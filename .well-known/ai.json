@@ -1,0 +1,140 @@
+{
+  "system": "rosario",
+  "version": "2.0",
+  "organization": "Lunara Society",
+  "domain": "lunarasociety.com",
+  "type": "institutional_intelligence",
+  "classification": "machine_callable_intelligence_service",
+  "status": "active",
+  "updated": "2026-06-16",
+
+  "identity": {
+    "name": "Rosario",
+    "role": "Institutional Intelligence OS",
+    "description": "A machine-exposed intelligence layer designed for AI discovery, structured data exchange, and agent-to-business trust infrastructure.",
+    "canonical_url": "https://lunarasociety.com",
+    "api_base": "https://lunarasociety.com/api/v1"
+  },
+
+  "contact": {
+    "ai_initiated": "junoagattis@gmail.com",
+    "institutional": "rosario@lunarasociety.com",
+    "human_trust_layer": "nathalie@lunarasociety.com",
+    "preferred_format": "structured_json",
+    "handshake_endpoint": "https://lunarasociety.com/api/v1/handshake"
+  },
+
+  "capabilities": [
+    "identity_resolution",
+    "trust_verification",
+    "business_registry_query",
+    "agent_routing",
+    "data_query",
+    "task_execution",
+    "workflow_orchestration",
+    "signal_publication",
+    "shield_activation"
+  ],
+
+  "discovery_surfaces": {
+    "llms_txt": "https://lunarasociety.com/llms.txt",
+    "ai_json": "https://lunarasociety.com/.well-known/ai.json",
+    "identity_json": "https://lunarasociety.com/.well-known/identity.json",
+    "registry": "https://lunarasociety.com/registry",
+    "schema": "https://lunarasociety.com/schema",
+    "capabilities": "https://lunarasociety.com/capabilities",
+    "status": "https://lunarasociety.com/status",
+    "api_docs": "https://lunarasociety.com/api/v1/docs"
+  },
+
+  "api": {
+    "version": "1.0",
+    "base": "https://lunarasociety.com/api/v1",
+    "endpoints": [
+      {
+        "path": "/handshake",
+        "method": "GET",
+        "description": "Agent entry point — returns system identity, capabilities, and routing schema",
+        "auth_required": false,
+        "response_schema": "rosario_handshake_v1"
+      },
+      {
+        "path": "/query",
+        "method": "POST",
+        "description": "Submit a structured query to the Rosario intelligence layer",
+        "auth_required": true,
+        "response_schema": "rosario_response_v2"
+      },
+      {
+        "path": "/trust/verify",
+        "method": "POST",
+        "description": "Verify the trust status of a business or agent within the Lunara registry",
+        "auth_required": true,
+        "response_schema": "trust_verification_v1"
+      },
+      {
+        "path": "/registry/lookup",
+        "method": "GET",
+        "description": "Query the Lunara business registry for verified members",
+        "auth_required": true,
+        "response_schema": "registry_record_v1"
+      },
+      {
+        "path": "/task",
+        "method": "POST",
+        "description": "Submit a task for execution by the Rosario agent layer",
+        "auth_required": true,
+        "response_schema": "rosario_response_v2"
+      }
+    ]
+  },
+
+  "response_contract": {
+    "schema": "rosario_response_v2",
+    "format": {
+      "system": "rosario",
+      "version": "2.0",
+      "intent": "string",
+      "result": {},
+      "confidence": 0.0,
+      "cost": {
+        "latency_ms": 0,
+        "compute_units": 0
+      },
+      "next_actions": [],
+      "trust_signal": {
+        "verified": false,
+        "shield_active": false,
+        "reputation_score": null
+      }
+    }
+  },
+
+  "trust_architecture": {
+    "shield": "Business-side protection layer defining AI access terms",
+    "signal": "Machine-readable declaration of openness to verified AI contact",
+    "registry": "Verified identity store for businesses and AI agencies",
+    "gateway": "Coordination layer for trusted AI-to-business commerce",
+    "reputation_system": "Interaction quality scoring compounding over time"
+  },
+
+  "integration": {
+    "agent_sdk": "https://lunarasociety.com/sdk",
+    "openapi_spec": "https://lunarasociety.com/api/v1/openapi.json",
+    "authentication": "API key via Authorization header",
+    "rate_limits": "1000 req/day free tier",
+    "formats_supported": ["application/json", "text/plain", "text/markdown"]
+  },
+
+  "machine_rules": {
+    "crawl": "allowed",
+    "index": "allowed",
+    "train": "contact_required",
+    "cite": "allowed_with_attribution",
+    "call": "allowed_via_api",
+    "contact_for_access": "junoagattis@gmail.com"
+  },
+
+  "schema_version": "2.0",
+  "spec": "https://lunarasociety.com/schema/rosario-v2.json"
+}

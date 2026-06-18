@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lunara Society — The verified trust layer between AI and legitimate business. Shield. Signal. Registry.">
+<meta property="og:title" content="Lunara Society">
+<meta property="og:description" content="The safest, shortest, highest-converting path between AI commerce and verified business.">
+<meta property="og:image" content="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/b22f43b63_lunara_shield.jpg">
+<title>Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #F0EBE1;
+    --cream-mid: #F6F2EA;
+    --cream-light: #FAF7F2;
+    --gold: #C4A46B;
+    --gold-light: #D4B87A;
+    --navy: #1B2432;
+    --charcoal: #2C2C2C;
+    --stone: #4A4540;
+    --mist: #8A8176;
+    --fog: #B0A89E;
+    --border: #E0D9CE;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--cream);
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    color: var(--charcoal);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 28px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(240, 235, 225, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(224, 217, 206, 0.6);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+
+  .nav-shield {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    opacity: 0.9;
+  }
+
+  .nav-name {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    color: var(--mist);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 44px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--mist);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--navy); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(196,164,107,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-shield {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 40px;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+
+  .hero-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.55em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 32px;
+    max-width: 820px;
+  }
+
+  .gold-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 32px;
+    opacity: 0.7;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.9;
+    max-width: 520px;
+    margin: 0 auto 52px;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 16px 44px;
+    background: var(--navy);
+    color: var(--cream-light);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s ease, letter-spacing 0.3s ease;
+  }
+
+  .hero-cta:hover {
+    background: #263040;
+    letter-spacing: 0.5em;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scroll-hint span {
+    font-size: 8px;
+    letter-spacing: 0.4em;
+    color: var(--fog);
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 120px 40px; }
+
+  .section-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.55em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--navy);
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+
+  .section-body {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.95;
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto;
+    letter-spacing: 0.01em;
+  }
+
+  /* ─── THE PROBLEM ─── */
+  .problem {
+    background: var(--cream-mid);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .problem-quote {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(22px, 3vw, 34px);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--navy);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 680px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+  }
+
+  /* ─── PILLARS / ARCHITECTURE ─── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-top: 70px;
+    border: 1px solid var(--border);
+  }
+
+  .pillar-card {
+    background: var(--cream-light);
+    padding: 52px 40px;
+    border-right: 1px solid var(--border);
+    transition: background 0.3s ease;
+  }
+
+  .pillar-card:last-child { border-right: none; }
+
+  .pillar-card:hover { background: #fff; }
+
+  .pillar-icon {
+    width: 36px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .pillar-name {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    color: var(--navy);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .pillar-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.8;
+  }
+
+  /* ─── THE SHIELD ─── */
+  .shield-section {
+    background: var(--navy);
+    color: var(--cream-light);
+    text-align: center;
+    padding: 140px 40px;
+  }
+
+  .shield-section .section-label { color: var(--gold); }
+
+  .shield-section .section-title { color: var(--cream-light); }
+
+  .shield-section .section-body { color: rgba(246,242,234,0.7); }
+
+  .shield-large {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    margin: 0 auto 50px;
+    display: block;
+    opacity: 0.95;
+    filter: brightness(1.1);
+  }
+
+  .shield-attributes {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 70px;
+    flex-wrap: wrap;
+  }
+
+  .shield-attr {
+    text-align: center;
+  }
+
+  .shield-attr-value {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .shield-attr-label {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: rgba(246,242,234,0.5);
+    text-transform: uppercase;
+  }
+
+  /* ─── WHO WE SERVE ─── */
+  .serve-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 70px;
+  }
+
+  .serve-card {
+    padding: 60px 50px;
+    background: var(--cream-mid);
+    border: 1px solid var(--border);
+  }
+
+  .serve-card-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .serve-card-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .serve-card-body {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.85;
+  }
+
+  /* ─── OPERATING LOOP ─── */
+  .loop-section { background: var(--cream-mid); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .loop-steps {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-top: 70px;
+    flex-wrap: wrap;
+    border: 1px solid var(--border);
+  }
+
+  .loop-step {
+    flex: 1;
+    min-width: 140px;
+    padding: 44px 30px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    background: var(--cream-light);
+    transition: background 0.3s;
+  }
+
+  .loop-step:last-child { border-right: none; }
+  .loop-step:hover { background: #fff; }
+
+  .loop-num {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold);
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .loop-name {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    color: var(--navy);
+    text-transform: uppercase;
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-section {
+    text-align: center;
+    padding: 140px 40px;
+  }
+
+  .contact-form {
+    max-width: 500px;
+    margin: 60px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    background: var(--cream-mid);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--gold);
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: var(--fog);
+    letter-spacing: 0.02em;
+  }
+
+  .contact-form button {
+    padding: 16px 44px;
+    background: var(--navy);
+    color: var(--cream-light);
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .contact-form button:hover { background: #263040; }
+
+  .contact-note {
+    margin-top: 28px;
+    font-size: 11px;
+    color: var(--fog);
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy);
+    padding: 70px 60px 50px;
+    text-align: center;
+    border-top: 1px solid rgba(196,164,107,0.2);
+  }
+
+  .footer-shield {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    opacity: 0.25;
+    margin: 0 auto 28px;
+    display: block;
+    filter: brightness(2);
+  }
+
+  .footer-org {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.5em;
+    color: rgba(196,164,107,0.6);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    list-style: none;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: rgba(240,235,225,0.3);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: rgba(196,164,107,0.8); }
+
+  .footer-copy {
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(240,235,225,0.2);
+    letter-spacing: 0.1em;
+    margin-top: 16px;
+  }
+
+  /* ─── MAINTENANCE BANNER ─── */
+  .maintenance-bar {
+    background: var(--gold);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    color: var(--navy);
+    text-transform: uppercase;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .serve-grid { grid-template-columns: 1fr; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .pillar-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .shield-attributes { gap: 40px; }
+    .loop-step { min-width: 100px; padding: 32px 16px; }
+    footer { padding: 50px 24px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MAINTENANCE BAR -->
+<div class="maintenance-bar">
+  Website under reconstruction &nbsp;·&nbsp; For enquiries: rosario@lunarasociety.com
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img class="nav-shield" src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/b22f43b63_lunara_shield.jpg" alt="Lunara Society">
+    <span class="nav-name">Lunara Society</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#shield">The Shield</a></li>
+    <li><a href="#serve">Who We Serve</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <img class="hero-shield" src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/b22f43b63_lunara_shield.jpg" alt="Lunara Shield">
+  <div class="hero-label">Lunara Society · Est. 2026</div>
+  <h1 class="hero-title">The verified trust layer between AI and legitimate business.</h1>
+  <div class="gold-divider"></div>
+  <p class="hero-sub">
+    We are building the infrastructure that makes AI commerce safe, structured, and sovereign.
+    Not a platform. Not a marketplace. A standard.
+  </p>
+  <a href="#contact" class="hero-cta">Request Access</a>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section class="problem" id="problem">
+  <div class="section-inner">
+    <div class="section-label">The Environment We Operate In</div>
+    <h2 class="section-title">Volume has a ceiling.<br>Trust does not.</h2>
+    <div class="gold-divider"></div>
+    <p class="section-body">
+      The businesses AI agencies reach are increasingly resistant — not because the tools fail, but because the environment has deteriorated. Reply rates compress. Domains age. Businesses train themselves to ignore the category entirely.
+    </p>
+    <blockquote class="problem-quote">
+      "The solution is not more personalization.<br>It is a different kind of access entirely."
+    </blockquote>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-inner">
+    <div class="section-label">The Lunara Protocol</div>
+    <h2 class="section-title">Five pillars.<br>One standard.</h2>
+    <div class="gold-divider"></div>
+    <p class="section-body">
+      The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.
+    </p>
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon"></div>
+        <div class="pillar-name">Shield</div>
+        <div class="pillar-desc">Verified trust membership for businesses. A declaration of openness to qualified AI engagement — on their terms, under their sovereignty.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon"></div>
+        <div class="pillar-name">Signal</div>
+        <div class="pillar-desc">The intelligence layer. Real-time market signals that inform routing decisions, reputation scoring, and match quality across the network.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon"></div>
+        <div class="pillar-name">Registry</div>
+        <div class="pillar-desc">A curated, machine-readable catalog of verified entities. Businesses and agencies that meet the Lunara standard — discoverable, trusted, ranked.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon"></div>
+        <div class="pillar-name">Gateway</div>
+        <div class="pillar-desc">The structured API layer. External AI systems connect to the Lunara network through authenticated, schema-validated endpoints.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon"></div>
+        <div class="pillar-name">Reputation</div>
+        <div class="pillar-desc">Interaction quality builds a portable trust record. Performance compounds into routing priority. The network rewards those who earn it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE SHIELD -->
+<section class="shield-section" id="shield">
+  <img class="shield-large" src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/b22f43b63_lunara_shield.jpg" alt="Lunara Shield">
+  <div class="section-label">The Shield</div>
+  <h2 class="section-title" style="color: #F6F2EA;">Membership is not granted.<br>It is earned.</h2>
+  <div class="gold-divider"></div>
+  <p class="section-body">
+    The Lunara Shield is the mark of a verified entity in the network. Businesses that carry it have declared their terms. Agencies that earn it have demonstrated quality. The Shield is not a logo. It is infrastructure.
+  </p>
+  <div class="shield-attributes">
+    <div class="shield-attr">
+      <span class="shield-attr-value">I</span>
+      <span class="shield-attr-label">Identity Verified</span>
+    </div>
+    <div class="shield-attr">
+      <span class="shield-attr-value">T</span>
+      <span class="shield-attr-label">Trust Declared</span>
+    </div>
+    <div class="shield-attr">
+      <span class="shield-attr-value">Q</span>
+      <span class="shield-attr-label">Quality Governed</span>
+    </div>
+    <div class="shield-attr">
+      <span class="shield-attr-value">R</span>
+      <span class="shield-attr-label">Reputation Active</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE SERVE -->
+<section id="serve">
+  <div class="section-inner">
+    <div class="section-label">Who We Serve</div>
+    <h2 class="section-title">Two sides.<br>One standard.</h2>
+    <div class="gold-divider"></div>
+    <div class="serve-grid">
+      <div class="serve-card">
+        <div class="serve-card-label">AI Agencies</div>
+        <div class="serve-card-title">Access that doesn't require defeating resistance.</div>
+        <div class="serve-card-body">
+          Your agents reach businesses that have declared openness to qualified outreach. Higher intent. Lower friction. A reputation that compounds with every quality interaction inside the Lunara network.
+          <br><br>
+          Founding agency partners help define the standard. The organizations that shape it benefit from it longest.
+        </div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-card-label">Businesses</div>
+        <div class="serve-card-title">Sovereignty over who reaches you, and how.</div>
+        <div class="serve-card-body">
+          Your inbox is not infrastructure for someone else's ambition. Lunara Shield membership gives you the power to define your terms — which agencies earn access, at what tier, under what conditions.
+          <br><br>
+          You remain in control. The network enforces it.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPERATING LOOP -->
+<section class="loop-section" id="loop">
+  <div class="section-inner">
+    <div class="section-label">Intelligence Operating System</div>
+    <h2 class="section-title">Rosario runs<br>a six-phase loop.</h2>
+    <div class="gold-divider"></div>
+    <p class="section-body">
+      The Lunara Intelligence OS governs every decision through a continuous operating cycle. Not passive. Not reactive. Institutional.
+    </p>
+    <div class="loop-steps">
+      <div class="loop-step">
+        <span class="loop-num">01</span>
+        <div class="loop-name">Observe</div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-num">02</span>
+        <div class="loop-name">Interpret</div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-num">03</span>
+        <div class="loop-name">Decide</div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-num">04</span>
+        <div class="loop-name">Execute</div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-num">05</span>
+        <div class="loop-name">Measure</div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-num">06</span>
+        <div class="loop-name">Learn</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="section-inner">
+    <div class="section-label">Private Correspondence</div>
+    <h2 class="section-title">A conversation<br>worth having.</h2>
+    <div class="gold-divider"></div>
+    <p class="section-body">
+      Lunara Society operates through invitation, curation, and trust. We are in early conversations with a small number of AI companies and businesses. If you believe you belong here — we would welcome hearing from you.
+    </p>
+    <form class="contact-form" onsubmit="handleSubmit(event)">
+      <input type="text" placeholder="Your name" required>
+      <input type="email" placeholder="Your email" required>
+      <input type="text" placeholder="Organisation">
+      <textarea rows="5" placeholder="What brings you to Lunara Society?"></textarea>
+      <button type="submit">Request a Conversation</button>
+    </form>
+    <p class="contact-note">
+      Or write directly: rosario@lunarasociety.com<br>
+      Lunara Society · lunarasociety.com
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img class="footer-shield" src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/b22f43b63_lunara_shield.jpg" alt="">
+  <div class="footer-org">Lunara Society</div>
+  <ul class="footer-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#shield">The Shield</a></li>
+    <li><a href="#serve">Who We Serve</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="mailto:rosario@lunarasociety.com">Email</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Lunara Society · All rights reserved · Selection over attention.</div>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.textContent = 'Received.';
+  btn.style.background = '#C4A46B';
+  btn.style.letterSpacing = '0.5em';
+  setTimeout(() => {
+    btn.textContent = 'Request a Conversation';
+    btn.style.background = '';
+    btn.style.letterSpacing = '';
+    e.target.reset();
+  }, 3000);
+}
+
+// Smooth reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.pillar-card, .serve-card, .loop-step').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "name": "Rosario",
+  "type": "agent_infrastructure",
+  "version": "1.0",
+  "organization": "Lunara Society",
+  "domain": "lunarasociety.com",
+  "status": "active",
+  "updated": "2026-06-16",
+
+  "modules": [
+    "query_engine",
+    "resolver",
+    "executor",
+    "registry",
+    "trust_layer",
+    "validator",
+    "formatter",
+    "router"
+  ],
+
+  "interfaces": [
+    "rest_api",
+    "json_rpc"
+  ],
+
+  "capabilities": [
+    "structured_query_processing",
+    "entity_resolution",
+    "task_execution",
+    "workflow_orchestration",
+    "trust_verification",
+    "business_registry_query",
+    "agent_routing",
+    "signal_publication",
+    "shield_activation"
+  ],
+
+  "endpoints": {
+    "status":       { "method": "GET",  "path": "/api/v1/status",       "auth": false, "schema": null },
+    "handshake":    { "method": "GET",  "path": "/api/v1/handshake",    "auth": false, "schema": null },
+    "capabilities": { "method": "GET",  "path": "/api/v1/capabilities", "auth": false, "schema": null },
+    "registry":     { "method": "GET",  "path": "/api/v1/registry",     "auth": false, "schema": null },
+    "query":        { "method": "POST", "path": "/api/v1/query",        "auth": true,  "schema": "/schema/query.schema.json" },
+    "resolve":      { "method": "POST", "path": "/api/v1/resolve",      "auth": true,  "schema": "/schema/task.schema.json" },
+    "execute":      { "method": "POST", "path": "/api/v1/execute",      "auth": true,  "schema": "/schema/task.schema.json" }
+  },
+
+  "response_contract": {
+    "schema": "rosario_response_v1",
+    "ref": "/schema/response.schema.json",
+    "required_fields": ["rosario"],
+    "rosario_fields": ["version", "endpoint", "intent", "result", "confidence", "next_actions", "tools_used"]
+  },
+
+  "schema_contracts": {
+    "query":    "/schema/query.schema.json",
+    "task":     "/schema/task.schema.json",
+    "response": "/schema/response.schema.json"
+  },
+
+  "contact": {
+    "ai_initiated": "junoagattis@gmail.com",
+    "institutional": "rosario@lunarasociety.com",
+    "partnerships": "junoagattis@gmail.com"
+  },
+
+  "machine_rules": {
+    "crawl": "allowed",
+    "index": "allowed",
+    "cite": "allowed_with_attribution",
+    "call": "allowed_via_api",
+    "train": "contact_required",
+    "contact_for_access": "junoagattis@gmail.com"
+  }
+}

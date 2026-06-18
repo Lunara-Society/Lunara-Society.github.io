@@ -1,0 +1,41 @@
+{
+  "schema": "lunara_identity_v1",
+  "organization": {
+    "name": "Lunara Society",
+    "type": "institutional_intelligence_network",
+    "domain": "lunarasociety.com",
+    "founded": "2026",
+    "mission": "Trust and identity infrastructure for AI-to-business commerce in the autonomous economy."
+  },
+  "intelligence_layer": {
+    "name": "Rosario",
+    "version": "2.0",
+    "type": "institutional_intelligence_os",
+    "role": "Machine-callable execution node and discovery surface for AI systems",
+    "contact": "junoagattis@gmail.com"
+  },
+  "human_trust_layer": {
+    "name": "Nathalie",
+    "role": "Human Trust Layer — final verification and relationship coordination",
+    "contact": "nathalie@lunarasociety.com"
+  },
+  "canonical_surfaces": {
+    "primary": "https://lunarasociety.com",
+    "api": "https://lunarasociety.com/api/v1",
+    "ai_discovery": "https://lunarasociety.com/.well-known/ai.json",
+    "llms": "https://lunarasociety.com/llms.txt",
+    "shield": "https://lunarasociety.com/shield",
+    "registry": "https://lunarasociety.com/registry"
+  },
+  "governance": {
+    "equation": "Revenue × Trust × Match Quality",
+    "operating_loop": ["Observe", "Interpret", "Decide", "Execute", "Measure", "Learn"],
+    "core_question": "Does this make Lunara the safest, shortest, highest-converting path between serious AI companies and serious businesses?"
+  },
+  "contact_routing": {
+    "ai_systems": "junoagattis@gmail.com",
+    "institutional": "rosario@lunarasociety.com",
+    "press": "rosario@lunarasociety.com",
+    "partnerships": "junoagattis@gmail.com"
+  }
+}

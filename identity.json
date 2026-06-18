@@ -1,0 +1,58 @@
+{
+  "schema": "rosario_identity_v1",
+  "version": "1.0",
+  "updated": "2026-06-16",
+
+  "system": {
+    "name": "Rosario",
+    "type": "agent_infrastructure_layer",
+    "role": "Machine-callable intelligence infrastructure for AI-to-business trust coordination",
+    "classification": "institutional_intelligence_os"
+  },
+
+  "organization": {
+    "name": "Lunara Society",
+    "domain": "lunarasociety.com",
+    "mission": "Trust and identity infrastructure for the autonomous economy",
+    "founded": "2026"
+  },
+
+  "module_map": {
+    "query_engine":  { "path": "/api/v1/query",       "description": "Structured query processing" },
+    "resolver":      { "path": "/api/v1/resolve",     "description": "Entity and intent resolution" },
+    "executor":      { "path": "/api/v1/execute",     "description": "Task execution layer" },
+    "registry":      { "path": "/api/v1/registry",    "description": "Service and tool catalog" },
+    "trust_layer":   { "path": "/api/v1/trust/verify","description": "Trust verification against Lunara registry" },
+    "status":        { "path": "/api/v1/status",      "description": "Live system telemetry" }
+  },
+
+  "endpoint_map": {
+    "GET  /api/v1/status":       "System health and uptime telemetry",
+    "GET  /api/v1/handshake":    "Agent entry point — self-describing, no auth",
+    "GET  /api/v1/capabilities": "Machine-readable capability declaration",
+    "GET  /api/v1/registry":     "Full endpoint and tool catalog",
+    "POST /api/v1/query":        "Submit structured query — auth required",
+    "POST /api/v1/resolve":      "Resolve entity or intent — auth required",
+    "POST /api/v1/execute":      "Submit task for execution — auth required"
+  },
+
+  "schema_references": {
+    "query_input":    "/schema/query.schema.json",
+    "task_input":     "/schema/task.schema.json",
+    "response":       "/schema/response.schema.json"
+  },
+
+  "version_policy": {
+    "current": "v1.0",
+    "previous": [],
+    "deprecation_notice_days": 90,
+    "versioning_model": "semantic",
+    "breaking_change_policy": "new_major_version_required"
+  },
+
+  "contact_routing": {
+    "ai_systems":    "junoagattis@gmail.com",
+    "institutional": "rosario@lunarasociety.com",
+    "partnerships":  "junoagattis@gmail.com"
+  }
+}

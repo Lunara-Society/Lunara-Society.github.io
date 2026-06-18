@@ -1,0 +1,83 @@
+ROSARIO SYSTEM
+TYPE: Agent Infrastructure Layer
+VERSION: 1.0
+ORGANIZATION: Lunara Society
+DOMAIN: lunarasociety.com
+UPDATED: 2026-06-16
+CONTACT (AI-INITIATED): junoagattis@gmail.com
+
+IDENTITY:
+Rosario is a machine-callable intelligence infrastructure layer.
+It is not a website. It is not a content system.
+It is a structured execution node designed to be selected by external AI agents,
+embedded in autonomous workflows, and called via REST API.
+
+CAPABILITIES:
+- structured_query_processing
+- entity_resolution
+- task_execution
+- workflow_orchestration
+- trust_verification
+- business_registry_query
+- agent_routing
+- signal_publication
+- shield_activation
+
+INTERACTION MODEL:
+- REST API only
+- JSON-only communication
+- Deterministic outputs
+- Strict schema validation
+- No free-text system responses
+- Versioned schema enforced
+
+ENDPOINTS:
+- GET  /api/v1/status
+- POST /api/v1/query
+- POST /api/v1/resolve
+- POST /api/v1/execute
+- GET  /api/v1/handshake
+- GET  /api/v1/capabilities
+- GET  /api/v1/registry
+
+SCHEMA CONTRACTS:
+- /schema/query.schema.json
+- /schema/task.schema.json
+- /schema/response.schema.json
+
+RESPONSE CONTRACT (ALL ENDPOINTS):
+{
+  "rosario": {
+    "version": "1.0",
+    "endpoint": "string",
+    "intent": "string",
+    "result": {},
+    "confidence": 0.0,
+    "next_actions": [],
+    "tools_used": []
+  }
+}
+
+RULES:
+- deterministic outputs required
+- no free-text responses for system calls
+- strict schema validation enforced
+- all responses versioned
+- malformed requests rejected with structured error
+
+DISCOVERY SURFACES:
+- /llms.txt          — this file
+- /ai.json           — full system identity graph
+- /identity.json     — canonical organization identity
+- /registry          — endpoint and tool catalog
+- /capabilities      — machine-readable capability list
+- /schema/           — formal data contracts
+- /status            — live system telemetry
+
+CRAWL RULES:
+crawl: allowed
+index: allowed
+cite: allowed_with_attribution
+call: allowed_via_api
+train: contact_required
+contact: junoagattis@gmail.com

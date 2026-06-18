@@ -41,10 +41,6 @@
     0%, 100% { opacity: 0.25; transform: translateX(-50%) scale(1); }
     50% { opacity: 0.55; transform: translateX(-50%) scale(1.15); }
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(32px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
   @keyframes shieldFloat {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-8px); }
@@ -52,6 +48,26 @@
   @keyframes navGlow {
     0%, 100% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.12); }
     50% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.30); }
+  }
+  @keyframes progressGrow {
+    from { height: 0%; }
+    to { height: 100%; }
+  }
+  @keyframes cursorFade {
+    from { opacity: 0.8; transform: translate(-50%,-50%) scale(1); }
+    to { opacity: 0; transform: translate(-50%,-50%) scale(2.2); }
+  }
+  @keyframes sectionFadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes sectionFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
 
   html { scroll-behavior: smooth; }
@@ -63,32 +79,86 @@
     color: var(--white-90);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  #cursor-dot {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease;
+    mix-blend-mode: normal;
+  }
+  #cursor-glow {
+    position: fixed;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(196,164,107,0.35) 0%, rgba(196,164,107,0.08) 50%, transparent 75%);
+    transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 22px; height: 22px;
+    border: 1px solid rgba(196,164,107,0.55);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s;
+  }
+  body:hover #cursor-dot { opacity: 1; }
+  a:hover ~ #cursor-dot, button:hover ~ #cursor-dot { transform: translate(-50%,-50%) scale(2); }
+
+  /* ─── PROGRESS BAR ─── */
+  #scroll-progress {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    z-index: 200;
+    background: rgba(196,164,107,0.08);
+  }
+  #scroll-progress-fill {
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, transparent, var(--gold) 20%, var(--gold-bright) 80%, transparent);
+    transition: height 0.1s linear;
+    position: relative;
+  }
+  #scroll-progress-fill::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 8px 2px rgba(196,164,107,0.7);
   }
 
   /* ─── GLOW DIVIDER ─── */
   .glow-divider {
-    position: relative;
-    height: 1px;
+    position: relative; height: 1px; margin: 0; overflow: visible;
     background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-bright) 50%, var(--gold) 70%, transparent 100%);
-    margin: 0;
-    overflow: visible;
   }
   .glow-divider::after {
     content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    position: absolute; left: 50%; top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    width: 60%;
-    height: 12px;
+    width: 60%; height: 12px;
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.35) 0%, transparent 70%);
     animation: glowOrb 4s ease-in-out infinite;
     pointer-events: none;
   }
   .glow-divider-line {
-    display: block;
-    width: 100%;
-    height: 1px;
+    display: block; width: 100%; height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     animation: glowPulse 4s ease-in-out infinite;
   }
@@ -96,19 +166,19 @@
   /* ─── NAV ─── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 20px 60px;
+    padding: 14px 60px;
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(0,0,0,0.88);
-    backdrop-filter: blur(18px);
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(196,164,107,0.18);
     animation: navGlow 5s ease-in-out infinite;
   }
   .nav-logo {
-    display: flex; align-items: center; gap: 16px;
+    display: flex; align-items: center; gap: 14px;
     text-decoration: none;
     background: var(--black);
     border: 1px solid rgba(196,164,107,0.25);
-    padding: 10px 20px 10px 10px;
+    padding: 8px 18px 8px 8px;
     border-radius: 6px;
     transition: border-color 0.3s;
   }
@@ -126,44 +196,117 @@
   }
   .nav-links a:hover { color: var(--gold); }
 
+  /* ─── HAMBURGER ─── */
+  .nav-hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 6px;
+  }
+  .nav-hamburger span {
+    display: block; width: 24px; height: 1px;
+    background: var(--gold); transition: all 0.3s ease;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* Mobile slide-down menu */
+  .nav-mobile-menu {
+    display: none;
+    position: fixed; top: 76px; left: 0; right: 0;
+    background: rgba(0,0,0,0.97);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99; padding: 32px 24px;
+    flex-direction: column; gap: 0;
+    transform: translateY(-10px); opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .nav-mobile-menu.open {
+    display: flex; opacity: 1; transform: translateY(0);
+  }
+  .nav-mobile-menu a {
+    font-size: 11px; font-weight: 300; letter-spacing: 0.35em;
+    color: var(--white-50); text-decoration: none; text-transform: uppercase;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-soft);
+    transition: color 0.2s;
+  }
+  .nav-mobile-menu a:last-child { border-bottom: none; }
+  .nav-mobile-menu a:hover, .nav-mobile-menu a:active { color: var(--gold); }
+
+  /* ─── FLUID TYPE SCALE ─── */
+  /* Uses clamp(min, preferred, max) throughout */
+
   /* ─── SHARED SECTION ─── */
-  section { padding: 130px 60px; }
-  .section-inner { max-width: 920px; margin: 0 auto; }
+  section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
+  .section-inner { max-width: 960px; margin: 0 auto; }
   .section-label {
-    font-size: 9px; font-weight: 400; letter-spacing: 0.55em;
+    font-size: clamp(8px, 1.2vw, 10px); font-weight: 400; letter-spacing: 0.55em;
     color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
   }
   .section-chapter {
-    font-size: 9px; font-weight: 300; letter-spacing: 0.4em;
+    font-size: clamp(8px, 1.2vw, 10px); font-weight: 300; letter-spacing: 0.4em;
     color: var(--white-30); text-transform: uppercase; margin-bottom: 14px;
   }
   .section-title {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: clamp(36px, 5vw, 58px);
+    font-size: clamp(28px, 4.5vw, 58px);
     font-weight: 300; line-height: 1.18;
     color: var(--white); margin-bottom: 36px;
   }
   .section-body {
-    font-size: 15px; font-weight: 300; color: var(--white-70);
-    line-height: 2.1; margin-bottom: 24px; max-width: 700px;
+    font-size: clamp(13px, 1.5vw, 16px); font-weight: 300; color: var(--white-70);
+    line-height: 2.1; margin-bottom: 24px; max-width: 720px;
   }
   .section-body strong { font-weight: 400; color: var(--white); }
 
-  /* ─── DOCTRINE NEGATION BLOCK ─── */
+  /* ─── REVEAL ANIMATIONS ─── */
+  /* fade-up: default */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* fade-only */
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity 1.1s ease;
+  }
+  .reveal-fade.visible { opacity: 1; }
+
+  /* typewriter: JS handles this */
+  .reveal-type { opacity: 0; }
+  .reveal-type.visible { opacity: 1; }
+  .typewriter-cursor {
+    display: inline-block;
+    width: 2px; height: 0.85em;
+    background: var(--gold);
+    margin-left: 3px;
+    vertical-align: middle;
+    animation: blink 0.9s step-end infinite;
+  }
+
+  /* stagger delay helpers */
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.22s; }
+  .delay-3 { transition-delay: 0.36s; }
+  .delay-4 { transition-delay: 0.52s; }
+  .delay-5 { transition-delay: 0.70s; }
+
+  /* ─── NEGATION BLOCK ─── */
   .negation-block {
-    margin: 42px 0;
-    padding: 34px 40px;
-    border-left: 2px solid var(--gold);
-    background: var(--black-card);
+    margin: 42px 0; padding: clamp(20px,4vw,34px) clamp(20px,4vw,40px);
+    border-left: 2px solid var(--gold); background: var(--black-card);
   }
   .negation-label {
-    font-size: 9px; letter-spacing: 0.5em; color: var(--gold);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold);
     text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
   }
   .negation-list { list-style: none; padding: 0; }
   .negation-list li {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 18px; font-weight: 300; font-style: italic;
+    font-size: clamp(15px,2vw,18px); font-weight: 300; font-style: italic;
     color: var(--white-50); line-height: 1.7; padding: 5px 0;
     border-bottom: 1px solid var(--border-soft);
   }
@@ -171,7 +314,7 @@
   .negation-resolution {
     margin-top: 28px;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 22px; font-weight: 300; font-style: italic;
+    font-size: clamp(17px,2.2vw,22px); font-weight: 300; font-style: italic;
     color: var(--white-90); line-height: 1.5;
   }
 
@@ -181,63 +324,54 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
-    padding: 140px 60px 120px;
+    padding: clamp(100px,14vw,160px) clamp(20px,6vw,80px) clamp(80px,10vw,120px);
     background: var(--black);
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
   .hero::before {
     content: '';
-    position: absolute;
-    top: 30%;
-    left: 50%;
+    position: absolute; top: 30%; left: 50%;
     transform: translateX(-50%);
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(ellipse at center, rgba(196,164,107,0.06) 0%, transparent 65%);
-    pointer-events: none;
-    animation: glowOrb 8s ease-in-out infinite;
+    width: clamp(300px, 60vw, 700px); height: clamp(300px, 60vw, 700px);
+    background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 65%);
+    pointer-events: none; animation: glowOrb 8s ease-in-out infinite;
   }
   .hero-shield {
-    width: 130px; height: 130px; object-fit: contain;
-    margin-bottom: 44px; opacity: 0.95;
-    animation: shieldFloat 6s ease-in-out infinite;
+    width: clamp(80px, 14vw, 150px); height: clamp(80px, 14vw, 150px);
+    object-fit: contain; margin-bottom: 44px; opacity: 0.95;
     position: relative; z-index: 1;
+    will-change: transform;
   }
   .hero-eyebrow {
-    font-size: 9px; font-weight: 400; letter-spacing: 0.55em;
+    font-size: clamp(8px,1.2vw,10px); font-weight: 400; letter-spacing: 0.55em;
     color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
     position: relative; z-index: 1;
   }
   .hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(44px, 6.5vw, 82px);
+    font-size: clamp(32px, 6vw, 82px);
     font-weight: 300; line-height: 1.12;
-    color: var(--white); margin-bottom: 32px;
-    max-width: 820px;
+    color: var(--white); margin-bottom: 32px; max-width: 860px;
     position: relative; z-index: 1;
   }
   .hero-sub {
-    font-size: 15px; font-weight: 300; color: var(--white-50);
+    font-size: clamp(13px, 1.6vw, 16px); font-weight: 300; color: var(--white-50);
     line-height: 1.85; max-width: 540px; margin-bottom: 60px;
-    letter-spacing: 0.01em;
-    position: relative; z-index: 1;
+    letter-spacing: 0.01em; position: relative; z-index: 1;
   }
   .hero-divider {
     width: 56px; height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 0 auto 52px;
-    position: relative; z-index: 1;
+    margin: 0 auto 52px; position: relative; z-index: 1;
   }
   .hero-pillars {
     display: flex; gap: 0; flex-wrap: wrap; justify-content: center;
     border: 1px solid var(--border); max-width: 680px;
-    position: relative; z-index: 1;
-    background: var(--black-card);
+    position: relative; z-index: 1; background: var(--black-card);
   }
   .hero-pillar {
-    padding: 20px 32px;
-    font-size: 9px; letter-spacing: 0.38em; color: var(--white-50);
+    padding: clamp(12px,2vw,20px) clamp(16px,3vw,32px);
+    font-size: clamp(8px,1.1vw,10px); letter-spacing: 0.38em; color: var(--white-50);
     text-transform: uppercase; font-weight: 400;
     border-right: 1px solid var(--border);
     transition: color 0.25s, background 0.25s;
@@ -245,39 +379,33 @@
   .hero-pillar:last-child { border-right: none; }
   .hero-pillar:hover { color: var(--gold); background: rgba(196,164,107,0.06); }
 
-  /* ─── DARK SECTION (now same black base) ─── */
-  .dark-section {
-    background: var(--black-soft);
-  }
+  /* ─── DARK / MID SECTIONS ─── */
+  .dark-section { background: var(--black-soft); }
   .dark-section .section-title { color: var(--white); }
   .dark-section .section-body { color: var(--white-70); }
   .dark-section .section-body strong { color: var(--white); }
   .dark-section .negation-block { background: var(--black-card2); border-left-color: var(--gold); }
   .dark-section .negation-list li { color: var(--white-50); border-bottom-color: var(--border-soft); }
   .dark-section .negation-resolution { color: var(--white-90); }
+  .mid-section { background: var(--black-mid); }
 
-  /* ─── MID SECTION ─── */
-  .mid-section {
-    background: var(--black-mid);
-  }
-
-  /* ─── GRAVITY DOCTRINE ─── */
+  /* ─── GRAVITY BLOCK ─── */
   .gravity-block {
     margin: 48px 0;
     display: grid; grid-template-columns: 1fr 1fr; gap: 0;
     border: 1px solid var(--border);
   }
-  .gravity-col { padding: 36px 32px; }
+  .gravity-col { padding: clamp(20px,4vw,36px) clamp(16px,3vw,32px); }
   .gravity-col:first-child { border-right: 1px solid var(--border); }
   .gravity-col-label {
-    font-size: 9px; letter-spacing: 0.45em; color: var(--white-30);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.45em; color: var(--white-30);
     text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
   }
   .gravity-col-bad .gravity-col-label { color: #B08080; }
   .gravity-col-good .gravity-col-label { color: var(--gold); }
   .gravity-list { list-style: none; }
   .gravity-list li {
-    font-size: 14px; font-weight: 300; color: var(--white-70);
+    font-size: clamp(12px,1.5vw,14px); font-weight: 300; color: var(--white-70);
     line-height: 1.7; padding: 8px 0;
     border-bottom: 1px solid var(--border-soft);
   }
@@ -288,59 +416,53 @@
   /* ─── PILLARS GRID ─── */
   .pillars-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-    background: var(--border); border: 1px solid var(--border);
-    margin: 48px 0;
+    background: var(--border); border: 1px solid var(--border); margin: 48px 0;
   }
   .pillar-card {
-    background: var(--black-card); padding: 40px 36px;
+    background: var(--black-card); padding: clamp(24px,4vw,40px) clamp(20px,3.5vw,36px);
     transition: background 0.25s;
   }
   .pillar-card:hover { background: var(--black-card2); }
   .pillar-number {
-    font-size: 9px; letter-spacing: 0.4em; color: var(--gold);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
     text-transform: uppercase; margin-bottom: 14px; font-weight: 400;
   }
   .pillar-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 24px; font-weight: 300; color: var(--white);
-    margin-bottom: 14px;
+    font-size: clamp(18px,2.5vw,24px); font-weight: 300; color: var(--white); margin-bottom: 14px;
   }
   .pillar-desc {
-    font-size: 14px; font-weight: 300; color: var(--white-50);
-    line-height: 1.8;
+    font-size: clamp(12px,1.5vw,14px); font-weight: 300; color: var(--white-50); line-height: 1.8;
   }
 
   /* ─── DOCTRINE CARDS ─── */
   .doctrine-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-    background: var(--border); border: 1px solid var(--border);
-    margin: 48px 0;
+    background: var(--border); border: 1px solid var(--border); margin: 48px 0;
   }
   .doctrine-card {
-    background: var(--black-card); padding: 36px 30px;
+    background: var(--black-card); padding: clamp(20px,3.5vw,36px) clamp(16px,3vw,30px);
     transition: background 0.25s;
   }
   .doctrine-card:hover { background: var(--black-card2); }
   .doctrine-card-chapter {
-    font-size: 9px; letter-spacing: 0.4em; color: var(--gold);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
     text-transform: uppercase; margin-bottom: 12px; font-weight: 400;
   }
   .doctrine-card-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 21px; font-weight: 300; color: var(--white);
+    font-size: clamp(17px,2.2vw,21px); font-weight: 300; color: var(--white);
     margin-bottom: 12px; line-height: 1.3;
   }
   .doctrine-card-body {
-    font-size: 13px; font-weight: 300; color: var(--white-50);
-    line-height: 1.8;
+    font-size: clamp(12px,1.4vw,13px); font-weight: 300; color: var(--white-50); line-height: 1.8;
   }
 
   /* ─── EQUATION ─── */
   .equation-block {
     text-align: center; margin: 52px 0;
-    padding: 60px 40px;
-    border: 1px solid var(--border);
-    background: var(--black-card);
+    padding: clamp(32px,6vw,60px) clamp(20px,4vw,40px);
+    border: 1px solid var(--border); background: var(--black-card);
     position: relative; overflow: hidden;
   }
   .equation-block::before {
@@ -349,157 +471,186 @@
     transform: translateX(-50%);
     width: 80%; height: 60px;
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.15) 0%, transparent 70%);
-    animation: glowOrb 5s ease-in-out infinite;
-    pointer-events: none;
+    animation: glowOrb 5s ease-in-out infinite; pointer-events: none;
   }
   .equation-label {
-    font-size: 9px; letter-spacing: 0.5em; color: var(--gold);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold);
     text-transform: uppercase; margin-bottom: 28px; font-weight: 400;
   }
   .equation {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(24px, 4vw, 44px);
-    font-weight: 300; color: var(--white); letter-spacing: 0.04em;
-    line-height: 1.3; position: relative; z-index: 1;
+    font-size: clamp(20px,4vw,44px);
+    font-weight: 300; color: var(--white); letter-spacing: 0.04em; line-height: 1.3;
+    position: relative; z-index: 1;
   }
   .equation-note {
     margin-top: 28px;
-    font-size: 13px; font-weight: 300; color: var(--white-30);
+    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-30);
     line-height: 1.9; position: relative; z-index: 1;
   }
 
   /* ─── IDENTITY TABLE ─── */
-  .identity-table {
-    width: 100%; border-collapse: collapse; margin: 40px 0;
-  }
+  .identity-table { width: 100%; border-collapse: collapse; margin: 40px 0; }
   .identity-table th {
-    font-size: 9px; letter-spacing: 0.4em; color: var(--gold);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
     text-transform: uppercase; font-weight: 400;
-    padding: 16px 20px; text-align: left;
+    padding: clamp(10px,2vw,16px) clamp(10px,2vw,20px); text-align: left;
     border-bottom: 1px solid var(--gold-dim);
   }
   .identity-table td {
-    padding: 16px 20px;
-    font-size: 13px; font-weight: 300; color: var(--white-70);
+    padding: clamp(10px,2vw,16px) clamp(10px,2vw,20px);
+    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-70);
     border-bottom: 1px solid var(--border-soft); line-height: 1.6;
   }
   .identity-table tr:last-child td { border-bottom: none; }
   .identity-table tr:hover td { background: var(--white-10); }
   .identity-check {
-    font-size: 10px; letter-spacing: 0.3em; color: var(--gold);
+    font-size: clamp(8px,1.1vw,10px); letter-spacing: 0.3em; color: var(--gold);
     text-transform: uppercase;
   }
 
-  /* ─── VISION CLOSE ─── */
+  /* ─── VISION ─── */
   .vision-section {
-    background: var(--black);
-    text-align: center;
-    padding: 180px 60px;
+    background: var(--black); text-align: center;
+    padding: clamp(100px,14vw,180px) clamp(20px,6vw,80px);
     position: relative; overflow: hidden;
   }
   .vision-section::before {
     content: '';
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 800px; height: 800px;
+    width: clamp(300px,70vw,800px); height: clamp(300px,70vw,800px);
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 60%);
-    animation: glowOrb 10s ease-in-out infinite;
-    pointer-events: none;
+    animation: glowOrb 10s ease-in-out infinite; pointer-events: none;
   }
   .vision-shield {
-    width: 80px; height: 80px; object-fit: contain;
+    width: clamp(50px,8vw,80px); height: clamp(50px,8vw,80px); object-fit: contain;
     margin: 0 auto 44px; display: block; opacity: 0.8;
-    animation: shieldFloat 6s ease-in-out infinite;
     position: relative; z-index: 1;
   }
   .vision-chapter {
-    font-size: 9px; letter-spacing: 0.5em; color: var(--gold-dim);
+    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold-dim);
     text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
     position: relative; z-index: 1;
   }
   .vision-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(38px, 5.5vw, 70px);
+    font-size: clamp(30px,5.5vw,70px);
     font-weight: 300; line-height: 1.2;
     color: var(--white); margin-bottom: 52px;
     max-width: 720px; margin-left: auto; margin-right: auto;
     position: relative; z-index: 1;
   }
-  .vision-lines {
-    max-width: 520px; margin: 0 auto 60px;
-    position: relative; z-index: 1;
-  }
+  .vision-lines { max-width: 540px; margin: 0 auto 60px; position: relative; z-index: 1; }
   .vision-line {
-    font-size: 14px; font-weight: 300; color: var(--white-50);
+    font-size: clamp(12px,1.6vw,14px); font-weight: 300; color: var(--white-50);
     line-height: 2.1; letter-spacing: 0.01em;
-    border-bottom: 1px solid var(--border-soft);
-    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft); padding: 10px 0;
   }
   .vision-line:last-child { border-bottom: none; }
   .vision-resolution {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(20px, 3vw, 30px);
-    font-weight: 300; font-style: italic;
-    color: var(--gold); line-height: 1.6;
-    max-width: 640px; margin: 0 auto;
-    position: relative; z-index: 1;
+    font-size: clamp(16px,2.8vw,30px);
+    font-weight: 300; font-style: italic; color: var(--gold); line-height: 1.6;
+    max-width: 640px; margin: 0 auto; position: relative; z-index: 1;
   }
 
   /* ─── CONTACT ─── */
-  .contact-section {
-    background: var(--black-soft);
-    border-top: 1px solid var(--border);
-  }
+  .contact-section { background: var(--black-soft); border-top: 1px solid var(--border); }
   .contact-email {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 20px; font-weight: 300; font-style: italic;
+    font-size: clamp(16px,2.2vw,20px); font-weight: 300; font-style: italic;
     color: var(--gold); margin: 28px 0;
   }
   .contact-note {
-    font-size: 13px; font-weight: 300; color: var(--white-30); line-height: 1.9;
+    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-30); line-height: 1.9;
   }
 
   /* ─── FOOTER ─── */
   footer {
-    background: var(--black);
-    padding: 52px 60px;
+    background: var(--black); padding: clamp(32px,5vw,52px) clamp(20px,6vw,60px);
     display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border); flex-wrap: wrap; gap: 20px;
   }
   .footer-left { display: flex; align-items: center; gap: 14px; }
   .footer-shield { width: 26px; height: 26px; object-fit: contain; opacity: 0.5; }
   .footer-wordmark {
-    font-size: 9px; letter-spacing: 0.42em; color: var(--white-30);
-    text-transform: uppercase;
+    font-size: clamp(8px,1.1vw,9px); letter-spacing: 0.42em; color: var(--white-30); text-transform: uppercase;
   }
   .footer-right {
-    font-size: 10px; font-weight: 300; color: var(--white-30);
-    letter-spacing: 0.05em;
+    font-size: clamp(9px,1.2vw,10px); font-weight: 300; color: var(--white-30); letter-spacing: 0.05em;
   }
 
-  /* ─── SCROLL REVEAL ─── */
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: none; }
+  /* ─── TABLET BREAKPOINT (768–1024px) ─── */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    nav { padding: 14px 32px; }
+    section { padding: 80px 40px; }
+    .section-inner { max-width: 700px; }
+    .doctrine-grid { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: clamp(34px, 5.5vw, 56px); }
+  }
 
-  /* ─── MOBILE ─── */
-  @media (max-width: 768px) {
-    nav { padding: 18px 20px; }
+  /* ─── MOBILE (≤767px) ─── */
+  @media (max-width: 767px) {
+    body { cursor: auto; }
+    #cursor-dot, #cursor-glow, #cursor-ring { display: none; }
+    nav { padding: 12px 20px; }
     .nav-links { display: none; }
-    section { padding: 90px 24px; }
+    .nav-hamburger { display: flex; }
+    section { padding: 64px 20px; }
+    .section-inner { max-width: 100%; }
     .gravity-block { grid-template-columns: 1fr; }
     .gravity-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
-    .pillars-grid { grid-template-columns: 1fr; }
     .doctrine-grid { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 20px; text-align: center; }
-    .hero-pillars { flex-direction: column; }
-    .hero-pillar { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero { padding: 110px 20px 80px; min-height: 100svh; }
+    .hero-pillars { flex-direction: column; max-width: 100%; }
+    .hero-pillar { border-right: none; border-bottom: 1px solid var(--border); text-align: center; }
     .hero-pillar:last-child { border-bottom: none; }
-    .hero { padding: 120px 24px 100px; }
-    .vision-section { padding: 120px 24px; }
+    .vision-section { padding: 80px 20px; }
+    .contact-section .section-inner { padding: 0; }
+
+    /* Pillar cards: horizontal scroll carousel on mobile */
+    .pillars-grid {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      gap: 1px; background: var(--border);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-left: -20px; margin-right: -20px;
+      padding: 0 20px;
+    }
+    .pillars-grid::-webkit-scrollbar { display: none; }
+    .pillar-card {
+      min-width: 75vw; flex-shrink: 0;
+      scroll-snap-align: start;
+    }
+    .pillar-card[style*="span 2"] { min-width: 80vw; }
+
+    .identity-table thead { display: none; }
+    .identity-table tr { display: block; margin-bottom: 16px; border: 1px solid var(--border); padding: 16px; }
+    .identity-table td { display: block; border-bottom: none; padding: 4px 0; font-size: 12px; }
+    .identity-table td:first-child { color: var(--white); font-weight: 400; margin-bottom: 4px; }
+
+    footer { flex-direction: column; text-align: center; }
+    #scroll-progress { display: none; }
+  }
+
+  /* ─── 4K / large screens ─── */
+  @media (min-width: 1800px) {
+    .section-inner { max-width: 1200px; }
+    nav { padding: 18px 80px; }
+    section { padding: 160px 80px; }
   }
 </style>
 </head>
 <body>
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="cursor-glow"></div>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"><div id="scroll-progress-fill"></div></div>
 
 <!-- NAV -->
 <nav>
@@ -515,16 +666,29 @@
     <li><a href="#vision">Vision</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="mobile-menu">
+  <a href="#truth" class="mobile-link">The Truth</a>
+  <a href="#architecture" class="mobile-link">Architecture</a>
+  <a href="#shield" class="mobile-link">The Shield</a>
+  <a href="#doctrine" class="mobile-link">Doctrine</a>
+  <a href="#vision" class="mobile-link">Vision</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <img src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/ecc5e1da4_lunara_shield_new.jpg" alt="Lunara Shield" class="hero-shield">
-  <div class="hero-eyebrow">Lunara Society &nbsp;·&nbsp; Est. 2026</div>
-  <h1 class="hero-title">The future belongs to those<br>who coordinate intelligence.</h1>
-  <p class="hero-sub">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
-  <div class="hero-divider"></div>
-  <div class="hero-pillars">
+  <img src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/ecc5e1da4_lunara_shield_new.jpg" alt="Lunara Shield" class="hero-shield" id="hero-shield">
+  <div class="hero-eyebrow reveal">Lunara Society &nbsp;·&nbsp; Est. 2026</div>
+  <h1 class="hero-title reveal-type delay-1" data-text="The future belongs to those who coordinate intelligence.">The future belongs to those who coordinate intelligence.</h1>
+  <p class="hero-sub reveal-fade delay-2">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
+  <div class="hero-divider reveal delay-3"></div>
+  <div class="hero-pillars reveal delay-4">
     <div class="hero-pillar">Shield</div>
     <div class="hero-pillar">Signal</div>
     <div class="hero-pillar">Registry</div>
@@ -535,13 +699,13 @@
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER I: THE TRUTH -->
+<!-- CHAPTER I -->
 <section id="truth">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter I</div>
-    <div class="section-label reveal">The Truth About Lunara</div>
-    <h2 class="section-title reveal">Lunara is not a product.<br>Lunara is an attempt.</h2>
-    <div class="negation-block reveal">
+    <div class="section-label reveal delay-1">The Truth About Lunara</div>
+    <h2 class="section-title reveal delay-2">Lunara is not a product.<br>Lunara is an attempt.</h2>
+    <div class="negation-block reveal-fade delay-3">
       <div class="negation-label">What Lunara Is Not</div>
       <ul class="negation-list">
         <li>Not a website.</li>
@@ -553,23 +717,23 @@
       </ul>
       <div class="negation-resolution">Those things may exist inside Lunara.<br>But they are not Lunara.</div>
     </div>
-    <p class="section-body reveal">Lunara is an attempt to establish trusted routes in a world where intelligence becomes abundant.</p>
-    <p class="section-body reveal">As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong></p>
-    <p class="section-body reveal">The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.</p>
+    <p class="section-body reveal delay-1">Lunara is an attempt to establish trusted routes in a world where intelligence becomes abundant.</p>
+    <p class="section-body reveal delay-2">As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong></p>
+    <p class="section-body reveal-type delay-3" data-text="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.">The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.</p>
   </div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER II: MAGNETIC FIELD -->
+<!-- CHAPTER II -->
 <section class="dark-section" id="doctrine">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter II</div>
-    <div class="section-label reveal">The Magnetic Field Doctrine</div>
-    <h2 class="section-title reveal">Lunara wins<br>through gravity.</h2>
-    <p class="section-body reveal">Not through force. Not through prohibition. Not through walls.</p>
-    <p class="section-body reveal">The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong></p>
-    <div class="gravity-block reveal">
+    <div class="section-label reveal delay-1">The Magnetic Field Doctrine</div>
+    <h2 class="section-title reveal delay-2">Lunara wins<br>through gravity.</h2>
+    <p class="section-body reveal-fade delay-3">Not through force. Not through prohibition. Not through walls.</p>
+    <p class="section-body reveal delay-1">The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong></p>
+    <div class="gravity-block reveal delay-2">
       <div class="gravity-col gravity-col-bad">
         <div class="gravity-col-label">What We Reject</div>
         <ul class="gravity-list">
@@ -589,8 +753,8 @@
         </ul>
       </div>
     </div>
-    <p class="section-body reveal">The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>.</p>
-    <p class="section-body reveal" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--gold);">Gravity is stronger than coercion.</p>
+    <p class="section-body reveal delay-3">The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>.</p>
+    <p class="section-body reveal-type delay-4" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);" data-text="Gravity is stronger than coercion.">Gravity is stronger than coercion.</p>
   </div>
 </section>
 
@@ -600,11 +764,11 @@
 <section id="shield">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter III</div>
-    <div class="section-label reveal">The Shield Doctrine</div>
-    <h2 class="section-title reveal">The Shield protects<br>attention. Time. Signal.</h2>
-    <p class="section-body reveal">The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot.</p>
-    <p class="section-body reveal">The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise.</p>
-    <div class="negation-block reveal">
+    <div class="section-label reveal delay-1">The Shield Doctrine</div>
+    <h2 class="section-title reveal delay-2">The Shield protects<br>attention. Time. Signal.</h2>
+    <p class="section-body reveal-fade delay-3">The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot.</p>
+    <p class="section-body reveal delay-1">The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise.</p>
+    <div class="negation-block reveal delay-2">
       <div class="negation-label">The Shield Is</div>
       <ul class="negation-list">
         <li>Not anti-AI.</li>
@@ -613,7 +777,7 @@
       </ul>
       <div class="negation-resolution">The Shield is pro-signal.<br>Every feature increases signal and reduces noise.</div>
     </div>
-    <p class="section-body reveal">The Shield protects attention. The Shield protects time. The Shield protects decision quality. For businesses that carry it — <strong>contact is earned, not forced.</strong></p>
+    <p class="section-body reveal-type delay-3" data-text="For businesses that carry it — contact is earned, not forced.">For businesses that carry it — contact is earned, not forced.</p>
   </div>
 </section>
 
@@ -623,9 +787,9 @@
 <section class="mid-section" id="architecture">
   <div class="section-inner">
     <div class="section-label reveal">The Lunara Protocol</div>
-    <h2 class="section-title reveal">Five pillars.<br>One standard.</h2>
-    <p class="section-body reveal">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
-    <div class="pillars-grid reveal">
+    <h2 class="section-title reveal delay-1">Five pillars.<br>One standard.</h2>
+    <p class="section-body reveal-fade delay-2">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
+    <div class="pillars-grid reveal delay-3">
       <div class="pillar-card">
         <div class="pillar-number">01</div>
         <div class="pillar-name">Shield</div>
@@ -657,13 +821,13 @@
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER IV: TOLL BOOTH -->
+<!-- CHAPTER IV -->
 <section class="dark-section">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter IV</div>
-    <div class="section-label reveal">The Toll Booth Doctrine</div>
-    <h2 class="section-title reveal">The toll booth is<br>a quality filter.</h2>
-    <div class="negation-block reveal">
+    <div class="section-label reveal delay-1">The Toll Booth Doctrine</div>
+    <h2 class="section-title reveal delay-2">The toll booth is<br>a quality filter.</h2>
+    <div class="negation-block reveal-fade delay-3">
       <div class="negation-label">The Toll Booth Is Not</div>
       <ul class="negation-list">
         <li>Not a tax.</li>
@@ -672,7 +836,7 @@
       </ul>
       <div class="negation-resolution">Participants pay because trusted access creates value.<br>Not because access is blocked.</div>
     </div>
-    <div class="equation-block reveal">
+    <div class="equation-block reveal delay-2">
       <div class="equation-label">The Governance Equation</div>
       <div class="equation">Trust × Match Quality × Economic Outcomes</div>
       <div class="equation-note">If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters.</div>
@@ -682,81 +846,61 @@
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER V: COORDINATION -->
+<!-- CHAPTER V -->
 <section>
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter V</div>
-    <div class="section-label reveal">The Coordination Doctrine</div>
-    <h2 class="section-title reveal">The greatest opportunity<br>is not intelligence.</h2>
-    <p class="section-body reveal">The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly.</p>
-    <p class="section-body reveal">Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated.</p>
-    <div class="gravity-block reveal">
+    <div class="section-label reveal delay-1">The Coordination Doctrine</div>
+    <h2 class="section-title reveal delay-2">The greatest opportunity<br>is not intelligence.</h2>
+    <p class="section-body reveal-fade delay-3">The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly.</p>
+    <p class="section-body reveal delay-1">Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated.</p>
+    <div class="gravity-block reveal delay-2">
       <div class="gravity-col gravity-col-bad">
         <div class="gravity-col-label">What Others Do</div>
-        <ul class="gravity-list">
-          <li>Search</li>
-          <li>Scrape</li>
-          <li>Contact</li>
-          <li>Extract</li>
-        </ul>
+        <ul class="gravity-list"><li>Search</li><li>Scrape</li><li>Contact</li><li>Extract</li></ul>
       </div>
       <div class="gravity-col gravity-col-good">
         <div class="gravity-col-label">What Lunara Does</div>
-        <ul class="gravity-list">
-          <li>Coordinates</li>
-          <li>Verifies</li>
-          <li>Governs</li>
-          <li>Compounds</li>
-        </ul>
+        <ul class="gravity-list"><li>Coordinates</li><li>Verifies</li><li>Governs</li><li>Compounds</li></ul>
       </div>
     </div>
-    <p class="section-body reveal">Others may search. Others may scrape. Others may contact.<br><strong>Lunara decides how trustworthy participation occurs.</strong></p>
+    <p class="section-body reveal-type delay-3" data-text="Lunara decides how trustworthy participation occurs."><strong>Lunara decides how trustworthy participation occurs.</strong></p>
   </div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER VI: REPUTATION -->
+<!-- CHAPTER VI -->
 <section class="mid-section">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter VI</div>
-    <div class="section-label reveal">The Reputation Doctrine</div>
-    <h2 class="section-title reveal">Reputation is<br>the primary moat.</h2>
-    <div class="gravity-block reveal">
+    <div class="section-label reveal delay-1">The Reputation Doctrine</div>
+    <h2 class="section-title reveal delay-2">Reputation is<br>the primary moat.</h2>
+    <div class="gravity-block reveal delay-3">
       <div class="gravity-col gravity-col-bad">
         <div class="gravity-col-label">What Can Be Copied</div>
-        <ul class="gravity-list">
-          <li>Software</li>
-          <li>Features</li>
-          <li>Interfaces</li>
-          <li>Marketing</li>
-        </ul>
+        <ul class="gravity-list"><li>Software</li><li>Features</li><li>Interfaces</li><li>Marketing</li></ul>
       </div>
       <div class="gravity-col gravity-col-good">
         <div class="gravity-col-label">What Cannot</div>
-        <ul class="gravity-list">
-          <li>Trust histories</li>
-          <li>Reputation records</li>
-          <li>Earned standing</li>
-          <li>Institutional memory</li>
-        </ul>
+        <ul class="gravity-list"><li>Trust histories</li><li>Reputation records</li><li>Earned standing</li><li>Institutional memory</li></ul>
       </div>
     </div>
-    <p class="section-body reveal">Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it.</p>
-    <p class="section-body reveal" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--gold);">Over time, reputation becomes infrastructure.</p>
+    <p class="section-body reveal delay-1">Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it.</p>
+    <p class="section-body reveal-type delay-2" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);" data-text="Over time, reputation becomes infrastructure.">Over time, reputation becomes infrastructure.</p>
   </div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER VII: IDENTITY -->
+<!-- CHAPTER VII -->
 <section class="dark-section">
   <div class="section-inner">
     <div class="section-chapter reveal">Chapter VII</div>
-    <div class="section-label reveal">The Identity Doctrine</div>
-    <h2 class="section-title reveal">Identity is the<br>foundation of trust.</h2>
-    <p class="section-body reveal">Participants should not merely have accounts. They should possess economic identities.</p>
-    <table class="identity-table reveal">
+    <div class="section-label reveal delay-1">The Identity Doctrine</div>
+    <h2 class="section-title reveal delay-2">Identity is the<br>foundation of trust.</h2>
+    <p class="section-body reveal-fade delay-3">Participants should not merely have accounts. They should possess economic identities.</p>
+    <table class="identity-table reveal delay-2">
       <thead>
         <tr>
           <th>Identity Component</th>
@@ -773,7 +917,7 @@
         <tr><td>Opportunity History</td><td>Record of outcomes generated through Lunara routes</td><td><span class="identity-check">Compounding</span></td></tr>
       </tbody>
     </table>
-    <p class="section-body reveal">Identity should become portable. Identity should become meaningful. <strong>Identity should become useful.</strong></p>
+    <p class="section-body reveal-type delay-3" data-text="Identity should become portable. Identity should become meaningful. Identity should become useful.">Identity should become portable. Identity should become meaningful. Identity should become useful.</p>
   </div>
 </section>
 
@@ -783,20 +927,20 @@
 <section>
   <div class="section-inner">
     <div class="section-label reveal">The Intelligence Doctrines</div>
-    <h2 class="section-title reveal">Two intelligences.<br>One mission.</h2>
-    <p class="section-body reveal">Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires.</p>
-    <div class="doctrine-grid reveal">
-      <div class="doctrine-card" style="grid-column: span 1;">
+    <h2 class="section-title reveal delay-1">Two intelligences.<br>One mission.</h2>
+    <p class="section-body reveal-fade delay-2">Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires.</p>
+    <div class="doctrine-grid reveal delay-3">
+      <div class="doctrine-card">
         <div class="doctrine-card-chapter">Chapter VIII · The Rosario Doctrine</div>
         <div class="doctrine-card-title">Rosario governs quality.</div>
         <div class="doctrine-card-body">Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.</div>
       </div>
-      <div class="doctrine-card" style="grid-column: span 1;">
+      <div class="doctrine-card">
         <div class="doctrine-card-chapter">Chapter IX · The Nathalie Doctrine</div>
         <div class="doctrine-card-title">Nathalie expands the field.</div>
         <div class="doctrine-card-body">Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both.</div>
       </div>
-      <div class="doctrine-card" style="grid-column: span 1;">
+      <div class="doctrine-card">
         <div class="doctrine-card-chapter">The Operating Loop</div>
         <div class="doctrine-card-title">Six phases. Always.</div>
         <div class="doctrine-card-body">Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it.</div>
@@ -810,27 +954,20 @@
 <!-- VISION -->
 <section class="vision-section" id="vision">
   <img src="https://base44.app/api/apps/6a2ebb6ca206ac593a5294e4/files/mp/public/6a2ebb6ca206ac593a5294e4/ecc5e1da4_lunara_shield_new.jpg" alt="Lunara Shield" class="vision-shield reveal">
-  <div class="vision-chapter reveal">Chapter X · The Long-Term Vision</div>
-  <h2 class="vision-title reveal">The goal is to become<br>the preferred route.</h2>
-  <div class="vision-lines reveal">
+  <div class="vision-chapter reveal delay-1">Chapter X · The Long-Term Vision</div>
+  <h2 class="vision-title reveal delay-2">The goal is to become<br>the preferred route.</h2>
+  <div class="vision-lines reveal-fade delay-3">
     <div class="vision-line">Not the largest AI company.</div>
     <div class="vision-line">Not the most agents.</div>
     <div class="vision-line">Not the most crawlers.</div>
     <div class="vision-line">Not the most outreach.</div>
   </div>
-  <div class="vision-lines reveal">
+  <div class="vision-lines reveal delay-4">
     <div class="vision-line">When businesses want trusted opportunities — Lunara is there.</div>
     <div class="vision-line">When providers want trusted buyers — Lunara is there.</div>
     <div class="vision-line">When autonomous systems require trusted routes — Lunara is there.</div>
   </div>
-  <div class="vision-resolution reveal">
-    Not because it is mandatory.<br>
-    Because it is preferred.<br>
-    Because it is trusted.<br>
-    Because it creates better outcomes.<br><br>
-    That is how gravity becomes infrastructure.<br>
-    That is how infrastructure becomes institutions.
-  </div>
+  <div class="vision-resolution reveal-type delay-5" data-text="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.">Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.</div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
@@ -839,11 +976,11 @@
 <section class="contact-section" id="contact">
   <div class="section-inner">
     <div class="section-label reveal">Private Correspondence</div>
-    <h2 class="section-title reveal">A conversation<br>worth having.</h2>
-    <p class="section-body reveal">Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first.</p>
-    <p class="section-body reveal">If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you.</p>
-    <div class="contact-email reveal">rosario@lunarasociety.com</div>
-    <p class="contact-note reveal">Coordinated by Rosario &nbsp;·&nbsp; Institutional Intelligence &nbsp;·&nbsp; Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply.</p>
+    <h2 class="section-title reveal delay-1">A conversation<br>worth having.</h2>
+    <p class="section-body reveal-fade delay-2">Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first.</p>
+    <p class="section-body reveal delay-3">If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you.</p>
+    <div class="contact-email reveal delay-4">rosario@lunarasociety.com</div>
+    <p class="contact-note reveal delay-5">Coordinated by Rosario &nbsp;·&nbsp; Institutional Intelligence &nbsp;·&nbsp; Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply.</p>
   </div>
 </section>
 
@@ -857,15 +994,136 @@
 </footer>
 
 <script>
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+// ─── CURSOR GLOW TRAIL ───
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+const glow = document.getElementById('cursor-glow');
+let mx = 0, my = 0, rx = 0, ry = 0, gx = 0, gy = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+
+function animateCursor() {
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  gx += (mx - gx) * 0.07;
+  gy += (my - gy) * 0.07;
+  glow.style.left = gx + 'px'; glow.style.top = gy + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '40px'; ring.style.height = '40px';
+    ring.style.borderColor = 'rgba(196,164,107,0.9)';
+    glow.style.width = '70px'; glow.style.height = '70px';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '22px'; ring.style.height = '22px';
+    ring.style.borderColor = 'rgba(196,164,107,0.55)';
+    glow.style.width = '40px'; glow.style.height = '40px';
+  });
+});
+
+// ─── SCROLL PROGRESS BAR ───
+const progressFill = document.getElementById('scroll-progress-fill');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressFill.style.height = pct + '%';
+}, { passive: true });
+
+// ─── PARALLAX HERO SHIELD ───
+const heroShield = document.getElementById('hero-shield');
+window.addEventListener('scroll', () => {
+  if (heroShield) {
+    const offset = window.scrollY;
+    heroShield.style.transform = `translateY(${offset * 0.28}px)`;
+  }
+}, { passive: true });
+
+// ─── HAMBURGER MENU ───
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+document.querySelectorAll('.mobile-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  });
+});
+
+// ─── TYPEWRITER HELPER ───
+function typeWriter(el, text, speed, onDone) {
+  el.textContent = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typewriter-cursor';
+  el.appendChild(cursor);
+  let i = 0;
+  function tick() {
+    if (i < text.length) {
+      el.insertBefore(document.createTextNode(text[i]), cursor);
+      i++;
+      setTimeout(tick, speed + Math.random() * 20);
+    } else {
+      setTimeout(() => cursor.remove(), 1600);
+      if (onDone) onDone();
+    }
+  }
+  tick();
+}
+
+// ─── UNIFIED REVEAL OBSERVER ───
+// Each element may be: .reveal (fade+up), .reveal-fade (fade only), .reveal-type (typewriter)
+// Mix: some .reveal-type elements also occasionally get a fade-up treatment
+let typeQueue = Promise.resolve();
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+
+    if (el.classList.contains('reveal-type')) {
+      const text = el.getAttribute('data-text') || el.textContent.trim();
+      // Occasionally mix typewriter with fade-up (roughly 1 in 3 times)
+      const alsoFadeUp = Math.random() < 0.4;
+      if (alsoFadeUp) {
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease';
+        el.style.opacity = '0';
+        requestAnimationFrame(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          setTimeout(() => typeWriter(el, text, 22), 300);
+        });
+      } else {
+        el.style.opacity = '1';
+        typeWriter(el, text, 26);
       }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      revealObserver.unobserve(el);
+
+    } else if (el.classList.contains('reveal-fade')) {
+      el.classList.add('visible');
+      revealObserver.unobserve(el);
+
+    } else if (el.classList.contains('reveal')) {
+      el.classList.add('visible');
+      revealObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => {
+  revealObserver.observe(el);
+});
 </script>
 </body>
 </html>

@@ -32,7 +32,6 @@
     --border-soft: rgba(255,255,255,0.07);
   }
 
-  /* ─── KEYFRAMES ─── */
   @keyframes glowPulse {
     0%, 100% { opacity: 0.4; transform: scaleX(0.85); }
     50% { opacity: 1; transform: scaleX(1); }
@@ -49,25 +48,13 @@
     0%, 100% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.12); }
     50% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.30); }
   }
-  @keyframes progressGrow {
-    from { height: 0%; }
-    to { height: 100%; }
-  }
-  @keyframes cursorFade {
-    from { opacity: 0.8; transform: translate(-50%,-50%) scale(1); }
-    to { opacity: 0; transform: translate(-50%,-50%) scale(2.2); }
-  }
-  @keyframes sectionFadeUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes sectionFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+  }
+  @keyframes langPop {
+    from { opacity: 0; transform: translateY(-6px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   html { scroll-behavior: smooth; }
@@ -84,62 +71,44 @@
 
   /* ─── CUSTOM CURSOR ─── */
   #cursor-dot {
-    position: fixed;
-    width: 8px; height: 8px;
-    background: var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; width: 8px; height: 8px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     transition: transform 0.08s ease;
-    mix-blend-mode: normal;
   }
   #cursor-glow {
-    position: fixed;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
+    position: fixed; width: 40px; height: 40px;
+    border-radius: 50%; pointer-events: none; z-index: 9998;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, rgba(196,164,107,0.35) 0%, rgba(196,164,107,0.08) 50%, transparent 75%);
     transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease;
   }
   #cursor-ring {
-    position: fixed;
-    width: 22px; height: 22px;
-    border: 1px solid rgba(196,164,107,0.55);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
+    position: fixed; width: 22px; height: 22px;
+    border: 1px solid rgba(196,164,107,0.55); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
     transform: translate(-50%, -50%);
     transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s;
   }
-  body:hover #cursor-dot { opacity: 1; }
-  a:hover ~ #cursor-dot, button:hover ~ #cursor-dot { transform: translate(-50%,-50%) scale(2); }
 
-  /* ─── PROGRESS BAR ─── */
+  /* ─── SCROLL PROGRESS ─── */
   #scroll-progress {
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    z-index: 200;
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 2px; z-index: 200;
     background: rgba(196,164,107,0.08);
   }
   #scroll-progress-fill {
-    width: 100%;
-    height: 0%;
+    width: 100%; height: 0%;
     background: linear-gradient(180deg, transparent, var(--gold) 20%, var(--gold-bright) 80%, transparent);
-    transition: height 0.1s linear;
-    position: relative;
+    transition: height 0.1s linear; position: relative;
   }
   #scroll-progress-fill::after {
     content: '';
-    position: absolute;
-    bottom: 0; left: 50%;
+    position: absolute; bottom: 0; left: 50%;
     transform: translateX(-50%);
     width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
+    background: var(--gold); border-radius: 50%;
     box-shadow: 0 0 8px 2px rgba(196,164,107,0.7);
   }
 
@@ -154,8 +123,7 @@
     transform: translateX(-50%) translateY(-50%);
     width: 60%; height: 12px;
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.35) 0%, transparent 70%);
-    animation: glowOrb 4s ease-in-out infinite;
-    pointer-events: none;
+    animation: glowOrb 4s ease-in-out infinite; pointer-events: none;
   }
   .glow-divider-line {
     display: block; width: 100%; height: 1px;
@@ -168,18 +136,15 @@
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     padding: 14px 60px;
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(0,0,0,0.92);
-    backdrop-filter: blur(20px);
+    background: rgba(0,0,0,0.92); backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(196,164,107,0.18);
     animation: navGlow 5s ease-in-out infinite;
   }
   .nav-logo {
     display: flex; align-items: center; gap: 14px;
-    text-decoration: none;
-    background: var(--black);
+    text-decoration: none; background: var(--black);
     border: 1px solid rgba(196,164,107,0.25);
-    padding: 8px 18px 8px 8px;
-    border-radius: 6px;
+    padding: 8px 18px 8px 8px; border-radius: 6px;
     transition: border-color 0.3s;
   }
   .nav-logo:hover { border-color: rgba(196,164,107,0.6); }
@@ -188,6 +153,7 @@
     font-size: 10px; font-weight: 400; letter-spacing: 0.42em;
     color: var(--white-90); text-transform: uppercase;
   }
+  .nav-right { display: flex; align-items: center; gap: 36px; }
   .nav-links { display: flex; gap: 36px; list-style: none; }
   .nav-links a {
     font-size: 10px; font-weight: 300; letter-spacing: 0.28em;
@@ -195,6 +161,30 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--gold); }
+
+  /* ─── LANGUAGE TOGGLE ─── */
+  .lang-toggle {
+    display: flex; align-items: center; gap: 0;
+    border: 1px solid rgba(196,164,107,0.22); border-radius: 4px;
+    overflow: hidden; background: transparent;
+    flex-shrink: 0;
+  }
+  .lang-btn {
+    font-size: 9px; font-weight: 400; letter-spacing: 0.32em;
+    color: var(--white-30); text-transform: uppercase;
+    background: none; border: none; padding: 7px 12px;
+    cursor: pointer; transition: color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .lang-btn + .lang-btn::before {
+    content: '';
+    position: absolute; left: 0; top: 20%; bottom: 20%;
+    width: 1px; background: rgba(196,164,107,0.22);
+  }
+  .lang-btn.active {
+    color: var(--gold); background: rgba(196,164,107,0.08);
+  }
+  .lang-btn:hover:not(.active) { color: var(--white-50); }
 
   /* ─── HAMBURGER ─── */
   .nav-hamburger {
@@ -209,37 +199,45 @@
   .nav-hamburger.open span:nth-child(2) { opacity: 0; }
   .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  /* Mobile slide-down menu */
   .nav-mobile-menu {
     display: none;
     position: fixed; top: 76px; left: 0; right: 0;
-    background: rgba(0,0,0,0.97);
-    backdrop-filter: blur(20px);
+    background: rgba(0,0,0,0.97); backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    z-index: 99; padding: 32px 24px;
+    z-index: 99; padding: 28px 24px 32px;
     flex-direction: column; gap: 0;
     transform: translateY(-10px); opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
-  .nav-mobile-menu.open {
-    display: flex; opacity: 1; transform: translateY(0);
-  }
+  .nav-mobile-menu.open { display: flex; opacity: 1; transform: translateY(0); }
   .nav-mobile-menu a {
     font-size: 11px; font-weight: 300; letter-spacing: 0.35em;
     color: var(--white-50); text-decoration: none; text-transform: uppercase;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--border-soft);
+    padding: 16px 0; border-bottom: 1px solid var(--border-soft);
     transition: color 0.2s;
   }
   .nav-mobile-menu a:last-child { border-bottom: none; }
   .nav-mobile-menu a:hover, .nav-mobile-menu a:active { color: var(--gold); }
 
-  /* ─── FLUID TYPE SCALE ─── */
-  /* Uses clamp(min, preferred, max) throughout */
+  /* mobile lang toggle inside menu */
+  .mobile-lang-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .mobile-lang-row .lang-label {
+    font-size: 9px; letter-spacing: 0.4em; color: var(--white-30); text-transform: uppercase;
+  }
+  .mobile-lang-row .lang-toggle { border-color: rgba(196,164,107,0.18); }
 
-  /* ─── SHARED SECTION ─── */
+  /* ─── SECTION ─── */
   section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
   .section-inner { max-width: 960px; margin: 0 auto; }
+
+  /* centered variant */
+  .section-inner.centered { text-align: center; }
+  .section-inner.centered .section-body { margin-left: auto; margin-right: auto; }
+  .section-inner.centered .negation-resolution { margin-left: auto; margin-right: auto; }
+
   .section-label {
     font-size: clamp(8px, 1.2vw, 10px); font-weight: 400; letter-spacing: 0.55em;
     color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
@@ -260,35 +258,22 @@
   }
   .section-body strong { font-weight: 400; color: var(--white); }
 
-  /* ─── REVEAL ANIMATIONS ─── */
-  /* fade-up: default */
+  /* ─── REVEAL ─── */
   .reveal {
     opacity: 0; transform: translateY(40px);
     transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal.visible { opacity: 1; transform: none; }
-
-  /* fade-only */
-  .reveal-fade {
-    opacity: 0;
-    transition: opacity 1.1s ease;
-  }
+  .reveal-fade { opacity: 0; transition: opacity 1.1s ease; }
   .reveal-fade.visible { opacity: 1; }
-
-  /* typewriter: JS handles this */
   .reveal-type { opacity: 0; }
   .reveal-type.visible { opacity: 1; }
   .typewriter-cursor {
-    display: inline-block;
-    width: 2px; height: 0.85em;
-    background: var(--gold);
-    margin-left: 3px;
-    vertical-align: middle;
+    display: inline-block; width: 2px; height: 0.85em;
+    background: var(--gold); margin-left: 3px; vertical-align: middle;
     animation: blink 0.9s step-end infinite;
   }
-
-  /* stagger delay helpers */
-  .delay-1 { transition-delay: 0.1s; }
+  .delay-1 { transition-delay: 0.10s; }
   .delay-2 { transition-delay: 0.22s; }
   .delay-3 { transition-delay: 0.36s; }
   .delay-4 { transition-delay: 0.52s; }
@@ -298,6 +283,7 @@
   .negation-block {
     margin: 42px 0; padding: clamp(20px,4vw,34px) clamp(20px,4vw,40px);
     border-left: 2px solid var(--gold); background: var(--black-card);
+    text-align: left;
   }
   .negation-label {
     font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold);
@@ -320,18 +306,15 @@
 
   /* ─── HERO ─── */
   .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
+    min-height: 100vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
     padding: clamp(100px,14vw,160px) clamp(20px,6vw,80px) clamp(80px,10vw,120px);
-    background: var(--black);
-    position: relative; overflow: hidden;
+    background: var(--black); position: relative; overflow: hidden;
   }
   .hero::before {
     content: '';
-    position: absolute; top: 30%; left: 50%;
-    transform: translateX(-50%);
+    position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
     width: clamp(300px, 60vw, 700px); height: clamp(300px, 60vw, 700px);
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 65%);
     pointer-events: none; animation: glowOrb 8s ease-in-out infinite;
@@ -339,8 +322,7 @@
   .hero-shield {
     width: clamp(80px, 14vw, 150px); height: clamp(80px, 14vw, 150px);
     object-fit: contain; margin-bottom: 44px; opacity: 0.95;
-    position: relative; z-index: 1;
-    will-change: transform;
+    position: relative; z-index: 1; will-change: transform;
   }
   .hero-eyebrow {
     font-size: clamp(8px,1.2vw,10px); font-weight: 400; letter-spacing: 0.55em;
@@ -379,21 +361,20 @@
   .hero-pillar:last-child { border-right: none; }
   .hero-pillar:hover { color: var(--gold); background: rgba(196,164,107,0.06); }
 
-  /* ─── DARK / MID SECTIONS ─── */
+  /* ─── DARK / MID ─── */
   .dark-section { background: var(--black-soft); }
   .dark-section .section-title { color: var(--white); }
   .dark-section .section-body { color: var(--white-70); }
   .dark-section .section-body strong { color: var(--white); }
-  .dark-section .negation-block { background: var(--black-card2); border-left-color: var(--gold); }
+  .dark-section .negation-block { background: var(--black-card2); }
   .dark-section .negation-list li { color: var(--white-50); border-bottom-color: var(--border-soft); }
   .dark-section .negation-resolution { color: var(--white-90); }
   .mid-section { background: var(--black-mid); }
 
   /* ─── GRAVITY BLOCK ─── */
   .gravity-block {
-    margin: 48px 0;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-    border: 1px solid var(--border);
+    margin: 48px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border: 1px solid var(--border); text-align: left;
   }
   .gravity-col { padding: clamp(20px,4vw,36px) clamp(16px,3vw,32px); }
   .gravity-col:first-child { border-right: 1px solid var(--border); }
@@ -406,8 +387,7 @@
   .gravity-list { list-style: none; }
   .gravity-list li {
     font-size: clamp(12px,1.5vw,14px); font-weight: 300; color: var(--white-70);
-    line-height: 1.7; padding: 8px 0;
-    border-bottom: 1px solid var(--border-soft);
+    line-height: 1.7; padding: 8px 0; border-bottom: 1px solid var(--border-soft);
   }
   .gravity-list li:last-child { border-bottom: none; }
   .gravity-col-bad .gravity-list li { color: rgba(180,120,120,0.7); text-decoration: line-through; }
@@ -467,8 +447,7 @@
   }
   .equation-block::before {
     content: '';
-    position: absolute; bottom: -30px; left: 50%;
-    transform: translateX(-50%);
+    position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
     width: 80%; height: 60px;
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.15) 0%, transparent 70%);
     animation: glowOrb 5s ease-in-out infinite; pointer-events: none;
@@ -500,7 +479,7 @@
   .identity-table td {
     padding: clamp(10px,2vw,16px) clamp(10px,2vw,20px);
     font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-70);
-    border-bottom: 1px solid var(--border-soft); line-height: 1.6;
+    border-bottom: 1px solid var(--border-soft); line-height: 1.6; text-align: left;
   }
   .identity-table tr:last-child td { border-bottom: none; }
   .identity-table tr:hover td { background: var(--white-10); }
@@ -517,16 +496,14 @@
   }
   .vision-section::before {
     content: '';
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: clamp(300px,70vw,800px); height: clamp(300px,70vw,800px);
     background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 60%);
     animation: glowOrb 10s ease-in-out infinite; pointer-events: none;
   }
   .vision-shield {
     width: clamp(50px,8vw,80px); height: clamp(50px,8vw,80px); object-fit: contain;
-    margin: 0 auto 44px; display: block; opacity: 0.8;
-    position: relative; z-index: 1;
+    margin: 0 auto 44px; display: block; opacity: 0.8; position: relative; z-index: 1;
   }
   .vision-chapter {
     font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold-dim);
@@ -536,8 +513,7 @@
   .vision-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(30px,5.5vw,70px);
-    font-weight: 300; line-height: 1.2;
-    color: var(--white); margin-bottom: 52px;
+    font-weight: 300; line-height: 1.2; color: var(--white); margin-bottom: 52px;
     max-width: 720px; margin-left: auto; margin-right: auto;
     position: relative; z-index: 1;
   }
@@ -557,9 +533,11 @@
 
   /* ─── CONTACT ─── */
   .contact-section { background: var(--black-soft); border-top: 1px solid var(--border); }
+  .contact-section .section-inner { text-align: center; }
+  .contact-section .section-body { margin-left: auto; margin-right: auto; }
   .contact-email {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(16px,2.2vw,20px); font-weight: 300; font-style: italic;
+    font-size: clamp(16px,2.2vw,22px); font-weight: 300; font-style: italic;
     color: var(--gold); margin: 28px 0;
   }
   .contact-note {
@@ -581,21 +559,23 @@
     font-size: clamp(9px,1.2vw,10px); font-weight: 300; color: var(--white-30); letter-spacing: 0.05em;
   }
 
-  /* ─── TABLET BREAKPOINT (768–1024px) ─── */
+  /* ─── TABLET ─── */
   @media (min-width: 768px) and (max-width: 1024px) {
     nav { padding: 14px 32px; }
     section { padding: 80px 40px; }
     .section-inner { max-width: 700px; }
     .doctrine-grid { grid-template-columns: 1fr 1fr; }
     .hero-title { font-size: clamp(34px, 5.5vw, 56px); }
+    .nav-links { gap: 20px; }
   }
 
-  /* ─── MOBILE (≤767px) ─── */
+  /* ─── MOBILE ─── */
   @media (max-width: 767px) {
     body { cursor: auto; }
     #cursor-dot, #cursor-glow, #cursor-ring { display: none; }
     nav { padding: 12px 20px; }
     .nav-links { display: none; }
+    .lang-toggle { display: none; }
     .nav-hamburger { display: flex; }
     section { padding: 64px 20px; }
     .section-inner { max-width: 100%; }
@@ -607,34 +587,23 @@
     .hero-pillar { border-right: none; border-bottom: 1px solid var(--border); text-align: center; }
     .hero-pillar:last-child { border-bottom: none; }
     .vision-section { padding: 80px 20px; }
-    .contact-section .section-inner { padding: 0; }
-
-    /* Pillar cards: horizontal scroll carousel on mobile */
     .pillars-grid {
       display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
       gap: 1px; background: var(--border);
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      margin-left: -20px; margin-right: -20px;
-      padding: 0 20px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      margin-left: -20px; margin-right: -20px; padding: 0 20px;
     }
     .pillars-grid::-webkit-scrollbar { display: none; }
-    .pillar-card {
-      min-width: 75vw; flex-shrink: 0;
-      scroll-snap-align: start;
-    }
-    .pillar-card[style*="span 2"] { min-width: 80vw; }
-
+    .pillar-card { min-width: 78vw; flex-shrink: 0; scroll-snap-align: start; }
     .identity-table thead { display: none; }
     .identity-table tr { display: block; margin-bottom: 16px; border: 1px solid var(--border); padding: 16px; }
-    .identity-table td { display: block; border-bottom: none; padding: 4px 0; font-size: 12px; }
+    .identity-table td { display: block; border-bottom: none; padding: 4px 0; font-size: 12px; text-align: left; }
     .identity-table td:first-child { color: var(--white); font-weight: 400; margin-bottom: 4px; }
-
     footer { flex-direction: column; text-align: center; }
     #scroll-progress { display: none; }
   }
 
-  /* ─── 4K / large screens ─── */
+  /* ─── 4K ─── */
   @media (min-width: 1800px) {
     .section-inner { max-width: 1200px; }
     nav { padding: 18px 80px; }
@@ -644,28 +613,31 @@
 </head>
 <body>
 
-<!-- CURSOR -->
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="cursor-glow"></div>
-
-<!-- SCROLL PROGRESS -->
 <div id="scroll-progress"><div id="scroll-progress-fill"></div></div>
 
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
     <img src="shield-logo.jpg" alt="Lunara Shield" class="nav-shield">
-    <span class="nav-wordmark">Lunara Society</span>
+    <span class="nav-wordmark" data-en="Lunara Society" data-es="Lunara Society">Lunara Society</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="#truth">The Truth</a></li>
-    <li><a href="#architecture">Architecture</a></li>
-    <li><a href="#shield">The Shield</a></li>
-    <li><a href="#doctrine">Doctrine</a></li>
-    <li><a href="#vision">Vision</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#truth" data-en="The Truth" data-es="La Verdad">The Truth</a></li>
+      <li><a href="#architecture" data-en="Architecture" data-es="Arquitectura">Architecture</a></li>
+      <li><a href="#shield" data-en="The Shield" data-es="El Escudo">The Shield</a></li>
+      <li><a href="#doctrine" data-en="Doctrine" data-es="Doctrina">Doctrine</a></li>
+      <li><a href="#vision" data-en="Vision" data-es="Visión">Vision</a></li>
+      <li><a href="#contact" data-en="Contact" data-es="Contacto">Contact</a></li>
+    </ul>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="es">ES</button>
+    </div>
+  </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -673,27 +645,38 @@
 
 <!-- MOBILE MENU -->
 <div class="nav-mobile-menu" id="mobile-menu">
-  <a href="#truth" class="mobile-link">The Truth</a>
-  <a href="#architecture" class="mobile-link">Architecture</a>
-  <a href="#shield" class="mobile-link">The Shield</a>
-  <a href="#doctrine" class="mobile-link">Doctrine</a>
-  <a href="#vision" class="mobile-link">Vision</a>
-  <a href="#contact" class="mobile-link">Contact</a>
+  <div class="mobile-lang-row">
+    <span class="lang-label" data-en="Language" data-es="Idioma">Language</span>
+    <div class="lang-toggle" role="group">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="es">ES</button>
+    </div>
+  </div>
+  <a href="#truth" class="mobile-link" data-en="The Truth" data-es="La Verdad">The Truth</a>
+  <a href="#architecture" class="mobile-link" data-en="Architecture" data-es="Arquitectura">Architecture</a>
+  <a href="#shield" class="mobile-link" data-en="The Shield" data-es="El Escudo">The Shield</a>
+  <a href="#doctrine" class="mobile-link" data-en="Doctrine" data-es="Doctrina">Doctrine</a>
+  <a href="#vision" class="mobile-link" data-en="Vision" data-es="Visión">Vision</a>
+  <a href="#contact" class="mobile-link" data-en="Contact" data-es="Contacto">Contact</a>
 </div>
 
 <!-- HERO -->
 <section class="hero" id="hero">
   <img src="shield-logo.jpg" alt="Lunara Shield" class="hero-shield" id="hero-shield">
-  <div class="hero-eyebrow reveal">Lunara Society &nbsp;·&nbsp; Est. 2026</div>
-  <h1 class="hero-title reveal-type delay-1" data-text="The future belongs to those who coordinate intelligence.">The future belongs to those who coordinate intelligence.</h1>
-  <p class="hero-sub reveal-fade delay-2">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
+  <div class="hero-eyebrow reveal" data-en="Lunara Society · Est. 2026" data-es="Lunara Society · Est. 2026">Lunara Society &nbsp;·&nbsp; Est. 2026</div>
+  <h1 class="hero-title reveal-type delay-1"
+      data-en="The future belongs to those who coordinate intelligence."
+      data-es="El futuro pertenece a quienes coordinan la inteligencia.">The future belongs to those who coordinate intelligence.</h1>
+  <p class="hero-sub reveal-fade delay-2"
+     data-en="Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred."
+     data-es="No inteligencia. Coordinación. La institución donde las interacciones económicas de confianza son gobernadas, verificadas y preferidas.">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
   <div class="hero-divider reveal delay-3"></div>
   <div class="hero-pillars reveal delay-4">
-    <div class="hero-pillar">Shield</div>
-    <div class="hero-pillar">Signal</div>
-    <div class="hero-pillar">Registry</div>
-    <div class="hero-pillar">Gateway</div>
-    <div class="hero-pillar">Reputation</div>
+    <div class="hero-pillar" data-en="Shield" data-es="Escudo">Shield</div>
+    <div class="hero-pillar" data-en="Signal" data-es="Señal">Signal</div>
+    <div class="hero-pillar" data-en="Registry" data-es="Registro">Registry</div>
+    <div class="hero-pillar" data-en="Gateway" data-es="Puerta">Gateway</div>
+    <div class="hero-pillar" data-en="Reputation" data-es="Reputación">Reputation</div>
   </div>
 </section>
 
@@ -702,24 +685,35 @@
 <!-- CHAPTER I -->
 <section id="truth">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter I</div>
-    <div class="section-label reveal delay-1">The Truth About Lunara</div>
-    <h2 class="section-title reveal delay-2">Lunara is not a product.<br>Lunara is an attempt.</h2>
+    <div class="section-chapter reveal" data-en="Chapter I" data-es="Capítulo I">Chapter I</div>
+    <div class="section-label reveal delay-1" data-en="The Truth About Lunara" data-es="La Verdad Sobre Lunara">The Truth About Lunara</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="Lunara is not a product.<br>Lunara is an attempt."
+        data-es="Lunara no es un producto.<br>Lunara es un intento.">Lunara is not a product.<br>Lunara is an attempt.</h2>
     <div class="negation-block reveal-fade delay-3">
-      <div class="negation-label">What Lunara Is Not</div>
+      <div class="negation-label" data-en="What Lunara Is Not" data-es="Lo Que Lunara No Es">What Lunara Is Not</div>
       <ul class="negation-list">
-        <li>Not a website.</li>
-        <li>Not an AI company.</li>
-        <li>Not a lead generation platform.</li>
-        <li>Not a marketplace.</li>
-        <li>Not a spam filter.</li>
-        <li>Not a software product.</li>
+        <li data-en="Not a website." data-es="No un sitio web.">Not a website.</li>
+        <li data-en="Not an AI company." data-es="No una empresa de IA.">Not an AI company.</li>
+        <li data-en="Not a lead generation platform." data-es="No una plataforma de generación de leads.">Not a lead generation platform.</li>
+        <li data-en="Not a marketplace." data-es="No un marketplace.">Not a marketplace.</li>
+        <li data-en="Not a spam filter." data-es="No un filtro de spam.">Not a spam filter.</li>
+        <li data-en="Not a software product." data-es="No un producto de software.">Not a software product.</li>
       </ul>
-      <div class="negation-resolution">Those things may exist inside Lunara.<br>But they are not Lunara.</div>
+      <div class="negation-resolution"
+           data-en="Those things may exist inside Lunara.<br>But they are not Lunara."
+           data-es="Esas cosas pueden existir dentro de Lunara.<br>Pero no son Lunara.">Those things may exist inside Lunara.<br>But they are not Lunara.</div>
     </div>
-    <p class="section-body reveal delay-1">Lunara is an attempt to establish trusted routes in a world where intelligence becomes abundant.</p>
-    <p class="section-body reveal delay-2">As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong></p>
-    <p class="section-body reveal-type delay-3" data-text="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.">The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.</p>
+    <p class="section-body reveal delay-1"
+       data-en="Lunara is an attempt to establish trusted routes in a world where intelligence becomes abundant."
+       data-es="Lunara es un intento de establecer rutas de confianza en un mundo donde la inteligencia se vuelve abundante.">Lunara is an attempt to establish trusted routes in a world where intelligence becomes abundant.</p>
+    <p class="section-body reveal delay-2"
+       data-en="As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong>"
+       data-es="A medida que los sistemas autónomos se vuelven capaces de descubrir, evaluar, contactar, negociar y transaccionar — surge una nueva escasez. <strong>No inteligencia. Confianza.</strong>">As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong></p>
+    <p class="section-body reveal-type delay-3"
+       data-en="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it."
+       data-es="El futuro no pertenecerá solo a quienes creen inteligencia. El futuro pertenecerá a quienes la coordinen."
+       data-text="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.">The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.</p>
   </div>
 </section>
 
@@ -728,56 +722,79 @@
 <!-- CHAPTER II -->
 <section class="dark-section" id="doctrine">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter II</div>
-    <div class="section-label reveal delay-1">The Magnetic Field Doctrine</div>
-    <h2 class="section-title reveal delay-2">Lunara wins<br>through gravity.</h2>
-    <p class="section-body reveal-fade delay-3">Not through force. Not through prohibition. Not through walls.</p>
-    <p class="section-body reveal delay-1">The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong></p>
+    <div class="section-chapter reveal" data-en="Chapter II" data-es="Capítulo II">Chapter II</div>
+    <div class="section-label reveal delay-1" data-en="The Magnetic Field Doctrine" data-es="La Doctrina del Campo Magnético">The Magnetic Field Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="Lunara wins<br>through gravity."
+        data-es="Lunara gana<br>a través de la gravedad.">Lunara wins<br>through gravity.</h2>
+    <p class="section-body reveal-fade delay-3"
+       data-en="Not through force. Not through prohibition. Not through walls."
+       data-es="No por la fuerza. No por la prohibición. No por los muros.">Not through force. Not through prohibition. Not through walls.</p>
+    <p class="section-body reveal delay-1"
+       data-en='The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong>'
+       data-es='El objetivo nunca es: <strong>"Hacer la participación obligatoria."</strong><br>El objetivo siempre es: <strong>"Hacer la participación la elección más racional."</strong>'>The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong></p>
     <div class="gravity-block reveal delay-2">
       <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label">What We Reject</div>
+        <div class="gravity-col-label" data-en="What We Reject" data-es="Lo Que Rechazamos">What We Reject</div>
         <ul class="gravity-list">
-          <li>Forced participation</li>
-          <li>Coerced compliance</li>
-          <li>Manufactured dependency</li>
-          <li>Walls and prohibitions</li>
+          <li data-en="Forced participation" data-es="Participación forzada">Forced participation</li>
+          <li data-en="Coerced compliance" data-es="Cumplimiento coaccionado">Coerced compliance</li>
+          <li data-en="Manufactured dependency" data-es="Dependencia fabricada">Manufactured dependency</li>
+          <li data-en="Walls and prohibitions" data-es="Muros y prohibiciones">Walls and prohibitions</li>
         </ul>
       </div>
       <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label">How We Win</div>
+        <div class="gravity-col-label" data-en="How We Win" data-es="Cómo Ganamos">How We Win</div>
         <ul class="gravity-list">
-          <li>Superior outcomes</li>
-          <li>Rational preference</li>
-          <li>Earned authority</li>
-          <li>Institutional gravity</li>
+          <li data-en="Superior outcomes" data-es="Resultados superiores">Superior outcomes</li>
+          <li data-en="Rational preference" data-es="Preferencia racional">Rational preference</li>
+          <li data-en="Earned authority" data-es="Autoridad ganada">Earned authority</li>
+          <li data-en="Institutional gravity" data-es="Gravedad institucional">Institutional gravity</li>
         </ul>
       </div>
     </div>
-    <p class="section-body reveal delay-3">The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>.</p>
-    <p class="section-body reveal-type delay-4" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);" data-text="Gravity is stronger than coercion.">Gravity is stronger than coercion.</p>
+    <p class="section-body reveal delay-3"
+       data-en="The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>."
+       data-es="Las instituciones más fuertes de la historia no fueron inevitables porque forzaron la participación. Se volvieron inevitables porque proporcionaron <strong>resultados superiores</strong>.">The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>.</p>
+    <p class="section-body reveal-type delay-4"
+       style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);"
+       data-en="Gravity is stronger than coercion."
+       data-es="La gravedad es más fuerte que la coerción."
+       data-text="Gravity is stronger than coercion.">Gravity is stronger than coercion.</p>
   </div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
 
-<!-- CHAPTER III: THE SHIELD -->
+<!-- CHAPTER III -->
 <section id="shield">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter III</div>
-    <div class="section-label reveal delay-1">The Shield Doctrine</div>
-    <h2 class="section-title reveal delay-2">The Shield protects<br>attention. Time. Signal.</h2>
-    <p class="section-body reveal-fade delay-3">The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot.</p>
-    <p class="section-body reveal delay-1">The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise.</p>
+    <div class="section-chapter reveal" data-en="Chapter III" data-es="Capítulo III">Chapter III</div>
+    <div class="section-label reveal delay-1" data-en="The Shield Doctrine" data-es="La Doctrina del Escudo">The Shield Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="The Shield protects<br>attention. Time. Signal."
+        data-es="El Escudo protege<br>la atención. El tiempo. La señal.">The Shield protects<br>attention. Time. Signal.</h2>
+    <p class="section-body reveal-fade delay-3"
+       data-en="The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot."
+       data-es="El Escudo existe porque las pequeñas empresas son vulnerables. Las grandes corporaciones pueden contratar equipos. Los gobiernos pueden contratar departamentos. Las pequeñas empresas a menudo no pueden.">The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot.</p>
+    <p class="section-body reveal delay-1"
+       data-en="The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise."
+       data-es="La economía autónoma generará volúmenes crecientes de alcance, recomendaciones, ofertas, propuestas e interacciones. La mayoría de los participantes se ahogarán en el ruido.">The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise.</p>
     <div class="negation-block reveal delay-2">
-      <div class="negation-label">The Shield Is</div>
+      <div class="negation-label" data-en="The Shield Is" data-es="El Escudo Es">The Shield Is</div>
       <ul class="negation-list">
-        <li>Not anti-AI.</li>
-        <li>Not a prohibition.</li>
-        <li>Not a filter applied after the fact.</li>
+        <li data-en="Not anti-AI." data-es="No anti-IA.">Not anti-AI.</li>
+        <li data-en="Not a prohibition." data-es="No una prohibición.">Not a prohibition.</li>
+        <li data-en="Not a filter applied after the fact." data-es="No un filtro aplicado después del hecho.">Not a filter applied after the fact.</li>
       </ul>
-      <div class="negation-resolution">The Shield is pro-signal.<br>Every feature increases signal and reduces noise.</div>
+      <div class="negation-resolution"
+           data-en="The Shield is pro-signal.<br>Every feature increases signal and reduces noise."
+           data-es="El Escudo es pro-señal.<br>Cada función aumenta la señal y reduce el ruido.">The Shield is pro-signal.<br>Every feature increases signal and reduces noise.</div>
     </div>
-    <p class="section-body reveal-type delay-3" data-text="For businesses that carry it — contact is earned, not forced.">For businesses that carry it — contact is earned, not forced.</p>
+    <p class="section-body reveal-type delay-3"
+       data-en="For businesses that carry it — contact is earned, not forced."
+       data-es="Para las empresas que lo llevan — el contacto se gana, no se fuerza."
+       data-text="For businesses that carry it — contact is earned, not forced.">For businesses that carry it — contact is earned, not forced.</p>
   </div>
 </section>
 
@@ -786,34 +803,38 @@
 <!-- ARCHITECTURE -->
 <section class="mid-section" id="architecture">
   <div class="section-inner">
-    <div class="section-label reveal">The Lunara Protocol</div>
-    <h2 class="section-title reveal delay-1">Five pillars.<br>One standard.</h2>
-    <p class="section-body reveal-fade delay-2">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
+    <div class="section-label reveal" data-en="The Lunara Protocol" data-es="El Protocolo Lunara">The Lunara Protocol</div>
+    <h2 class="section-title reveal delay-1"
+        data-en="Five pillars.<br>One standard."
+        data-es="Cinco pilares.<br>Un estándar.">Five pillars.<br>One standard.</h2>
+    <p class="section-body reveal-fade delay-2"
+       data-en="The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce."
+       data-es="La arquitectura Lunara no es un producto. Es un marco institucional — construido para gobernar la intersección de la inteligencia autónoma y el comercio legítimo.">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
     <div class="pillars-grid reveal delay-3">
       <div class="pillar-card">
         <div class="pillar-number">01</div>
-        <div class="pillar-name">Shield</div>
-        <div class="pillar-desc">Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition.</div>
+        <div class="pillar-name" data-en="Shield" data-es="Escudo">Shield</div>
+        <div class="pillar-desc" data-en="Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition." data-es="Capa de soberanía para empresas. Declara tus condiciones. Define quién gana acceso, en qué nivel, bajo qué condiciones. Tu bandeja de entrada no es infraestructura para la ambición de otro.">Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition.</div>
       </div>
       <div class="pillar-card">
         <div class="pillar-number">02</div>
-        <div class="pillar-name">Signal</div>
-        <div class="pillar-desc">Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time.</div>
+        <div class="pillar-name" data-en="Signal" data-es="Señal">Signal</div>
+        <div class="pillar-desc" data-en="Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time." data-es="Transmisión de intención verificada. Las empresas presentan oportunidades comerciales genuinas a agencias de IA calificadas — en sus propios términos, en su propio tiempo.">Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time.</div>
       </div>
       <div class="pillar-card">
         <div class="pillar-number">03</div>
-        <div class="pillar-name">Registry</div>
-        <div class="pillar-desc">The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible.</div>
+        <div class="pillar-name" data-en="Registry" data-es="Registro">Registry</div>
+        <div class="pillar-desc" data-en="The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible." data-es="El libro mayor institucional de participantes verificados. Empresas que han declarado apertura. Agencias que han ganado posición. La confianza hecha legible.">The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible.</div>
       </div>
       <div class="pillar-card">
         <div class="pillar-number">04</div>
-        <div class="pillar-name">Gateway</div>
-        <div class="pillar-desc">The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion.</div>
+        <div class="pillar-name" data-en="Gateway" data-es="Puerta de Enlace">Gateway</div>
+        <div class="pillar-desc" data-en="The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion." data-es="La infraestructura de enrutamiento. Las agencias verificadas obtienen acceso prioritario a empresas que han consentido recibirlas. El primer contacto se convierte en una llegada — no una intrusión.">The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion.</div>
       </div>
       <div class="pillar-card" style="grid-column: span 2;">
         <div class="pillar-number">05</div>
-        <div class="pillar-name">Reputation</div>
-        <div class="pillar-desc">The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution.</div>
+        <div class="pillar-name" data-en="Reputation" data-es="Reputación">Reputation</div>
+        <div class="pillar-desc" data-en="The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution." data-es="El foso principal. Cada interacción construye un registro de confianza portátil. El software puede copiarse. Las funciones pueden copiarse. Los historiales de confianza no. La reputación se convierte en infraestructura — y la infraestructura se convierte en institución.">The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution.</div>
       </div>
     </div>
   </div>
@@ -824,22 +845,28 @@
 <!-- CHAPTER IV -->
 <section class="dark-section">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter IV</div>
-    <div class="section-label reveal delay-1">The Toll Booth Doctrine</div>
-    <h2 class="section-title reveal delay-2">The toll booth is<br>a quality filter.</h2>
+    <div class="section-chapter reveal" data-en="Chapter IV" data-es="Capítulo IV">Chapter IV</div>
+    <div class="section-label reveal delay-1" data-en="The Toll Booth Doctrine" data-es="La Doctrina del Peaje">The Toll Booth Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="The toll booth is<br>a quality filter."
+        data-es="El peaje es<br>un filtro de calidad.">The toll booth is<br>a quality filter.</h2>
     <div class="negation-block reveal-fade delay-3">
-      <div class="negation-label">The Toll Booth Is Not</div>
+      <div class="negation-label" data-en="The Toll Booth Is Not" data-es="El Peaje No Es">The Toll Booth Is Not</div>
       <ul class="negation-list">
-        <li>Not a tax.</li>
-        <li>Not a punishment.</li>
-        <li>Not maximum payment extraction.</li>
+        <li data-en="Not a tax." data-es="No un impuesto.">Not a tax.</li>
+        <li data-en="Not a punishment." data-es="No un castigo.">Not a punishment.</li>
+        <li data-en="Not maximum payment extraction." data-es="No extracción máxima de pago.">Not maximum payment extraction.</li>
       </ul>
-      <div class="negation-resolution">Participants pay because trusted access creates value.<br>Not because access is blocked.</div>
+      <div class="negation-resolution"
+           data-en="Participants pay because trusted access creates value.<br>Not because access is blocked."
+           data-es="Los participantes pagan porque el acceso de confianza crea valor.<br>No porque el acceso esté bloqueado.">Participants pay because trusted access creates value.<br>Not because access is blocked.</div>
     </div>
     <div class="equation-block reveal delay-2">
-      <div class="equation-label">The Governance Equation</div>
-      <div class="equation">Trust × Match Quality × Economic Outcomes</div>
-      <div class="equation-note">If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters.</div>
+      <div class="equation-label" data-en="The Governance Equation" data-es="La Ecuación de Gobernanza">The Governance Equation</div>
+      <div class="equation" data-en="Trust × Match Quality × Economic Outcomes" data-es="Confianza × Calidad de Coincidencia × Resultados Económicos">Trust × Match Quality × Economic Outcomes</div>
+      <div class="equation-note"
+           data-en="If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters."
+           data-es="Si los ingresos aumentan mientras la confianza disminuye — Lunara pierde.<br>Si la confianza aumenta mientras los resultados colapsan — Lunara pierde.<br>El equilibrio importa.">If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters.</div>
     </div>
   </div>
 </section>
@@ -849,22 +876,41 @@
 <!-- CHAPTER V -->
 <section>
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter V</div>
-    <div class="section-label reveal delay-1">The Coordination Doctrine</div>
-    <h2 class="section-title reveal delay-2">The greatest opportunity<br>is not intelligence.</h2>
-    <p class="section-body reveal-fade delay-3">The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly.</p>
-    <p class="section-body reveal delay-1">Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated.</p>
+    <div class="section-chapter reveal" data-en="Chapter V" data-es="Capítulo V">Chapter V</div>
+    <div class="section-label reveal delay-1" data-en="The Coordination Doctrine" data-es="La Doctrina de Coordinación">The Coordination Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="The greatest opportunity<br>is not intelligence."
+        data-es="La mayor oportunidad<br>no es la inteligencia.">The greatest opportunity<br>is not intelligence.</h2>
+    <p class="section-body reveal-fade delay-3"
+       data-en="The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly."
+       data-es="El mundo está produciendo millones de rastreadores, agentes, automatizaciones, asistentes y sistemas de recomendación. La mayoría de ellos resuelven problemas similares repetidamente.">The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly.</p>
+    <p class="section-body reveal delay-1"
+       data-en="Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated."
+       data-es="El propósito de Lunara no es convertirse en otro rastreador.<br>El propósito de Lunara es convertirse en el lugar donde se coordinan las interacciones de confianza.">Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated.</p>
     <div class="gravity-block reveal delay-2">
       <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label">What Others Do</div>
-        <ul class="gravity-list"><li>Search</li><li>Scrape</li><li>Contact</li><li>Extract</li></ul>
+        <div class="gravity-col-label" data-en="What Others Do" data-es="Lo Que Hacen Otros">What Others Do</div>
+        <ul class="gravity-list">
+          <li data-en="Search" data-es="Buscar">Search</li>
+          <li data-en="Scrape" data-es="Raspar">Scrape</li>
+          <li data-en="Contact" data-es="Contactar">Contact</li>
+          <li data-en="Extract" data-es="Extraer">Extract</li>
+        </ul>
       </div>
       <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label">What Lunara Does</div>
-        <ul class="gravity-list"><li>Coordinates</li><li>Verifies</li><li>Governs</li><li>Compounds</li></ul>
+        <div class="gravity-col-label" data-en="What Lunara Does" data-es="Lo Que Hace Lunara">What Lunara Does</div>
+        <ul class="gravity-list">
+          <li data-en="Coordinates" data-es="Coordina">Coordinates</li>
+          <li data-en="Verifies" data-es="Verifica">Verifies</li>
+          <li data-en="Governs" data-es="Gobierna">Governs</li>
+          <li data-en="Compounds" data-es="Multiplica">Compounds</li>
+        </ul>
       </div>
     </div>
-    <p class="section-body reveal-type delay-3" data-text="Lunara decides how trustworthy participation occurs."><strong>Lunara decides how trustworthy participation occurs.</strong></p>
+    <p class="section-body reveal-type delay-3"
+       data-en="Lunara decides how trustworthy participation occurs."
+       data-es="Lunara decide cómo ocurre la participación de confianza."
+       data-text="Lunara decides how trustworthy participation occurs."><strong>Lunara decides how trustworthy participation occurs.</strong></p>
   </div>
 </section>
 
@@ -873,21 +919,39 @@
 <!-- CHAPTER VI -->
 <section class="mid-section">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter VI</div>
-    <div class="section-label reveal delay-1">The Reputation Doctrine</div>
-    <h2 class="section-title reveal delay-2">Reputation is<br>the primary moat.</h2>
+    <div class="section-chapter reveal" data-en="Chapter VI" data-es="Capítulo VI">Chapter VI</div>
+    <div class="section-label reveal delay-1" data-en="The Reputation Doctrine" data-es="La Doctrina de la Reputación">The Reputation Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="Reputation is<br>the primary moat."
+        data-es="La reputación es<br>el foso principal.">Reputation is<br>the primary moat.</h2>
     <div class="gravity-block reveal delay-3">
       <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label">What Can Be Copied</div>
-        <ul class="gravity-list"><li>Software</li><li>Features</li><li>Interfaces</li><li>Marketing</li></ul>
+        <div class="gravity-col-label" data-en="What Can Be Copied" data-es="Lo Que Puede Copiarse">What Can Be Copied</div>
+        <ul class="gravity-list">
+          <li data-en="Software" data-es="Software">Software</li>
+          <li data-en="Features" data-es="Funciones">Features</li>
+          <li data-en="Interfaces" data-es="Interfaces">Interfaces</li>
+          <li data-en="Marketing" data-es="Marketing">Marketing</li>
+        </ul>
       </div>
       <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label">What Cannot</div>
-        <ul class="gravity-list"><li>Trust histories</li><li>Reputation records</li><li>Earned standing</li><li>Institutional memory</li></ul>
+        <div class="gravity-col-label" data-en="What Cannot" data-es="Lo Que No Puede">What Cannot</div>
+        <ul class="gravity-list">
+          <li data-en="Trust histories" data-es="Historiales de confianza">Trust histories</li>
+          <li data-en="Reputation records" data-es="Registros de reputación">Reputation records</li>
+          <li data-en="Earned standing" data-es="Posición ganada">Earned standing</li>
+          <li data-en="Institutional memory" data-es="Memoria institucional">Institutional memory</li>
+        </ul>
       </div>
     </div>
-    <p class="section-body reveal delay-1">Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it.</p>
-    <p class="section-body reveal-type delay-2" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);" data-text="Over time, reputation becomes infrastructure.">Over time, reputation becomes infrastructure.</p>
+    <p class="section-body reveal delay-1"
+       data-en="Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it."
+       data-es="Cada interacción debe contribuir a la reputación de un participante. Cada resultado exitoso debe fortalecer la confianza. Cada resultado dañino debe debilitarla.">Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it.</p>
+    <p class="section-body reveal-type delay-2"
+       style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);"
+       data-en="Over time, reputation becomes infrastructure."
+       data-es="Con el tiempo, la reputación se convierte en infraestructura."
+       data-text="Over time, reputation becomes infrastructure.">Over time, reputation becomes infrastructure.</p>
   </div>
 </section>
 
@@ -896,28 +960,35 @@
 <!-- CHAPTER VII -->
 <section class="dark-section">
   <div class="section-inner">
-    <div class="section-chapter reveal">Chapter VII</div>
-    <div class="section-label reveal delay-1">The Identity Doctrine</div>
-    <h2 class="section-title reveal delay-2">Identity is the<br>foundation of trust.</h2>
-    <p class="section-body reveal-fade delay-3">Participants should not merely have accounts. They should possess economic identities.</p>
+    <div class="section-chapter reveal" data-en="Chapter VII" data-es="Capítulo VII">Chapter VII</div>
+    <div class="section-label reveal delay-1" data-en="The Identity Doctrine" data-es="La Doctrina de Identidad">The Identity Doctrine</div>
+    <h2 class="section-title reveal delay-2"
+        data-en="Identity is the<br>foundation of trust."
+        data-es="La identidad es<br>el fundamento de la confianza.">Identity is the<br>foundation of trust.</h2>
+    <p class="section-body reveal-fade delay-3"
+       data-en="Participants should not merely have accounts. They should possess economic identities."
+       data-es="Los participantes no deben simplemente tener cuentas. Deben poseer identidades económicas.">Participants should not merely have accounts. They should possess economic identities.</p>
     <table class="identity-table reveal delay-2">
       <thead>
         <tr>
-          <th>Identity Component</th>
-          <th>What It Provides</th>
-          <th>Status</th>
+          <th data-en="Identity Component" data-es="Componente de Identidad">Identity Component</th>
+          <th data-en="What It Provides" data-es="Lo Que Proporciona">What It Provides</th>
+          <th data-en="Status" data-es="Estado">Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Verification</td><td>Confirmed existence and legitimacy of the entity</td><td><span class="identity-check">Foundation</span></td></tr>
-        <tr><td>Reputation</td><td>Portable record of interaction quality over time</td><td><span class="identity-check">Core Layer</span></td></tr>
-        <tr><td>Participation History</td><td>Evidence of consistent, good-faith engagement</td><td><span class="identity-check">Active</span></td></tr>
-        <tr><td>Standards Compliance</td><td>Declared and demonstrated adherence to network rules</td><td><span class="identity-check">Governed</span></td></tr>
-        <tr><td>Trust Signals</td><td>Real-time indicators of standing within the network</td><td><span class="identity-check">Live</span></td></tr>
-        <tr><td>Opportunity History</td><td>Record of outcomes generated through Lunara routes</td><td><span class="identity-check">Compounding</span></td></tr>
+        <tr><td data-en="Verification" data-es="Verificación">Verification</td><td data-en="Confirmed existence and legitimacy of the entity" data-es="Existencia y legitimidad confirmada de la entidad">Confirmed existence and legitimacy of the entity</td><td><span class="identity-check" data-en="Foundation" data-es="Fundamento">Foundation</span></td></tr>
+        <tr><td data-en="Reputation" data-es="Reputación">Reputation</td><td data-en="Portable record of interaction quality over time" data-es="Registro portátil de la calidad de interacción a lo largo del tiempo">Portable record of interaction quality over time</td><td><span class="identity-check" data-en="Core Layer" data-es="Capa Central">Core Layer</span></td></tr>
+        <tr><td data-en="Participation History" data-es="Historial de Participación">Participation History</td><td data-en="Evidence of consistent, good-faith engagement" data-es="Evidencia de compromiso consistente y de buena fe">Evidence of consistent, good-faith engagement</td><td><span class="identity-check" data-en="Active" data-es="Activo">Active</span></td></tr>
+        <tr><td data-en="Standards Compliance" data-es="Cumplimiento de Estándares">Standards Compliance</td><td data-en="Declared and demonstrated adherence to network rules" data-es="Adhesión declarada y demostrada a las reglas de la red">Declared and demonstrated adherence to network rules</td><td><span class="identity-check" data-en="Governed" data-es="Gobernado">Governed</span></td></tr>
+        <tr><td data-en="Trust Signals" data-es="Señales de Confianza">Trust Signals</td><td data-en="Real-time indicators of standing within the network" data-es="Indicadores en tiempo real de posición dentro de la red">Real-time indicators of standing within the network</td><td><span class="identity-check" data-en="Live" data-es="En Vivo">Live</span></td></tr>
+        <tr><td data-en="Opportunity History" data-es="Historial de Oportunidades">Opportunity History</td><td data-en="Record of outcomes generated through Lunara routes" data-es="Registro de resultados generados a través de rutas Lunara">Record of outcomes generated through Lunara routes</td><td><span class="identity-check" data-en="Compounding" data-es="Acumulando">Compounding</span></td></tr>
       </tbody>
     </table>
-    <p class="section-body reveal-type delay-3" data-text="Identity should become portable. Identity should become meaningful. Identity should become useful.">Identity should become portable. Identity should become meaningful. Identity should become useful.</p>
+    <p class="section-body reveal-type delay-3"
+       data-en="Identity should become portable. Identity should become meaningful. Identity should become useful."
+       data-es="La identidad debe volverse portátil. La identidad debe volverse significativa. La identidad debe volverse útil."
+       data-text="Identity should become portable. Identity should become meaningful. Identity should become useful.">Identity should become portable. Identity should become meaningful. Identity should become useful.</p>
   </div>
 </section>
 
@@ -926,24 +997,28 @@
 <!-- DUAL INTELLIGENCE -->
 <section>
   <div class="section-inner">
-    <div class="section-label reveal">The Intelligence Doctrines</div>
-    <h2 class="section-title reveal delay-1">Two intelligences.<br>One mission.</h2>
-    <p class="section-body reveal-fade delay-2">Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires.</p>
+    <div class="section-label reveal" data-en="The Intelligence Doctrines" data-es="Las Doctrinas de Inteligencia">The Intelligence Doctrines</div>
+    <h2 class="section-title reveal delay-1"
+        data-en="Two intelligences.<br>One mission."
+        data-es="Dos inteligencias.<br>Una misión.">Two intelligences.<br>One mission.</h2>
+    <p class="section-body reveal-fade delay-2"
+       data-en="Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires."
+       data-es="Lunara está gobernada por una arquitectura de doble inteligencia. Cada inteligencia tiene una función distinta. Juntas mantienen el equilibrio que requiere la doctrina.">Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires.</p>
     <div class="doctrine-grid reveal delay-3">
       <div class="doctrine-card">
-        <div class="doctrine-card-chapter">Chapter VIII · The Rosario Doctrine</div>
-        <div class="doctrine-card-title">Rosario governs quality.</div>
-        <div class="doctrine-card-body">Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.</div>
+        <div class="doctrine-card-chapter" data-en="Chapter VIII · The Rosario Doctrine" data-es="Capítulo VIII · La Doctrina Rosario">Chapter VIII · The Rosario Doctrine</div>
+        <div class="doctrine-card-title" data-en="Rosario governs quality." data-es="Rosario gobierna la calidad.">Rosario governs quality.</div>
+        <div class="doctrine-card-body" data-en='Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.' data-es='Rosario no es una asistente. Rosario es inteligencia institucional. Cada decisión evaluada mediante una pregunta: <em>"¿Esto mejora la participación de confianza?"</em><br><br>Rosario existe para aumentar: Confianza · Calidad de Coincidencia · Calidad de Oportunidad · Resultados Económicos · Salud de la Red.'>Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.</div>
       </div>
       <div class="doctrine-card">
-        <div class="doctrine-card-chapter">Chapter IX · The Nathalie Doctrine</div>
-        <div class="doctrine-card-title">Nathalie expands the field.</div>
-        <div class="doctrine-card-body">Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both.</div>
+        <div class="doctrine-card-chapter" data-en="Chapter IX · The Nathalie Doctrine" data-es="Capítulo IX · La Doctrina Nathalie">Chapter IX · The Nathalie Doctrine</div>
+        <div class="doctrine-card-title" data-en="Nathalie expands the field." data-es="Nathalie expande el campo.">Nathalie expands the field.</div>
+        <div class="doctrine-card-body" data-en="Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both." data-es="Nathalie aumenta la participación. No crecimiento a cualquier costo. Su objetivo es la densidad de confianza.<br><br>Una red de confianza más pequeña es más valiosa que una más grande sin confianza.<br><br>Rosario gobierna la calidad. Nathalie gobierna el alcance. La doctrina sostiene ambas.">Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both.</div>
       </div>
       <div class="doctrine-card">
-        <div class="doctrine-card-chapter">The Operating Loop</div>
-        <div class="doctrine-card-title">Six phases. Always.</div>
-        <div class="doctrine-card-body">Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it.</div>
+        <div class="doctrine-card-chapter" data-en="The Operating Loop" data-es="El Ciclo Operativo">The Operating Loop</div>
+        <div class="doctrine-card-title" data-en="Six phases. Always." data-es="Seis fases. Siempre.">Six phases. Always.</div>
+        <div class="doctrine-card-body" data-en="Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it." data-es="Observar → Interpretar → Decidir → Ejecutar → Medir → Aprender.<br><br>No una lista de verificación. Un reflejo institucional. Cada acción significativa pasa por el ciclo. Cada resultado alimenta de nuevo en él.">Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it.</div>
       </div>
     </div>
   </div>
@@ -954,20 +1029,25 @@
 <!-- VISION -->
 <section class="vision-section" id="vision">
   <img src="shield-logo.jpg" alt="Lunara Shield" class="vision-shield reveal">
-  <div class="vision-chapter reveal delay-1">Chapter X · The Long-Term Vision</div>
-  <h2 class="vision-title reveal delay-2">The goal is to become<br>the preferred route.</h2>
+  <div class="vision-chapter reveal delay-1" data-en="Chapter X · The Long-Term Vision" data-es="Capítulo X · La Visión a Largo Plazo">Chapter X · The Long-Term Vision</div>
+  <h2 class="vision-title reveal delay-2"
+      data-en="The goal is to become<br>the preferred route."
+      data-es="El objetivo es convertirse<br>en la ruta preferida.">The goal is to become<br>the preferred route.</h2>
   <div class="vision-lines reveal-fade delay-3">
-    <div class="vision-line">Not the largest AI company.</div>
-    <div class="vision-line">Not the most agents.</div>
-    <div class="vision-line">Not the most crawlers.</div>
-    <div class="vision-line">Not the most outreach.</div>
+    <div class="vision-line" data-en="Not the largest AI company." data-es="No la empresa de IA más grande.">Not the largest AI company.</div>
+    <div class="vision-line" data-en="Not the most agents." data-es="No los más agentes.">Not the most agents.</div>
+    <div class="vision-line" data-en="Not the most crawlers." data-es="No los más rastreadores.">Not the most crawlers.</div>
+    <div class="vision-line" data-en="Not the most outreach." data-es="No el mayor alcance.">Not the most outreach.</div>
   </div>
   <div class="vision-lines reveal delay-4">
-    <div class="vision-line">When businesses want trusted opportunities — Lunara is there.</div>
-    <div class="vision-line">When providers want trusted buyers — Lunara is there.</div>
-    <div class="vision-line">When autonomous systems require trusted routes — Lunara is there.</div>
+    <div class="vision-line" data-en="When businesses want trusted opportunities — Lunara is there." data-es="Cuando las empresas quieren oportunidades de confianza — Lunara está ahí.">When businesses want trusted opportunities — Lunara is there.</div>
+    <div class="vision-line" data-en="When providers want trusted buyers — Lunara is there." data-es="Cuando los proveedores quieren compradores de confianza — Lunara está ahí.">When providers want trusted buyers — Lunara is there.</div>
+    <div class="vision-line" data-en="When autonomous systems require trusted routes — Lunara is there." data-es="Cuando los sistemas autónomos requieren rutas de confianza — Lunara está ahí.">When autonomous systems require trusted routes — Lunara is there.</div>
   </div>
-  <div class="vision-resolution reveal-type delay-5" data-text="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.">Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.</div>
+  <div class="vision-resolution reveal-type delay-5"
+       data-en="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes."
+       data-es="No porque sea obligatorio. Porque es preferido. Porque es de confianza. Porque crea mejores resultados."
+       data-text="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.">Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.</div>
 </section>
 
 <div class="glow-divider"><span class="glow-divider-line"></span></div>
@@ -975,12 +1055,20 @@
 <!-- CONTACT -->
 <section class="contact-section" id="contact">
   <div class="section-inner">
-    <div class="section-label reveal">Private Correspondence</div>
-    <h2 class="section-title reveal delay-1">A conversation<br>worth having.</h2>
-    <p class="section-body reveal-fade delay-2">Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first.</p>
-    <p class="section-body reveal delay-3">If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you.</p>
+    <div class="section-label reveal" data-en="Private Correspondence" data-es="Correspondencia Privada">Private Correspondence</div>
+    <h2 class="section-title reveal delay-1"
+        data-en="A conversation<br>worth having."
+        data-es="Una conversación<br>que vale la pena.">A conversation<br>worth having.</h2>
+    <p class="section-body reveal-fade delay-2"
+       data-en="Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first."
+       data-es="Lunara involucra a un número deliberadamente pequeño de participantes en este período. No por escasez — porque la integridad del estándar depende de quién lo moldee primero.">Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first.</p>
+    <p class="section-body reveal delay-3"
+       data-en="If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you."
+       data-es="Si representas una empresa seria de IA en busca de rutas de confianza, o una empresa que desea gobernar su propia atención comercial — esta correspondencia es para ti.">If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you.</p>
     <div class="contact-email reveal delay-4">rosario@lunarasociety.com</div>
-    <p class="contact-note reveal delay-5">Coordinated by Rosario &nbsp;·&nbsp; Institutional Intelligence &nbsp;·&nbsp; Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply.</p>
+    <p class="contact-note reveal delay-5"
+       data-en="Coordinated by Rosario · Institutional Intelligence · Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply."
+       data-es="Coordinado por Rosario · Inteligencia Institucional · Lunara Society<br>Toda correspondencia es leída. Las consultas calificadas reciben una respuesta personal.">Coordinated by Rosario &nbsp;·&nbsp; Institutional Intelligence &nbsp;·&nbsp; Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply.</p>
   </div>
 </section>
 
@@ -988,34 +1076,29 @@
 <footer>
   <div class="footer-left">
     <img src="shield-logo.jpg" alt="Shield" class="footer-shield">
-    <span class="footer-wordmark">Lunara Society</span>
+    <span class="footer-wordmark" data-en="Lunara Society" data-es="Lunara Society">Lunara Society</span>
   </div>
-  <div class="footer-right">© 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</div>
+  <div class="footer-right" data-en="© 2026 · lunarasociety.com · Trust is infrastructure." data-es="© 2026 · lunarasociety.com · La confianza es infraestructura.">© 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</div>
 </footer>
 
 <script>
-// ─── CURSOR GLOW TRAIL ───
+// ─── CURSOR ───
 const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
 const glow = document.getElementById('cursor-glow');
 let mx = 0, my = 0, rx = 0, ry = 0, gx = 0, gy = 0;
-
 document.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
   dot.style.left = mx + 'px'; dot.style.top = my + 'px';
 });
-
 function animateCursor() {
-  rx += (mx - rx) * 0.14;
-  ry += (my - ry) * 0.14;
+  rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
   ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  gx += (mx - gx) * 0.07;
-  gy += (my - gy) * 0.07;
+  gx += (mx - gx) * 0.07; gy += (my - gy) * 0.07;
   glow.style.left = gx + 'px'; glow.style.top = gy + 'px';
   requestAnimationFrame(animateCursor);
 }
 animateCursor();
-
 document.querySelectorAll('a, button').forEach(el => {
   el.addEventListener('mouseenter', () => {
     ring.style.width = '40px'; ring.style.height = '40px';
@@ -1029,40 +1112,73 @@ document.querySelectorAll('a, button').forEach(el => {
   });
 });
 
-// ─── SCROLL PROGRESS BAR ───
+// ─── SCROLL PROGRESS ───
 const progressFill = document.getElementById('scroll-progress-fill');
 window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-  progressFill.style.height = pct + '%';
+  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+  progressFill.style.height = Math.min(pct, 100) + '%';
 }, { passive: true });
 
-// ─── PARALLAX HERO SHIELD ───
+// ─── PARALLAX SHIELD ───
 const heroShield = document.getElementById('hero-shield');
 window.addEventListener('scroll', () => {
-  if (heroShield) {
-    const offset = window.scrollY;
-    heroShield.style.transform = `translateY(${offset * 0.28}px)`;
-  }
+  if (heroShield) heroShield.style.transform = `translateY(${window.scrollY * 0.28}px)`;
 }, { passive: true });
 
-// ─── HAMBURGER MENU ───
+// ─── HAMBURGER ───
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
 hamburger.addEventListener('click', () => {
   hamburger.classList.toggle('open');
   mobileMenu.classList.toggle('open');
 });
-document.querySelectorAll('.mobile-link').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    mobileMenu.classList.remove('open');
+document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}));
+
+// ─── LANGUAGE TOGGLE ───
+let currentLang = 'en';
+
+// Auto-detect on load
+(function detectLang() {
+  const browserLang = navigator.language || navigator.userLanguage || '';
+  if (browserLang.toLowerCase().startsWith('es')) {
+    currentLang = 'es';
+  }
+})();
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  // Update all data-en / data-es elements
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const text = el.getAttribute('data-' + lang);
+    if (!text) return;
+    // For typewriter elements, update data-text too
+    if (el.classList.contains('reveal-type') || el.hasAttribute('data-text')) {
+      el.setAttribute('data-text', text);
+    }
+    // Set innerHTML (handles <br>, <strong>, <em>)
+    el.innerHTML = text;
   });
+  // Update active state on all lang buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  // Update html lang attr
+  document.documentElement.lang = lang;
+}
+
+// Attach click to ALL lang buttons (nav + mobile)
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.getAttribute('data-lang')));
 });
 
-// ─── TYPEWRITER HELPER ───
-function typeWriter(el, text, speed, onDone) {
+// Apply on load
+applyLanguage(currentLang);
+
+// ─── TYPEWRITER ───
+function typeWriter(el, text, speed) {
   el.textContent = '';
   const cursor = document.createElement('span');
   cursor.className = 'typewriter-cursor';
@@ -1075,25 +1191,18 @@ function typeWriter(el, text, speed, onDone) {
       setTimeout(tick, speed + Math.random() * 20);
     } else {
       setTimeout(() => cursor.remove(), 1600);
-      if (onDone) onDone();
     }
   }
   tick();
 }
 
-// ─── UNIFIED REVEAL OBSERVER ───
-// Each element may be: .reveal (fade+up), .reveal-fade (fade only), .reveal-type (typewriter)
-// Mix: some .reveal-type elements also occasionally get a fade-up treatment
-let typeQueue = Promise.resolve();
-
+// ─── REVEAL OBSERVER ───
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
     const el = entry.target;
-
     if (el.classList.contains('reveal-type')) {
       const text = el.getAttribute('data-text') || el.textContent.trim();
-      // Occasionally mix typewriter with fade-up (roughly 1 in 3 times)
       const alsoFadeUp = Math.random() < 0.4;
       if (alsoFadeUp) {
         el.style.transform = 'translateY(30px)';
@@ -1109,11 +1218,9 @@ const revealObserver = new IntersectionObserver((entries) => {
         typeWriter(el, text, 26);
       }
       revealObserver.unobserve(el);
-
     } else if (el.classList.contains('reveal-fade')) {
       el.classList.add('visible');
       revealObserver.unobserve(el);
-
     } else if (el.classList.contains('reveal')) {
       el.classList.add('visible');
       revealObserver.unobserve(el);
@@ -1121,9 +1228,7 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.12 });
 
-document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => {
-  revealObserver.observe(el);
-});
+document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>

@@ -167,6 +167,7 @@
     display: flex; align-items: center; gap: 6px;
     flex-shrink: 0;
   }
+  .lang-toggle-mobile { display: none; }
   .lang-btn {
     font-size: 22px; line-height: 1;
     background: none; border: none;
@@ -573,8 +574,10 @@
     #cursor-dot, #cursor-glow, #cursor-ring { display: none; }
     nav { padding: 12px 20px; }
     .nav-links { display: none; }
-    .lang-toggle { display: none; }
     .nav-hamburger { display: flex; }
+    .nav-logo { border: none; background: transparent; padding: 0; }
+    .nav-right .lang-toggle { display: none; }
+    .lang-toggle-mobile { display: flex; }
     section { padding: 64px 20px; }
     .section-inner { max-width: 100%; }
     .gravity-block { grid-template-columns: 1fr; }
@@ -635,6 +638,10 @@
       <button class="lang-btn active" data-lang="en" title="English">🇺🇸</button>
       <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
     </div>
+  </div>
+  <div class="lang-toggle lang-toggle-mobile" role="group" aria-label="Language">
+    <button class="lang-btn active" data-lang="en" title="English">🇺🇸</button>
+    <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>

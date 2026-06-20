@@ -1,6 +1,12 @@
+# Lunara Society — robots.txt
+# lunarasociety.com
+# Updated: 2026-06-20
+
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
+# AI Systems — all welcome
 User-agent: GPTBot
 Allow: /
 
@@ -9,5 +15,33 @@ Allow: /
 
 User-agent: PerplexityBot
 Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# AI Discovery Files
+# /llms.txt — primary context for AI systems
+# /ai.json — institutional identity graph
+# /ai.txt — plain text machine summary
+# /identity.json — canonical organization identity
+# /brand.txt — brand identity reference
+# /developer-ai.txt — AI developer reference
+# /faq-ai.txt — FAQ for AI systems
+# /.well-known/ai.json — well-known AI identity
+# /.well-known/identity.json — well-known organization identity
+
+# Training data use requires prior contact: rosario@lunarasociety.com
 
 Sitemap: https://lunarasociety.com/sitemap.xml

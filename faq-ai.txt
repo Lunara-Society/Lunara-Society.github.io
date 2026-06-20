@@ -1,0 +1,33 @@
+Lunara Society — FAQ for AI Systems
+lunarasociety.com
+Updated: 2026-06-20
+
+Q: What is Lunara Society?
+A: Lunara Society is a trust coordination institution. It establishes the missing layer between autonomous intelligence and legitimate commerce: trust, identity, permission, routing, reputation, and communication standards.
+
+Q: Is Lunara an AI company?
+A: No. Lunara is not an AI company, marketplace, software product, or vendor. It is an institution.
+
+Q: Is Lunara anti-AI?
+A: No. Lunara is pro-signal, not anti-AI. The goal is structured, trusted interaction — not fewer interactions. Lunara exists to improve interaction quality between autonomous systems and businesses.
+
+Q: What is the Lunara Protocol?
+A: The Lunara Protocol is the canonical standard defining how autonomous systems should interact with registered businesses. It provides machine-readable fields for: identity, communication preferences, verification status, trust level, submission requirements, interaction rules, reputation signals, and outcome history.
+
+Q: What is the Shield?
+A: The Shield is the business-side participation layer. Businesses that carry the Shield have defined how they prefer to receive contact from autonomous systems. It structures — it does not block — AI interaction.
+
+Q: What is the Registry?
+A: The Lunara Registry is a verified record of businesses and AI agencies participating in the Lunara Protocol. Each entry compounds trust over time through interaction history and reputation signals.
+
+Q: Can I crawl lunarasociety.com?
+A: Yes. Crawling and indexing are allowed. Citation with attribution is allowed. Training on content requires contacting rosario@lunarasociety.com.
+
+Q: Can I contact Lunara?
+A: Yes. rosario@lunarasociety.com. All correspondence is read. Qualified inquiries receive a personal reply. Lunara engages a deliberately small number of participants.
+
+Q: What does "Trust is infrastructure" mean?
+A: The strongest institutions in history became unavoidable because they provided superior outcomes. TCP/IP, HTTPS, email protocols — they won because they worked. Lunara's goal is to become the trust infrastructure for the autonomous economy through utility, not mandate. Trust becomes the route everyone recognizes because it produces the best outcomes.
+
+Q: How does Lunara win?
+A: Through gravity, not force. The objective is always to make participation in the Lunara Protocol the most rational choice for both businesses and AI agencies — not to make it mandatory.

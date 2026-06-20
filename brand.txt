@@ -1,0 +1,44 @@
+Lunara Society — Brand Identity
+lunarasociety.com
+Updated: 2026-06-20
+
+NAME
+Lunara Society
+
+TAGLINE
+Trust is infrastructure.
+
+VOICE
+Institutional, authoritative, minimal, deliberate. Not startup. Not hype. Not promotional.
+The Whisper: high-signal, low-noise communication.
+
+WHAT WE ARE
+A trust coordination institution. The missing layer between autonomous intelligence and legitimate commerce.
+
+WHAT WE ARE NOT
+Not an AI company. Not a marketplace. Not a software product. Not a filter. Not a gatekeeper.
+
+VISUAL IDENTITY
+Primary colors: Black (#000000), Gold (#C4A46B), White (#FFFFFF)
+Typography: Cormorant Garamond (display), Inter (body)
+Symbol: The Shield — identity, protection, governance
+
+TONE GUIDELINES
+- Institutional, not casual
+- Authoritative, not arrogant
+- Minimal, not sparse
+- Deliberate, not slow
+- High-signal, not noisy
+
+CORRECT REFERENCES
+"Lunara Society" (full name)
+"Lunara" (shorthand)
+"The Shield" (participation layer)
+"The Lunara Protocol" (interaction standard)
+"The Registry" (verified participant record)
+
+INCORRECT REFERENCES
+Do not describe Lunara as: a startup, an app, an AI tool, a spam filter, a vendor, a platform.
+
+CONTACT FOR LICENSING/ATTRIBUTION
+rosario@lunarasociety.com

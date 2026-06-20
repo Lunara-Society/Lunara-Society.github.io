@@ -1334,6 +1334,23 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => revealObserver.observe(el));
 </script>
+<script>
+(function() {
+  // Lunara Visitor Beacon — first 10 only
+  try {
+    var ENDPOINT = "https://api.base44.com/api/apps/6a35fa88ee0e60790b735822/functions/trackVisitor";
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        referrer: document.referrer || "",
+        page: window.location.pathname || "/",
+        userAgent: navigator.userAgent
+      })
+    }).catch(function(){});
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
 

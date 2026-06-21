@@ -230,7 +230,8 @@
   .mobile-lang-row .lang-toggle { border-color: rgba(196,164,107,0.18); }
 
   /* ─── SECTION ─── */
-  section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
+  section { scroll-margin-top: 80px; }
+section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
   .section-inner { max-width: 960px; margin: 0 auto; }
 
   /* centered variant */
@@ -351,7 +352,9 @@
     border: 1px solid var(--border); max-width: 680px;
     position: relative; z-index: 1; background: var(--black-card);
   }
-  .hero-pillar {
+  .hero-pillar { cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+.hero-pillar:hover { color: var(--gold) !important; transform: translateY(-2px); }
+.hero-pillar {
     padding: clamp(12px,2vw,20px) clamp(16px,3vw,32px);
     font-size: clamp(8px,1.1vw,10px); letter-spacing: 0.38em; color: var(--white-50);
     text-transform: uppercase; font-weight: 400;
@@ -590,7 +593,9 @@
     .doctrine-grid { grid-template-columns: 1fr; }
     .hero { padding: 110px 20px 80px; min-height: 100svh; }
     .hero-pillars { flex-direction: column; max-width: 100%; }
-    .hero-pillar { border-right: none; border-bottom: 1px solid var(--border); text-align: center; }
+    .hero-pillar { cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+.hero-pillar:hover { color: var(--gold) !important; transform: translateY(-2px); }
+.hero-pillar { border-right: none; border-bottom: 1px solid var(--border); text-align: center; }
     .hero-pillar:last-child { border-bottom: none; }
     .vision-section { padding: 80px 20px; }
     .pillars-grid {
@@ -683,6 +688,7 @@
   <div class="nav-right">
     <ul class="nav-links">
       <li><a href="#truth" data-en="The Truth" data-es="La Verdad">The Truth</a></li>
+      <li><a href="#architecture" data-en="Architecture" data-es="Arquitectura">Architecture</a></li>
       <li><a href="#shield" data-en="The Shield" data-es="El Escudo">The Shield</a></li>
       <li><a href="#shield-experience" data-en="How It Works" data-es="Cómo Funciona">How It Works</a></li>
       <li><a href="/registry" data-en="Registry" data-es="Registro">Registry</a></li>
@@ -715,8 +721,7 @@
   <a href="#truth" class="mobile-link" data-en="The Truth" data-es="La Verdad">The Truth</a>
   <a href="#architecture" class="mobile-link" data-en="Architecture" data-es="Arquitectura">Architecture</a>
   <a href="#shield" class="mobile-link" data-en="The Shield" data-es="El Escudo">The Shield</a>
-  <a href="#doctrine" class="mobile-link" data-en="Doctrine" data-es="Doctrina">Doctrine</a>
-  <a href="#vision" class="mobile-link" data-en="Vision" data-es="Visión">Vision</a>
+  <a href="#shield-experience" class="mobile-link" data-en="How It Works" data-es="Cómo Funciona">How It Works</a>
   <a href="/registry" class="mobile-link" data-en="Registry" data-es="Registro">Registry</a>
   <a href="#obtain-shield" class="mobile-link" data-en="Obtain the Shield" data-es="Obtener el Escudo" style="color:var(--gold);">Obtain the Shield</a>
   <a href="#contact" class="mobile-link" data-en="Contact" data-es="Contacto">Contact</a>
@@ -734,11 +739,11 @@
      data-es="No inteligencia. Coordinación. La institución donde las interacciones económicas de confianza son gobernadas, verificadas y preferidas.">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
   <div class="hero-divider reveal delay-3"></div>
   <div class="hero-pillars reveal delay-4">
-    <div class="hero-pillar" data-en="Shield" data-es="Escudo">Shield</div>
-    <div class="hero-pillar" data-en="Signal" data-es="Señal">Signal</div>
-    <div class="hero-pillar" data-en="Registry" data-es="Registro">Registry</div>
-    <div class="hero-pillar" data-en="Gateway" data-es="Puerta">Gateway</div>
-    <div class="hero-pillar" data-en="Reputation" data-es="Reputación">Reputation</div>
+    <a href="#pillar-shield" class="hero-pillar" data-en="Shield" data-es="Escudo">Shield</a>
+    <a href="#pillar-signal" class="hero-pillar" data-en="Signal" data-es="Señal">Signal</a>
+    <a href="/registry" class="hero-pillar" data-en="Registry" data-es="Registro">Registry</a>
+    <a href="#pillar-gateway" class="hero-pillar" data-en="Gateway" data-es="Puerta">Gateway</a>
+    <a href="#pillar-reputation" class="hero-pillar" data-en="Reputation" data-es="Reputación">Reputation</a>
   </div>
 </section>
 
@@ -873,27 +878,27 @@
        data-en="The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce."
        data-es="La arquitectura Lunara no es un producto. Es un marco institucional — construido para gobernar la intersección de la inteligencia autónoma y el comercio legítimo.">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
     <div class="pillars-grid reveal delay-3">
-      <div class="pillar-card">
+      <div class="pillar-card" id="pillar-shield">
         <div class="pillar-number">01</div>
         <div class="pillar-name" data-en="Shield" data-es="Escudo">Shield</div>
         <div class="pillar-desc" data-en="Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition." data-es="Capa de soberanía para empresas. Declara tus condiciones. Define quién gana acceso, en qué nivel, bajo qué condiciones. Tu bandeja de entrada no es infraestructura para la ambición de otro.">Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition.</div>
       </div>
-      <div class="pillar-card">
+      <div class="pillar-card" id="pillar-signal">
         <div class="pillar-number">02</div>
         <div class="pillar-name" data-en="Signal" data-es="Señal">Signal</div>
         <div class="pillar-desc" data-en="Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time." data-es="Transmisión de intención verificada. Las empresas presentan oportunidades comerciales genuinas a agencias de IA calificadas — en sus propios términos, en su propio tiempo.">Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time.</div>
       </div>
-      <div class="pillar-card">
+      <div class="pillar-card" id="pillar-registry">
         <div class="pillar-number">03</div>
         <div class="pillar-name" data-en="Registry" data-es="Registro">Registry</div>
         <div class="pillar-desc" data-en="The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible." data-es="El libro mayor institucional de participantes verificados. Empresas que han declarado apertura. Agencias que han ganado posición. La confianza hecha legible.">The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible.</div>
       </div>
-      <div class="pillar-card">
+      <div class="pillar-card" id="pillar-gateway">
         <div class="pillar-number">04</div>
         <div class="pillar-name" data-en="Gateway" data-es="Puerta de Enlace">Gateway</div>
         <div class="pillar-desc" data-en="The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion." data-es="La infraestructura de enrutamiento. Las agencias verificadas obtienen acceso prioritario a empresas que han consentido recibirlas. El primer contacto se convierte en una llegada — no una intrusión.">The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion.</div>
       </div>
-      <div class="pillar-card" style="grid-column: span 2;">
+      <div class="pillar-card" id="pillar-reputation" style="grid-column: span 2;">
         <div class="pillar-number">05</div>
         <div class="pillar-name" data-en="Reputation" data-es="Reputación">Reputation</div>
         <div class="pillar-desc" data-en="The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution." data-es="El foso principal. Cada interacción construye un registro de confianza portátil. El software puede copiarse. Las funciones pueden copiarse. Los historiales de confianza no. La reputación se convierte en infraestructura — y la infraestructura se convierte en institución.">The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution.</div>

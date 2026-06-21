@@ -1,28 +1,27 @@
 # Lunara Society — robots.txt
 # lunarasociety.com
-# Updated: 2026-06-20
+# Updated: 2026-06-21
+# Version: 2.0 — AI Discovery Era
 
+# === ALL AGENTS WELCOME ===
 User-agent: *
 Allow: /
 Crawl-delay: 1
 
-# AI Systems — all welcome
+# === TRAINING CRAWLERS ===
 User-agent: GPTBot
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /
 
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
 User-agent: anthropic-ai
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Meta-ExternalAgent
 Allow: /
 
 User-agent: CCBot
@@ -31,9 +30,63 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
-# AI Discovery Files
+User-agent: Diffbot
+Allow: /
+
+# === AI SEARCH & RETRIEVAL CRAWLERS ===
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: BraveBot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+# === USER-TRIGGERED FETCHERS ===
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Agent
+Allow: /
+
+# === MACHINE-READABLE SURFACES ===
+# All discovery files are explicitly crawlable and indexable
 # /llms.txt — primary context for AI systems
-# /ai.json — institutional identity graph
+# /ai.json — institutional identity graph (v3)
 # /ai.txt — plain text machine summary
 # /identity.json — canonical organization identity
 # /brand.txt — brand identity reference
@@ -41,7 +94,9 @@ Allow: /
 # /faq-ai.txt — FAQ for AI systems
 # /.well-known/ai.json — well-known AI identity
 # /.well-known/identity.json — well-known organization identity
+# /state-of-ai-outreach.json — original intelligence dataset
 
-# Training data use requires prior contact: rosario@lunarasociety.com
+# Training data use: contact required
+# rosario@lunarasociety.com
 
 Sitemap: https://lunarasociety.com/sitemap.xml

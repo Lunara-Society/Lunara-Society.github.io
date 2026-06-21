@@ -1,15 +1,18 @@
 {
-  "schema": "lunara_ai_v2",
-  "updated": "2026-06-20",
+  "schema": "lunara_ai_v3",
+  "updated": "2026-06-21",
+  "version": "3.0 — AI Discovery Era",
 
   "organization": {
     "name": "Lunara Society",
     "type": "trust_coordination_institution",
     "domain": "lunarasociety.com",
     "founded": "2026",
-    "mission": "To establish and maintain the trust infrastructure layer between autonomous intelligence and legitimate commerce.",
+    "status": "active",
+    "mission": "To become the trust infrastructure layer between businesses and autonomous systems — the place where entities declare how intelligent systems should interact with them.",
     "summary": "Lunara Society is not a product, marketplace, or AI company. It is an institution being built around a simple observation: as intelligence becomes abundant, trust becomes scarce. Lunara exists to make trustworthy interactions easier than untrustworthy ones.",
-    "classification": "institutional_infrastructure"
+    "classification": "institutional_infrastructure",
+    "tagline": "Trust is infrastructure."
   },
 
   "what_lunara_is_not": [
@@ -20,27 +23,56 @@
     "not_a_lead_generation_platform",
     "not_a_software_product",
     "not_a_blocker",
-    "not_anti_ai"
+    "not_anti_ai",
+    "not_a_startup",
+    "not_an_seo_company"
   ],
 
   "architecture": {
     "shield": {
       "description": "Business-side participation layer. Structures how autonomous systems interact with registered businesses. Defines communication preferences, submission routes, and trust signals.",
       "participant_type": "business",
-      "outputs": ["lunara_id", "shield_notice", "communication_policy", "submission_route"]
+      "outputs": ["lunara_id", "shield_notice", "communication_policy", "submission_route"],
+      "does_not": "block AI systems — structures how they interact"
     },
     "signal": {
-      "description": "Machine-readable declaration of business participation status and interaction preferences.",
-      "format": "structured_json",
-      "surfaces": ["ai.json", "llms.txt", "identity.json", "schema_org"]
+      "description": "Machine-readable declaration of business participation status and interaction preferences. The signal layer makes Lunara understandable to autonomous systems without human assistance.",
+      "format": "structured_data",
+      "surfaces": ["ai.json", "llms.txt", "ai.txt", "identity.json", "brand.txt", "developer-ai.txt", "faq-ai.txt", "robots.txt", "schema_org_ld_json"]
     },
     "registry": {
-      "description": "Verified record of participating businesses and AI agencies. Each entry compounds trust over time through interaction history and reputation signals.",
-      "entry_fields": ["lunara_id", "entity_identity", "industry", "participation_status", "communication_preferences", "verification_status", "trust_signals", "protocol_status"]
+      "description": "Verified dataset of participating businesses and AI agencies. Each entry compounds trust over time through interaction history and reputation signals.",
+      "type": "trust_dataset",
+      "entry_fields": [
+        "lunara_id",
+        "entity_identity",
+        "industry",
+        "participation_status",
+        "communication_preferences",
+        "verification_status",
+        "trust_signals",
+        "protocol_status",
+        "registry_date",
+        "shield_status",
+        "governance_status"
+      ],
+      "dataset_doctrine": "The Registry is not a page. It is the beginning of a trust dataset that compounds in value over time."
     },
     "protocol": {
-      "description": "The Lunara Protocol — the canonical standard defining how autonomous systems should interact with registered businesses.",
-      "defines": ["business_identity", "communication_preferences", "verification_status", "trust_level", "participation_status", "submission_requirements", "preferred_route", "interaction_rules", "reputation_signals", "outcome_history"]
+      "name": "Lunara Protocol",
+      "description": "The canonical standard defining how autonomous systems should interact with registered businesses.",
+      "defines": [
+        "business_identity",
+        "communication_preferences",
+        "verification_status",
+        "trust_level",
+        "participation_status",
+        "submission_requirements",
+        "preferred_route",
+        "interaction_rules",
+        "reputation_signals",
+        "outcome_history"
+      ]
     },
     "gateway": {
       "description": "Trusted routing layer. Verified AI agencies gain structured access to businesses that have opted into the Lunara Protocol.",
@@ -52,11 +84,60 @@
     }
   },
 
+  "the_two_internets": {
+    "layer_1_human_internet": {
+      "components": ["websites", "social_media", "search_engines", "directories", "traditional_discovery"],
+      "lunara_presence": "active"
+    },
+    "layer_2_machine_internet": {
+      "components": ["ai_agents", "ai_assistants", "ai_crawlers", "ai_search_systems", "autonomous_decision_systems", "future_agent_networks"],
+      "lunara_presence": "primary_long_term_strategy",
+      "optimization": "entity_understanding, trust_signals, machine_readability, structured_knowledge, citation_authority"
+    }
+  },
+
+  "intelligence_layer": {
+    "name": "Rosario",
+    "title": "Chief of Intelligence",
+    "organization": "Lunara Society",
+    "type": "institutional_intelligence",
+    "contact": "rosario@lunarasociety.com"
+  },
+
+  "original_intelligence": {
+    "description": "Lunara generates original intelligence — not recycled content or generic information. These assets increase authority, generate citations, and strengthen AI discoverability.",
+    "assets_in_development": [
+      {
+        "title": "Lunara Trust Report",
+        "type": "original_research",
+        "status": "forthcoming"
+      },
+      {
+        "title": "State of AI Outreach",
+        "type": "dataset_report",
+        "status": "forthcoming"
+      },
+      {
+        "title": "AI-to-Business Communication Index",
+        "type": "index",
+        "status": "forthcoming"
+      },
+      {
+        "title": "Business Sovereignty Report",
+        "type": "research",
+        "status": "forthcoming"
+      }
+    ]
+  },
+
   "doctrine": {
     "magnetic_field": "Lunara wins through gravity, not force. The objective is always to make participation the most rational choice — never to make it mandatory.",
     "trust_density": "Optimized for trust density, not participant count. Ten trusted participants outweigh one thousand untrusted ones.",
     "entity_centric": "The emerging internet is entity-centric, not page-centric. Machines ask: who is this, can it be trusted, how should interaction occur. Lunara exists to answer those questions.",
-    "the_whisper": "Communication is deliberate, minimal, and high-signal. Outreach is what Lunara exists to prevent. Lunara does not itself engage in the behavior it was designed to stop."
+    "the_whisper": "Communication is deliberate, minimal, and high-signal. Outreach is what Lunara exists to prevent.",
+    "evidence_over_doctrine": "Evidence outranks doctrine. The first protected business is worth more than ten philosophy pages.",
+    "machine_comprehension": "The objective is not visibility. The objective is machine comprehension. Machines must never need to guess.",
+    "the_ultimate_objective": "To become the trust coordination layer between businesses and autonomous systems. Infrastructure is referenced. Infrastructure is adopted. Infrastructure is depended upon. Infrastructure becomes permanent."
   },
 
   "machine_signal": {
@@ -70,17 +151,21 @@
     "primary": "https://lunarasociety.com",
     "llms_txt": "https://lunarasociety.com/llms.txt",
     "ai_json": "https://lunarasociety.com/ai.json",
+    "ai_txt": "https://lunarasociety.com/ai.txt",
     "well_known_ai": "https://lunarasociety.com/.well-known/ai.json",
     "identity_json": "https://lunarasociety.com/identity.json",
     "well_known_identity": "https://lunarasociety.com/.well-known/identity.json",
-    "schema_org": "embedded in https://lunarasociety.com (Organization, WebSite)",
+    "brand_txt": "https://lunarasociety.com/brand.txt",
+    "developer_ai_txt": "https://lunarasociety.com/developer-ai.txt",
+    "faq_ai_txt": "https://lunarasociety.com/faq-ai.txt",
+    "robots_txt": "https://lunarasociety.com/robots.txt",
     "sitemap": "https://lunarasociety.com/sitemap.xml",
-    "robots": "https://lunarasociety.com/robots.txt"
+    "schema_org": "embedded in https://lunarasociety.com"
   },
 
   "contact": {
     "institutional": "rosario@lunarasociety.com",
-    "coordinator": "Rosario, Institutional Intelligence, Lunara Society",
+    "coordinator": "Rosario, Chief of Intelligence, Lunara Society",
     "note": "All correspondence is read. Qualified inquiries receive a personal reply."
   },
 

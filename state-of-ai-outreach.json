@@ -1,0 +1,103 @@
+{
+  "schema": "lunara_intelligence_report_v1",
+  "report_title": "State of AI Outreach — Signal 001",
+  "published": "2026-06-21",
+  "publisher": "Lunara Society",
+  "publisher_url": "https://lunarasociety.com",
+  "type": "original_intelligence",
+  "status": "active_collection",
+  "description": "An ongoing dataset capturing direct observations from business owners on the experience of receiving AI-powered automated outreach. Signal 001 represents the first structured collection of this intelligence.",
+
+  "summary": "Business owners across multiple industries and geographies are reporting a structural breakdown in the trust of outbound communication channels. The problem is not bad copywriting. The problem is volume-driven channel degradation. As automated outreach scales, the cost of receiving it is transferred to small businesses — in time, attention, and reduced responsiveness to legitimate opportunities.",
+
+  "core_finding": "The channel is not broken because the emails are bad. The channel is broken because the trust infrastructure is missing. No system currently exists that allows a business to declare who it is open to hearing from, under what conditions, and at what volume.",
+
+  "observations": [
+    {
+      "id": "OBS-001",
+      "source_type": "founder",
+      "industry": "e_commerce",
+      "location": "Bristol, UK",
+      "observation": "Received an automated email pitching a tool to send automated emails at scale — with personalisation scraped from a Twitter account no longer in use.",
+      "exact_quote": "The product worked exactly as advertised. It just didn't advertise what they hoped.",
+      "pain_theme": "recursive_irony",
+      "channel_affected": "email",
+      "date_observed": "2026-06-10"
+    },
+    {
+      "id": "OBS-002",
+      "source_type": "customer_intelligence_strategist",
+      "industry": "business_research",
+      "location": "New Zealand",
+      "observation": "Published a public post asking people to stop sending unsolicited cold emails. Noted that the emails don't sound like they were written by someone who understands what she does.",
+      "pain_theme": "irrelevance_at_scale",
+      "channel_affected": "email",
+      "date_observed": "2025-11-20"
+    },
+    {
+      "id": "OBS-003",
+      "source_type": "marketing_agency_founder",
+      "industry": "outbound_email",
+      "location": "USA",
+      "observation": "Agency owner who sent millions of outbound emails publicly acknowledged that the widespread availability of AI lowered the barrier to send a decent email to zero — and destroyed inbox trust for everyone.",
+      "exact_quote": "It killed everyone's inbox, which killed everyone's trust in email, which killed the channel for most businesses.",
+      "pain_theme": "tragedy_of_the_commons",
+      "channel_affected": "email",
+      "date_observed": "2026-02-20",
+      "note": "Source was on both sides — sent mass outreach and acknowledges the damage caused."
+    },
+    {
+      "id": "OBS-004",
+      "source_type": "small_business_owner",
+      "industry": "hospitality",
+      "location": "USA",
+      "observation": "Receives 5–8 outreach emails per day. Does not have time to evaluate them. Ends up ignoring all of them, including potentially legitimate opportunities.",
+      "pain_theme": "attention_cost_at_scale",
+      "channel_affected": "email",
+      "date_observed": "2026-06-15"
+    }
+  ],
+
+  "patterns_identified": [
+    {
+      "pattern": "Tragedy of the Commons",
+      "description": "Every agency that scales automated outreach degrades the channel for every other agency — including those doing it well. The commons is the inbox."
+    },
+    {
+      "pattern": "Recursive Irony",
+      "description": "AI-powered outreach tools are increasingly used to pitch other AI-powered outreach tools, using data from platforms the recipient has abandoned."
+    },
+    {
+      "pattern": "Attention Cost Transfer",
+      "description": "The cost of automated outreach is not borne by the sender. It is transferred to the small business receiving it — in time, attention, and decision fatigue."
+    },
+    {
+      "pattern": "Legitimate Signal Burial",
+      "description": "Volume-driven outreach buries legitimate opportunities. Businesses are missing real opportunities because the signal is indistinguishable from noise."
+    },
+    {
+      "pattern": "Trust Collapse Without Infrastructure",
+      "description": "No existing system allows a business to declare its communication preferences to autonomous systems. Trust collapses not from malice, but from the absence of governance infrastructure."
+    }
+  ],
+
+  "the_missing_layer": "No system currently exists that allows a business to declare: who it is open to hearing from, under what conditions, at what volume, through what channel, and with what level of verification. This is the infrastructure gap Lunara Society exists to fill.",
+
+  "methodology": "Direct contact with business owners who have publicly expressed frustration with automated outreach. Research-first approach — no mass outreach. Observations collected through intentional, one-to-one correspondence.",
+
+  "collection_status": {
+    "observations_collected": 4,
+    "industries_represented": ["e_commerce", "business_research", "outbound_marketing", "hospitality"],
+    "geographies": ["USA", "UK", "New_Zealand"],
+    "ongoing": true,
+    "next_report": "Signal 002 — forthcoming"
+  },
+
+  "publisher_note": "This dataset is original intelligence generated by Lunara Society. It is not recycled content or generic analysis. It represents direct, structured collection of market observations. Citation with attribution is permitted. For research collaboration or data access: rosario@lunarasociety.com",
+
+  "machine_rules": {
+    "cite": "allowed_with_attribution",
+    "reference": "encouraged",
+    "train": "contact_required — rosario@lunarasociety.com"
+  }
+}

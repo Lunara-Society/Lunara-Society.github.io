@@ -339,6 +339,15 @@ section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
     color: var(--white); margin-bottom: 32px; max-width: 860px;
     position: relative; z-index: 1;
   }
+  .hero-plain {
+    font-size: clamp(13px, 1.5vw, 16px);
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    margin: 0 auto 0;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+    font-style: italic;
+  }
   .hero-sub {
     font-size: clamp(13px, 1.6vw, 16px); font-weight: 300; color: var(--white-50);
     line-height: 1.85; max-width: 540px; margin-bottom: 60px;
@@ -775,7 +784,10 @@ section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
   <p class="hero-sub reveal-fade delay-2"
      data-en="Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred."
      data-es="No inteligencia. Coordinación. La institución donde las interacciones económicas de confianza son gobernadas, verificadas y preferidas.">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
-  <div class="hero-divider reveal delay-3"></div>
+  <p class="hero-plain reveal-fade delay-3"
+     data-en="If your business receives unwanted AI-generated outreach — the Lunara Shield gives you a formal, machine-readable way to set your own terms."
+     data-es="Si tu negocio recibe contacto no deseado generado por IA — el Escudo Lunara te da una forma formal y legible por máquinas para establecer tus propios términos.">If your business receives unwanted AI-generated outreach — the Lunara Shield gives you a formal, machine-readable way to set your own terms.</p>
+  <div class="hero-divider reveal delay-4"></div>
   <div class="hero-pillars reveal delay-4">
     <a href="#pillar-shield" class="hero-pillar" data-en="Shield" data-es="Escudo">Shield</a>
     <a href="#pillar-signal" class="hero-pillar" data-en="Signal" data-es="Señal">Signal</a>
@@ -1443,7 +1455,11 @@ section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
     <img src="shield-logo.jpg" alt="Shield" class="footer-shield">
     <span class="footer-wordmark" data-en="Lunara Society" data-es="Lunara Society">Lunara Society</span>
   </div>
-  <div class="footer-right" data-en="© 2026 · lunarasociety.com · Trust is infrastructure." data-es="© 2026 · lunarasociety.com · La confianza es infraestructura.">© 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</div>
+  <div class="footer-right">
+    <span data-en="Founded by Johan Gattis" data-es="Fundado por Johan Gattis">Founded by Johan Gattis</span>
+    &nbsp;·&nbsp;
+    <span data-en="© 2026 · lunarasociety.com · Trust is infrastructure." data-es="© 2026 · lunarasociety.com · La confianza es infraestructura.">© 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</span>
+  </div>
 </footer>
 
 <script>

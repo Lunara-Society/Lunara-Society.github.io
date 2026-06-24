@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Area — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#000000;--black-soft:#0A0A0A;--black-mid:#111111;--black-card:#141414;--black-card2:#1a1a1a;
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.35);--gold-bright:#D4B47B;
+  --white:#FFFFFF;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);--white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);
+  --border:rgba(196,164,107,0.18);--green:#4CAF72;--red:#E05555;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);font-family:'Inter',sans-serif;font-weight:300;color:var(--white-90);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(0,0,0,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:28px;height:28px;border-radius:50%}
+.nav-wordmark{font-size:14px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--white-90)}
+.nav-right{font-size:12px;color:var(--white-30);letter-spacing:1px}
+
+/* VIEWS */
+#view-auth{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px 60px;text-align:center}
+#view-dashboard{flex:1;display:none;padding:80px 0 0}
+
+/* AUTH PANEL */
+.auth-panel{background:var(--black-card);border:1px solid var(--border);padding:56px 48px;width:100%;max-width:480px}
+.auth-logo{margin-bottom:32px}
+.auth-logo img{width:48px;border-radius:50%}
+.auth-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.auth-title{font-size:28px;font-weight:300;color:var(--white);margin-bottom:8px}
+.auth-sub{font-size:14px;color:var(--white-30);margin-bottom:40px;line-height:1.6}
+
+/* TABS */
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:32px}
+.auth-tab{flex:1;padding:12px;text-align:center;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--white-30);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
+.auth-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* FORM */
+.form-group{margin-bottom:20px;text-align:left}
+.form-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--white-50);margin-bottom:8px;display:block}
+.form-input{width:100%;background:var(--black-soft);border:1px solid rgba(196,164,107,0.2);padding:14px 16px;font-size:14px;color:var(--white-90);font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;-webkit-user-select:text;-moz-user-select:text;user-select:text}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--white-30)}
+.form-btn{width:100%;background:var(--gold);color:#000;border:none;padding:16px;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:opacity 0.2s;font-family:'Inter',sans-serif}
+.form-btn:hover{opacity:0.85}
+.form-error{font-size:12px;color:var(--red);margin-top:12px;min-height:16px;text-align:center}
+.form-divider{display:flex;align-items:center;gap:16px;margin:24px 0;font-size:11px;color:var(--white-30)}
+.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.form-link{font-size:12px;color:var(--white-30);margin-top:20px;text-align:center}
+.form-link a{color:var(--gold);text-decoration:none;cursor:pointer}
+
+/* PRICING NOTE */
+.pricing-note{background:rgba(196,164,107,0.05);border:1px solid var(--border);padding:20px 24px;margin-top:32px;text-align:left}
+.pricing-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px}
+.pricing-row span:first-child{color:var(--white-50)}
+.pricing-row span:last-child{color:var(--gold);font-weight:500}
+.pricing-cta{display:block;text-align:center;margin-top:16px;padding:12px;background:var(--gold);color:#000;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:opacity 0.2s}
+.pricing-cta:hover{opacity:0.85}
+
+/* DASHBOARD */
+.dash-sidebar{position:fixed;top:64px;left:0;bottom:0;width:260px;background:var(--black-soft);border-right:1px solid var(--border);padding:32px 0;overflow-y:auto}
+.dash-user{padding:0 24px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.dash-user-id{font-family:monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
+.dash-user-name{font-size:15px;color:var(--white-90);margin-bottom:4px}
+.dash-user-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green)}
+.dash-user-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%}
+.dash-nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-size:13px;color:var(--white-50);cursor:pointer;transition:all 0.15s;border-left:2px solid transparent}
+.dash-nav-item:hover{color:var(--white-90);background:rgba(196,164,107,0.04)}
+.dash-nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(196,164,107,0.06)}
+.dash-nav-icon{width:16px;text-align:center;font-size:14px}
+.dash-nav-section{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--white-30);padding:20px 24px 8px;margin-top:8px}
+
+/* MAIN CONTENT */
+.dash-main{margin-left:260px;padding:40px;min-height:calc(100vh - 64px)}
+.dash-section{display:none}
+.dash-section.active{display:block}
+.dash-section-title{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.dash-section-heading{font-size:28px;font-weight:300;color:var(--white);margin-bottom:32px}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;margin-bottom:32px}
+.card{background:var(--black-card);border:1px solid var(--border);padding:28px}
+.card-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.card-value{font-size:22px;font-weight:400;color:var(--white);margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--white-30);letter-spacing:0.5px}
+.card-green{border-color:rgba(76,175,114,0.3)}
+.card-green .card-value{color:var(--green)}
+
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:collapse;margin-top:20px}
+.data-table th{text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--white-30);padding:12px 16px;border-bottom:1px solid var(--border)}
+.data-table td{padding:14px 16px;font-size:13px;color:var(--white-70);border-bottom:1px solid rgba(255,255,255,0.04)}
+.data-table tr:hover td{background:rgba(196,164,107,0.03)}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px}
+.badge-green{background:rgba(76,175,114,0.12);color:var(--green)}
+.badge-gold{background:rgba(196,164,107,0.1);color:var(--gold)}
+.badge-gray{background:rgba(255,255,255,0.05);color:var(--white-30)}
+
+/* AI CONFIG */
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.config-row:last-child{border-bottom:none}
+.config-label{font-size:14px;color:var(--white-70)}
+.config-desc{font-size:12px;color:var(--white-30);margin-top:3px}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0}
+.toggle input{display:none}
+.toggle-track{width:100%;height:100%;background:rgba(255,255,255,0.1);border-radius:12px;transition:background 0.2s}
+.toggle input:checked+.toggle-track{background:var(--gold)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform 0.2s}
+.toggle input:checked~.toggle-thumb{transform:translateX(20px)}
+
+/* COMING SOON */
+.coming-soon{background:var(--black-card);border:1px solid var(--border);padding:60px 40px;text-align:center;margin-top:20px}
+.coming-soon-icon{font-size:32px;margin-bottom:16px;opacity:0.4}
+.coming-soon-title{font-size:18px;color:var(--white-50);margin-bottom:8px}
+.coming-soon-sub{font-size:13px;color:var(--white-30);line-height:1.6}
+
+/* LOGOUT BTN */
+.logout-btn{position:absolute;bottom:24px;left:24px;right:24px;padding:12px;border:1px solid var(--border);background:transparent;color:var(--white-30);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.logout-btn:hover{color:var(--white-70);border-color:rgba(255,255,255,0.2)}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .auth-panel{padding:36px 24px}
+  .dash-sidebar{display:none}
+  .dash-main{margin-left:0;padding:24px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="shield-logo.jpg" alt="Lunara">
+    <span class="nav-wordmark">Lunara Society</span>
+  </a>
+  <span class="nav-right" id="nav-status">MEMBER AREA</span>
+</nav>
+
+<!-- AUTH VIEW -->
+<div id="view-auth">
+  <div class="auth-panel">
+    <div class="auth-logo"><img src="shield-logo.jpg" alt="Lunara Shield"></div>
+    <p class="auth-label">Lunara Society</p>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="form-login">
+      <h2 class="auth-title">Member Access</h2>
+      <p class="auth-sub">Enter your Lunara ID and passphrase to access your protected infrastructure.</p>
+      <div class="form-group">
+        <label class="form-label">Lunara ID</label>
+        <input type="text" class="form-input" id="login-id" placeholder="LUN-BUS-2026-00001284">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Passphrase</label>
+        <input type="password" class="form-input" id="login-pass" placeholder="••••••••••••">
+      </div>
+      <button class="form-btn" onclick="doLogin()">Access Member Area</button>
+      <p class="form-error" id="login-error"></p>
+      <p class="form-link">Not yet a member? <a onclick="switchTab('register')">Obtain the Shield →</a></p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="form-register" style="display:none">
+      <h2 class="auth-title">Obtain the Shield</h2>
+      <p class="auth-sub">Complete your payment to receive your Lunara ID and activate your member access.</p>
+      <div class="pricing-note">
+        <div class="pricing-row"><span>Founding Participant Status</span><span>$99</span></div>
+        <div class="pricing-row"><span>Registry Entry</span><span>Included</span></div>
+        <div class="pricing-row"><span>AI Discovery Stack</span><span>Included</span></div>
+        <div class="pricing-row"><span>Communication Policy</span><span>Included</span></div>
+        <div class="pricing-row"><span>Member Area Access</span><span>Included</span></div>
+        <div class="pricing-row"><span>Permanence</span><span>Lifetime Record</span></div>
+        <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="pricing-cta">Proceed to Payment — $99</a>
+      </div>
+      <p class="form-link" style="margin-top:20px">Already paid? <a onclick="switchTab('login')">Sign in with your Lunara ID →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard">
+  <div class="dash-sidebar">
+    <div class="dash-user">
+      <div class="dash-user-id" id="dash-id">LUN-BUS-2026-00001284</div>
+      <div class="dash-user-name" id="dash-name">Member</div>
+      <div class="dash-user-status">Active · Protected</div>
+    </div>
+
+    <div class="dash-nav-section">Overview</div>
+    <div class="dash-nav-item active" onclick="showSection('overview',this)"><span class="dash-nav-icon">◈</span>Dashboard</div>
+    <div class="dash-nav-item" onclick="showSection('registry',this)"><span class="dash-nav-icon">⊕</span>Registry Record</div>
+    <div class="dash-nav-item" onclick="showSection('shield',this)"><span class="dash-nav-icon">⬡</span>Shield Status</div>
+
+    <div class="dash-nav-section">Identity</div>
+    <div class="dash-nav-item" onclick="showSection('comms',this)"><span class="dash-nav-icon">◎</span>Communication Policy</div>
+    <div class="dash-nav-item" onclick="showSection('trust',this)"><span class="dash-nav-icon">◇</span>Trust Profile</div>
+    <div class="dash-nav-item" onclick="showSection('ai-config',this)"><span class="dash-nav-icon">⊹</span>AI Interaction Prefs</div>
+
+    <div class="dash-nav-section">Intelligence</div>
+    <div class="dash-nav-item" onclick="showSection('interactions',this)"><span class="dash-nav-icon">↺</span>Agent Interactions</div>
+    <div class="dash-nav-item" onclick="showSection('reputation',this)"><span class="dash-nav-icon">◈</span>Reputation History</div>
+    <div class="dash-nav-item" onclick="showSection('discovery',this)"><span class="dash-nav-icon">◉</span>Discovery Config</div>
+
+    <div class="dash-nav-section">Governance</div>
+    <div class="dash-nav-item" onclick="showSection('routing',this)"><span class="dash-nav-icon">→</span>Routing Controls</div>
+    <div class="dash-nav-item" onclick="showSection('governance',this)"><span class="dash-nav-icon">⊞</span>Governance Settings</div>
+    <div class="dash-nav-item" onclick="showSection('intel',this)"><span class="dash-nav-icon">◈</span>Participant Intelligence</div>
+
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <div class="dash-main">
+
+    <!-- OVERVIEW -->
+    <div class="dash-section active" id="section-overview">
+      <p class="dash-section-title">Member Dashboard</p>
+      <h2 class="dash-section-heading">Your Protected Infrastructure</h2>
+      <div class="card-grid">
+        <div class="card card-green">
+          <p class="card-label">Shield Status</p>
+          <p class="card-value">Active</p>
+          <p class="card-sub">Protection enabled · Founding Participant</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Lunara ID</p>
+          <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-BUS-2026-00001284</p>
+          <p class="card-sub">Permanent identifier · Lifetime record</p>
+        </div>
+        <div class="card card-green">
+          <p class="card-label">AI Visibility Score</p>
+          <p class="card-value">94 / 100</p>
+          <p class="card-sub">Grade A · Fully machine-readable</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Registry Status</p>
+          <p class="card-value" style="font-size:16px">Verified · Public</p>
+          <p class="card-sub">Queryable by AI systems</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Communication Policy</p>
+          <p class="card-value" style="font-size:16px">Declared</p>
+          <p class="card-sub">Active · Machine-readable</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Participation Since</p>
+          <p class="card-value" id="card-date" style="font-size:16px">June 2026</p>
+          <p class="card-sub">Founding cohort · Priority status</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGISTRY -->
+    <div class="dash-section" id="section-registry">
+      <p class="dash-section-title">Registry</p>
+      <h2 class="dash-section-heading">Your Registry Record</h2>
+      <div class="card" style="font-family:monospace;font-size:12px;color:rgba(196,164,107,0.8);line-height:2;padding:32px;overflow-x:auto">
+        <p style="color:var(--gold);letter-spacing:2px;font-size:10px;text-transform:uppercase;margin-bottom:16px">LIVE REGISTRY ENTRY — lunarasociety.com/registry</p>
+        <pre id="registry-record">{
+  "lunara_id": "LUN-BUS-2026-00001284",
+  "entity_name": "Your Business",
+  "domain": "yourdomain.com",
+  "industry": "Your Industry",
+  "location": "Your Location",
+  "verification_status": "verified",
+  "shield_status": "active",
+  "registry_date": "2026-06-24",
+  "trust_tier": "founding_participant",
+  "ai_interaction_preference": "structured_inquiry_only",
+  "communication_policy": "declared"
+}</pre>
+      </div>
+    </div>
+
+    <!-- SHIELD -->
+    <div class="dash-section" id="section-shield">
+      <p class="dash-section-title">Protection</p>
+      <h2 class="dash-section-heading">Shield Status</h2>
+      <div class="card-grid">
+        <div class="card card-green"><p class="card-label">Shield ID</p><p class="card-value" style="font-size:14px;font-family:monospace;color:var(--gold)">SHD-2026-84A7C2D1</p><p class="card-sub">Permanent · Non-transferable</p></div>
+        <div class="card card-green"><p class="card-label">Protection Level</p><p class="card-value" style="font-size:16px">Founding Participant</p><p class="card-sub">Highest founding tier</p></div>
+        <div class="card card-green"><p class="card-label">Status</p><p class="card-value">Active ✓</p><p class="card-sub">All systems operational</p></div>
+      </div>
+    </div>
+
+    <!-- COMMS -->
+    <div class="dash-section" id="section-comms">
+      <p class="dash-section-title">Communication</p>
+      <h2 class="dash-section-heading">Communication Policy</h2>
+      <div class="card" style="padding:32px">
+        <p style="font-size:13px;color:var(--white-50);margin-bottom:24px;line-height:1.7">Your communication policy is machine-readable and publicly accessible. AI systems and autonomous agents read this before attempting to contact your business.</p>
+        <div class="config-row">
+          <div><div class="config-label">Accepted Contact Channels</div><div class="config-desc">Email (structured inquiry format)</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Cold AI Outreach</div><div class="config-desc">Unsolicited AI agent contact</div></div>
+          <span class="badge badge-gold">Restricted</span>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Lunara Protocol Access</div><div class="config-desc">Verified agents via Lunara channel</div></div>
+          <span class="badge badge-green">Permitted</span>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Response Expectation</div><div class="config-desc">3–5 business days</div></div>
+          <span class="badge badge-gray">Declared</span>
+        </div>
+        <p style="margin-top:24px;font-size:12px;color:var(--white-30)">Policy editing available in a future update. Contact maya@lunarasociety.com to request changes.</p>
+      </div>
+    </div>
+
+    <!-- TRUST -->
+    <div class="dash-section" id="section-trust">
+      <p class="dash-section-title">Reputation</p>
+      <h2 class="dash-section-heading">Trust Profile</h2>
+      <div class="card-grid">
+        <div class="card card-green"><p class="card-label">Trust Score</p><p class="card-value">Establishing</p><p class="card-sub">Grows with participation history</p></div>
+        <div class="card"><p class="card-label">Verification Level</p><p class="card-value" style="font-size:16px">Verified</p><p class="card-sub">Identity confirmed</p></div>
+      </div>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">◈</div>
+        <div class="coming-soon-title">Trust History — Coming Soon</div>
+        <div class="coming-soon-sub">Full trust scoring, interaction history, and reputation records will be visible here as the Lunara network grows. Every interaction adds to your permanent institutional record.</div>
+      </div>
+    </div>
+
+    <!-- AI CONFIG -->
+    <div class="dash-section" id="section-ai-config">
+      <p class="dash-section-title">AI Preferences</p>
+      <h2 class="dash-section-heading">AI Interaction Preferences</h2>
+      <div class="card" style="padding:32px">
+        <div class="config-row">
+          <div><div class="config-label">Allow AI discovery crawlers</div><div class="config-desc">Let AI systems index and reference your business</div></div>
+          <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Appear in AI recommendations</div><div class="config-desc">Allow AI assistants to recommend your business</div></div>
+          <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Accept structured AI inquiries</div><div class="config-desc">Permit compliant agents to send inquiries via Lunara protocol</div></div>
+          <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="config-row">
+          <div><div class="config-label">Block unsolicited AI contact</div><div class="config-desc">Reject agents that ignore your communication policy</div></div>
+          <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <p style="margin-top:24px;font-size:12px;color:var(--white-30)">Live preference editing coming in a future update. Contact maya@lunarasociety.com to adjust preferences.</p>
+      </div>
+    </div>
+
+    <!-- INTERACTIONS -->
+    <div class="dash-section" id="section-interactions">
+      <p class="dash-section-title">Activity</p>
+      <h2 class="dash-section-heading">Agent Interactions</h2>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">↺</div>
+        <div class="coming-soon-title">Agent Interaction Log — Coming Soon</div>
+        <div class="coming-soon-sub">Every AI agent interaction with your domain will be logged here — including agent identity, protocol compliance status, and outcome. The more AI systems operate in the world, the more valuable this log becomes.</div>
+      </div>
+    </div>
+
+    <!-- REPUTATION -->
+    <div class="dash-section" id="section-reputation">
+      <p class="dash-section-title">History</p>
+      <h2 class="dash-section-heading">Reputation History</h2>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">◈</div>
+        <div class="coming-soon-title">Reputation Records — Coming Soon</div>
+        <div class="coming-soon-sub">Your participation history, protocol compliance record, and institutional reputation will accumulate here permanently. Unlike social ratings, Lunara reputation cannot be deleted or manipulated — it is structural.</div>
+      </div>
+    </div>
+
+    <!-- DISCOVERY -->
+    <div class="dash-section" id="section-discovery">
+      <p class="dash-section-title">Discovery</p>
+      <h2 class="dash-section-heading">Discovery Configuration</h2>
+      <div class="card-grid">
+        <div class="card card-green"><p class="card-label">/llms.txt</p><p class="card-value" style="font-size:16px">Live ✓</p><p class="card-sub">Published to your domain</p></div>
+        <div class="card card-green"><p class="card-label">/ai.json</p><p class="card-value" style="font-size:16px">Live ✓</p><p class="card-sub">Published to your domain</p></div>
+        <div class="card card-green"><p class="card-label">/robots.txt</p><p class="card-value" style="font-size:16px">Updated ✓</p><p class="card-sub">AI crawlers welcomed</p></div>
+        <div class="card card-green"><p class="card-label">Registry Link</p><p class="card-value" style="font-size:16px">Active ✓</p><p class="card-sub">Queryable by AI systems</p></div>
+      </div>
+    </div>
+
+    <!-- ROUTING -->
+    <div class="dash-section" id="section-routing">
+      <p class="dash-section-title">Controls</p>
+      <h2 class="dash-section-heading">Routing Controls</h2>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">→</div>
+        <div class="coming-soon-title">Routing Controls — Coming Soon</div>
+        <div class="coming-soon-sub">Define exactly how AI agents are routed when they contact your business. Approve specific agent classes, block others, set conditional permissions based on agent trust score and protocol compliance.</div>
+      </div>
+    </div>
+
+    <!-- GOVERNANCE -->
+    <div class="dash-section" id="section-governance">
+      <p class="dash-section-title">Governance</p>
+      <h2 class="dash-section-heading">Governance Settings</h2>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">⊞</div>
+        <div class="coming-soon-title">Governance Controls — Coming Soon</div>
+        <div class="coming-soon-sub">Participate in Lunara protocol governance. Propose standard changes, vote on registry updates, and shape the rules that govern how AI systems interact with your industry.</div>
+      </div>
+    </div>
+
+    <!-- INTEL -->
+    <div class="dash-section" id="section-intel">
+      <p class="dash-section-title">Intelligence</p>
+      <h2 class="dash-section-heading">Participant Intelligence</h2>
+      <div class="coming-soon">
+        <div class="coming-soon-icon">◈</div>
+        <div class="coming-soon-title">Network Intelligence — Coming Soon</div>
+        <div class="coming-soon-sub">Aggregated intelligence from the Lunara participant network — AI outreach patterns, protocol compliance trends, agent behavior reports, and early warnings about emerging risks to your industry.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// DEMO AUTH — replace with real backend later
+const DEMO_ID = "LUN-BUS-2026-DEMO";
+const DEMO_PASS = "lunara2026";
+
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'));
+  });
+  document.getElementById('form-login').style.display = tab==='login'?'block':'none';
+  document.getElementById('form-register').style.display = tab==='register'?'block':'none';
+}
+
+function doLogin(){
+  const id = document.getElementById('login-id').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-error');
+  if(!id||!pass){err.textContent='Please enter your Lunara ID and passphrase.';return;}
+  // For now: demo credentials or any valid-looking ID
+  if(pass===DEMO_PASS || pass.length >= 6){
+    const name = id.replace('LUN-BUS-','').replace(/-\d+$/,'') || 'Member';
+    showDashboard(id, name);
+  } else {
+    err.textContent='Invalid credentials. Check your Lunara ID and passphrase.';
+  }
+}
+
+function showDashboard(id, name){
+  document.getElementById('view-auth').style.display='none';
+  document.getElementById('view-dashboard').style.display='block';
+  document.getElementById('dash-id').textContent=id;
+  document.getElementById('dash-name').textContent=id;
+  document.getElementById('card-id').textContent=id;
+  document.getElementById('nav-status').textContent='MEMBER: '+id;
+  const rec = document.getElementById('registry-record');
+  if(rec) rec.textContent = rec.textContent.replace('LUN-BUS-2026-00001284', id);
+}
+
+function doLogout(){
+  document.getElementById('view-auth').style.display='flex';
+  document.getElementById('view-dashboard').style.display='none';
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-error').textContent='';
+  document.getElementById('nav-status').textContent='MEMBER AREA';
+}
+
+function showSection(name, el){
+  document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+// Enter key on login
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && document.getElementById('view-auth').style.display!=='none') doLogin();
+});
+
+// Security
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&['c','s','u','a','p'].includes(e.key.toLowerCase()))e.preventDefault();
+  if(e.key==='F12')e.preventDefault();
+});
+</script>
+</body>
+</html>

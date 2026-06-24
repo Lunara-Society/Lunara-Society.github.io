@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens After the Shield — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#000000;--black-soft:#0A0A0A;--black-mid:#111111;--black-card:#141414;--black-card2:#1a1a1a;
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.35);--gold-bright:#D4B47B;
+  --white:#FFFFFF;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);--white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);
+  --border:rgba(196,164,107,0.18);--green:#4CAF72;--green-dim:rgba(76,175,114,0.15);
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);font-family:'Inter',sans-serif;font-weight:300;color:var(--white-90);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(0,0,0,0.92);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:28px;height:28px;border-radius:50%}
+.nav-wordmark{font-size:14px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--white-90)}
+.nav-links{list-style:none;display:flex;gap:32px}
+.nav-links a{color:var(--white-50);font-size:13px;letter-spacing:1px;text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:#000;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;text-decoration:none;transition:opacity 0.2s}
+.nav-cta:hover{opacity:0.85}
+
+/* HERO */
+.hero{padding:140px 40px 80px;text-align:center;max-width:900px;margin:0 auto}
+.hero-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+.hero-title{font-size:clamp(36px,5vw,64px);font-weight:300;line-height:1.1;margin-bottom:24px}
+.hero-title span{color:var(--gold)}
+.hero-sub{font-size:18px;color:var(--white-50);line-height:1.7;max-width:620px;margin:0 auto}
+
+/* CONNECTOR LINE */
+.flow-connector{display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.flow-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--gold),transparent)}
+.flow-arrow{color:var(--gold);font-size:18px;margin-top:-4px}
+
+/* STEP CARDS */
+.steps-section{max-width:800px;margin:0 auto;padding:40px 40px 120px}
+
+.step-card{position:relative;background:var(--black-card);border:1px solid var(--border);padding:40px;margin-bottom:0}
+.step-card.active{border-color:var(--gold)}
+.step-number{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.step-title{font-size:22px;font-weight:400;color:var(--white);margin-bottom:16px}
+.step-desc{font-size:15px;color:var(--white-50);line-height:1.7;margin-bottom:28px}
+
+/* EXAMPLE BOX */
+.example-box{background:var(--black-soft);border:1px solid rgba(196,164,107,0.12);padding:28px;margin-top:20px}
+.example-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.example-id{font-family:monospace;font-size:16px;color:var(--gold-bright);letter-spacing:3px}
+.example-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px}
+.example-row:last-child{border-bottom:none}
+.example-key{color:var(--white-50);letter-spacing:0.5px}
+.example-val{color:var(--white-70);text-align:right;max-width:60%}
+.example-val.green{color:var(--green)}
+.example-val.gold{color:var(--gold)}
+.badge-verified{display:inline-flex;align-items:center;gap:6px;background:var(--green-dim);border:1px solid rgba(76,175,114,0.3);color:var(--green);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px}
+.badge-active{display:inline-flex;align-items:center;gap:6px;background:rgba(196,164,107,0.1);border:1px solid rgba(196,164,107,0.3);color:var(--gold);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px}
+
+/* CODE BLOCK */
+.code-block{background:#050505;border:1px solid rgba(196,164,107,0.1);padding:24px;overflow-x:auto;margin-top:16px}
+.code-block pre{font-family:monospace;font-size:12px;color:rgba(196,164,107,0.7);line-height:1.8;white-space:pre}
+
+/* MACHINE NOTE */
+.machine-note{background:rgba(196,164,107,0.04);border-left:2px solid var(--gold);padding:16px 20px;margin-top:20px;font-size:13px;color:var(--white-50);line-height:1.6}
+.machine-note strong{color:var(--gold)}
+
+/* FINAL STATE */
+.final-state{background:linear-gradient(135deg,#0a0800,#0d0c00);border:1px solid var(--gold);padding:60px 40px;text-align:center;margin:60px 0}
+.final-state-title{font-size:32px;font-weight:300;color:var(--white);margin-bottom:16px}
+.final-state-sub{font-size:16px;color:var(--white-50);margin-bottom:40px;line-height:1.7}
+.final-badges{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:40px}
+.final-badge{display:flex;align-items:center;gap:8px;background:rgba(196,164,107,0.08);border:1px solid var(--border);padding:10px 20px;font-size:12px;letter-spacing:1px;color:var(--white-70)}
+.final-badge::before{content:"✦";color:var(--gold)}
+
+/* CTA SECTION */
+.cta-section{max-width:700px;margin:0 auto;padding:80px 40px;text-align:center}
+.cta-title{font-size:28px;font-weight:300;margin-bottom:16px}
+.cta-sub{font-size:16px;color:var(--white-50);margin-bottom:40px;line-height:1.7}
+.cta-price{font-size:48px;font-weight:300;color:var(--gold);margin-bottom:8px}
+.cta-price-note{font-size:13px;color:var(--white-30);letter-spacing:1px;margin-bottom:40px}
+.cta-btn{display:inline-block;background:var(--gold);color:#000;font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;padding:18px 48px;text-decoration:none;transition:opacity 0.2s}
+.cta-btn:hover{opacity:0.85}
+.cta-alt{margin-top:20px;font-size:13px;color:var(--white-30)}
+.cta-alt a{color:var(--white-50);text-decoration:none}
+
+/* FOOTER */
+footer{padding:40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-left{display:flex;align-items:center;gap:10px}
+.footer-left img{width:24px;border-radius:50%}
+.footer-wordmark{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--white-50)}
+.footer-right{font-size:12px;color:var(--white-30);letter-spacing:0.5px}
+
+/* SECURITY BAR */
+.security-bar{background:rgba(196,164,107,0.04);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 40px;display:flex;align-items:center;gap:16px;font-size:11px;color:var(--white-30);letter-spacing:1px}
+.security-bar span{color:var(--gold)}
+
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .hero{padding:100px 20px 60px}
+  .steps-section{padding:20px 20px 80px}
+  .step-card{padding:28px 20px}
+  .final-state{padding:40px 20px}
+  .cta-section{padding:60px 20px}
+  footer{padding:28px 20px}
+}
+
+/* PROTECT */
+body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="shield-logo.jpg" alt="Lunara">
+    <span class="nav-wordmark">Lunara Society</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/registry.html">Registry</a></li>
+    <li><a href="/member.html">Member Area</a></li>
+  </ul>
+  <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="nav-cta">Obtain the Shield</a>
+</nav>
+
+<div class="security-bar">
+  <span>✦ PUBLIC DEMONSTRATION PAGE</span>
+  &nbsp;·&nbsp; This page is intentionally transparent. Trust grows when uncertainty decreases.
+</div>
+
+<section class="hero">
+  <p class="hero-label">The Shield Process</p>
+  <h1 class="hero-title">What happens after<br><span>you obtain the Shield</span></h1>
+  <p class="hero-sub">Every step. Every output. Every transformation. No abstraction — this is exactly what occurs when a business participates in Lunara Society.</p>
+</section>
+
+<section class="steps-section">
+
+  <!-- STEP 1 -->
+  <div class="step-card">
+    <p class="step-number">Step 01</p>
+    <h2 class="step-title">Application Submitted</h2>
+    <p class="step-desc">Your business information enters the Lunara verification queue. Name, domain, industry, and contact details are received and assigned a processing token. Nothing is published yet.</p>
+    <div class="example-box">
+      <p class="example-label">Processing Receipt</p>
+      <div class="example-row"><span class="example-key">Token</span><span class="example-val gold" style="font-family:monospace">LUN-PROC-2026-8A3F</span></div>
+      <div class="example-row"><span class="example-key">Status</span><span class="example-val">Received — Pending Verification</span></div>
+      <div class="example-row"><span class="example-key">Queue Position</span><span class="example-val">Active</span></div>
+      <div class="example-row"><span class="example-key">Est. Processing</span><span class="example-val">24–48 hours</span></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 2 -->
+  <div class="step-card">
+    <p class="step-number">Step 02</p>
+    <h2 class="step-title">Business Verification</h2>
+    <p class="step-desc">Lunara confirms the legitimacy of the business. Domain ownership, operational status, and institutional signals are reviewed. This is not bureaucracy — it is how trust begins. Unverified entities cannot hold a Lunara ID.</p>
+    <div class="example-box">
+      <p class="example-label">Verification Signals Checked</p>
+      <div class="example-row"><span class="example-key">Domain Active</span><span class="example-val green">Confirmed</span></div>
+      <div class="example-row"><span class="example-key">Business Operational</span><span class="example-val green">Confirmed</span></div>
+      <div class="example-row"><span class="example-key">Contact Verifiable</span><span class="example-val green">Confirmed</span></div>
+      <div class="example-row"><span class="example-key">Fraud Signals</span><span class="example-val green">None Detected</span></div>
+    </div>
+    <div class="machine-note"><strong>Machine implication:</strong> AI systems that query the Lunara Registry will see verification status as a trust signal. Unverified entities do not appear.</div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 3 -->
+  <div class="step-card active">
+    <p class="step-number">Step 03</p>
+    <h2 class="step-title">Lunara ID Issued</h2>
+    <p class="step-desc">A permanent institutional identifier is assigned to your business. This ID is yours for life. It appears in every Lunara system, every trust record, and every machine-readable file associated with your domain.</p>
+    <div class="example-box">
+      <p class="example-label">Lunara ID — Example</p>
+      <p class="example-id">LUN-BUS-2026-00001284</p>
+      <div style="margin-top:20px">
+        <div class="example-row"><span class="example-key">Entity Type</span><span class="example-val">Business Participant</span></div>
+        <div class="example-row"><span class="example-key">Issued</span><span class="example-val">June 2026</span></div>
+        <div class="example-row"><span class="example-key">Registry Status</span><span class="example-val green">Active</span></div>
+        <div class="example-row"><span class="example-key">Permanence</span><span class="example-val">Lifetime Record</span></div>
+      </div>
+    </div>
+    <div class="machine-note"><strong>Machine implication:</strong> The Lunara ID becomes a persistent anchor in the trust graph. Every interaction, every record, every reputation signal is attached to this identifier permanently.</div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 4 -->
+  <div class="step-card">
+    <p class="step-number">Step 04</p>
+    <h2 class="step-title">Registry Entry Created</h2>
+    <p class="step-desc">Your business is added to the Lunara Registry — a machine-readable, publicly queryable dataset of verified participants. This is the foundational trust record. AI systems that encounter your domain can query this record directly.</p>
+    <div class="example-box">
+      <p class="example-label">Registry Record — Example</p>
+      <div class="code-block"><pre>{
+  "lunara_id": "LUN-BUS-2026-00001284",
+  "entity_name": "Meridian Studio",
+  "domain": "meridianstudio.com",
+  "industry": "Interior Design",
+  "location": "Austin, TX",
+  "verification_status": "verified",
+  "shield_status": "active",
+  "registry_date": "2026-06-24",
+  "trust_tier": "founding_participant",
+  "ai_interaction_preference": "structured_inquiry_only",
+  "contact_route": "contact@meridianstudio.com"
+}</pre></div>
+    </div>
+    <div class="machine-note"><strong>Machine implication:</strong> Any AI assistant, crawler, or autonomous agent that queries lunarasociety.com/registry will find this record. Your participation becomes a discoverable, structured fact — not just a claim.</div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 5 -->
+  <div class="step-card">
+    <p class="step-number">Step 05</p>
+    <h2 class="step-title">Communication Policy Established</h2>
+    <p class="step-desc">Your business declares exactly how it accepts communication from AI systems and autonomous agents. This is your institutional voice on the machine-readable web. It tells every intelligent system the rules of engagement before they attempt contact.</p>
+    <div class="example-box">
+      <p class="example-label">Communication Policy — Example</p>
+      <div class="code-block"><pre>LUNARA COMMUNICATION POLICY
+Entity: Meridian Studio
+ID: LUN-BUS-2026-00001284
+
+Accepted Channels: Email (structured inquiry format)
+Response Time: 3–5 business days
+AI Agent Access: Permitted via Lunara Protocol only
+Cold Contact: Not accepted
+Preferred Tone: Professional, concise
+Language: English
+Emergency Contact: contact@meridianstudio.com
+
+This policy is machine-readable and enforced
+by Lunara Society participation standards.</pre></div>
+    </div>
+    <div class="machine-note"><strong>Machine implication:</strong> Compliant AI systems read this policy before contacting your business. Non-compliant agents that ignore it are flagged in the Lunara trust graph — permanently.</div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 6 -->
+  <div class="step-card active">
+    <p class="step-number">Step 06</p>
+    <h2 class="step-title">Shield Activated</h2>
+    <p class="step-desc">The Lunara Shield goes live on your domain. It is not a badge or an image. It is a machine-readable declaration — a structured signal embedded in your domain's identity layer that tells AI systems, agents, and crawlers that this business operates under Lunara protection standards.</p>
+    <div class="example-box">
+      <p class="example-label">Shield Status</p>
+      <div class="example-row"><span class="example-key">Shield ID</span><span class="example-val gold" style="font-family:monospace">SHD-2026-84A7C2D1</span></div>
+      <div class="example-row"><span class="example-key">Activation Date</span><span class="example-val">June 24, 2026</span></div>
+      <div class="example-row"><span class="example-key">Protection Level</span><span class="example-val gold">Founding Participant</span></div>
+      <div class="example-row"><span class="example-key">Status</span><span class="example-val"><span class="badge-active">✦ ACTIVE</span></span></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 7 -->
+  <div class="step-card">
+    <p class="step-number">Step 07</p>
+    <h2 class="step-title">AI Discovery Configuration Published</h2>
+    <p class="step-desc">Your domain receives a full AI identity stack — the machine-readable files that tell every AI crawler, assistant, and autonomous system who you are, what you do, and how you want to be treated. These files are published to your domain within 48 hours of Shield activation.</p>
+    <div class="example-box">
+      <p class="example-label">Files Deployed to Your Domain</p>
+      <div class="example-row"><span class="example-key" style="font-family:monospace">/llms.txt</span><span class="example-val green">Published ✓</span></div>
+      <div class="example-row"><span class="example-key" style="font-family:monospace">/ai.json</span><span class="example-val green">Published ✓</span></div>
+      <div class="example-row"><span class="example-key" style="font-family:monospace">/robots.txt</span><span class="example-val green">Updated ✓</span></div>
+      <div class="example-row"><span class="example-key" style="font-family:monospace">/sitemap.xml</span><span class="example-val green">Updated ✓</span></div>
+      <div class="example-row"><span class="example-key">Lunara Registry Link</span><span class="example-val green">Active ✓</span></div>
+    </div>
+    <div class="machine-note"><strong>Machine implication:</strong> When ChatGPT, Claude, Perplexity, Gemini, or any AI agent encounters your domain, it will find structured, accurate identity information — your specialization, your communication preferences, your trust signals. No guessing. No omission.</div>
+  </div>
+
+  <div class="flow-connector"><div class="flow-line"></div><div class="flow-arrow">↓</div></div>
+
+  <!-- STEP 8 -->
+  <div class="step-card active">
+    <p class="step-number">Step 08</p>
+    <h2 class="step-title">Protected Status Achieved</h2>
+    <p class="step-desc">Your business has completed the full Lunara participation process. You are now a verified, Shield-protected entity in the Lunara trust infrastructure. Your domain is machine-readable. Your identity is structured. Your communication preferences are declared. Your reputation history has begun.</p>
+    <div class="example-box">
+      <p class="example-label">Verification Profile — Protected</p>
+      <div class="example-row"><span class="example-key">Registry Status</span><span class="example-val"><span class="badge-verified">✓ VERIFIED</span></span></div>
+      <div class="example-row"><span class="example-key">Shield Status</span><span class="example-val"><span class="badge-active">✦ ACTIVE</span></span></div>
+      <div class="example-row"><span class="example-key">AI Visibility Score</span><span class="example-val green">94/100 — Grade A</span></div>
+      <div class="example-row"><span class="example-key">Communication Policy</span><span class="example-val green">Declared</span></div>
+      <div class="example-row"><span class="example-key">Trust Profile</span><span class="example-val green">Established</span></div>
+      <div class="example-row"><span class="example-key">Participation Tier</span><span class="example-val gold">Founding Participant</span></div>
+    </div>
+  </div>
+
+  <!-- FINAL STATE -->
+  <div class="final-state">
+    <h2 class="final-state-title">The transformation is complete.</h2>
+    <p class="final-state-sub">You are no longer invisible to the machine web.<br>You are no longer subject to AI systems that guess who you are.<br>You are no longer without a declared communication standard.<br>You are a verified, protected participant in the trust infrastructure of the autonomous age.</p>
+    <div class="final-badges">
+      <div class="final-badge">Verified Identity</div>
+      <div class="final-badge">Registry Record</div>
+      <div class="final-badge">Communication Policy</div>
+      <div class="final-badge">Shield Protection</div>
+      <div class="final-badge">AI Discovery Stack</div>
+      <div class="final-badge">Trust Profile</div>
+      <div class="final-badge">Founding Participant Status</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to begin?</h2>
+  <p class="cta-sub">The Shield is the entry point. Everything you saw above begins the moment you participate.</p>
+  <p class="cta-price">$99</p>
+  <p class="cta-price-note">ONE-TIME &nbsp;·&nbsp; FOUNDING PARTICIPANT RATE &nbsp;·&nbsp; PERMANENT RECORD</p>
+  <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="cta-btn">Obtain the Shield</a>
+  <p class="cta-alt">Already a member? <a href="/member.html">Access your Member Area →</a></p>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <img src="shield-logo.jpg" alt="Shield">
+    <span class="footer-wordmark">Lunara Society</span>
+  </div>
+  <div class="footer-right">Founded by Johan Gattis &nbsp;·&nbsp; © 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</div>
+</footer>
+
+<script>
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&['c','s','u','a','p'].includes(e.key.toLowerCase()))e.preventDefault();
+  if(e.key==='F12'||e.key==='PrintScreen')e.preventDefault();
+});
+</script>
+</body>
+</html>

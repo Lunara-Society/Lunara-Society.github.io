@@ -63,17 +63,17 @@ button{cursor:pointer;font-family:'Inter',sans-serif}
 }
 .hall-bg{
   position:absolute;inset:0;
-  background:url('hall-bg.png') center top / cover no-repeat;
+  background:url('hall-bg.png') center center / cover no-repeat;
   z-index:0;
 }
 .hall-bg::after{
   content:'';position:absolute;inset:0;
   background:linear-gradient(to bottom,
-    rgba(0,0,0,0.20) 0%,
-    rgba(0,0,0,0.05) 25%,
-    rgba(0,0,0,0.00) 45%,
-    rgba(0,0,0,0.50) 78%,
-    rgba(0,0,0,0.97) 100%
+    rgba(0,0,0,0.35) 0%,
+    rgba(0,0,0,0.15) 30%,
+    rgba(0,0,0,0.10) 55%,
+    rgba(0,0,0,0.65) 80%,
+    rgba(0,0,0,0.95) 100%
   );
 }
 
@@ -135,201 +135,95 @@ button{cursor:pointer;font-family:'Inter',sans-serif}
 /* Maya hologram platform */
 .platform-wrap{
   position:relative;z-index:10;
-  margin-top:clamp(4px,1.5vw,16px);
+  margin-top:clamp(8px,2vw,20px);
   display:flex;flex-direction:column;align-items:center;
   width:100%;
 }
-
-/* Projector device base — emits beam upward */
-.projector-device{
-  position:absolute;
-  bottom:0;left:50%;transform:translateX(-50%);
-  width:clamp(60px,8vw,120px);height:clamp(10px,1.5vw,22px);
-  background:linear-gradient(to bottom,rgba(196,164,107,0.6),rgba(196,164,107,0.15));
-  border-radius:4px;
-  box-shadow:0 0 20px rgba(196,164,107,0.4), 0 0 60px rgba(126,184,212,0.3);
-  z-index:12;
-}
-.projector-device::before{
-  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:30%;height:40%;
-  background:rgba(126,184,212,0.8);
-  border-radius:2px;
-  box-shadow:0 0 12px rgba(126,184,212,1);
-  animation:projectorLens 2s ease-in-out infinite;
-}
-@keyframes projectorLens{
-  0%,100%{opacity:0.8;box-shadow:0 0 12px rgba(126,184,212,1)}
-  50%{opacity:1;box-shadow:0 0 20px rgba(126,184,212,1),0 0 40px rgba(126,184,212,0.5)}
-}
-
-/* Projection beam rising from device */
-.projection-beam{
-  position:absolute;
-  bottom:clamp(12px,2vw,26px);
-  left:50%;transform:translateX(-50%);
-  width:clamp(100px,14vw,220px);
-  height:clamp(220px,38vw,520px);
-  background:linear-gradient(to top,
-    rgba(126,184,212,0.22) 0%,
-    rgba(126,184,212,0.10) 30%,
-    rgba(126,184,212,0.04) 65%,
-    transparent 100%
-  );
-  clip-path:polygon(20% 100%, 80% 100%, 100% 0%, 0% 0%);
-  filter:blur(4px);
-  animation:beamPulse 3s ease-in-out infinite;
-  z-index:6;
-}
-@keyframes beamPulse{
-  0%,100%{opacity:0.7}
-  50%{opacity:1}
-}
-
-/* Platform glow on floor */
 .platform-glow{
-  position:absolute;bottom:clamp(10px,1.5vw,22px);left:50%;transform:translateX(-50%);
-  width:clamp(200px,26vw,380px);height:clamp(40px,6vw,90px);
-  background:radial-gradient(ellipse,rgba(126,184,212,0.45) 0%,rgba(126,184,212,0.1) 50%,transparent 75%);
-  filter:blur(10px);
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  width:300px;height:80px;
+  background:radial-gradient(ellipse,rgba(126,184,212,0.35) 0%,transparent 70%);
+  filter:blur(12px);
   animation:platformPulse 3s ease-in-out infinite;
-  z-index:5;
 }
 @keyframes platformPulse{
-  0%,100%{opacity:0.65;transform:translateX(-50%) scaleX(1)}
-  50%{opacity:1;transform:translateX(-50%) scaleX(1.12)}
+  0%,100%{opacity:0.6;transform:translateX(-50%) scaleX(1)}
+  50%{opacity:1;transform:translateX(-50%) scaleX(1.15)}
 }
 
-/* Maya hologram wrapper — floats above device */
+/* Maya hologram image */
 .maya-hologram{
   position:relative;
-  width:clamp(160px,20vw,300px);
-  margin-bottom:clamp(14px,2.5vw,36px);
+  width:clamp(180px,22vw,340px);
+  animation:mayaAppear 3s ease-out forwards, mayaFloat 6s ease-in-out 3s infinite;
   opacity:0;
-  z-index:10;
-  animation:
-    mayaMaterialize 4s cubic-bezier(0.16,1,0.3,1) 0.5s forwards,
-    mayaWalk 5s ease-in-out 4.5s infinite,
-    mayaBreath 7s ease-in-out 4.5s infinite;
-  filter:
-    drop-shadow(0 0 18px rgba(126,184,212,0.9))
-    drop-shadow(0 0 40px rgba(126,184,212,0.5))
-    drop-shadow(0 0 80px rgba(126,184,212,0.2));
+  filter:drop-shadow(0 0 30px rgba(126,184,212,0.7)) drop-shadow(0 0 60px rgba(126,184,212,0.4));
 }
-
-/* She materializes — fading in from bottom up, like a projection building itself */
-@keyframes mayaMaterialize{
-  0%{
-    opacity:0;
-    clip-path:inset(100% 0% 0% 0%);
-    filter:drop-shadow(0 0 40px rgba(126,184,212,1)) brightness(2);
-  }
-  20%{opacity:0.3;clip-path:inset(80% 0% 0% 0%)}
-  50%{opacity:0.7;clip-path:inset(40% 0% 0% 0%);filter:drop-shadow(0 0 30px rgba(126,184,212,0.9)) brightness(1.4)}
-  80%{opacity:0.9;clip-path:inset(5% 0% 0% 0%)}
-  100%{
-    opacity:1;
-    clip-path:inset(0% 0% 0% 0%);
-    filter:drop-shadow(0 0 18px rgba(126,184,212,0.9)) drop-shadow(0 0 40px rgba(126,184,212,0.5));
-  }
+@keyframes mayaAppear{
+  0%{opacity:0;transform:translateY(30px) scaleY(0.95)}
+  40%{opacity:0.4}
+  70%{opacity:0.85}
+  100%{opacity:1;transform:translateY(0) scaleY(1)}
 }
-
-/* Subtle walk cycle — weight shift and gentle forward movement */
-@keyframes mayaWalk{
-  0%{transform:translateY(0) rotate(0deg) scaleX(1)}
-  15%{transform:translateY(-4px) rotate(-0.4deg) scaleX(1.005)}
-  30%{transform:translateY(-8px) rotate(0deg) scaleX(1)}
-  45%{transform:translateY(-4px) rotate(0.4deg) scaleX(0.995)}
-  60%{transform:translateY(-10px) rotate(0deg) scaleX(1)}
-  75%{transform:translateY(-5px) rotate(-0.3deg) scaleX(1.005)}
-  100%{transform:translateY(0) rotate(0deg) scaleX(1)}
+@keyframes mayaFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
 }
-
-/* Gentle breathing / hover */
-@keyframes mayaBreath{
-  0%,100%{filter:drop-shadow(0 0 18px rgba(126,184,212,0.9)) drop-shadow(0 0 40px rgba(126,184,212,0.5)) brightness(1)}
-  50%{filter:drop-shadow(0 0 28px rgba(126,184,212,1)) drop-shadow(0 0 60px rgba(126,184,212,0.6)) brightness(1.08)}
-}
-
 .maya-hologram img{
   width:100%;
-  display:block;
-  /* No mix-blend-mode — transparent PNG floats clean */
-  animation:holoFlicker 9s ease-in-out infinite;
+  mix-blend-mode:screen;
+  animation:holoFlicker 8s ease-in-out infinite;
 }
-
 @keyframes holoFlicker{
-  0%,100%{opacity:1}
-  10%{opacity:0.94}
-  11%{opacity:1}
-  35%{opacity:0.97}
-  60%{opacity:1}
-  78%{opacity:0.88}
-  79%{opacity:1}
-  80%{opacity:0.72}
-  81%{opacity:1}
+  0%,100%{opacity:1;filter:hue-rotate(0deg) brightness(1)}
+  15%{opacity:0.92;filter:hue-rotate(5deg) brightness(1.05)}
+  30%{opacity:1}
+  72%{opacity:0.95;filter:hue-rotate(-3deg) brightness(0.98)}
+  73%{opacity:0.7}
+  74%{opacity:1}
 }
 
-/* Holographic scan lines over Maya */
+/* Scan lines overlay on Maya */
 .maya-scanlines{
   position:absolute;inset:0;
   background:repeating-linear-gradient(
     0deg,
-    transparent 0px,
-    transparent 2px,
-    rgba(126,184,212,0.05) 2px,
-    rgba(126,184,212,0.05) 3px
+    transparent,transparent 3px,
+    rgba(126,184,212,0.04) 3px,rgba(126,184,212,0.04) 4px
   );
   pointer-events:none;
-  border-radius:2px;
-  animation:scanDrift 3s linear infinite;
+  animation:scanMove 4s linear infinite;
 }
-@keyframes scanDrift{
+@keyframes scanMove{
   0%{background-position:0 0}
-  100%{background-position:0 60px}
+  100%{background-position:0 100px}
 }
 
-/* Horizontal glitch bars — occasional hologram artifacts */
-.maya-hologram::before{
-  content:'';
-  position:absolute;
-  left:0;right:0;
-  height:3px;
-  background:rgba(126,184,212,0.3);
-  top:35%;
-  opacity:0;
-  animation:glitchBar1 11s ease-in-out infinite;
+/* Projection cone from base */
+.projection-cone{
+  position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:80px solid transparent;
+  border-right:80px solid transparent;
+  border-bottom:120px solid rgba(126,184,212,0.08);
+  filter:blur(8px);
+  animation:coneFlicker 3s ease-in-out infinite;
 }
-.maya-hologram::after{
-  content:'';
-  position:absolute;
-  left:0;right:0;
-  height:2px;
-  background:rgba(126,184,212,0.2);
-  top:60%;
-  opacity:0;
-  animation:glitchBar2 13s ease-in-out infinite;
-}
-@keyframes glitchBar1{
-  0%,68%,70%,100%{opacity:0}
-  69%{opacity:1;transform:translateX(-3px)}
-}
-@keyframes glitchBar2{
-  0%,84%,87%,100%{opacity:0}
-  85%,86%{opacity:1;transform:translateX(4px)}
+@keyframes coneFlicker{
+  0%,100%{opacity:0.6;border-bottom-color:rgba(126,184,212,0.08)}
+  50%{opacity:1;border-bottom-color:rgba(126,184,212,0.14)}
 }
 
 /* Platform disc */
 .platform-disc{
-  width:clamp(180px,24vw,360px);height:14px;
-  background:radial-gradient(ellipse,rgba(196,164,107,0.55) 0%,rgba(196,164,107,0.12) 50%,transparent 72%);
-  margin-bottom:clamp(8px,1.5vw,24px);
+  width:clamp(200px,28vw,400px);height:16px;
+  background:radial-gradient(ellipse,rgba(196,164,107,0.5) 0%,rgba(196,164,107,0.1) 50%,transparent 70%);
+  margin-top:-8px;
   animation:discGlow 3s ease-in-out infinite;
-  z-index:11;
 }
 @keyframes discGlow{
-  0%,100%{opacity:0.75;transform:scaleX(1)}
-  50%{opacity:1;transform:scaleX(1.06)}
+  0%,100%{opacity:0.7;transform:scaleX(1)}
+  50%{opacity:1;transform:scaleX(1.08)}
 }
 
 /* Scroll prompt */
@@ -562,7 +456,7 @@ footer{
   .hall-arches{gap:12px;padding:0 12px;flex-wrap:wrap;margin-top:20px}
   .arch-label{display:none}
   .hall-title{font-size:clamp(28px,7vw,52px)}
-  .maya-hologram{width:clamp(120px,38vw,200px)}
+  .maya-hologram{width:clamp(140px,45vw,220px)}
   .shield-hero{grid-template-columns:1fr;gap:40px}
   .shield-steps{grid-template-columns:1fr}
   .doctrine-item{padding:18px 20px}
@@ -675,13 +569,12 @@ footer{
   <!-- Maya Hologram Platform -->
   <div class="platform-wrap">
     <div class="platform-glow"></div>
-    <div class="projection-beam"></div>
+    <div class="projection-cone"></div>
     <div class="maya-hologram" id="maya">
       <div class="maya-scanlines"></div>
-      <img src="maya-hologram.png" alt="Maya — Representative of Lunara Society, appearing as holographic projection" draggable="false">
+      <img src="maya-hologram.png" alt="Maya — Intelligence Correspondent, Lunara Society" draggable="false">
     </div>
     <div class="platform-disc"></div>
-    <div class="projector-device"></div>
   </div>
 
   <div class="scroll-prompt" data-en="Scroll to Enter the Institution" data-es="Desplácese para Entrar">Scroll to Enter the Institution</div>

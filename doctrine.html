@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctrine — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
+  --black:#000;--black-soft:#080604;--black-mid:#0f0d0a;
+  --white:#fff;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);
+  --white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);--white-15:rgba(255,255,255,0.15);
+  --border:rgba(196,164,107,0.2);
+}
+html{scroll-behavior:smooth;height:100%}
+body{
+  background:var(--black-soft);
+  font-family:'Inter',sans-serif;font-weight:300;
+  color:var(--white-90);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+img{max-width:100%;height:auto;display:block}
+
+/* FADE IN */
+body{animation:pageIn 0.6s ease forwards;}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
+
+/* BACK NAV */
+.page-nav{
+  position:fixed;top:0;left:0;right:0;
+  height:52px;
+  background:rgba(0,0,0,0.88);
+  border-bottom:1px solid rgba(196,164,107,0.12);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,48px);
+  z-index:100;
+  backdrop-filter:blur(12px);
+}
+.back-link{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(196,164,107,0.6);transition:color 0.2s;
+  cursor:pointer;
+}
+.back-link:hover{color:var(--gold);}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+}
+.nav-right{
+  display:flex;gap:clamp(12px,3vw,32px);
+}
+.nav-link{
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(196,164,107,0.45);transition:color 0.2s;cursor:pointer;
+}
+.nav-link:hover{color:var(--gold);}
+
+/* PAGE CONTENT */
+.page-wrap{
+  padding-top:52px;
+  min-height:100vh;
+}
+.page-inner{
+  max-width:960px;
+  margin:0 auto;
+  padding:clamp(48px,8vw,96px) clamp(20px,5vw,64px);
+}
+
+/* SECTION COMPONENTS */
+.eyebrow{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(12px,2vw,20px);
+}
+.page-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,5vw,64px);
+  font-weight:300;line-height:1.15;
+  color:var(--white);
+  margin-bottom:clamp(16px,3vw,28px);
+}
+.page-sub{
+  font-size:clamp(13px,1.6vw,16px);
+  color:var(--white-50);line-height:1.85;
+  margin-bottom:clamp(32px,5vw,56px);
+  max-width:680px;
+}
+.gold-rule{
+  width:clamp(60px,8vw,120px);height:1px;
+  background:linear-gradient(to right,var(--gold),transparent);
+  margin:clamp(24px,4vw,40px) 0;
+}
+
+/* CARDS */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(clamp(200px,30vw,280px),1fr));
+  gap:clamp(12px,2vw,24px);
+  margin-top:clamp(24px,4vw,40px);
+}
+.card{
+  border:1px solid var(--border);
+  padding:clamp(20px,3vw,32px);
+  background:rgba(196,164,107,0.02);
+  transition:border-color 0.2s, background 0.2s;
+}
+.card:hover{border-color:rgba(196,164,107,0.4);background:rgba(196,164,107,0.04);}
+.card-num{
+  font-size:9px;letter-spacing:3px;color:rgba(196,164,107,0.4);
+  font-family:monospace;margin-bottom:14px;
+}
+.card-title{
+  font-size:clamp(13px,1.5vw,15px);font-weight:500;
+  color:var(--white);margin-bottom:10px;letter-spacing:0.5px;
+}
+.card-text{
+  font-size:clamp(12px,1.3vw,13px);color:var(--white-50);line-height:1.7;
+}
+
+/* STEP LIST */
+.step-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+.step-item{
+  display:flex;align-items:flex-start;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(16px,2.5vw,28px) clamp(16px,2.5vw,28px);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.step-item:last-child{border-bottom:none;}
+.step-item:hover{background:rgba(196,164,107,0.025);}
+.step-num{
+  font-size:10px;font-family:monospace;
+  color:rgba(196,164,107,0.4);flex-shrink:0;
+  padding-top:2px;min-width:24px;
+}
+.step-title{
+  font-size:clamp(13px,1.5vw,15px);font-weight:500;
+  color:var(--white);margin-bottom:6px;
+}
+.step-text{font-size:clamp(12px,1.3vw,13px);color:var(--white-50);line-height:1.7;}
+
+/* DOCTRINE ITEMS */
+.doctrine-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+.doctrine-item{
+  display:flex;align-items:flex-start;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(18px,3vw,32px) clamp(16px,2.5vw,28px);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.doctrine-item:last-child{border-bottom:none;}
+.doctrine-item:hover{background:rgba(196,164,107,0.03);}
+.doctrine-num{
+  font-size:10px;font-family:monospace;
+  color:rgba(196,164,107,0.4);flex-shrink:0;
+  padding-top:3px;
+}
+.doctrine-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(16px,2vw,20px);
+  font-weight:300;color:var(--white-70);
+  line-height:1.55;font-style:italic;
+}
+
+/* CTA BUTTON */
+.cta-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:clamp(12px,2vw,18px) clamp(24px,4vw,40px);
+  background:var(--gold);color:var(--black);
+  font-size:clamp(10px,1.2vw,12px);letter-spacing:3px;text-transform:uppercase;
+  font-weight:500;transition:all 0.25s;cursor:pointer;border:none;
+  margin-top:clamp(24px,4vw,40px);
+}
+.cta-btn:hover{background:var(--gold-bright);transform:translateY(-2px);box-shadow:0 8px 32px rgba(196,164,107,0.25);}
+.cta-link{
+  display:inline-flex;align-items:center;gap:10px;
+  color:var(--gold);font-size:clamp(10px,1.2vw,12px);letter-spacing:3px;text-transform:uppercase;
+  border:1px solid var(--border);
+  padding:clamp(10px,1.5vw,14px) clamp(20px,3vw,32px);
+  transition:all 0.2s;margin-top:16px;
+}
+.cta-link:hover{border-color:var(--gold);}
+
+/* REGISTRY CODE */
+.registry-block{
+  background:rgba(196,164,107,0.04);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  padding:clamp(16px,3vw,28px);
+  margin-top:clamp(20px,3vw,32px);
+  font-family:monospace;
+  font-size:clamp(10px,1.2vw,12px);
+  color:var(--white-70);line-height:1.8;
+  overflow-x:auto;
+}
+.registry-label{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(196,164,107,0.4);margin-bottom:12px;
+}
+
+/* PRICE TIER */
+.price-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(clamp(180px,28vw,260px),1fr));
+  gap:clamp(12px,2vw,20px);
+  margin-top:clamp(24px,4vw,40px);
+}
+.price-tier{
+  border:1px solid var(--border);
+  padding:clamp(20px,3vw,32px);
+  transition:border-color 0.2s;
+}
+.price-tier:hover{border-color:var(--gold);}
+.tier-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.tier-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4vw,40px);color:var(--white);margin-bottom:6px;
+}
+.tier-desc{font-size:11px;color:var(--white-30);}
+
+/* FOOTER */
+.page-footer{
+  border-top:1px solid rgba(196,164,107,0.1);
+  padding:clamp(16px,3vw,28px) clamp(20px,5vw,64px);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+  background:rgba(0,0,0,0.4);
+}
+.footer-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.3);}
+.footer-links{display:flex;gap:clamp(12px,2.5vw,28px);flex-wrap:wrap;}
+.footer-link{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;transition:color 0.2s;}
+.footer-link:hover{color:var(--gold);}
+
+@media(max-width:600px){
+  .card-grid{grid-template-columns:1fr;}
+  .price-grid{grid-template-columns:1fr;}
+  .page-footer{flex-direction:column;align-items:flex-start;}
+}
+
+</style>
+</head>
+<body>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
+<nav class="page-nav">
+  <div class="back-link" onclick="fadeNavigate('index.html')">← Enter the Hall</div>
+  <span class="nav-logo">Lunara Society</span>
+  <div class="nav-right">
+    <span class="nav-link" onclick="fadeNavigate('shield.html')">Shield</span>
+    <span class="nav-link" onclick="fadeNavigate('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNavigate('member.html')">Member</span>
+  </div>
+</nav>
+<div class="page-wrap">
+  <div class="page-inner">
+    <p class="eyebrow">Doctrine</p>
+    <h1 class="page-title">What We Know<br>To Be True</h1>
+    <p class="page-sub">Seven founding principles. They do not change. They compound.</p>
+    <div class="gold-rule"></div>
+    <div class="doctrine-list">
+      <div class="doctrine-item"><span class="doctrine-num">I</span><p class="doctrine-text">The era of passive digital presence is ending. Machines now make decisions about your business before humans do.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">II</span><p class="doctrine-text">An undeclared business is not protected. It is simply unread.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">III</span><p class="doctrine-text">Trust is no longer built only through reputation. It is built through verifiable, machine-readable identity.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">IV</span><p class="doctrine-text">The institutions that define the standards become the infrastructure others depend on.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">V</span><p class="doctrine-text">Useful systems attract participation. Participation builds trust. Trust builds reputation. Reputation builds gravity. Gravity builds institutions.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">VI</span><p class="doctrine-text">The future belongs to those who coordinate intelligence — not those who merely produce it.</p></div>
+      <div class="doctrine-item"><span class="doctrine-num">VII</span><p class="doctrine-text">Evidence outranks doctrine. One protected business is worth more than a hundred pages of philosophy.</p></div>
+    </div>
+    <div class="gold-rule"></div>
+    <div onclick="fadeNavigate('join.html')" class="cta-btn" style="display:inline-flex;">Join the Institution →</div>
+  </div>
+  <footer class="page-footer">
+    <span class="footer-text">Lunara Society · Est. 2026 · MMXXVI</span>
+    <div class="footer-links">
+      <span class="footer-link" onclick="fadeNavigate('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNavigate('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNavigate('shield.html')">How It Works</span>
+      <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
+    </div>
+  </footer>
+</div>
+<script>
+function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
+window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+</script>
+</body>
+</html>

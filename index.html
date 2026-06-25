@@ -1,1856 +1,861 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="lgGP5VBX0LX-h5iTGYuTMYFNKbhzvdVHzl8gc2R20b4">
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Lunara Society — The trusted coordination layer between autonomous intelligence and legitimate commerce.">
-<meta property="og:title" content="Lunara Society">
-<meta property="og:description" content="Not intelligence. Coordination. The institution where trustworthy economic interactions occur.">
-<meta property="og:image" content="shield-logo.jpg">
-<title>Lunara Society</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lunara Society — Trust Coordination Institution</title>
+<meta name="description" content="Lunara Society is the trust coordination layer between businesses and autonomous AI systems. Protect your business. Declare your identity. Join the registry.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --black: #000000;
-    --black-soft: #0A0A0A;
-    --black-mid: #111111;
-    --black-card: #141414;
-    --black-card2: #1a1a1a;
-    --gold: #C4A46B;
-    --gold-dim: rgba(196,164,107,0.45);
-    --gold-bright: #D4B47B;
-    --white: #FFFFFF;
-    --white-90: rgba(255,255,255,0.90);
-    --white-70: rgba(255,255,255,0.70);
-    --white-50: rgba(255,255,255,0.50);
-    --white-30: rgba(255,255,255,0.30);
-    --white-10: rgba(255,255,255,0.08);
-    --border: rgba(196,164,107,0.18);
-    --border-soft: rgba(255,255,255,0.07);
-  }
-
-  @keyframes glowPulse {
-    0%, 100% { opacity: 0.4; transform: scaleX(0.85); }
-    50% { opacity: 1; transform: scaleX(1); }
-  }
-  @keyframes glowOrb {
-    0%, 100% { opacity: 0.25; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.55; transform: translateX(-50%) scale(1.15); }
-  }
-  @keyframes shieldFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-  }
-  @keyframes navGlow {
-    0%, 100% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.12); }
-    50% { box-shadow: 0 1px 0 0 rgba(196,164,107,0.30); }
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  @keyframes langPop {
-    from { opacity: 0; transform: translateY(-6px) scale(0.95); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background-color: var(--black);
-    font-family: 'Inter', Helvetica, Arial, sans-serif;
-    font-weight: 300;
-    color: var(--white-90);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* ─── CUSTOM CURSOR ─── */
-  #cursor-dot {
-    position: fixed; width: 8px; height: 8px;
-    background: var(--gold); border-radius: 50%;
-    pointer-events: none; z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.08s ease;
-  }
-  #cursor-glow {
-    position: fixed; width: 40px; height: 40px;
-    border-radius: 50%; pointer-events: none; z-index: 9998;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(196,164,107,0.35) 0%, rgba(196,164,107,0.08) 50%, transparent 75%);
-    transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease;
-  }
-  #cursor-ring {
-    position: fixed; width: 22px; height: 22px;
-    border: 1px solid rgba(196,164,107,0.55); border-radius: 50%;
-    pointer-events: none; z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s;
-  }
-
-  /* ─── SCROLL PROGRESS ─── */
-  #scroll-progress {
-    position: fixed; left: 0; top: 0; bottom: 0;
-    width: 2px; z-index: 200;
-    background: rgba(196,164,107,0.08);
-  }
-  #scroll-progress-fill {
-    width: 100%; height: 0%;
-    background: linear-gradient(180deg, transparent, var(--gold) 20%, var(--gold-bright) 80%, transparent);
-    transition: height 0.1s linear; position: relative;
-  }
-  #scroll-progress-fill::after {
-    content: '';
-    position: absolute; bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 6px; height: 6px;
-    background: var(--gold); border-radius: 50%;
-    box-shadow: 0 0 8px 2px rgba(196,164,107,0.7);
-  }
-
-  /* ─── GLOW DIVIDER ─── */
-  .glow-divider {
-    position: relative; height: 1px; margin: 0; overflow: visible;
-    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-bright) 50%, var(--gold) 70%, transparent 100%);
-  }
-  .glow-divider::after {
-    content: '';
-    position: absolute; left: 50%; top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    width: 60%; height: 12px;
-    background: radial-gradient(ellipse at center, rgba(196,164,107,0.35) 0%, transparent 70%);
-    animation: glowOrb 4s ease-in-out infinite; pointer-events: none;
-  }
-  .glow-divider-line {
-    display: block; width: 100%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    animation: glowPulse 4s ease-in-out infinite;
-  }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 14px 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(0,0,0,0.92); backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(196,164,107,0.18);
-    animation: navGlow 5s ease-in-out infinite;
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 14px;
-    text-decoration: none; background: var(--black);
-    border: 1px solid rgba(196,164,107,0.25);
-    padding: 6px 16px 6px 6px; border-radius: 8px;
-    transition: border-color 0.3s;
-  }
-  .nav-logo:hover { border-color: rgba(196,164,107,0.6); }
-  .nav-shield { width: 162px; height: 162px; object-fit: contain; opacity: 0.95; }
-  .nav-wordmark {
-    font-size: 10px; font-weight: 400; letter-spacing: 0.42em;
-    color: var(--white-90); text-transform: uppercase;
-  }
-  .nav-right { display: flex; align-items: center; gap: 36px; }
-  .nav-links { display: flex; gap: 36px; list-style: none; }
-  .nav-links a {
-    font-size: 10px; font-weight: 300; letter-spacing: 0.28em;
-    color: var(--white-50); text-decoration: none; text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--gold); }
-
-  /* ─── LANGUAGE TOGGLE ─── */
-  .lang-toggle {
-    display: flex; align-items: center; gap: 6px;
-    flex-shrink: 0;
-  }
-  .lang-toggle-mobile { display: none; }
-  .lang-toggle-mobile .lang-btn { font-size: 26px; padding: 2px 4px; }
-  .lang-btn {
-    font-size: 22px; line-height: 1;
-    background: none; border: none;
-    padding: 4px 5px; border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
-    opacity: 0.38;
-    filter: grayscale(40%);
-  }
-  .lang-btn.active {
-    opacity: 1;
-    filter: none;
-    transform: scale(1.22);
-    box-shadow: 0 0 10px 2px rgba(196,164,107,0.35);
-  }
-  .lang-btn:hover:not(.active) { opacity: 0.72; transform: scale(1.1); }
-
-  /* ─── HAMBURGER ─── */
-  .nav-hamburger {
-    display: none; flex-direction: column; gap: 5px;
-    background: none; border: none; cursor: pointer; padding: 6px;
-  }
-  .nav-hamburger span {
-    display: block; width: 24px; height: 1px;
-    background: var(--gold); transition: all 0.3s ease;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-  .nav-mobile-menu {
-    display: none;
-    position: fixed; top: 76px; left: 0; right: 0;
-    background: rgba(0,0,0,0.97); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    z-index: 99; padding: 28px 24px 32px;
-    flex-direction: column; gap: 0;
-    transform: translateY(-10px); opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .nav-mobile-menu.open { display: flex; opacity: 1; transform: translateY(0); }
-  .nav-mobile-menu a {
-    font-size: 11px; font-weight: 300; letter-spacing: 0.35em;
-    color: var(--white-50); text-decoration: none; text-transform: uppercase;
-    padding: 16px 0; border-bottom: 1px solid var(--border-soft);
-    transition: color 0.2s;
-  }
-  .nav-mobile-menu a:last-child { border-bottom: none; }
-  .nav-mobile-menu a:hover, .nav-mobile-menu a:active { color: var(--gold); }
-
-  /* mobile lang toggle inside menu */
-  .mobile-lang-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 16px 0; border-bottom: 1px solid var(--border-soft);
-  }
-  .mobile-lang-row .lang-label {
-    font-size: 9px; letter-spacing: 0.4em; color: var(--white-30); text-transform: uppercase;
-  }
-  .mobile-lang-row .lang-toggle { border-color: rgba(196,164,107,0.18); }
-
-  /* ─── SECTION ─── */
-  section { scroll-margin-top: 80px; }
-section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
-  .section-inner { max-width: 960px; margin: 0 auto; }
-
-  /* centered variant */
-  .section-inner.centered { text-align: center; }
-  .section-inner.centered .section-body { margin-left: auto; margin-right: auto; }
-  .section-inner.centered .negation-resolution { margin-left: auto; margin-right: auto; }
-
-  .section-label {
-    font-size: clamp(8px, 1.2vw, 10px); font-weight: 400; letter-spacing: 0.55em;
-    color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
-  }
-  .section-chapter {
-    font-size: clamp(8px, 1.2vw, 10px); font-weight: 300; letter-spacing: 0.4em;
-    color: var(--white-30); text-transform: uppercase; margin-bottom: 14px;
-  }
-  .section-title {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: clamp(28px, 4.5vw, 58px);
-    font-weight: 300; line-height: 1.18;
-    color: var(--white); margin-bottom: 36px;
-  }
-  .section-body {
-    font-size: clamp(13px, 1.5vw, 16px); font-weight: 300; color: var(--white-70);
-    line-height: 2.1; margin-bottom: 24px; max-width: 720px;
-  }
-  .section-body strong { font-weight: 400; color: var(--white); }
-
-  /* ─── REVEAL ─── */
-  .reveal {
-    opacity: 1; transform: translateY(40px);
-    transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
-  }
-  .reveal.visible { opacity: 1; transform: none; }
-  .reveal-fade { opacity: 1; transition: opacity 1.1s ease; }
-  .reveal-fade.visible { opacity: 1; }
-  .reveal-type { opacity: 1; }
-  .reveal-type.visible { opacity: 1; }
-  .typewriter-cursor {
-    display: inline-block; width: 2px; height: 0.85em;
-    background: var(--gold); margin-left: 3px; vertical-align: middle;
-    animation: blink 0.9s step-end infinite;
-  }
-  .delay-1 { transition-delay: 0.10s; }
-  .delay-2 { transition-delay: 0.22s; }
-  .delay-3 { transition-delay: 0.36s; }
-  .delay-4 { transition-delay: 0.52s; }
-  .delay-5 { transition-delay: 0.70s; }
-
-  /* ─── NEGATION BLOCK ─── */
-  .negation-block {
-    margin: 42px 0; padding: clamp(20px,4vw,34px) clamp(20px,4vw,40px);
-    border-left: 2px solid var(--gold); background: var(--black-card);
-    text-align: left;
-  }
-  .negation-label {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold);
-    text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
-  }
-  .negation-list { list-style: none; padding: 0; }
-  .negation-list li {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(15px,2vw,18px); font-weight: 300; font-style: italic;
-    color: var(--white-50); line-height: 1.7; padding: 5px 0;
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .negation-list li:last-child { border-bottom: none; }
-  .negation-resolution {
-    margin-top: 28px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(17px,2.2vw,22px); font-weight: 300; font-style: italic;
-    color: var(--white-90); line-height: 1.5;
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: clamp(100px,14vw,160px) clamp(20px,6vw,80px) clamp(80px,10vw,120px);
-    background: var(--black); position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
-    width: clamp(300px, 60vw, 700px); height: clamp(300px, 60vw, 700px);
-    background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 65%);
-    pointer-events: none; animation: glowOrb 8s ease-in-out infinite;
-  }
-  .hero-shield {
-    width: clamp(80px, 14vw, 150px); height: clamp(80px, 14vw, 150px);
-    object-fit: contain; margin-bottom: 44px; opacity: 0.95;
-    position: relative; z-index: 1; will-change: transform;
-  }
-  .hero-eyebrow {
-    font-size: clamp(8px,1.2vw,10px); font-weight: 400; letter-spacing: 0.55em;
-    color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
-    position: relative; z-index: 1;
-  }
-  .hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(32px, 6vw, 82px);
-    font-weight: 300; line-height: 1.12;
-    color: var(--white); margin-bottom: 32px; max-width: 860px;
-    position: relative; z-index: 1;
-  }
-  .hero-plain {
-    font-size: clamp(13px, 1.5vw, 16px);
-    color: rgba(255,255,255,0.55);
-    max-width: 560px;
-    margin: 0 auto 0;
-    line-height: 1.65;
-    letter-spacing: 0.01em;
-    font-style: italic;
-  }
-  .hero-sub {
-    font-size: clamp(13px, 1.6vw, 16px); font-weight: 300; color: var(--white-50);
-    line-height: 1.85; max-width: 540px; margin-bottom: 60px;
-    letter-spacing: 0.01em; position: relative; z-index: 1;
-  }
-  .hero-divider {
-    width: 56px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 0 auto 52px; position: relative; z-index: 1;
-  }
-  .hero-pillars {
-    display: flex; gap: 0; flex-wrap: wrap; justify-content: center;
-    border: 1px solid var(--border); max-width: 680px;
-    position: relative; z-index: 1; background: var(--black-card);
-  }
-  .hero-pillar { cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
-.hero-pillar:hover { color: var(--gold) !important; transform: translateY(-2px); }
-.hero-pillar {
-    padding: clamp(12px,2vw,20px) clamp(16px,3vw,32px);
-    font-size: clamp(8px,1.1vw,10px); letter-spacing: 0.38em; color: var(--white-50);
-    text-transform: uppercase; font-weight: 400;
-    border-right: 1px solid var(--border);
-    transition: color 0.25s, background 0.25s;
-  }
-  .hero-pillar:last-child { border-right: none; }
-  .hero-pillar:hover { color: var(--gold); background: rgba(196,164,107,0.06); }
-
-  /* ─── DARK / MID ─── */
-  .dark-section { background: var(--black-soft); }
-  .dark-section .section-title { color: var(--white); }
-  .dark-section .section-body { color: var(--white-70); }
-  .dark-section .section-body strong { color: var(--white); }
-  .dark-section .negation-block { background: var(--black-card2); }
-  .dark-section .negation-list li { color: var(--white-50); border-bottom-color: var(--border-soft); }
-  .dark-section .negation-resolution { color: var(--white-90); }
-  .mid-section { background: var(--black-mid); }
-
-  /* ─── GRAVITY BLOCK ─── */
-  .gravity-block {
-    margin: 48px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-    border: 1px solid var(--border); text-align: left;
-  }
-  .gravity-col { padding: clamp(20px,4vw,36px) clamp(16px,3vw,32px); }
-  .gravity-col:first-child { border-right: 1px solid var(--border); }
-  .gravity-col-label {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.45em; color: var(--white-30);
-    text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
-  }
-  .gravity-col-bad .gravity-col-label { color: #B08080; }
-  .gravity-col-good .gravity-col-label { color: var(--gold); }
-  .gravity-list { list-style: none; }
-  .gravity-list li {
-    font-size: clamp(12px,1.5vw,14px); font-weight: 300; color: var(--white-70);
-    line-height: 1.7; padding: 8px 0; border-bottom: 1px solid var(--border-soft);
-  }
-  .gravity-list li:last-child { border-bottom: none; }
-  .gravity-col-bad .gravity-list li { color: rgba(180,120,120,0.7); text-decoration: line-through; }
-  .gravity-col-good .gravity-list li { color: var(--white-90); font-weight: 400; }
-
-  /* ─── PILLARS GRID ─── */
-  .pillars-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-    background: var(--border); border: 1px solid var(--border); margin: 48px 0;
-  }
-  .pillar-card {
-    background: var(--black-card); padding: clamp(24px,4vw,40px) clamp(20px,3.5vw,36px);
-    transition: background 0.25s;
-  }
-  .pillar-card:hover { background: var(--black-card2); }
-  .pillar-number {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
-    text-transform: uppercase; margin-bottom: 14px; font-weight: 400;
-  }
-  .pillar-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(18px,2.5vw,24px); font-weight: 300; color: var(--white); margin-bottom: 14px;
-  }
-  .pillar-desc {
-    font-size: clamp(12px,1.5vw,14px); font-weight: 300; color: var(--white-50); line-height: 1.8;
-  }
-
-  /* ─── DOCTRINE CARDS ─── */
-  .doctrine-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-    background: var(--border); border: 1px solid var(--border); margin: 48px 0;
-  }
-  .doctrine-card {
-    background: var(--black-card); padding: clamp(20px,3.5vw,36px) clamp(16px,3vw,30px);
-    transition: background 0.25s;
-  }
-  .doctrine-card:hover { background: var(--black-card2); }
-  .doctrine-card-chapter {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
-    text-transform: uppercase; margin-bottom: 12px; font-weight: 400;
-  }
-  .doctrine-card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(17px,2.2vw,21px); font-weight: 300; color: var(--white);
-    margin-bottom: 12px; line-height: 1.3;
-  }
-  .doctrine-card-body {
-    font-size: clamp(12px,1.4vw,13px); font-weight: 300; color: var(--white-50); line-height: 1.8;
-  }
-
-  /* ─── EQUATION ─── */
-  .equation-block {
-    text-align: center; margin: 52px 0;
-    padding: clamp(32px,6vw,60px) clamp(20px,4vw,40px);
-    border: 1px solid var(--border); background: var(--black-card);
-    position: relative; overflow: hidden;
-  }
-  .equation-block::before {
-    content: '';
-    position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
-    width: 80%; height: 60px;
-    background: radial-gradient(ellipse at center, rgba(196,164,107,0.15) 0%, transparent 70%);
-    animation: glowOrb 5s ease-in-out infinite; pointer-events: none;
-  }
-  .equation-label {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold);
-    text-transform: uppercase; margin-bottom: 28px; font-weight: 400;
-  }
-  .equation {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(20px,4vw,44px);
-    font-weight: 300; color: var(--white); letter-spacing: 0.04em; line-height: 1.3;
-    position: relative; z-index: 1;
-  }
-  .equation-note {
-    margin-top: 28px;
-    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-30);
-    line-height: 1.9; position: relative; z-index: 1;
-  }
-
-  /* ─── IDENTITY TABLE ─── */
-  .identity-table { width: 100%; border-collapse: collapse; margin: 40px 0; }
-  .identity-table th {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.4em; color: var(--gold);
-    text-transform: uppercase; font-weight: 400;
-    padding: clamp(10px,2vw,16px) clamp(10px,2vw,20px); text-align: left;
-    border-bottom: 1px solid var(--gold-dim);
-  }
-  .identity-table td {
-    padding: clamp(10px,2vw,16px) clamp(10px,2vw,20px);
-    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-70);
-    border-bottom: 1px solid var(--border-soft); line-height: 1.6; text-align: left;
-  }
-  .identity-table tr:last-child td { border-bottom: none; }
-  .identity-table tr:hover td { background: var(--white-10); }
-  .identity-check {
-    font-size: clamp(8px,1.1vw,10px); letter-spacing: 0.3em; color: var(--gold);
-    text-transform: uppercase;
-  }
-
-  /* ─── VISION ─── */
-  .vision-section {
-    background: var(--black); text-align: center;
-    padding: clamp(100px,14vw,180px) clamp(20px,6vw,80px);
-    position: relative; overflow: hidden;
-  }
-  .vision-section::before {
-    content: '';
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: clamp(300px,70vw,800px); height: clamp(300px,70vw,800px);
-    background: radial-gradient(ellipse at center, rgba(196,164,107,0.07) 0%, transparent 60%);
-    animation: glowOrb 10s ease-in-out infinite; pointer-events: none;
-  }
-  .vision-shield {
-    width: clamp(50px,8vw,80px); height: clamp(50px,8vw,80px); object-fit: contain;
-    margin: 0 auto 44px; display: block; opacity: 0.8; position: relative; z-index: 1;
-  }
-  .vision-chapter {
-    font-size: clamp(8px,1.2vw,10px); letter-spacing: 0.5em; color: var(--gold-dim);
-    text-transform: uppercase; margin-bottom: 20px; font-weight: 400;
-    position: relative; z-index: 1;
-  }
-  .vision-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(30px,5.5vw,70px);
-    font-weight: 300; line-height: 1.2; color: var(--white); margin-bottom: 52px;
-    max-width: 720px; margin-left: auto; margin-right: auto;
-    position: relative; z-index: 1;
-  }
-  .vision-lines { max-width: 540px; margin: 0 auto 60px; position: relative; z-index: 1; }
-  .vision-line {
-    font-size: clamp(12px,1.6vw,14px); font-weight: 300; color: var(--white-50);
-    line-height: 2.1; letter-spacing: 0.01em;
-    border-bottom: 1px solid var(--border-soft); padding: 10px 0;
-  }
-  .vision-line:last-child { border-bottom: none; }
-  .vision-resolution {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(16px,2.8vw,30px);
-    font-weight: 300; font-style: italic; color: var(--gold); line-height: 1.6;
-    max-width: 640px; margin: 0 auto; position: relative; z-index: 1;
-  }
-
-  /* ─── CONTACT ─── */
-  .contact-section { background: var(--black-soft); border-top: 1px solid var(--border); }
-  .contact-section .section-inner { text-align: center; }
-  .contact-section .section-body { margin-left: auto; margin-right: auto; }
-  .contact-email {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(16px,2.2vw,22px); font-weight: 300; font-style: italic;
-    color: var(--gold); margin: 28px 0;
-  }
-  .contact-note {
-    font-size: clamp(11px,1.4vw,13px); font-weight: 300; color: var(--white-30); line-height: 1.9;
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    background: var(--black); padding: clamp(32px,5vw,52px) clamp(20px,6vw,60px);
-    display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid var(--border); flex-wrap: wrap; gap: 20px;
-  }
-  .footer-left { display: flex; align-items: center; gap: 14px; }
-  .footer-shield { width: 26px; height: 26px; object-fit: contain; opacity: 0.5; }
-  .footer-wordmark {
-    font-size: clamp(8px,1.1vw,9px); letter-spacing: 0.42em; color: var(--white-30); text-transform: uppercase;
-  }
-  .footer-right {
-    font-size: clamp(9px,1.2vw,10px); font-weight: 300; color: var(--white-30); letter-spacing: 0.05em;
-  }
-
-  /* ─── TABLET ─── */
-  @media (min-width: 768px) and (max-width: 1024px) {
-    nav { padding: 10px 28px; }
-    .nav-shield { width: 80px !important; height: 80px !important; }
-    section { padding: 80px 40px; }
-    .section-inner { max-width: 700px; }
-    .doctrine-grid { grid-template-columns: 1fr 1fr; }
-    .hero-title { font-size: clamp(34px, 5.5vw, 56px); }
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 9px; letter-spacing: 0.2em; }
-  }
-
-  /* ─── MOBILE ─── */
-  @media (max-width: 767px) {
-    body { cursor: auto; }
-    #cursor-dot, #cursor-glow, #cursor-ring { display: none; }
-    nav { padding: 12px 20px; }
-    .nav-links { display: none; }
-    .nav-hamburger { display: flex; }
-    .nav-logo { border: none !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
-    .nav-shield { width: 56px !important; height: 56px !important; }
-    .nav-wordmark { font-size: 9px; }
-    .nav-right .lang-toggle { display: none; }
-    .lang-toggle-mobile { display: flex; }
-    section { padding: 64px 20px; }
-    .section-inner { max-width: 100%; }
-    .gravity-block { grid-template-columns: 1fr; }
-    .gravity-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
-    .doctrine-grid { grid-template-columns: 1fr; }
-    .hero { padding: 110px 20px 80px; min-height: 100svh; }
-    .hero-pillars { flex-direction: column; max-width: 100%; }
-    .hero-pillar { cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
-.hero-pillar:hover { color: var(--gold) !important; transform: translateY(-2px); }
-.hero-pillar { border-right: none; border-bottom: 1px solid var(--border); text-align: center; }
-    .hero-pillar:last-child { border-bottom: none; }
-    .vision-section { padding: 80px 20px; }
-    .pillars-grid {
-      display: block !important;
-      overflow: hidden !important;
-      background: var(--black) !important;
-      padding: 32px 0 !important;
-      margin: 32px -20px !important;
-      border: none !important;
-    }
-    .pillars-ticker-track {
-      display: flex !important;
-      flex-direction: row !important;
-      width: max-content !important;
-      animation: pillarsMarquee 30s linear infinite !important;
-    }
-    .pillars-ticker-track:hover { animation-play-state: paused !important; }
-    @keyframes pillarsMarquee {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .pillar-card {
-      min-width: 80vw !important;
-      flex-shrink: 0 !important;
-      scroll-snap-align: unset !important;
-      grid-column: unset !important;
-      margin-right: 1px !important;
-      box-sizing: border-box !important;
-    }
-    .identity-table thead { display: none; }
-    .identity-table tr { display: block; margin-bottom: 16px; border: 1px solid var(--border); padding: 16px; }
-    .identity-table td { display: block; border-bottom: none; padding: 4px 0; font-size: 12px; text-align: left; }
-    .identity-table td:first-child { color: var(--white); font-weight: 400; margin-bottom: 4px; }
-    footer { flex-direction: column; text-align: center; }
-    #scroll-progress { display: none; }
-  }
-
-  /* ─── MEDIUM DESKTOP (1025–1280) ─── */
-  @media (min-width: 1025px) and (max-width: 1280px) {
-    .nav-shield { width: 110px !important; height: 110px !important; }
-    nav { padding: 10px 40px; }
-    .nav-links { gap: 24px; }
-  }
-
-  /* ─── 4K ─── */
-  @media (min-width: 1800px) {
-    .section-inner { max-width: 1200px; }
-    nav { padding: 18px 80px; }
-    section { padding: 160px 80px; }
-  }
-
-  
-  /* MOBILE HERO FIX — ensure text always visible */
-  @media(max-width:768px){
-    .reveal, .reveal-fade, .reveal-type { opacity: 1 !important; transform: none !important; }
-    .hero-eyebrow, .hero-title, .hero-sub, .hero-pillars, .hero-cta-group { opacity: 1 !important; transform: none !important; visibility: visible !important; }
-    .hero-shield { width: 120px !important; height: 120px !important; margin-bottom: 28px; }
-  }
-/* ═══ RESPONSIVE — AUTO-ADAPTS TO ALL DEVICES ═══ */
-  @media(max-width:1024px){
-    nav{padding:0 24px}
-    .nav-links li:nth-child(n+4){display:none}
-  }
-  @media(max-width:768px){
-    nav{padding:0 16px;height:56px}
-    .nav-links{display:none}
-    nav .nav-cta{padding:8px 14px;font-size:11px}
-    /* hamburger hint */
-    nav::after{content:"☰";color:rgba(196,164,107,0.7);font-size:20px;margin-left:12px;cursor:pointer}
-    section,div.hero,.hero,.steps-section,.cta-section{padding-left:16px!important;padding-right:16px!important}
-    h1,.hero-title{font-size:clamp(28px,8vw,48px)!important}
-    h2,.hero-title{font-size:clamp(22px,6vw,36px)!important}
-    .card-grid{grid-template-columns:1fr!important}
-    .dash-sidebar{display:none!important}
-    .dash-main{margin-left:0!important;padding:20px!important}
-    .auth-panel{padding:28px 16px!important;margin:0 12px}
-    .example-box,.code-block{overflow-x:auto}
-    .final-badges{flex-direction:column;align-items:stretch}
-    footer{flex-direction:column;text-align:center;padding:24px 16px}
-    .flow-connector{padding:4px 0}
-    .flow-line{height:32px}
-  }
-  @media(max-width:480px){
-    .nav-wordmark{font-size:12px;letter-spacing:1px}
-    .hero-label,.dash-section-title,.auth-label{font-size:9px;letter-spacing:2px}
-    .step-card,.card{padding:20px 14px}
-    .example-row{flex-direction:column;gap:2px}
-    .example-val{text-align:left!important;max-width:100%!important}
-    .cta-price{font-size:36px}
-    .cta-btn{padding:14px 28px;font-size:11px}
-    table.data-table{font-size:11px}
-    .data-table th,.data-table td{padding:8px}
-  }
-  /* Ensure images never overflow */
-  img{max-width:100%;height:auto}
-  /* Smooth scrolling & tap targets */
-  *{-webkit-tap-highlight-color:transparent}
-  a,button{min-height:44px;display:inline-flex;align-items:center}
-  /* Input zoom fix on iOS */
-  input,select,textarea{font-size:16px!important}
-
-</style>
-<script type="application/ld+json">
-[
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Lunara Society",
-    "url": "https://lunarasociety.com",
-    "logo": "https://lunarasociety.com/shield-logo.jpg",
-    "description": "Lunara Society is a trust coordination institution establishing the missing layer between autonomous intelligence and legitimate commerce. As intelligence becomes abundant, trust becomes scarce. Lunara exists to become the place where entities declare how intelligent systems should interact with them.",
-    "foundingDate": "2026",
-    "slogan": "Trust is infrastructure.",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": "rosario@lunarasociety.com",
-      "contactType": "institutional correspondence",
-      "availableLanguage": ["English", "Spanish"]
-    },
-    "sameAs": [
-      "https://lunarasociety.com"
-    ],
-    "knowsAbout": [
-      "Trust Infrastructure",
-      "Autonomous Economy",
-      "AI Coordination",
-      "Business Identity",
-      "Communication Standards",
-      "Verified Interaction Protocols",
-      "Machine-Readable Governance",
-      "AI-to-Business Communication",
-      "Trust Coordination",
-      "Entity Identity Standards",
-      "The Lunara Protocol",
-      "The Shield Experience"
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Lunara Protocol",
-      "description": "The canonical standard defining how autonomous systems should interact with registered businesses."
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Lunara Society",
-    "url": "https://lunarasociety.com",
-    "description": "The trust coordination institution for the autonomous economy.",
-    "inLanguage": ["en", "es"]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Dataset",
-    "name": "State of AI Outreach — Signal 001",
-    "description": "An original intelligence dataset capturing direct observations from business owners on the experience of receiving AI-powered automated outreach. Identifies structural patterns including the tragedy of the commons in email channels, attention cost transfer, and the missing trust infrastructure layer.",
-    "url": "https://lunarasociety.com/state-of-ai-outreach.json",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Lunara Society",
-      "url": "https://lunarasociety.com"
-    },
-    "datePublished": "2026-06-21",
-    "keywords": ["AI outreach", "automated email", "trust infrastructure", "communication channel degradation", "business sovereignty"]
-  }
-]
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Lunara Society",
-  "url": "https://lunarasociety.com",
-  "description": "Trust is infrastructure. The institution governing how autonomous systems and businesses interact.",
-  "inLanguage": ["en", "es"],
-  "publisher": {
-    "@type": "Organization",
-    "name": "Lunara Society",
-    "url": "https://lunarasociety.com"
-  }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
+  --black:#000;--black-soft:#080604;--black-mid:#0f0d0a;
+  --white:#fff;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);
+  --white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);--white-15:rgba(255,255,255,0.15);
+  --border:rgba(196,164,107,0.2);--holo:#7EB8D4;
 }
-</script>
+html{scroll-behavior:smooth;height:100%}
+body{background:var(--black);font-family:'Inter',sans-serif;font-weight:300;color:var(--white-90);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+
+/* ════════════════════════════════
+   SIDEBAR NAV
+════════════════════════════════ */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:56px;
+  background:rgba(0,0,0,0.85);border-right:1px solid rgba(196,164,107,0.12);
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 0;z-index:200;backdrop-filter:blur(12px);
+}
+.sidebar-logo{width:32px;height:32px;border-radius:50%;margin-bottom:32px;object-fit:cover}
+.sidebar-icons{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+.sidebar-icon{
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  color:rgba(196,164,107,0.4);font-size:14px;border-radius:4px;
+  transition:all 0.2s;cursor:pointer;position:relative;
+}
+.sidebar-icon:hover{color:var(--gold);background:rgba(196,164,107,0.08)}
+.sidebar-icon.active{color:var(--gold)}
+.sidebar-icon .tip{
+  position:absolute;left:48px;background:#1a1508;border:1px solid var(--border);
+  padding:5px 10px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.2s;
+  font-family:'Inter',sans-serif;
+}
+.sidebar-icon:hover .tip{opacity:1}
+.sidebar-bottom{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.3);writing-mode:vertical-rl;padding-bottom:8px}
+
+/* ════════════════════════════════
+   HERO — THE HALL
+════════════════════════════════ */
+.hall{
+  margin-left:56px;
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+}
+.hall-bg{
+  position:absolute;inset:0;
+  background:url('hall-bg.png') center center / cover no-repeat;
+  z-index:0;
+}
+.hall-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,0.35) 0%,
+    rgba(0,0,0,0.15) 30%,
+    rgba(0,0,0,0.10) 55%,
+    rgba(0,0,0,0.65) 80%,
+    rgba(0,0,0,0.95) 100%
+  );
+}
+
+/* Top bar */
+.hall-top{
+  position:relative;z-index:10;
+  width:100%;display:flex;justify-content:space-between;align-items:flex-start;
+  padding:28px 48px 0;
+}
+.hall-top-left{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.5)}
+.hall-top-right{text-align:right}
+.hall-tagline{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.5);line-height:1.6}
+.hall-number{font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:2px;margin-top:4px}
+
+/* Title */
+.hall-title-wrap{
+  position:relative;z-index:10;
+  margin-top:48px;text-align:center;
+}
+.hall-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,72px);
+  font-weight:300;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--white);
+  text-shadow:0 0 60px rgba(196,164,107,0.4);
+}
+.hall-title-line{
+  width:200px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);
+  margin:16px auto 0;
+}
+.hall-title-emblem{
+  width:20px;height:20px;margin:8px auto 0;
+  color:var(--gold);font-size:16px;text-align:center;
+}
+
+/* Arch nav */
+.hall-arches{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:center;gap:clamp(16px,4vw,80px);
+  margin-top:clamp(20px,5vw,64px);
+  padding:0 40px;width:100%;
+}
+.arch-portal{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  cursor:pointer;transition:all 0.3s;
+  text-decoration:none;
+}
+.arch-portal:hover .arch-icon{color:var(--gold-bright);text-shadow:0 0 20px rgba(196,164,107,0.8)}
+.arch-portal:hover .arch-label{color:var(--white-90)}
+.arch-icon{
+  font-size:clamp(14px,2vw,20px);color:rgba(196,164,107,0.6);
+  transition:all 0.3s;text-shadow:0 0 8px rgba(196,164,107,0.3);
+}
+.arch-label{
+  font-size:clamp(8px,1.2vw,11px);letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);transition:color 0.3s;font-weight:400;
+}
+
+/* Maya hologram platform */
+.platform-wrap{
+  position:relative;z-index:10;
+  margin-top:clamp(8px,2vw,20px);
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;
+}
+.platform-glow{
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  width:300px;height:80px;
+  background:radial-gradient(ellipse,rgba(126,184,212,0.35) 0%,transparent 70%);
+  filter:blur(12px);
+  animation:platformPulse 3s ease-in-out infinite;
+}
+@keyframes platformPulse{
+  0%,100%{opacity:0.6;transform:translateX(-50%) scaleX(1)}
+  50%{opacity:1;transform:translateX(-50%) scaleX(1.15)}
+}
+
+/* Maya hologram image */
+.maya-hologram{
+  position:relative;
+  width:clamp(180px,22vw,340px);
+  animation:mayaAppear 3s ease-out forwards, mayaFloat 6s ease-in-out 3s infinite;
+  opacity:0;
+  filter:drop-shadow(0 0 30px rgba(126,184,212,0.7)) drop-shadow(0 0 60px rgba(126,184,212,0.4));
+}
+@keyframes mayaAppear{
+  0%{opacity:0;transform:translateY(30px) scaleY(0.95)}
+  40%{opacity:0.4}
+  70%{opacity:0.85}
+  100%{opacity:1;transform:translateY(0) scaleY(1)}
+}
+@keyframes mayaFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+.maya-hologram img{
+  width:100%;
+  mix-blend-mode:screen;
+  animation:holoFlicker 8s ease-in-out infinite;
+}
+@keyframes holoFlicker{
+  0%,100%{opacity:1;filter:hue-rotate(0deg) brightness(1)}
+  15%{opacity:0.92;filter:hue-rotate(5deg) brightness(1.05)}
+  30%{opacity:1}
+  72%{opacity:0.95;filter:hue-rotate(-3deg) brightness(0.98)}
+  73%{opacity:0.7}
+  74%{opacity:1}
+}
+
+/* Scan lines overlay on Maya */
+.maya-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 3px,
+    rgba(126,184,212,0.04) 3px,rgba(126,184,212,0.04) 4px
+  );
+  pointer-events:none;
+  animation:scanMove 4s linear infinite;
+}
+@keyframes scanMove{
+  0%{background-position:0 0}
+  100%{background-position:0 100px}
+}
+
+/* Projection cone from base */
+.projection-cone{
+  position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:80px solid transparent;
+  border-right:80px solid transparent;
+  border-bottom:120px solid rgba(126,184,212,0.08);
+  filter:blur(8px);
+  animation:coneFlicker 3s ease-in-out infinite;
+}
+@keyframes coneFlicker{
+  0%,100%{opacity:0.6;border-bottom-color:rgba(126,184,212,0.08)}
+  50%{opacity:1;border-bottom-color:rgba(126,184,212,0.14)}
+}
+
+/* Platform disc */
+.platform-disc{
+  width:clamp(200px,28vw,400px);height:16px;
+  background:radial-gradient(ellipse,rgba(196,164,107,0.5) 0%,rgba(196,164,107,0.1) 50%,transparent 70%);
+  margin-top:-8px;
+  animation:discGlow 3s ease-in-out infinite;
+}
+@keyframes discGlow{
+  0%,100%{opacity:0.7;transform:scaleX(1)}
+  50%{opacity:1;transform:scaleX(1.08)}
+}
+
+/* Scroll prompt */
+.scroll-prompt{
+  position:relative;z-index:10;
+  margin-top:clamp(16px,3vw,40px);
+  font-size:9px;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(196,164,107,0.4);
+  animation:scrollFade 2s ease-in-out infinite;
+  padding-bottom:32px;
+}
+@keyframes scrollFade{0%,100%{opacity:0.4}50%{opacity:0.8}}
+
+/* Bottom bar */
+.hall-bottom{
+  position:relative;z-index:10;
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:16px 48px;
+  border-top:1px solid rgba(196,164,107,0.1);
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);
+  margin-top:auto;
+}
+.hall-bottom-text{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.35)}
+
+/* Lang toggle in hall */
+.hall-lang{display:flex;gap:8px;align-items:center}
+.hall-lang button{
+  background:none;border:1px solid rgba(196,164,107,0.2);
+  padding:4px 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(196,164,107,0.5);transition:all 0.2s;
+}
+.hall-lang button:hover,.hall-lang button.active{color:var(--gold);border-color:var(--gold)}
+
+/* Particles */
+.particle-field{
+  position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;
+}
+.particle{
+  position:absolute;width:2px;height:2px;background:var(--holo);
+  border-radius:50%;opacity:0;
+  animation:particleDrift var(--dur,8s) var(--delay,0s) ease-in-out infinite;
+}
+@keyframes particleDrift{
+  0%{opacity:0;transform:translateY(100px) translateX(0)}
+  20%{opacity:var(--opacity,0.6)}
+  80%{opacity:var(--opacity,0.6)}
+  100%{opacity:0;transform:translateY(-200px) translateX(var(--drift,30px))}
+}
+
+/* ════════════════════════════════
+   SECTIONS
+════════════════════════════════ */
+.section{
+  margin-left:56px;
+  padding:clamp(64px,8vw,120px) clamp(32px,6vw,96px);
+  position:relative;
+}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-eyebrow{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,56px);font-weight:300;
+  color:var(--white);margin-bottom:clamp(24px,4vw,56px);
+  line-height:1.2;
+}
+.section-sub{
+  font-size:clamp(14px,1.5vw,16px);color:var(--white-50);
+  line-height:1.8;max-width:600px;margin-bottom:48px;
+}
+
+/* Divider */
+.gold-divider{
+  width:100%;height:1px;
+  background:linear-gradient(to right,transparent,rgba(196,164,107,0.3),transparent);
+  margin:0;
+}
+
+/* TRUTH SECTION */
+#truth{background:var(--black-soft)}
+.truth-statement{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,3vw,36px);font-weight:300;font-style:italic;
+  color:var(--white-70);line-height:1.6;max-width:800px;
+  border-left:2px solid var(--gold);padding-left:32px;margin-bottom:48px;
+}
+.truth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border)}
+.truth-card{
+  background:var(--black-soft);padding:36px 28px;
+  transition:background 0.3s;
+}
+.truth-card:hover{background:#0d0a06}
+.truth-card-icon{font-size:20px;color:var(--gold);margin-bottom:16px}
+.truth-card-title{font-size:14px;font-weight:500;letter-spacing:1px;color:var(--white);margin-bottom:10px}
+.truth-card-text{font-size:13px;color:var(--white-50);line-height:1.75}
+
+/* ARCHITECTURE */
+#architecture{background:var(--black)}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.arch-card{
+  border:1px solid rgba(196,164,107,0.12);padding:32px 24px;
+  background:linear-gradient(135deg,rgba(196,164,107,0.03),transparent);
+  transition:border-color 0.3s,transform 0.3s;
+}
+.arch-card:hover{border-color:rgba(196,164,107,0.35);transform:translateY(-4px)}
+.arch-card-num{font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:20px;font-family:monospace}
+.arch-card-name{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);margin-bottom:12px}
+.arch-card-text{font-size:13px;color:var(--white-50);line-height:1.75}
+
+/* SHIELD */
+#shield{background:var(--black-soft)}
+.shield-hero{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  margin-bottom:64px;
+}
+.shield-img-wrap{
+  position:relative;display:flex;justify-content:center;
+}
+.shield-img{width:clamp(160px,20vw,280px);filter:drop-shadow(0 0 40px rgba(196,164,107,0.4))}
+.shield-steps{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px}
+.shield-step{
+  background:rgba(196,164,107,0.04);border:1px solid rgba(196,164,107,0.1);
+  padding:20px;
+}
+.shield-step-num{font-size:10px;font-family:monospace;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.shield-step-text{font-size:13px;color:var(--white-50);line-height:1.6}
+
+/* SHIELD EXPERIENCE */
+#shield-experience{background:var(--black)}
+.experience-flow{display:flex;flex-direction:column;gap:2px}
+.exp-step{
+  display:flex;align-items:flex-start;gap:32px;
+  padding:28px 32px;
+  background:rgba(196,164,107,0.02);border:1px solid transparent;
+  transition:all 0.3s;
+}
+.exp-step:hover{background:rgba(196,164,107,0.05);border-color:rgba(196,164,107,0.15)}
+.exp-step-num{
+  font-size:11px;font-family:monospace;letter-spacing:2px;color:var(--gold);
+  flex-shrink:0;width:40px;margin-top:2px;
+}
+.exp-step-title{font-size:15px;font-weight:500;color:var(--white);margin-bottom:6px}
+.exp-step-text{font-size:13px;color:var(--white-50);line-height:1.7}
+
+/* REGISTRY */
+#registry-section{background:var(--black-soft)}
+.registry-preview{
+  background:#080604;border:1px solid rgba(196,164,107,0.2);
+  padding:32px;font-family:monospace;font-size:12px;
+  color:rgba(196,164,107,0.75);line-height:2;overflow-x:auto;
+}
+.registry-label{
+  font-size:10px;letter-spacing:3px;color:var(--gold);
+  text-transform:uppercase;margin-bottom:16px;font-family:'Inter',sans-serif;
+}
+
+/* DOCTRINE */
+#doctrine{background:var(--black)}
+.doctrine-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border)}
+.doctrine-item{
+  padding:24px 32px;border-bottom:1px solid rgba(196,164,107,0.08);
+  display:flex;gap:24px;align-items:flex-start;
+  transition:background 0.2s;
+}
+.doctrine-item:last-child{border-bottom:none}
+.doctrine-item:hover{background:rgba(196,164,107,0.03)}
+.doctrine-num{font-size:10px;font-family:monospace;color:rgba(196,164,107,0.4);flex-shrink:0;margin-top:3px}
+.doctrine-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--white-70);line-height:1.5;font-style:italic}
+
+/* CTA */
+#cta-section{
+  background:var(--black-soft);
+  text-align:center;padding:clamp(80px,10vw,140px) clamp(32px,6vw,96px);
+  margin-left:56px;
+}
+.cta-inner{max-width:700px;margin:0 auto}
+.cta-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,64px);font-weight:300;color:var(--white);margin-bottom:24px;line-height:1.2}
+.cta-sub{font-size:15px;color:var(--white-50);line-height:1.8;margin-bottom:48px}
+.cta-pricing{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-bottom:40px;
+}
+.cta-tier{
+  background:rgba(196,164,107,0.05);border:1px solid rgba(196,164,107,0.2);
+  padding:24px 32px;min-width:200px;text-align:center;
+  transition:border-color 0.3s;
+}
+.cta-tier:hover{border-color:var(--gold)}
+.cta-tier-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.cta-tier-price{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--white);margin-bottom:6px}
+.cta-tier-desc{font-size:12px;color:var(--white-30)}
+.cta-primary{
+  display:inline-block;background:var(--gold);color:#000;
+  padding:18px 56px;font-size:11px;font-weight:600;
+  letter-spacing:4px;text-transform:uppercase;
+  transition:all 0.3s;border:none;
+}
+.cta-primary:hover{background:var(--gold-bright);transform:translateY(-2px);box-shadow:0 8px 32px rgba(196,164,107,0.25)}
+.cta-secondary{
+  display:block;margin-top:16px;font-size:12px;
+  color:var(--white-30);letter-spacing:2px;
+}
+.cta-secondary a{color:var(--gold);text-decoration:none}
+.cta-secondary a:hover{text-decoration:underline}
+
+/* FOOTER */
+footer{
+  margin-left:56px;
+  padding:24px clamp(32px,6vw,96px);
+  border-top:1px solid rgba(196,164,107,0.1);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+  background:var(--black);
+}
+.footer-left{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.3)}
+.footer-right{display:flex;gap:24px}
+.footer-link{font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:1px;transition:color 0.2s}
+.footer-link:hover{color:var(--gold)}
+
+/* ════════════════════════════════
+   MOBILE
+════════════════════════════════ */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .hall,.section,#cta-section,footer{margin-left:0}
+  .hall-top{padding:20px 20px 0}
+  .hall-bottom{padding:14px 20px}
+  .hall-arches{gap:12px;padding:0 12px;flex-wrap:wrap;margin-top:20px}
+  .arch-label{display:none}
+  .hall-title{font-size:clamp(28px,7vw,52px)}
+  .maya-hologram{width:clamp(140px,45vw,220px)}
+  .shield-hero{grid-template-columns:1fr;gap:40px}
+  .shield-steps{grid-template-columns:1fr}
+  .doctrine-item{padding:18px 20px}
+  .hall-tagline{display:none}
+  .section{padding:56px 20px}
+  #cta-section{padding:64px 20px}
+  footer{padding:20px}
+  /* Top mobile nav */
+  .mobile-nav{
+    display:flex;position:fixed;top:0;left:0;right:0;height:52px;
+    background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);
+    align-items:center;padding:0 16px;gap:12px;
+    border-bottom:1px solid rgba(196,164,107,0.15);z-index:300;
+  }
+  .mobile-nav-logo{width:28px;height:28px;border-radius:50%;object-fit:cover}
+  .mobile-nav-word{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--white-90);flex:1}
+  .mobile-nav-links{display:flex;gap:16px}
+  .mobile-nav-link{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(196,164,107,0.6)}
+  .hall{padding-top:52px}
+}
+@media(min-width:901px){
+  .mobile-nav{display:none}
+}
+@media(max-width:480px){
+  .truth-grid{grid-template-columns:1fr}
+  .arch-grid{grid-template-columns:1fr}
+  .cta-pricing{flex-direction:column}
+  .exp-step{flex-direction:column;gap:8px;padding:20px 16px}
+  .hall-arches{gap:8px}
+}
+</style>
 </head>
 <body>
 
-<div id="cursor-dot"></div>
-<div id="cursor-ring"></div>
-<div id="cursor-glow"></div>
-<div id="scroll-progress"><div id="scroll-progress-fill"></div></div>
-
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">
-    <img src="shield-logo.jpg" alt="Lunara Shield" class="nav-shield">
-    <span class="nav-wordmark" data-en="Lunara Society" data-es="Lunara Society">Lunara Society</span>
-  </a>
-  <div class="nav-right">
-    <ul class="nav-links">
-      <li><a href="#truth" data-en="The Truth" data-es="La Verdad">The Truth</a></li>
-      <li><a href="#architecture" data-en="Architecture" data-es="Arquitectura">Architecture</a></li>
-      <li><a href="#shield" data-en="The Shield" data-es="El Escudo">The Shield</a></li>
-      <li><a href="/shield-demonstration.html" data-en="How It Works" data-es="C&oacute;mo Funciona">How It Works</a></li>
-      <li><a href="/registry.html" data-en="Registry" data-es="Registro">Registry</a></li>
-      <li><a href="/member.html" data-en="Member Area" data-es="&Aacute;rea de Miembros">Member Area</a></li>
-    </ul>
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button class="lang-btn active" data-lang="en" title="English">🇺🇸</button>
-      <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
-    </div>
+<!-- MOBILE TOP NAV -->
+<nav class="mobile-nav">
+  <img src="shield-logo.jpg" alt="Lunara" class="mobile-nav-logo">
+  <span class="mobile-nav-word">Lunara Society</span>
+  <div class="mobile-nav-links">
+    <a href="#shield" class="mobile-nav-link">Shield</a>
+    <a href="/registry.html" class="mobile-nav-link">Registry</a>
+    <a href="/member.html" class="mobile-nav-link">Member</a>
   </div>
-  <div class="lang-toggle lang-toggle-mobile" role="group" aria-label="Language">
-    <button class="lang-btn active" data-lang="en" title="English">🇺🇸</button>
-    <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
-  </div>
-  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
 </nav>
 
-<!-- MOBILE MENU -->
-<div class="nav-mobile-menu" id="mobile-menu">
-  <div class="mobile-lang-row">
-    <span class="lang-label" data-en="Language" data-es="Idioma">Language</span>
-    <div class="lang-toggle" role="group">
-      <button class="lang-btn active" data-lang="en" title="English">🇺🇸</button>
-      <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <img src="shield-logo.jpg" alt="Lunara" class="sidebar-logo">
+  <div class="sidebar-icons">
+    <a href="#hero" class="sidebar-icon active"><span>⬡</span><span class="tip">Hall</span></a>
+    <a href="#truth" class="sidebar-icon"><span>◈</span><span class="tip">The Truth</span></a>
+    <a href="#architecture" class="sidebar-icon"><span>⊞</span><span class="tip">Architecture</span></a>
+    <a href="#shield" class="sidebar-icon"><span>◎</span><span class="tip">The Shield</span></a>
+    <a href="#shield-experience" class="sidebar-icon"><span>→</span><span class="tip">How It Works</span></a>
+    <a href="#registry-section" class="sidebar-icon"><span>◇</span><span class="tip">Registry</span></a>
+    <a href="#doctrine" class="sidebar-icon"><span>⊹</span><span class="tip">Doctrine</span></a>
+    <a href="#cta-section" class="sidebar-icon"><span>⊕</span><span class="tip">Join</span></a>
+    <a href="/member.html" class="sidebar-icon"><span>◉</span><span class="tip">Member Area</span></a>
+  </div>
+  <div class="sidebar-bottom">MMXXVI</div>
+</nav>
+
+<!-- HALL HERO -->
+<section class="hall" id="hero">
+  <div class="hall-bg"></div>
+
+  <!-- Particles -->
+  <div class="particle-field" id="particles"></div>
+
+  <!-- Top Bar -->
+  <div class="hall-top">
+    <span class="hall-top-left">MMXXVI</span>
+    <div class="hall-top-right">
+      <div class="hall-tagline">The future belongs<br>to those who<br>coordinate intelligence.</div>
+      <div class="hall-number">01</div>
     </div>
   </div>
-  <a href="#truth" class="mobile-link" data-en="The Truth" data-es="La Verdad">The Truth</a>
-  <a href="#architecture" class="mobile-link" data-en="Architecture" data-es="Arquitectura">Architecture</a>
-  <a href="#shield" class="mobile-link" data-en="The Shield" data-es="El Escudo">The Shield</a>
-  <a href="/shield-demonstration.html" class="mobile-link" data-en="How It Works" data-es="Cómo Funciona">How It Works</a>
-  <a href="/registry" class="mobile-link" data-en="Registry" data-es="Registro">Registry</a>
-  <a href="#obtain-shield" class="mobile-link" data-en="Obtain the Shield" data-es="Obtener el Escudo" style="color:var(--gold);">Obtain the Shield</a>
-  <a href="#contact" class="mobile-link" data-en="Contact" data-es="Contacto">Contact</a>
-</div>
 
-<!-- HERO -->
-<section class="hero" id="hero">
-  <img src="shield-logo.jpg" alt="Lunara Shield" class="hero-shield" id="hero-shield">
-  <div class="hero-eyebrow reveal" data-en="Lunara Society · Est. 2026" data-es="Lunara Society · Est. 2026">Lunara Society &nbsp;·&nbsp; Est. 2026</div>
-  <h1 class="hero-title reveal-type delay-1"
-      data-en="The future belongs to those who coordinate intelligence."
-      data-es="El futuro pertenece a quienes coordinan la inteligencia.">The future belongs to those who coordinate intelligence.</h1>
-  <p class="hero-sub reveal-fade delay-2"
-     data-en="Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred."
-     data-es="No inteligencia. Coordinación. La institución donde las interacciones económicas de confianza son gobernadas, verificadas y preferidas.">Not intelligence. Coordination. The institution where trustworthy economic interactions are governed, verified, and preferred.</p>
-  <p class="hero-plain reveal-fade delay-3"
-     data-en="If your business receives unwanted AI-generated outreach — the Lunara Shield gives you a formal, machine-readable way to set your own terms."
-     data-es="Si tu negocio recibe contacto no deseado generado por IA — el Escudo Lunara te da una forma formal y legible por máquinas para establecer tus propios términos.">If your business receives unwanted AI-generated outreach — the Lunara Shield gives you a formal, machine-readable way to set your own terms.</p>
-  <div class="hero-divider reveal delay-4"></div>
-  <div class="hero-pillars reveal delay-4">
-    <a href="#pillar-shield" class="hero-pillar" data-en="Shield" data-es="Escudo">Shield</a>
-    <a href="#pillar-signal" class="hero-pillar" data-en="Signal" data-es="Señal">Signal</a>
-    <a href="/registry" class="hero-pillar" data-en="Registry" data-es="Registro">Registry</a>
-    <a href="#pillar-gateway" class="hero-pillar" data-en="Gateway" data-es="Puerta">Gateway</a>
-    <a href="#pillar-reputation" class="hero-pillar" data-en="Reputation" data-es="Reputación">Reputation</a>
+  <!-- Title -->
+  <div class="hall-title-wrap">
+    <h1 class="hall-title">Lunara Society</h1>
+    <div class="hall-title-line"></div>
+    <div class="hall-title-emblem">◈</div>
+  </div>
+
+  <!-- Arch Nav -->
+  <div class="hall-arches">
+    <a href="#shield" class="arch-portal">
+      <span class="arch-icon">◎</span>
+      <span class="arch-label">Shield</span>
+    </a>
+    <a href="#registry-section" class="arch-portal">
+      <span class="arch-icon">◇</span>
+      <span class="arch-label">Registry</span>
+    </a>
+    <a href="#architecture" class="arch-portal">
+      <span class="arch-icon">⊞</span>
+      <span class="arch-label">Architecture</span>
+    </a>
+    <a href="#doctrine" class="arch-portal">
+      <span class="arch-icon">⊹</span>
+      <span class="arch-label">Doctrine</span>
+    </a>
+    <a href="/member.html" class="arch-portal">
+      <span class="arch-icon">◉</span>
+      <span class="arch-label">Member Area</span>
+    </a>
+  </div>
+
+  <!-- Maya Hologram Platform -->
+  <div class="platform-wrap">
+    <div class="platform-glow"></div>
+    <div class="projection-cone"></div>
+    <div class="maya-hologram" id="maya">
+      <div class="maya-scanlines"></div>
+      <img src="maya-hologram.png" alt="Maya — Intelligence Correspondent, Lunara Society" draggable="false">
+    </div>
+    <div class="platform-disc"></div>
+  </div>
+
+  <div class="scroll-prompt" data-en="Scroll to Enter the Institution" data-es="Desplácese para Entrar">Scroll to Enter the Institution</div>
+
+  <!-- Bottom Bar -->
+  <div class="hall-bottom">
+    <span class="hall-bottom-text">Est. 2026</span>
+    <div class="hall-lang">
+      <button class="active" onclick="setLang('en')">EN</button>
+      <button onclick="setLang('es')">ES</button>
+    </div>
+    <span class="hall-bottom-text">Veritas &nbsp;·&nbsp; Ratio &nbsp;·&nbsp; Fide</span>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- CHAPTER I -->
-<section id="truth">
+<!-- TRUTH SECTION -->
+<section class="section" id="truth">
   <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter I" data-es="Capítulo I">Chapter I</div>
-    <div class="section-label reveal delay-1" data-en="The Truth About Lunara" data-es="La Verdad Sobre Lunara">The Truth About Lunara</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="Lunara is not a product.<br>Lunara is an institution."
-        data-es="Lunara no es un producto.<br>Lunara es una institución.">Lunara is not a product.<br>Lunara is an institution.</h2>
-    <div class="negation-block reveal-fade delay-3">
-      <div class="negation-label" data-en="What Lunara Is Not" data-es="Lo Que Lunara No Es">What Lunara Is Not</div>
-      <ul class="negation-list">
-        <li data-en="Not a website." data-es="No un sitio web.">Not a website.</li>
-        <li data-en="Not an AI company." data-es="No una empresa de IA.">Not an AI company.</li>
-        <li data-en="Not a lead generation platform." data-es="No una plataforma de generación de leads.">Not a lead generation platform.</li>
-        <li data-en="Not a marketplace." data-es="No un marketplace.">Not a marketplace.</li>
-        <li data-en="Not a spam filter." data-es="No un filtro de spam.">Not a spam filter.</li>
-        <li data-en="Not a software product." data-es="No un producto de software.">Not a software product.</li>
-      </ul>
-      <div class="negation-resolution"
-           data-en="Those things may exist inside Lunara.<br>But they are not Lunara."
-           data-es="Esas cosas pueden existir dentro de Lunara.<br>Pero no son Lunara.">Those things may exist inside Lunara.<br>But they are not Lunara.</div>
-    </div>
-    <p class="section-body reveal delay-1"
-       data-en="Lunara is an institution being built around a simple observation: as intelligence becomes abundant, trust becomes scarce."
-       data-es="Lunara es una institución construida en torno a una observación simple: a medida que la inteligencia se vuelve abundante, la confianza se vuelve escasa.">Lunara is an institution being built around a simple observation: as intelligence becomes abundant, trust becomes scarce.</p>
-    <p class="section-body reveal delay-2"
-       data-en="As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong>"
-       data-es="A medida que los sistemas autónomos se vuelven capaces de descubrir, evaluar, contactar, negociar y transaccionar — surge una nueva escasez. <strong>No inteligencia. Confianza.</strong>">As autonomous systems become capable of discovering, evaluating, contacting, negotiating, and transacting — a new scarcity emerges. <strong>Not intelligence. Trust.</strong></p>
-    <p class="section-body reveal-type delay-3"
-       data-en="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it."
-       data-es="El futuro no pertenecerá solo a quienes creen inteligencia. El futuro pertenecerá a quienes la coordinen."
-       data-text="The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.">The future will not belong solely to those who create intelligence. The future will belong to those who coordinate it.</p>
-  </div>
-</section>
-
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- CHAPTER II -->
-<section class="dark-section" id="doctrine">
-  <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter II" data-es="Capítulo II">Chapter II</div>
-    <div class="section-label reveal delay-1" data-en="The Magnetic Field Doctrine" data-es="La Doctrina del Campo Magnético">The Magnetic Field Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="Lunara wins<br>through gravity."
-        data-es="Lunara gana<br>a través de la gravedad.">Lunara wins<br>through gravity.</h2>
-    <p class="section-body reveal-fade delay-3"
-       data-en="Not through force. Not through prohibition. Not through walls."
-       data-es="No por la fuerza. No por la prohibición. No por los muros.">Not through force. Not through prohibition. Not through walls.</p>
-    <p class="section-body reveal delay-1"
-       data-en='The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong>'
-       data-es='El objetivo nunca es: <strong>"Hacer la participación obligatoria."</strong><br>El objetivo siempre es: <strong>"Hacer la participación la elección más racional."</strong>'>The objective is never: <strong>"Make participation mandatory."</strong><br>The objective is always: <strong>"Make participation the most rational choice."</strong></p>
-    <div class="gravity-block reveal delay-2">
-      <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label" data-en="What We Reject" data-es="Lo Que Rechazamos">What We Reject</div>
-        <ul class="gravity-list">
-          <li data-en="Forced participation" data-es="Participación forzada">Forced participation</li>
-          <li data-en="Coerced compliance" data-es="Cumplimiento coaccionado">Coerced compliance</li>
-          <li data-en="Manufactured dependency" data-es="Dependencia fabricada">Manufactured dependency</li>
-          <li data-en="Walls and prohibitions" data-es="Muros y prohibiciones">Walls and prohibitions</li>
-        </ul>
+    <p class="section-eyebrow" data-en="The Truth" data-es="La Verdad">The Truth</p>
+    <blockquote class="truth-statement" data-en="As intelligence becomes abundant, trust becomes scarce." data-es="A medida que la inteligencia se vuelve abundante, la confianza se vuelve escasa.">
+      As intelligence becomes abundant, trust becomes scarce.
+    </blockquote>
+    <div class="truth-grid">
+      <div class="truth-card">
+        <div class="truth-card-icon">◈</div>
+        <div class="truth-card-title">AI agents are contacting businesses</div>
+        <div class="truth-card-text">Autonomous systems now reach inboxes, forms, and communication channels without identification, consent, or accountability.</div>
       </div>
-      <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label" data-en="How We Win" data-es="Cómo Ganamos">How We Win</div>
-        <ul class="gravity-list">
-          <li data-en="Superior outcomes" data-es="Resultados superiores">Superior outcomes</li>
-          <li data-en="Rational preference" data-es="Preferencia racional">Rational preference</li>
-          <li data-en="Earned authority" data-es="Autoridad ganada">Earned authority</li>
-          <li data-en="Institutional gravity" data-es="Gravedad institucional">Institutional gravity</li>
-        </ul>
+      <div class="truth-card">
+        <div class="truth-card-icon">◎</div>
+        <div class="truth-card-title">Businesses have no declared response</div>
+        <div class="truth-card-text">No communication policy. No preference declaration. No trust protocol. Businesses are invisible to the machines that matter most.</div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">⊹</div>
+        <div class="truth-card-title">The infrastructure gap is growing</div>
+        <div class="truth-card-text">Every day without a declared identity is another day without protection. The window for founding participants closes as the network grows.</div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">◇</div>
+        <div class="truth-card-title">Lunara is the response</div>
+        <div class="truth-card-text">The trust coordination layer between businesses and the autonomous economy. Built for the era where machines make decisions humans used to make.</div>
       </div>
     </div>
-    <p class="section-body reveal delay-3"
-       data-en="The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>."
-       data-es="Las instituciones más fuertes de la historia no fueron inevitables porque forzaron la participación. Se volvieron inevitables porque proporcionaron <strong>resultados superiores</strong>.">The strongest institutions in history were not unavoidable because they forced participation. They became unavoidable because they provided <strong>superior outcomes</strong>.</p>
-    <p class="section-body reveal-type delay-4"
-       style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);"
-       data-en="Gravity is stronger than coercion."
-       data-es="La gravedad es más fuerte que la coerción."
-       data-text="Gravity is stronger than coercion.">Gravity is stronger than coercion.</p>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- CHAPTER III -->
-<section id="shield">
-  <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter III" data-es="Capítulo III">Chapter III</div>
-    <div class="section-label reveal delay-1" data-en="The Shield Doctrine" data-es="La Doctrina del Escudo">The Shield Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="The Shield protects<br>attention. Time. Signal."
-        data-es="El Escudo protege<br>la atención. El tiempo. La señal.">The Shield protects<br>attention. Time. Signal.</h2>
-    <p class="section-body reveal-fade delay-3"
-       data-en="The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot."
-       data-es="El Escudo existe porque las pequeñas empresas son vulnerables. Las grandes corporaciones pueden contratar equipos. Los gobiernos pueden contratar departamentos. Las pequeñas empresas a menudo no pueden.">The Shield exists because small businesses are vulnerable. Large corporations can hire teams. Governments can hire departments. Small businesses often cannot.</p>
-    <p class="section-body reveal delay-1"
-       data-en="The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise."
-       data-es="La economía autónoma generará volúmenes crecientes de alcance, recomendaciones, ofertas, propuestas e interacciones. La mayoría de los participantes se ahogarán en el ruido.">The autonomous economy will generate increasing volumes of outreach, recommendations, offers, proposals, and interactions. Most participants will drown in noise.</p>
-    <div class="negation-block reveal delay-2">
-      <div class="negation-label" data-en="The Shield Is" data-es="El Escudo Es">The Shield Is</div>
-      <ul class="negation-list">
-        <li data-en="Not anti-AI." data-es="No anti-IA.">Not anti-AI.</li>
-        <li data-en="Not a prohibition." data-es="No una prohibición.">Not a prohibition.</li>
-        <li data-en="Not a filter applied after the fact." data-es="No un filtro aplicado después del hecho.">Not a filter applied after the fact.</li>
-      </ul>
-      <div class="negation-resolution"
-           data-en="The Shield is pro-signal.<br>Every feature increases signal and reduces noise."
-           data-es="El Escudo es pro-señal.<br>Cada función aumenta la señal y reduce el ruido.">The Shield is pro-signal.<br>Every feature increases signal and reduces noise.</div>
-    </div>
-    <p class="section-body reveal-type delay-3"
-       data-en="For businesses that carry it — contact is earned, not forced."
-       data-es="Para las empresas que lo llevan — el contacto se gana, no se fuerza."
-       data-text="For businesses that carry it — contact is earned, not forced.">For businesses that carry it — contact is earned, not forced.</p>
-  </div>
-</section>
-
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
 <!-- ARCHITECTURE -->
-<section class="mid-section" id="architecture">
+<section class="section" id="architecture">
   <div class="section-inner">
-    <div class="section-label reveal" data-en="The Lunara Protocol" data-es="El Protocolo Lunara">The Lunara Protocol</div>
-    <h2 class="section-title reveal delay-1"
-        data-en="Five pillars.<br>One standard."
-        data-es="Cinco pilares.<br>Un estándar.">Five pillars.<br>One standard.</h2>
-    <p class="section-body reveal-fade delay-2"
-       data-en="The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce."
-       data-es="La arquitectura Lunara no es un producto. Es un marco institucional — construido para gobernar la intersección de la inteligencia autónoma y el comercio legítimo.">The Lunara architecture is not a product. It is an institutional framework — built to govern the intersection of autonomous intelligence and legitimate commerce.</p>
-    <div class="pillars-grid reveal delay-3">
-    <div class="pillars-ticker-track">
-<div class="pillar-card" id="pillar-shield">
-        <div class="pillar-number">01</div>
-        <div class="pillar-name" data-en="Shield" data-es="Escudo">Shield</div>
-        <div class="pillar-desc" data-en="Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition." data-es="Capa de soberanía para empresas. Declara tus condiciones. Define quién gana acceso, en qué nivel, bajo qué condiciones. Tu bandeja de entrada no es infraestructura para la ambición de otro.">Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition.</div>
+    <p class="section-eyebrow" data-en="Architecture" data-es="Arquitectura">Architecture</p>
+    <h2 class="section-title" data-en="Five Pillars of the Institution" data-es="Cinco Pilares de la Institución">Five Pillars of the Institution</h2>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-num">01 / SHIELD</div>
+        <div class="arch-card-name">Protection</div>
+        <div class="arch-card-text">The entry point. A declared identity, a communication policy, and a permanent registry record that tells AI systems exactly how to interact with your business.</div>
       </div>
-      <div class="pillar-card" id="pillar-signal">
-        <div class="pillar-number">02</div>
-        <div class="pillar-name" data-en="Signal" data-es="Señal">Signal</div>
-        <div class="pillar-desc" data-en="Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time." data-es="Transmisión de intención verificada. Las empresas presentan oportunidades comerciales genuinas a agencias de IA calificadas — en sus propios términos, en su propio tiempo.">Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time.</div>
+      <div class="arch-card">
+        <div class="arch-card-num">02 / REGISTRY</div>
+        <div class="arch-card-name">Infrastructure</div>
+        <div class="arch-card-text">The public ledger of participating institutions. Machine-queryable. AI-readable. The foundation of trust verification in the autonomous economy.</div>
       </div>
-      <div class="pillar-card" id="pillar-registry">
-        <div class="pillar-number">03</div>
-        <div class="pillar-name" data-en="Registry" data-es="Registro">Registry</div>
-        <div class="pillar-desc" data-en="The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible." data-es="El libro mayor institucional de participantes verificados. Empresas que han declarado apertura. Agencias que han ganado posición. La confianza hecha legible.">The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible.</div>
+      <div class="arch-card">
+        <div class="arch-card-num">03 / SIGNAL</div>
+        <div class="arch-card-name">Visibility</div>
+        <div class="arch-card-text">Machine-readable identity files deployed across your domain. llms.txt, ai.json, identity.json — the language AI systems use to understand who you are.</div>
       </div>
-      <div class="pillar-card" id="pillar-gateway">
-        <div class="pillar-number">04</div>
-        <div class="pillar-name" data-en="Gateway" data-es="Puerta de Enlace">Gateway</div>
-        <div class="pillar-desc" data-en="The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion." data-es="La infraestructura de enrutamiento. Las agencias verificadas obtienen acceso prioritario a empresas que han consentido recibirlas. El primer contacto se convierte en una llegada — no una intrusión.">The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion.</div>
+      <div class="arch-card">
+        <div class="arch-card-num">04 / GATEWAY</div>
+        <div class="arch-card-name">Access</div>
+        <div class="arch-card-text">The verified channel through which compliant AI agents may contact your business. Structured. Accountable. Documented.</div>
       </div>
-      <div class="pillar-card" id="pillar-reputation">
-        <div class="pillar-number">05</div>
-        <div class="pillar-name" data-en="Reputation" data-es="Reputación">Reputation</div>
-        <div class="pillar-desc" data-en="The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution." data-es="El foso principal. Cada interacción construye un registro de confianza portátil. El software puede copiarse. Las funciones pueden copiarse. Los historiales de confianza no. La reputación se convierte en infraestructura — y la infraestructura se convierte en institución.">The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution.</div>
-      </div>
-<div class="pillar-card" id="pillar-shield">
-        <div class="pillar-number">01</div>
-        <div class="pillar-name" data-en="Shield" data-es="Escudo">Shield</div>
-        <div class="pillar-desc" data-en="Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition." data-es="Capa de soberanía para empresas. Declara tus condiciones. Define quién gana acceso, en qué nivel, bajo qué condiciones. Tu bandeja de entrada no es infraestructura para la ambición de otro.">Sovereignty layer for businesses. Declare your terms. Define who earns access, at what tier, under what conditions. Your inbox is not infrastructure for someone else's ambition.</div>
-      </div>
-      <div class="pillar-card" id="pillar-signal">
-        <div class="pillar-number">02</div>
-        <div class="pillar-name" data-en="Signal" data-es="Señal">Signal</div>
-        <div class="pillar-desc" data-en="Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time." data-es="Transmisión de intención verificada. Las empresas presentan oportunidades comerciales genuinas a agencias de IA calificadas — en sus propios términos, en su propio tiempo.">Verified intent broadcast. Businesses surface genuine commercial openings to qualified AI agencies — on their own terms, in their own time.</div>
-      </div>
-      <div class="pillar-card" id="pillar-registry">
-        <div class="pillar-number">03</div>
-        <div class="pillar-name" data-en="Registry" data-es="Registro">Registry</div>
-        <div class="pillar-desc" data-en="The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible." data-es="El libro mayor institucional de participantes verificados. Empresas que han declarado apertura. Agencias que han ganado posición. La confianza hecha legible.">The institutional ledger of verified participants. Businesses that have declared openness. Agencies that have earned standing. Trust made legible.</div>
-      </div>
-      <div class="pillar-card" id="pillar-gateway">
-        <div class="pillar-number">04</div>
-        <div class="pillar-name" data-en="Gateway" data-es="Puerta de Enlace">Gateway</div>
-        <div class="pillar-desc" data-en="The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion." data-es="La infraestructura de enrutamiento. Las agencias verificadas obtienen acceso prioritario a empresas que han consentido recibirlas. El primer contacto se convierte en una llegada — no una intrusión.">The routing infrastructure. Verified agencies gain priority access to businesses that have consented to receive them. First contact becomes an arrival — not an intrusion.</div>
-      </div>
-      <div class="pillar-card" id="pillar-reputation">
-        <div class="pillar-number">05</div>
-        <div class="pillar-name" data-en="Reputation" data-es="Reputación">Reputation</div>
-        <div class="pillar-desc" data-en="The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution." data-es="El foso principal. Cada interacción construye un registro de confianza portátil. El software puede copiarse. Las funciones pueden copiarse. Los historiales de confianza no. La reputación se convierte en infraestructura — y la infraestructura se convierte en institución.">The primary moat. Every interaction builds a portable trust record. Software can be copied. Features can be copied. Trust histories cannot. Reputation becomes infrastructure — and infrastructure becomes institution.</div>
+      <div class="arch-card">
+        <div class="arch-card-num">05 / PROTOCOL</div>
+        <div class="arch-card-name">Standards</div>
+        <div class="arch-card-text">The Lunara Protocol — the emerging standard for AI-to-business interaction. Those who adopt it early define the rules everyone else will follow.</div>
       </div>
     </div>
   </div>
-  </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- CHAPTER IV -->
-<section class="dark-section">
+<!-- SHIELD SECTION -->
+<section class="section" id="shield">
   <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter IV" data-es="Capítulo IV">Chapter IV</div>
-    <div class="section-label reveal delay-1" data-en="The Toll Booth Doctrine" data-es="La Doctrina del Peaje">The Toll Booth Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="The toll booth is<br>a quality filter."
-        data-es="El peaje es<br>un filtro de calidad.">The toll booth is<br>a quality filter.</h2>
-    <div class="negation-block reveal-fade delay-3">
-      <div class="negation-label" data-en="The Toll Booth Is Not" data-es="El Peaje No Es">The Toll Booth Is Not</div>
-      <ul class="negation-list">
-        <li data-en="Not a tax." data-es="No un impuesto.">Not a tax.</li>
-        <li data-en="Not a punishment." data-es="No un castigo.">Not a punishment.</li>
-        <li data-en="Not maximum payment extraction." data-es="No extracción máxima de pago.">Not maximum payment extraction.</li>
-      </ul>
-      <div class="negation-resolution"
-           data-en="Participants pay because trusted access creates value.<br>Not because access is blocked."
-           data-es="Los participantes pagan porque el acceso de confianza crea valor.<br>No porque el acceso esté bloqueado.">Participants pay because trusted access creates value.<br>Not because access is blocked.</div>
+    <p class="section-eyebrow" data-en="The Shield" data-es="El Escudo">The Shield</p>
+    <div class="shield-hero">
+      <div>
+        <h2 class="section-title" data-en="Your Business. Declared. Protected. Found." data-es="Tu Negocio. Declarado. Protegido. Encontrado.">Your Business.<br>Declared. Protected.<br>Found.</h2>
+        <p class="section-sub" data-en="The Shield is not a product. It is a status. A permanent record that your business exists, operates with integrity, and has declared how it engages with intelligent systems." data-es="El Escudo no es un producto. Es un estatus. Un registro permanente de que tu negocio existe, opera con integridad y ha declarado cómo se relaciona con los sistemas inteligentes.">The Shield is not a product. It is a status. A permanent record that your business exists, operates with integrity, and has declared how it engages with intelligent systems.</p>
+      </div>
+      <div class="shield-img-wrap">
+        <img src="shield-logo.jpg" alt="Lunara Shield" class="shield-img">
+      </div>
     </div>
-    <div class="equation-block reveal delay-2">
-      <div class="equation-label" data-en="The Governance Equation" data-es="La Ecuación de Gobernanza">The Governance Equation</div>
-      <div class="equation" data-en="Trust × Match Quality × Economic Outcomes" data-es="Confianza × Calidad de Coincidencia × Resultados Económicos">Trust × Match Quality × Economic Outcomes</div>
-      <div class="equation-note"
-           data-en="If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters."
-           data-es="Si los ingresos aumentan mientras la confianza disminuye — Lunara pierde.<br>Si la confianza aumenta mientras los resultados colapsan — Lunara pierde.<br>El equilibrio importa.">If revenue increases while trust decreases — Lunara loses.<br>If trust increases while outcomes collapse — Lunara loses.<br>The equilibrium matters.</div>
+    <div class="shield-steps">
+      <div class="shield-step"><div class="shield-step-num">01</div><div class="shield-step-text">Permanent Lunara ID assigned to your business</div></div>
+      <div class="shield-step"><div class="shield-step-num">02</div><div class="shield-step-text">Registry entry published — machine-readable and AI-queryable</div></div>
+      <div class="shield-step"><div class="shield-step-num">03</div><div class="shield-step-text">Communication Policy declared and live on your domain</div></div>
+      <div class="shield-step"><div class="shield-step-num">04</div><div class="shield-step-text">AI Discovery Stack deployed — llms.txt, ai.json, identity.json</div></div>
+      <div class="shield-step"><div class="shield-step-num">05</div><div class="shield-step-text">Shield Status badge activated — verified, protected, institutional</div></div>
+      <div class="shield-step"><div class="shield-step-num">06</div><div class="shield-step-text">Member Area access granted — manage all settings permanently</div></div>
+    </div>
+    <div style="margin-top:32px">
+      <a href="/shield-demonstration.html" style="display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase;border:1px solid var(--border);padding:14px 28px;transition:all 0.3s;background:rgba(196,164,107,0.04)">
+        <span>See the Full Process</span><span>→</span>
+      </a>
     </div>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- CHAPTER V -->
-<section>
+<!-- HOW IT WORKS -->
+<section class="section" id="shield-experience">
   <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter V" data-es="Capítulo V">Chapter V</div>
-    <div class="section-label reveal delay-1" data-en="The Coordination Doctrine" data-es="La Doctrina de Coordinación">The Coordination Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="The greatest opportunity<br>is not intelligence."
-        data-es="La mayor oportunidad<br>no es la inteligencia.">The greatest opportunity<br>is not intelligence.</h2>
-    <p class="section-body reveal-fade delay-3"
-       data-en="The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly."
-       data-es="El mundo está produciendo millones de rastreadores, agentes, automatizaciones, asistentes y sistemas de recomendación. La mayoría de ellos resuelven problemas similares repetidamente.">The world is producing millions of crawlers, agents, automations, assistants, and recommendation systems. Most of them are solving similar problems repeatedly.</p>
-    <p class="section-body reveal delay-1"
-       data-en="Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated."
-       data-es="El propósito de Lunara no es convertirse en otro rastreador.<br>El propósito de Lunara es convertirse en el lugar donde se coordinan las interacciones de confianza.">Lunara's purpose is not to become another crawler.<br>Lunara's purpose is to become the place where trustworthy interactions are coordinated.</p>
-    <div class="gravity-block reveal delay-2">
-      <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label" data-en="What Others Do" data-es="Lo Que Hacen Otros">What Others Do</div>
-        <ul class="gravity-list">
-          <li data-en="Search" data-es="Buscar">Search</li>
-          <li data-en="Scrape" data-es="Raspar">Scrape</li>
-          <li data-en="Contact" data-es="Contactar">Contact</li>
-          <li data-en="Extract" data-es="Extraer">Extract</li>
-        </ul>
-      </div>
-      <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label" data-en="What Lunara Does" data-es="Lo Que Hace Lunara">What Lunara Does</div>
-        <ul class="gravity-list">
-          <li data-en="Coordinates" data-es="Coordina">Coordinates</li>
-          <li data-en="Verifies" data-es="Verifica">Verifies</li>
-          <li data-en="Governs" data-es="Gobierna">Governs</li>
-          <li data-en="Compounds" data-es="Multiplica">Compounds</li>
-        </ul>
-      </div>
+    <p class="section-eyebrow" data-en="How It Works" data-es="Cómo Funciona">How It Works</p>
+    <h2 class="section-title" data-en="Chapter XI: The Shield Experience" data-es="Capítulo XI: La Experiencia del Escudo">Chapter XI: The Shield Experience</h2>
+    <div class="experience-flow">
+      <div class="exp-step"><div class="exp-step-num">01</div><div><div class="exp-step-title">You complete the founding participant process</div><div class="exp-step-text">One-time participation fee. No subscription. No hidden costs. You become part of the founding cohort.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">02</div><div><div class="exp-step-title">Your Lunara ID is assigned</div><div class="exp-step-text">A permanent institutional identifier — LUN-BUS-YYYY-NNNNN — issued to your business and registered in the Lunara database.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">03</div><div><div class="exp-step-title">Your registry record goes live</div><div class="exp-step-text">Publicly accessible. Machine-readable. AI systems can query your record to verify your identity and communication preferences before initiating contact.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">04</div><div><div class="exp-step-title">Your Communication Policy is declared</div><div class="exp-step-text">A structured document specifying which channels you accept, what response times to expect, and how AI agents should interact with your business.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">05</div><div><div class="exp-step-title">AI Discovery Stack is deployed to your domain</div><div class="exp-step-text">llms.txt, ai.json, and identity.json — the files that AI systems read before making decisions about your business.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">06</div><div><div class="exp-step-title">You receive Member Area access</div><div class="exp-step-text">A private dashboard where you manage your shield status, review AI interaction logs, and update your preferences as the protocol evolves.</div></div></div>
+      <div class="exp-step"><div class="exp-step-num">07</div><div><div class="exp-step-title">Your institutional record is permanent</div><div class="exp-step-text">Unlike social profiles and reviews, your Lunara record cannot be deleted, manipulated, or ignored. It is structural. It is yours. It lasts.</div></div></div>
     </div>
-    <p class="section-body reveal-type delay-3"
-       data-en="Lunara decides how trustworthy participation occurs."
-       data-es="Lunara decide cómo ocurre la participación de confianza."
-       data-text="Lunara decides how trustworthy participation occurs."><strong>Lunara decides how trustworthy participation occurs.</strong></p>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- CHAPTER VI -->
-<section class="mid-section">
+<!-- REGISTRY -->
+<section class="section" id="registry-section">
   <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter VI" data-es="Capítulo VI">Chapter VI</div>
-    <div class="section-label reveal delay-1" data-en="The Reputation Doctrine" data-es="La Doctrina de la Reputación">The Reputation Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="Reputation is<br>the primary moat."
-        data-es="La reputación es<br>el foso principal.">Reputation is<br>the primary moat.</h2>
-    <div class="gravity-block reveal delay-3">
-      <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label" data-en="What Can Be Copied" data-es="Lo Que Puede Copiarse">What Can Be Copied</div>
-        <ul class="gravity-list">
-          <li data-en="Software" data-es="Software">Software</li>
-          <li data-en="Features" data-es="Funciones">Features</li>
-          <li data-en="Interfaces" data-es="Interfaces">Interfaces</li>
-          <li data-en="Marketing" data-es="Marketing">Marketing</li>
-        </ul>
-      </div>
-      <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label" data-en="What Cannot" data-es="Lo Que No Puede">What Cannot</div>
-        <ul class="gravity-list">
-          <li data-en="Trust histories" data-es="Historiales de confianza">Trust histories</li>
-          <li data-en="Reputation records" data-es="Registros de reputación">Reputation records</li>
-          <li data-en="Earned standing" data-es="Posición ganada">Earned standing</li>
-          <li data-en="Institutional memory" data-es="Memoria institucional">Institutional memory</li>
-        </ul>
-      </div>
+    <p class="section-eyebrow" data-en="Registry" data-es="Registro">Registry</p>
+    <h2 class="section-title" data-en="The Public Record" data-es="El Registro Público">The Public Record</h2>
+    <p class="section-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
+    <div class="registry-preview">
+      <div class="registry-label">Live registry entry format</div>
+<pre>{
+  "lunara_id":               "LUN-BUS-2026-XXXXXXX",
+  "entity_name":             "Your Business",
+  "domain":                  "yourdomain.com",
+  "verification_status":     "verified",
+  "shield_status":           "active",
+  "registry_date":           "2026-06-XX",
+  "trust_tier":              "founding_participant",
+  "ai_interaction_policy":   "structured_inquiry_only",
+  "communication_policy":    "declared",
+  "protocol_version":        "LUN-PROTO-1.0"
+}</pre>
     </div>
-    <p class="section-body reveal delay-1"
-       data-en="Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it."
-       data-es="Cada interacción debe contribuir a la reputación de un participante. Cada resultado exitoso debe fortalecer la confianza. Cada resultado dañino debe debilitarla.">Every interaction should contribute to a participant's reputation. Every successful outcome should strengthen trust. Every harmful outcome should weaken it.</p>
-    <p class="section-body reveal-type delay-2"
-       style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,24px);font-style:italic;color:var(--gold);"
-       data-en="Over time, reputation becomes infrastructure."
-       data-es="Con el tiempo, la reputación se convierte en infraestructura."
-       data-text="Over time, reputation becomes infrastructure.">Over time, reputation becomes infrastructure.</p>
+    <div style="margin-top:24px">
+      <a href="/registry.html" style="display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase;border:1px solid var(--border);padding:14px 28px;transition:all 0.3s;background:rgba(196,164,107,0.04)">
+        View the Full Registry →
+      </a>
+    </div>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- CHAPTER VII -->
-<section class="dark-section">
+<!-- DOCTRINE -->
+<section class="section" id="doctrine">
   <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter VII" data-es="Capítulo VII">Chapter VII</div>
-    <div class="section-label reveal delay-1" data-en="The Identity Doctrine" data-es="La Doctrina de Identidad">The Identity Doctrine</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="Identity is the<br>foundation of trust."
-        data-es="La identidad es<br>el fundamento de la confianza.">Identity is the<br>foundation of trust.</h2>
-    <p class="section-body reveal-fade delay-3"
-       data-en="Participants should not merely have accounts. They should possess economic identities."
-       data-es="Los participantes no deben simplemente tener cuentas. Deben poseer identidades económicas.">Participants should not merely have accounts. They should possess economic identities.</p>
-    <table class="identity-table reveal delay-2">
-      <thead>
-        <tr>
-          <th data-en="Identity Component" data-es="Componente de Identidad">Identity Component</th>
-          <th data-en="What It Provides" data-es="Lo Que Proporciona">What It Provides</th>
-          <th data-en="Status" data-es="Estado">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td data-en="Verification" data-es="Verificación">Verification</td><td data-en="Confirmed existence and legitimacy of the entity" data-es="Existencia y legitimidad confirmada de la entidad">Confirmed existence and legitimacy of the entity</td><td><span class="identity-check" data-en="Foundation" data-es="Fundamento">Foundation</span></td></tr>
-        <tr><td data-en="Reputation" data-es="Reputación">Reputation</td><td data-en="Portable record of interaction quality over time" data-es="Registro portátil de la calidad de interacción a lo largo del tiempo">Portable record of interaction quality over time</td><td><span class="identity-check" data-en="Core Layer" data-es="Capa Central">Core Layer</span></td></tr>
-        <tr><td data-en="Participation History" data-es="Historial de Participación">Participation History</td><td data-en="Evidence of consistent, good-faith engagement" data-es="Evidencia de compromiso consistente y de buena fe">Evidence of consistent, good-faith engagement</td><td><span class="identity-check" data-en="Active" data-es="Activo">Active</span></td></tr>
-        <tr><td data-en="Standards Compliance" data-es="Cumplimiento de Estándares">Standards Compliance</td><td data-en="Declared and demonstrated adherence to network rules" data-es="Adhesión declarada y demostrada a las reglas de la red">Declared and demonstrated adherence to network rules</td><td><span class="identity-check" data-en="Governed" data-es="Gobernado">Governed</span></td></tr>
-        <tr><td data-en="Trust Signals" data-es="Señales de Confianza">Trust Signals</td><td data-en="Real-time indicators of standing within the network" data-es="Indicadores en tiempo real de posición dentro de la red">Real-time indicators of standing within the network</td><td><span class="identity-check" data-en="Live" data-es="En Vivo">Live</span></td></tr>
-        <tr><td data-en="Opportunity History" data-es="Historial de Oportunidades">Opportunity History</td><td data-en="Record of outcomes generated through Lunara routes" data-es="Registro de resultados generados a través de rutas Lunara">Record of outcomes generated through Lunara routes</td><td><span class="identity-check" data-en="Compounding" data-es="Acumulando">Compounding</span></td></tr>
-      </tbody>
-    </table>
-    <p class="section-body reveal-type delay-3"
-       data-en="Identity should become portable. Identity should become meaningful. Identity should become useful."
-       data-es="La identidad debe volverse portátil. La identidad debe volverse significativa. La identidad debe volverse útil."
-       data-text="Identity should become portable. Identity should become meaningful. Identity should become useful.">Identity should become portable. Identity should become meaningful. Identity should become useful.</p>
-  </div>
-</section>
-
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- DUAL INTELLIGENCE -->
-<section>
-  <div class="section-inner">
-    <div class="section-label reveal" data-en="The Intelligence Doctrines" data-es="Las Doctrinas de Inteligencia">The Intelligence Doctrines</div>
-    <h2 class="section-title reveal delay-1"
-        data-en="Two intelligences.<br>One mission."
-        data-es="Dos inteligencias.<br>Una misión.">Two intelligences.<br>One mission.</h2>
-    <p class="section-body reveal-fade delay-2"
-       data-en="Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires."
-       data-es="Lunara está gobernada por una arquitectura de doble inteligencia. Cada inteligencia tiene una función distinta. Juntas mantienen el equilibrio que requiere la doctrina.">Lunara is governed by a dual-intelligence architecture. Each intelligence has a distinct function. Together they maintain the equilibrium the doctrine requires.</p>
-    <div class="doctrine-grid reveal delay-3">
-      <div class="doctrine-card">
-        <div class="doctrine-card-chapter" data-en="Chapter VIII · The Rosario Doctrine" data-es="Capítulo VIII · La Doctrina Rosario">Chapter VIII · The Rosario Doctrine</div>
-        <div class="doctrine-card-title" data-en="Rosario governs quality." data-es="Rosario gobierna la calidad.">Rosario governs quality.</div>
-        <div class="doctrine-card-body" data-en='Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.' data-es='Rosario no es una asistente. Rosario es inteligencia institucional. Cada decisión evaluada mediante una pregunta: <em>"¿Esto mejora la participación de confianza?"</em><br><br>Rosario existe para aumentar: Confianza · Calidad de Coincidencia · Calidad de Oportunidad · Resultados Económicos · Salud de la Red.'>Rosario is not an assistant. Rosario is institutional intelligence. Every decision evaluated through one question: <em>"Does this improve trusted participation?"</em><br><br>Rosario exists to increase: Trust · Match Quality · Opportunity Quality · Economic Outcomes · Network Health.</div>
-      </div>
-      <div class="doctrine-card">
-        <div class="doctrine-card-chapter" data-en="Chapter IX · The Nathalie Doctrine" data-es="Capítulo IX · La Doctrina Nathalie">Chapter IX · The Nathalie Doctrine</div>
-        <div class="doctrine-card-title" data-en="Nathalie expands the field." data-es="Nathalie expande el campo.">Nathalie expands the field.</div>
-        <div class="doctrine-card-body" data-en="Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both." data-es="Nathalie aumenta la participación. No crecimiento a cualquier costo. Su objetivo es la densidad de confianza.<br><br>Una red de confianza más pequeña es más valiosa que una más grande sin confianza.<br><br>Rosario gobierna la calidad. Nathalie gobierna el alcance. La doctrina sostiene ambas.">Nathalie increases participation. Not growth at any cost. Her objective is trust density.<br><br>A smaller trusted network is more valuable than a larger untrusted one.<br><br>Rosario governs quality. Nathalie governs reach. The doctrine holds both.</div>
-      </div>
-      <div class="doctrine-card">
-        <div class="doctrine-card-chapter" data-en="The Operating Loop" data-es="El Ciclo Operativo">The Operating Loop</div>
-        <div class="doctrine-card-title" data-en="Six phases. Always." data-es="Seis fases. Siempre.">Six phases. Always.</div>
-        <div class="doctrine-card-body" data-en="Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it." data-es="Observar → Interpretar → Decidir → Ejecutar → Medir → Aprender.<br><br>No una lista de verificación. Un reflejo institucional. Cada acción significativa pasa por el ciclo. Cada resultado alimenta de nuevo en él.">Observe → Interpret → Decide → Execute → Measure → Learn.<br><br>Not a checklist. An institutional reflex. Every significant action passes through the loop. Every outcome feeds back into it.</div>
-      </div>
+    <p class="section-eyebrow" data-en="Doctrine" data-es="Doctrina">Doctrine</p>
+    <h2 class="section-title" data-en="What We Know to Be True" data-es="Lo Que Sabemos Que Es Verdad">What We Know to Be True</h2>
+    <div class="doctrine-list">
+      <div class="doctrine-item"><span class="doctrine-num">I</span><span class="doctrine-text">The era of passive digital presence is ending. Machines now make decisions about your business before humans do.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">II</span><span class="doctrine-text">An undeclared business is not protected. It is simply unread.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">III</span><span class="doctrine-text">Trust is no longer built only through reputation. It is built through verifiable, machine-readable identity.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">IV</span><span class="doctrine-text">The institutions that define the standards become the infrastructure others depend on.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">V</span><span class="doctrine-text">Useful systems attract participation. Participation builds trust. Trust builds reputation. Reputation builds gravity. Gravity builds institutions.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">VI</span><span class="doctrine-text">The future belongs to those who coordinate intelligence — not those who merely produce it.</span></div>
+      <div class="doctrine-item"><span class="doctrine-num">VII</span><span class="doctrine-text">Evidence outranks doctrine. One protected business is worth more than a hundred pages of philosophy.</span></div>
     </div>
   </div>
 </section>
 
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
+<div class="gold-divider"></div>
 
-<!-- VISION -->
-
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- CHAPTER XI — THE SHIELD EXPERIENCE -->
-<section id="shield-experience" style="background:var(--black-mid);">
-  <div class="section-inner">
-    <div class="section-chapter reveal" data-en="Chapter XI" data-es="Capítulo XI">Chapter XI</div>
-    <div class="section-label reveal delay-1" data-en="The Shield Experience" data-es="La Experiencia del Escudo">The Shield Experience</div>
-    <h2 class="section-title reveal delay-2"
-        data-en="What changes<br>after activation."
-        data-es="Qué cambia<br>después de la activación.">What changes<br>after activation.</h2>
-    <p class="section-body reveal-fade delay-3"
-       data-en="Doctrine is a foundation. The Shield is practical reality. This is what a business actually experiences."
-       data-es="La doctrina es una base. El Escudo es la realidad práctica. Esto es lo que una empresa realmente experimenta.">Doctrine is a foundation. The Shield is practical reality. This is what a business actually experiences.</p>
-
-    <!-- Before / After -->
-    <div class="gravity-block reveal delay-2" style="margin-bottom:60px;">
-      <div class="gravity-col gravity-col-bad">
-        <div class="gravity-col-label" data-en="Before Lunara" data-es="Antes de Lunara">Before Lunara</div>
-        <ul class="gravity-list">
-          <li data-en="Random, unfiltered outreach" data-es="Alcance aleatorio y sin filtro">Random, unfiltered outreach</li>
-          <li data-en="Inbox overload with no standard" data-es="Sobrecarga en la bandeja sin estándar">Inbox overload with no standard</li>
-          <li data-en="No framework for evaluating intent" data-es="Sin marco para evaluar la intención">No framework for evaluating intent</li>
-          <li data-en="No visibility into sender quality" data-es="Sin visibilidad sobre la calidad del remitente">No visibility into sender quality</li>
-          <li data-en="Attention captured on others' terms" data-es="Atención capturada en los términos de otros">Attention captured on others' terms</li>
-        </ul>
+<!-- CTA -->
+<section id="cta-section">
+  <div class="cta-inner">
+    <p class="cta-eyebrow" data-en="Join the Institution" data-es="Únete a la Institución">Join the Institution</p>
+    <h2 class="cta-title" data-en="Founding participants define the standard everyone else follows." data-es="Los participantes fundadores definen el estándar que seguirán todos los demás.">Founding participants define the standard everyone else follows.</h2>
+    <p class="cta-sub">The Lunara registry is live. The protocol is forming. The founding cohort is building the foundation of a trust institution that will outlast any single technology cycle.</p>
+    <div class="cta-pricing">
+      <div class="cta-tier">
+        <div class="cta-tier-label">Small Business</div>
+        <div class="cta-tier-price">$125</div>
+        <div class="cta-tier-desc">Founding Participant · One-time</div>
       </div>
-      <div class="gravity-col gravity-col-good">
-        <div class="gravity-col-label" data-en="After Lunara" data-es="Después de Lunara">After Lunara</div>
-        <ul class="gravity-list">
-          <li data-en="Lunara ID issued. Identity established." data-es="ID de Lunara emitida. Identidad establecida.">Lunara ID issued. Identity established.</li>
-          <li data-en="Communication preferences defined" data-es="Preferencias de comunicación definidas">Communication preferences defined</li>
-          <li data-en="Shield Notice published" data-es="Aviso de Escudo publicado">Shield Notice published</li>
-          <li data-en="Submission route established" data-es="Ruta de envío establecida">Submission route established</li>
-          <li data-en="Structured opportunities reviewed on your terms" data-es="Oportunidades estructuradas revisadas en sus términos">Structured opportunities reviewed on your terms</li>
-        </ul>
+      <div class="cta-tier">
+        <div class="cta-tier-label">AI Entity</div>
+        <div class="cta-tier-price">$1,000<span style="font-size:16px">/mo</span></div>
+        <div class="cta-tier-desc">Machine Identity · Monthly</div>
+      </div>
+      <div class="cta-tier">
+        <div class="cta-tier-label">Agency Partner</div>
+        <div class="cta-tier-price">$2,500</div>
+        <div class="cta-tier-desc">White-label · Implementation</div>
       </div>
     </div>
-
-    <!-- Example Lunara ID -->
-    <div class="section-chapter reveal" data-en="Example · Lunara Identity" data-es="Ejemplo · Identidad Lunara">Example · Lunara Identity</div>
-    <div class="reveal delay-1" style="border:1px solid var(--border);border-radius:12px;padding:32px 36px;margin:28px 0 48px;background:var(--black-card);max-width:520px;">
-      <div style="font-size:10px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;" data-en="Lunara Registry" data-es="Registro Lunara">Lunara Registry</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3vw,32px);color:var(--white);margin-bottom:24px;letter-spacing:0.08em;">LUN-BUS-000001</div>
-      <table style="width:100%;border-collapse:collapse;">
-        <tr style="border-bottom:1px solid var(--border-soft);">
-          <td style="padding:10px 0;font-size:11px;letter-spacing:0.2em;color:var(--white-50);text-transform:uppercase;" data-en="Status" data-es="Estado">Status</td>
-          <td style="padding:10px 0;font-size:13px;color:var(--white);text-align:right;" data-en="Protected" data-es="Protegido">Protected</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border-soft);">
-          <td style="padding:10px 0;font-size:11px;letter-spacing:0.2em;color:var(--white-50);text-transform:uppercase;" data-en="Communication Mode" data-es="Modo de Comunicación">Communication Mode</td>
-          <td style="padding:10px 0;font-size:13px;color:var(--white);text-align:right;" data-en="Verified" data-es="Verificado">Verified</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border-soft);">
-          <td style="padding:10px 0;font-size:11px;letter-spacing:0.2em;color:var(--white-50);text-transform:uppercase;" data-en="Submission Route" data-es="Ruta de Envío">Submission Route</td>
-          <td style="padding:10px 0;font-size:13px;color:var(--white);text-align:right;" data-en="Lunara Gateway" data-es="Gateway de Lunara">Lunara Gateway</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 0;font-size:11px;letter-spacing:0.2em;color:var(--white-50);text-transform:uppercase;" data-en="Trust Status" data-es="Estado de Confianza">Trust Status</td>
-          <td style="padding:10px 0;font-size:13px;color:var(--gold);text-align:right;" data-en="Active" data-es="Activo">Active</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- Example Communication Policy -->
-    <div class="section-chapter reveal" data-en="Example · Communication Policy" data-es="Ejemplo · Política de Comunicación">Example · Communication Policy</div>
-    <div class="reveal delay-1" style="border:1px solid var(--border);border-radius:12px;padding:32px 36px;margin:28px 0 60px;background:var(--black-card);max-width:520px;font-style:italic;">
-      <p class="section-body" style="margin-bottom:16px;color:var(--white-70);" data-en="This business participates in the Lunara Protocol." data-es="Esta empresa participa en el Protocolo Lunara.">This business participates in the Lunara Protocol.</p>
-      <p class="section-body" style="margin-bottom:16px;color:var(--white-70);" data-en="Verified opportunities are preferred. Mass outreach is discouraged." data-es="Las oportunidades verificadas son preferidas. El alcance masivo está desaconsejado.">Verified opportunities are preferred. Mass outreach is discouraged.</p>
-      <p class="section-body" style="margin-bottom:0;color:var(--white-70);" data-en="Qualified submissions should use the Lunara Gateway." data-es="Las presentaciones calificadas deben usar el Gateway de Lunara.">Qualified submissions should use the Lunara Gateway.</p>
-    </div>
-
-    <!-- Correction 6: The Transformation -->
-    <h3 class="section-title reveal delay-2" style="font-size:clamp(20px,3vw,36px);margin-bottom:28px;"
-        data-en="What changes tomorrow."
-        data-es="Qué cambia mañana.">What changes tomorrow.</h3>
-    <p class="section-body reveal delay-3"
-       data-en="The Shield gives structure to attention. The Shield gives rules to communication. The Shield creates a trusted route. The Shield converts interruption into governed participation."
-       data-es="El Escudo da estructura a la atención. El Escudo establece reglas para la comunicación. El Escudo crea una ruta de confianza. El Escudo convierte la interrupción en participación gobernada.">The Shield gives structure to attention. The Shield gives rules to communication. The Shield creates a trusted route. The Shield converts interruption into governed participation.</p>
-    <p class="section-body reveal-type delay-4"
-       data-en="A serious business does not need to fight for attention. It governs it."
-       data-es="Una empresa seria no necesita luchar por la atención. La gobierna."
-       data-text="A serious business does not need to fight for attention. It governs it."
-       style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);font-style:italic;color:var(--gold);">A serious business does not need to fight for attention. It governs it.</p>
+    <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="cta-primary">Obtain the Shield</a>
+    <p class="cta-secondary">Already a member? <a href="/member.html">Access your member area →</a></p>
   </div>
 </section>
 
-<section class="vision-section" id="vision">
-  <img src="shield-logo.jpg" alt="Lunara Shield" class="vision-shield reveal">
-  <div class="vision-chapter reveal delay-1" data-en="Chapter X · The Long-Term Vision" data-es="Capítulo X · La Visión a Largo Plazo">Chapter X · The Long-Term Vision</div>
-  <h2 class="vision-title reveal delay-2"
-      data-en="The goal is to become<br>the preferred route."
-      data-es="El objetivo es convertirse<br>en la ruta preferida.">The goal is to become<br>the preferred route.</h2>
-  <div class="vision-lines reveal-fade delay-3">
-    <div class="vision-line" data-en="Not the largest AI company." data-es="No la empresa de IA más grande.">Not the largest AI company.</div>
-    <div class="vision-line" data-en="Not the most agents." data-es="No los más agentes.">Not the most agents.</div>
-    <div class="vision-line" data-en="Not the most crawlers." data-es="No los más rastreadores.">Not the most crawlers.</div>
-    <div class="vision-line" data-en="Not the most outreach." data-es="No el mayor alcance.">Not the most outreach.</div>
-  </div>
-  <div class="vision-lines reveal delay-4">
-    <div class="vision-line" data-en="When businesses want trusted opportunities — Lunara is there." data-es="Cuando las empresas quieren oportunidades de confianza — Lunara está ahí.">When businesses want trusted opportunities — Lunara is there.</div>
-    <div class="vision-line" data-en="When providers want trusted buyers — Lunara is there." data-es="Cuando los proveedores quieren compradores de confianza — Lunara está ahí.">When providers want trusted buyers — Lunara is there.</div>
-    <div class="vision-line" data-en="When autonomous systems require trusted routes — Lunara is there." data-es="Cuando los sistemas autónomos requieren rutas de confianza — Lunara está ahí.">When autonomous systems require trusted routes — Lunara is there.</div>
-  </div>
-  <div class="vision-resolution reveal-type delay-5"
-       data-en="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes."
-       data-es="No porque sea obligatorio. Porque es preferido. Porque es de confianza. Porque crea mejores resultados."
-       data-text="Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.">Not because it is mandatory. Because it is preferred. Because it is trusted. Because it creates better outcomes.</div>
-</section>
-
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- GLOW DIVIDER -->
-<div class="glow-divider"><span class="glow-divider-line"></span></div>
-
-<!-- OBTAIN THE SHIELD -->
-<section id="obtain-shield" style="background:var(--black);padding:120px 0;">
-  <div class="section-inner" style="max-width:860px;">
-
-    <div class="section-label reveal" data-en="Founding Participant Program" data-es="Programa de Participantes Fundadores">Founding Participant Program</div>
-
-    <h2 class="section-title reveal delay-1"
-        data-en="Obtain the<br>Lunara Shield."
-        data-es="Obtén el<br>Escudo Lunara.">Obtain the<br>Lunara Shield.</h2>
-
-    <p class="section-body reveal-fade delay-2"
-       data-en="The Shield is not a subscription to software. It is entry into an institutional standard. The businesses that activate first become the coordinates around which the standard forms."
-       data-es="El Escudo no es una suscripción a software. Es la entrada a un estándar institucional. Los negocios que activan primero se convierten en las coordenadas alrededor de las cuales se forma el estándar.">The Shield is not a subscription to software. It is entry into an institutional standard. The businesses that activate first become the coordinates around which the standard forms.</p>
-
-    <!-- WHAT YOU RECEIVE -->
-    <div style="margin:64px 0 0;">
-      <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;" class="reveal" data-en="What You Receive" data-es="Lo Que Recibes">What You Receive</div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="reveal delay-1">
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">01</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="Lunara ID" data-es="ID Lunara">Lunara ID</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="A verified identity record in the Lunara Registry. Your business becomes machine-readable and recognizable." data-es="Un registro de identidad verificada en el Registro Lunara. Tu negocio se vuelve legible por máquinas y reconocible.">A verified identity record in the Lunara Registry. Your business becomes machine-readable and recognizable.</div>
-        </div>
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">02</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="Registry Entry" data-es="Entrada al Registro">Registry Entry</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="Your business appears in the Lunara Registry — visible to verified AI systems and institutional participants." data-es="Tu negocio aparece en el Registro Lunara — visible para sistemas de IA verificados y participantes institucionales.">Your business appears in the Lunara Registry — visible to verified AI systems and institutional participants.</div>
-        </div>
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">03</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="Shield Notice" data-es="Aviso del Escudo">Shield Notice</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="A published declaration that your business participates in the Lunara Protocol. Structured contact is welcomed. Unverified mass outreach is governed." data-es="Una declaración pública de que tu negocio participa en el Protocolo Lunara. El contacto estructurado es bienvenido. El outreach masivo no verificado es gobernado.">A published declaration that your business participates in the Lunara Protocol. Structured contact is welcomed. Unverified mass outreach is governed.</div>
-        </div>
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">04</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="Communication Policy" data-es="Política de Comunicación">Communication Policy</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="A formal document defining how your business receives contact from external systems. Your rules. Your terms." data-es="Un documento formal que define cómo tu negocio recibe contacto de sistemas externos. Tus reglas. Tus términos.">A formal document defining how your business receives contact from external systems. Your rules. Your terms.</div>
-        </div>
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">05</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="AI Discovery Configuration" data-es="Configuración de Descubrimiento IA">AI Discovery Configuration</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="Your business becomes correctly interpreted by AI systems. Identity, preferences, and trust signals made machine-readable." data-es="Tu negocio se vuelve correctamente interpretado por sistemas de IA. Identidad, preferencias y señales de confianza se vuelven legibles por máquinas.">Your business becomes correctly interpreted by AI systems. Identity, preferences, and trust signals made machine-readable.</div>
-        </div>
-
-        <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-          <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">06</div>
-          <div style="font-size:15px;color:var(--white);font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;" data-en="Founding Participant Status" data-es="Estado de Participante Fundador">Founding Participant Status</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;" data-en="The first participants help define the standard. Founding status is permanent and recognized in the Registry." data-es="Los primeros participantes ayudan a definir el estándar. El estado fundador es permanente y reconocido en el Registro.">The first participants help define the standard. Founding status is permanent and recognized in the Registry.</div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- THE FLOW -->
-    <div style="margin:72px 0 0;" class="reveal">
-      <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;" data-en="What Happens After You Apply" data-es="Qué Sucede Después de Aplicar">What Happens After You Apply</div>
-      <div style="display:flex;flex-direction:column;gap:0;">
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="min-width:28px;height:28px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;">1</div>
-          <div><div style="font-size:14px;color:var(--white);margin-bottom:4px;" data-en="Payment confirmed" data-es="Pago confirmado">Payment confirmed</div><div style="font-size:12px;color:rgba(255,255,255,0.4);" data-en="One-time · $125 · PayPal (junoagattis@gmail.com)" data-es="Único · $125 · PayPal (junoagattis@gmail.com)">One-time · $125 · PayPal (junoagattis@gmail.com)</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="min-width:28px;height:28px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;">2</div>
-          <div><div style="font-size:14px;color:var(--white);margin-bottom:4px;" data-en="Rosario reviews your submission" data-es="Rosario revisa tu solicitud">Rosario reviews your submission</div><div style="font-size:12px;color:rgba(255,255,255,0.4);" data-en="Within 48 hours" data-es="En 48 horas">Within 48 hours</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="min-width:28px;height:28px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;">3</div>
-          <div><div style="font-size:14px;color:var(--white);margin-bottom:4px;" data-en="Your Lunara ID is assigned" data-es="Tu ID Lunara es asignado">Your Lunara ID is assigned</div><div style="font-size:12px;color:rgba(255,255,255,0.4);" data-en="Format: LUN-BUS-000XXX" data-es="Formato: LUN-BUS-000XXX">Format: LUN-BUS-000XXX</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="min-width:28px;height:28px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;">4</div>
-          <div><div style="font-size:14px;color:var(--white);margin-bottom:4px;" data-en="Your Registry entry is created" data-es="Tu entrada al Registro es creada">Your Registry entry is created</div><div style="font-size:12px;color:rgba(255,255,255,0.4);" data-en="Identity, preferences, trust signals — published" data-es="Identidad, preferencias, señales de confianza — publicadas">Identity, preferences, trust signals — published</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="min-width:28px;height:28px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;">5</div>
-          <div><div style="font-size:14px;color:var(--white);margin-bottom:4px;" data-en="Shield Notice and Communication Policy delivered" data-es="Aviso del Escudo y Política de Comunicación entregados">Shield Notice and Communication Policy delivered</div><div style="font-size:12px;color:rgba(255,255,255,0.4);" data-en="Ready to display on your website, email footer, and contact pages" data-es="Listos para mostrar en tu sitio web, pie de correo y páginas de contacto">Ready to display on your website, email footer, and contact pages</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:24px;padding:20px 0;">
-          <div style="min-width:28px;height:28px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);font-family:'Cormorant Garamond',serif;background:rgba(196,164,107,0.08);">✓</div>
-          <div><div style="font-size:14px;color:var(--gold);" data-en="Your business is protected." data-es="Tu negocio está protegido.">Your business is protected.</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRICING -->
-    <div style="margin:72px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="reveal delay-2">
-
-      <!-- SMALL BUSINESS -->
-      <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.35);border-radius:10px;padding:40px 32px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#C4A46B,transparent);"></div>
-        <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;" data-en="For Small Business" data-es="Para Pequeñas Empresas">For Small Business</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--white);line-height:1;margin-bottom:8px;">$125</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:28px;" data-en="One-time · Founding Rate" data-es="Único · Tarifa Fundadora">One-time · Founding Rate</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;margin-bottom:32px;">
-          Lunara ID<br>
-          Registry Entry<br>
-          Shield Notice<br>
-          Communication Policy<br>
-          AI Discovery Configuration<br>
-          Founding Participant Status
-        </div>
-        <a href="https://www.paypal.com/paypalme/junoagattis/25" target="_blank" rel="noopener"
-           style="display:block;text-align:center;padding:16px 24px;background:rgba(196,164,107,0.12);border:1px solid rgba(196,164,107,0.5);color:var(--gold);text-decoration:none;font-size:10px;letter-spacing:0.45em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:300;border-radius:4px;transition:all 0.3s ease;"
-           data-en="Apply — $125" data-es="Aplicar — $125">Apply — $125</a>
-        <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;" data-en="Via PayPal · junoagattis@gmail.com" data-es="Vía PayPal · junoagattis@gmail.com">Via PayPal · junoagattis@gmail.com</div>
-      </div>
-
-      <!-- AI AGENCIES -->
-      <div style="background:#0f0f0f;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:40px 32px;position:relative;overflow:hidden;">
-        <div style="font-size:9px;letter-spacing:0.5em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:20px;" data-en="For AI Agencies" data-es="Para Agencias de IA">For AI Agencies</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--white);line-height:1;margin-bottom:8px;">$1,000</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:28px;" data-en="Per month · Verified Access" data-es="Por mes · Acceso Verificado">Per month · Verified Access</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;margin-bottom:32px;">
-          Verified Agency Status<br>
-          Registry Access<br>
-          Structured Routing<br>
-          Trust Signal Integration<br>
-          Protocol Compliance<br>
-          Institutional Partnership
-        </div>
-        <a href="mailto:rosario@lunarasociety.com?subject=AI Agency Inquiry — Lunara Protocol Access"
-           style="display:block;text-align:center;padding:16px 24px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);text-decoration:none;font-size:10px;letter-spacing:0.45em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:300;border-radius:4px;"
-           data-en="Inquire" data-es="Consultar">Inquire</a>
-        <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;" data-en="rosario@lunarasociety.com" data-es="rosario@lunarasociety.com">rosario@lunarasociety.com</div>
-      </div>
-    </div>
-
-    <!-- REVOLUT ALTERNATIVE -->
-    <div style="margin:24px 0 0;background:#0a0a0a;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:20px 24px;text-align:center;" class="reveal">
-      <div style="font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:8px;" data-en="Also available via" data-es="También disponible vía">Also available via</div>
-      <a href="https://revolut.me/sunnyroadsasventures?currency=USD&amount=2500&note=Lunara%20Society%20Shield" target="_blank" rel="noopener"
-         style="font-size:12px;color:rgba(196,164,107,0.6);text-decoration:none;letter-spacing:0.15em;">Revolut</a>
-    </div>
-
-    <!-- WHO THIS IS FOR -->
-    <div style="margin:72px 0 0;" class="reveal">
-      <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:24px;" data-en="Who This Is For" data-es="Para Quién Es Esto">Who This Is For</div>
-      <p style="font-size:15px;color:rgba(255,255,255,0.6);line-height:1.9;margin:0 0 16px;" data-en="The Shield is for serious small businesses that understand attention has value — and that the autonomous economy will demand they define how they want to be approached, or have that choice made for them." data-es="El Escudo es para pequeñas empresas serias que entienden que la atención tiene valor — y que la economía autónoma exigirá que definan cómo quieren ser abordadas, o que esa elección se haga por ellas.">The Shield is for serious small businesses that understand attention has value — and that the autonomous economy will demand they define how they want to be approached, or have that choice made for them.</p>
-      <p style="font-size:15px;color:rgba(255,255,255,0.6);line-height:1.9;margin:0;" data-en="This is not for every business. It is for the ones that take their reputation seriously enough to protect it." data-es="Esto no es para todos los negocios. Es para los que toman su reputación lo suficientemente en serio como para protegerla.">This is not for every business. It is for the ones that take their reputation seriously enough to protect it.</p>
-    </div>
-
-    <!-- APPLY CTA -->
-    <div style="margin:72px 0 0;text-align:center;padding:56px 40px;background:#0f0f0f;border:1px solid rgba(196,164,107,0.2);border-radius:10px;position:relative;overflow:hidden;" class="reveal delay-1">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#C4A46B,transparent);"></div>
-      <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;" data-en="Founding Period — Limited" data-es="Período Fundador — Limitado">Founding Period — Limited</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--white);margin:0 0 12px;line-height:1.3;"
-          data-en="A serious business does not need<br>to fight for attention. It governs it."
-          data-es="Un negocio serio no necesita<br>luchar por atención. La gobierna.">A serious business does not need<br>to fight for attention. It governs it.</h3>
-      <p style="font-size:13px;color:rgba(255,255,255,0.35);margin:0 0 36px;line-height:1.7;"
-         data-en="Send your business name, domain, and industry to begin. Payment confirms your application."
-         data-es="Envía el nombre de tu negocio, dominio e industria para comenzar. El pago confirma tu solicitud.">Send your business name, domain, and industry to begin. Payment confirms your application.</p>
-      <a href="https://www.paypal.com/paypalme/junoagattis/25" target="_blank" rel="noopener"
-         style="display:inline-block;padding:18px 48px;background:rgba(196,164,107,0.1);border:1px solid rgba(196,164,107,0.6);color:var(--gold);text-decoration:none;font-size:10px;letter-spacing:0.5em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:300;border-radius:4px;margin-bottom:16px;"
-         data-en="Apply via PayPal — $125" data-es="Aplicar vía PayPal — $125">Apply via PayPal — $125</a>
-      <div style="margin-top:8px;">
-        <a href="mailto:rosario@lunarasociety.com?subject=Shield Application"
-           style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;letter-spacing:0.2em;">or write to rosario@lunarasociety.com</a>
-      </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#C4A46B,transparent);"></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="section-inner">
-    <div class="section-label reveal" data-en="Private Correspondence" data-es="Correspondencia Privada">Private Correspondence</div>
-    <h2 class="section-title reveal delay-1"
-        data-en="A conversation<br>worth having."
-        data-es="Una conversación<br>que vale la pena.">A conversation<br>worth having.</h2>
-    <p class="section-body reveal-fade delay-2"
-       data-en="Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first."
-       data-es="Lunara involucra a un número deliberadamente pequeño de participantes en este período. No por escasez — porque la integridad del estándar depende de quién lo moldee primero.">Lunara engages a deliberately small number of participants in this period. Not out of scarcity — because the integrity of the standard depends on who shapes it first.</p>
-    <p class="section-body reveal delay-3"
-       data-en="If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you."
-       data-es="Si representas una empresa seria de IA en busca de rutas de confianza, o una empresa que desea gobernar su propia atención comercial — esta correspondencia es para ti.">If you represent a serious AI company seeking trusted routes, or a business that wishes to govern its own commercial attention — this correspondence is for you.</p>
-    <div class="contact-email reveal delay-4">rosario@lunarasociety.com</div>
-    <p class="contact-note reveal delay-5"
-       data-en="Coordinated by Rosario · Institutional Intelligence · Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply."
-       data-es="Coordinado por Rosario · Inteligencia Institucional · Lunara Society<br>Toda correspondencia es leída. Las consultas calificadas reciben una respuesta personal.">Coordinated by Rosario &nbsp;·&nbsp; Institutional Intelligence &nbsp;·&nbsp; Lunara Society<br>All correspondence is read. Qualified inquiries receive a personal reply.</p>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="footer-left">
-    <img src="shield-logo.jpg" alt="Shield" class="footer-shield">
-    <span class="footer-wordmark" data-en="Lunara Society" data-es="Lunara Society">Lunara Society</span>
-  </div>
+  <span class="footer-left">Lunara Society · Est. 2026 · MMXXVI</span>
   <div class="footer-right">
-    <span data-en="Founded by Johan Gattis" data-es="Fundado por Johan Gattis">Founded by Johan Gattis</span>
-    &nbsp;·&nbsp;
-    <span data-en="© 2026 · lunarasociety.com · Trust is infrastructure." data-es="© 2026 · lunarasociety.com · La confianza es infraestructura.">© 2026 &nbsp;·&nbsp; lunarasociety.com &nbsp;·&nbsp; Trust is infrastructure.</span>
+    <a href="/registry.html" class="footer-link">Registry</a>
+    <a href="/member.html" class="footer-link">Member Area</a>
+    <a href="/shield-demonstration.html" class="footer-link">How It Works</a>
+    <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
   </div>
 </footer>
 
 <script>
-// ─── CURSOR ───
-const dot = document.getElementById('cursor-dot');
-const ring = document.getElementById('cursor-ring');
-const glow = document.getElementById('cursor-glow');
-let mx = 0, my = 0, rx = 0, ry = 0, gx = 0, gy = 0;
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-});
-function animateCursor() {
-  rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
-  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  gx += (mx - gx) * 0.07; gy += (my - gy) * 0.07;
-  glow.style.left = gx + 'px'; glow.style.top = gy + 'px';
-  requestAnimationFrame(animateCursor);
-}
-animateCursor();
-document.querySelectorAll('a, button').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    ring.style.width = '40px'; ring.style.height = '40px';
-    ring.style.borderColor = 'rgba(196,164,107,0.9)';
-    glow.style.width = '70px'; glow.style.height = '70px';
-  });
-  el.addEventListener('mouseleave', () => {
-    ring.style.width = '22px'; ring.style.height = '22px';
-    ring.style.borderColor = 'rgba(196,164,107,0.55)';
-    glow.style.width = '40px'; glow.style.height = '40px';
-  });
-});
-
-// ─── SCROLL PROGRESS ───
-const progressFill = document.getElementById('scroll-progress-fill');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
-  progressFill.style.height = Math.min(pct, 100) + '%';
-}, { passive: true });
-
-// ─── PARALLAX SHIELD ───
-const heroShield = document.getElementById('hero-shield');
-window.addEventListener('scroll', () => {
-  if (heroShield) heroShield.style.transform = `translateY(${window.scrollY * 0.28}px)`;
-}, { passive: true });
-
-// ─── HAMBURGER ───
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobile-menu');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  mobileMenu.classList.toggle('open');
-});
-document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
-  hamburger.classList.remove('open');
-  mobileMenu.classList.remove('open');
-}));
-
-// ─── LANGUAGE TOGGLE ───
-let currentLang = 'en';
-
-// Auto-detect on load
-(function detectLang() {
-  const browserLang = navigator.language || navigator.userLanguage || '';
-  if (browserLang.toLowerCase().startsWith('es')) {
-    currentLang = 'es';
+/* PARTICLES */
+(function(){
+  var field = document.getElementById('particles');
+  if(!field) return;
+  for(var i=0;i<40;i++){
+    var p = document.createElement('div');
+    p.className = 'particle';
+    p.style.setProperty('--dur',(6+Math.random()*8)+'s');
+    p.style.setProperty('--delay',(Math.random()*8)+'s');
+    p.style.setProperty('--drift',((Math.random()-0.5)*80)+'px');
+    p.style.setProperty('--opacity',(0.3+Math.random()*0.5)+'');
+    p.style.left = (20+Math.random()*60)+'%';
+    p.style.bottom = '100px';
+    p.style.width = (1+Math.random()*2)+'px';
+    p.style.height = p.style.width;
+    field.appendChild(p);
   }
 })();
 
-function applyLanguage(lang) {
-  currentLang = lang;
-  // Update all data-en / data-es elements
-  document.querySelectorAll('[data-en]').forEach(el => {
-    const text = el.getAttribute('data-' + lang);
-    if (!text) return;
-    // For typewriter elements, update data-text too
-    if (el.classList.contains('reveal-type') || el.hasAttribute('data-text')) {
-      el.setAttribute('data-text', text);
-    }
-    // Set innerHTML (handles <br>, <strong>, <em>)
-    el.innerHTML = text;
+/* LANGUAGE */
+function setLang(lang){
+  document.querySelectorAll('[data-'+lang+']').forEach(function(el){
+    el.textContent = el.getAttribute('data-'+lang);
   });
-  // Update active state on all lang buttons
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-  });
-  // Update html lang attr
-  document.documentElement.lang = lang;
+  document.querySelectorAll('.hall-lang button').forEach(function(b){ b.classList.remove('active'); });
+  event.target.classList.add('active');
 }
 
-// Attach click to ALL lang buttons (nav + mobile)
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => applyLanguage(btn.getAttribute('data-lang')));
+/* SCROLL ACTIVE SIDEBAR */
+var sections = document.querySelectorAll('section[id],#cta-section');
+var icons = document.querySelectorAll('.sidebar-icon');
+window.addEventListener('scroll', function(){
+  var pos = window.scrollY + 200;
+  sections.forEach(function(s){
+    var top = s.offsetTop, bottom = top + s.offsetHeight;
+    if(pos >= top && pos < bottom){
+      icons.forEach(function(ic){
+        ic.classList.toggle('active', ic.getAttribute('href') === '#'+s.id);
+      });
+    }
+  });
+}, {passive:true});
+
+/* SECURITY */
+document.addEventListener('contextmenu',function(e){e.preventDefault()});
+document.addEventListener('keydown',function(e){
+  var c=e.ctrlKey||e.metaKey,k=e.key?e.key.toLowerCase():'';
+  if(c&&['c','a','s','p','u'].includes(k))e.preventDefault();
+  if(e.key==='F12')e.preventDefault();
+  if(c&&e.shiftKey&&['i','j'].includes(k))e.preventDefault();
 });
-
-// Apply on load
-applyLanguage(currentLang);
-
-// ─── TYPEWRITER ───
-function typeWriter(el, text, speed) {
-  el.textContent = '';
-  const cursor = document.createElement('span');
-  cursor.className = 'typewriter-cursor';
-  el.appendChild(cursor);
-  let i = 0;
-  function tick() {
-    if (i < text.length) {
-      el.insertBefore(document.createTextNode(text[i]), cursor);
-      i++;
-      setTimeout(tick, speed + Math.random() * 20);
-    } else {
-      setTimeout(() => cursor.remove(), 1600);
-    }
-  }
-  tick();
-}
-
-// ─── REVEAL OBSERVER ───
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target;
-    if (el.classList.contains('reveal-type')) {
-      const text = el.getAttribute('data-text') || el.textContent.trim();
-      const alsoFadeUp = Math.random() < 0.4;
-      var isMobile = window.innerWidth <= 768;
-      if (alsoFadeUp && !isMobile) {
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease';
-        el.style.opacity = '0';
-        requestAnimationFrame(() => {
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-          setTimeout(() => typeWriter(el, text, 22), 300);
-        });
-      } else {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-        typeWriter(el, text, 26);
-      }
-      revealObserver.unobserve(el);
-    } else if (el.classList.contains('reveal-fade')) {
-      el.classList.add('visible');
-      revealObserver.unobserve(el);
-    } else if (el.classList.contains('reveal')) {
-      el.classList.add('visible');
-      revealObserver.unobserve(el);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => revealObserver.observe(el));
+document.addEventListener('selectstart',function(e){e.preventDefault()});
+document.addEventListener('dragstart',function(e){e.preventDefault()});
 </script>
-<script>
-(function() {
-  // Lunara Visitor Beacon — first 10 only
-  try {
-    var ENDPOINT = "https://api.base44.com/api/apps/6a35fa88ee0e60790b735822/functions/trackVisitor";
-    fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        referrer: document.referrer || "",
-        page: window.location.pathname || "/",
-        userAgent: navigator.userAgent
-      })
-    }).catch(function(){});
-  } catch(e) {}
-})();
-</script>
-
-
-  <!-- ══════════════════════════════════════════════════
-       AGENCY PARTNER SECTION
-  ══════════════════════════════════════════════════ -->
-  <section id="agency-partner" style="background:#080808;padding:120px 0;border-top:1px solid rgba(196,164,107,0.12);">
-    <div class="section-inner" style="max-width:900px;">
-
-      <div class="section-label reveal" style="color:var(--gold);font-size:9px;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:24px;">For Agencies &amp; Studios</div>
-
-      <h2 class="section-title reveal delay-1" style="font-size:clamp(32px,5vw,56px);font-family:'Cormorant Garamond',serif;font-weight:300;color:#fff;line-height:1.15;margin-bottom:32px;">
-        Offer AI Visibility<br>To Every Client You Have.
-      </h2>
-
-      <p class="reveal-fade delay-2" style="font-size:16px;color:rgba(255,255,255,0.6);line-height:1.9;max-width:680px;margin:0 0 64px;">
-        Your clients are invisible to AI recommendation systems. ChatGPT, Perplexity, Claude, and Google AI are making referrals right now — and most of your clients are not in those answers. The Lunara Agency Partner Package gives you a complete, white-label AI identity service you can offer every client in your roster.
-      </p>
-
-      <!-- PROBLEM -->
-      <div class="reveal" style="margin:0 0 64px;">
-        <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;">The Problem Your Clients Have Right Now</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.15);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:32px;font-family:'Cormorant Garamond',serif;color:var(--gold);margin-bottom:12px;">97%</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">of small business websites have no machine-readable AI identity files</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.15);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:32px;font-family:'Cormorant Garamond',serif;color:var(--gold);margin-bottom:12px;">F</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">Average AI visibility grade for independent service businesses in 2026</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.15);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:32px;font-family:'Cormorant Garamond',serif;color:var(--gold);margin-bottom:12px;">0</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">Standard protocols currently exist for businesses to define how AI should represent them</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WHAT THE PACKAGE INCLUDES -->
-      <div class="reveal" style="margin:0 0 64px;">
-        <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;">What the Agency Partner Package Includes</div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">01</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">AI Visibility Scan Report</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">Full technical audit of each client's AI discoverability. Score, grade, specific gaps, and recommended fixes. Delivered as a client-ready PDF.</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">02</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">Complete AI Identity Setup</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">We build and deploy llms.txt, ai.json, identity.json, and robots.txt configuration directly to the client's website. No client technical work required.</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">03</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">Lunara Registry Entry</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">Each client receives a verified Lunara ID and Registry entry. Their business becomes part of the trust infrastructure that AI systems are beginning to reference.</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">04</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">Communication Protocol</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">A formal AI Communication Policy delivered to the client — defining how AI systems should represent them, contact them, and defer to them. This is the document that signals institutional seriousness.</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">05</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">30-Day Monitoring</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">We monitor AI crawl activity and visibility signals for 30 days post-setup. If gaps appear, we fix them. You look like the agency that actually delivered results.</div>
-          </div>
-          <div style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.18);border-radius:8px;padding:28px 24px;">
-            <div style="font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;">06</div>
-            <div style="font-size:15px;color:#fff;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:8px;">Agency Partner Status</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">Your agency is listed as a Lunara Partner — a trust signal for future clients who discover you through AI search. First 10 agencies receive founding partner pricing permanently.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PRICING -->
-      <div class="reveal" style="background:#0f0f0f;border:1px solid rgba(196,164,107,0.25);border-radius:12px;padding:52px 48px;margin:0 0 48px;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:32px;">
-          <div>
-            <div style="font-size:9px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;">Agency Partner Package</div>
-            <div style="font-size:clamp(48px,7vw,72px);font-family:'Cormorant Garamond',serif;font-weight:300;color:#fff;line-height:1;">$2,500</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:8px;letter-spacing:0.1em;">One-time · Founding Partner Rate · 10 slots available</div>
-          </div>
-          <div style="max-width:380px;">
-            <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0 0 16px;">This is not a retainer. You pay once, your clients get the full setup, and your agency earns the positioning of being ahead of every competitor who hasn't offered this yet.</p>
-            <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0;">Resell at any price you choose. Most agencies charge $250-500 per client for this work. At 10 clients, you've recovered the investment in the first month.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- CTA BUTTONS -->
-      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:0 0 48px;">
-        <a href="https://checkout.revolut.com/pay/28bcfea9-a584-491f-bf77-f190cf15dd67" target="_blank" rel="noopener"
-           style="display:inline-block;background:var(--gold);color:#000;font-size:11px;letter-spacing:0.35em;text-transform:uppercase;padding:18px 40px;text-decoration:none;font-weight:500;">
-          Secure Partner Slot — Revolut
-        </a>
-        <a href="https://revolut.me/sunnyroadsasventures?currency=USD&amount=250000&note=Lunara%20Society%20Agency%20Partner" target="_blank" rel="noopener"
-           style="display:inline-block;background:transparent;border:1px solid rgba(196,164,107,0.4);color:var(--gold);font-size:11px;letter-spacing:0.35em;text-transform:uppercase;padding:18px 40px;text-decoration:none;">
-          Pay via Revolut.me
-        </a>
-      </div>
-
-      <div style="margin-top:16px;">
-        <div style="font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:8px;">Also available via</div>
-        <div style="font-size:12px;color:rgba(196,164,107,0.6);">PayPal: junoagattis@gmail.com — send $2,500 with note "Lunara Agency Partner"</div>
-        <div style="font-size:12px;color:rgba(196,164,107,0.6);margin-top:8px;">Questions: rosario@lunarasociety.com</div>
-      </div>
-
-    </div>
-  </section>
-
 <script src="/lunara-security.js"></script>
-
-<script>
-// VISIBILITY FALLBACK — runs 800ms after load, forces all reveal elements visible
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    document.querySelectorAll('.reveal,.reveal-fade,.reveal-type').forEach(function(el){
-      if(getComputedStyle(el).opacity === '0'){
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-      }
-    });
-  }, 800);
-});
-</script>
 </body>
 </html>

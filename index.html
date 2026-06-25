@@ -15,7 +15,6 @@
   --black:#000;
   --border:rgba(196,164,107,0.25);
 }
-
 html,body{
   width:100%;height:100%;
   background:#000;
@@ -23,49 +22,68 @@ html,body{
   color:#fff;
   -webkit-font-smoothing:antialiased;
   overflow:hidden;
-  touch-action:none;
 }
 
-/* ── STAGE ───────────────────────────── */
-#stage{
+/* ══════════════════════════════════════
+   DESKTOP / LANDSCAPE — fullscreen hall
+══════════════════════════════════════ */
+#stage-desktop{
   position:fixed;inset:0;
-  display:flex;align-items:stretch;
+  display:none; /* shown via JS */
 }
-
-/* The background image is the entire site */
 .stage-bg{
   position:absolute;inset:0;
   background:url('hall-bg.png') center center / cover no-repeat;
   z-index:0;
 }
 
-/* ── PORTAL OVERLAY LAYER ────────────── */
-/* 
-  Image analysis (1280×853):
-  7 arch icons spread across the middle band of the image (~35-45% from top)
-  Approximate X positions (% of width):
-    Shield:    ~10%
-    Registry:  ~21%
-    Signal:    ~31%
-    Gateway:   ~40%
-    [Center arch — main, no portal, that's where Maya goes]
-    Institution: ~60%
-    Network:   ~69%
-    Protocol:  ~79%
-    Doctrine:  ~89%
-  Y center of icons: ~40% from top
-  
-  Bottom panel icons (already drawn in image):
-  Panel sits ~82% from top
-  7 circles at: ~25%, ~33%, ~41%, ~50%, ~59%, ~67%, ~75% x
-*/
+/* ══════════════════════════════════════
+   MOBILE PORTRAIT — horizontal scroll
+══════════════════════════════════════ */
+#stage-mobile{
+  position:fixed;inset:0;
+  display:none; /* shown via JS */
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+}
+#stage-mobile::-webkit-scrollbar{display:none;}
 
+/* The wide panorama canvas — 3× viewport width */
+.mobile-canvas{
+  position:relative;
+  height:100%;
+  width:300vw; /* 3 panels wide */
+  background:url('hall-bg.png') center center / auto 100% repeat-x;
+}
+
+/* Swipe hint arrows */
+.swipe-hint{
+  position:fixed;
+  top:50%;transform:translateY(-50%);
+  z-index:50;
+  display:flex;gap:6px;
+  animation:swipeHintBlink 0.7s ease-in-out infinite alternate;
+  pointer-events:none;
+  transition:opacity 0.6s;
+}
+.swipe-hint.left{left:10px;}
+.swipe-hint.right{right:10px;}
+.swipe-hint svg{width:28px;height:28px;opacity:0.85;}
+@keyframes swipeHintBlink{
+  from{opacity:0.3;}
+  to{opacity:1;}
+}
+
+/* ══════════════════════════════════════
+   PORTAL LAYER (shared between modes)
+══════════════════════════════════════ */
 .portal-layer{
   position:absolute;inset:0;z-index:10;
   pointer-events:none;
 }
-
-/* Each portal is a transparent clickable hit zone over the arch icon */
 .portal{
   position:absolute;
   pointer-events:all;
@@ -73,36 +91,25 @@ html,body{
   display:flex;flex-direction:column;align-items:center;
   transform:translate(-50%,-50%);
 }
-
-/* Invisible hit area — large enough to be tappable on mobile */
 .portal-hit{
   width:clamp(44px,7vw,90px);
   height:clamp(60px,9vw,110px);
   display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
   gap:clamp(4px,0.6vw,8px);
-  position:relative;
 }
-
-/* Portal label — appears on hover */
 .portal-label{
   font-size:clamp(7px,0.75vw,10px);
   letter-spacing:0.2em;text-transform:uppercase;
   color:rgba(196,164,107,0);
   transition:color 0.35s, text-shadow 0.35s;
-  text-align:center;
-  white-space:nowrap;
-  text-shadow:none;
-  font-weight:400;
+  text-align:center;white-space:nowrap;
 }
-
-/* Hover glow ring over the arch icon */
 .portal-ring{
   width:clamp(36px,5.5vw,72px);
   height:clamp(36px,5.5vw,72px);
   border-radius:50%;
   border:1px solid rgba(196,164,107,0);
   transition:all 0.35s;
-  display:flex;align-items:center;justify-content:center;
   position:relative;
 }
 .portal-ring::before{
@@ -111,50 +118,46 @@ html,body{
   border:1px solid rgba(196,164,107,0);
   transition:all 0.35s;
 }
-
-/* HOVER STATES */
-.portal:hover .portal-label{
+.portal:hover .portal-label,
+.portal:active .portal-label{
   color:rgba(196,164,107,0.9);
   text-shadow:0 0 12px rgba(196,164,107,0.5);
 }
-.portal:hover .portal-ring{
+.portal:hover .portal-ring,
+.portal:active .portal-ring{
   border-color:rgba(196,164,107,0.6);
-  box-shadow:0 0 20px rgba(196,164,107,0.35), inset 0 0 12px rgba(196,164,107,0.08);
+  box-shadow:0 0 20px rgba(196,164,107,0.35),inset 0 0 12px rgba(196,164,107,0.08);
   background:rgba(196,164,107,0.05);
 }
-.portal:hover .portal-ring::before{
+.portal:hover .portal-ring::before,
+.portal:active .portal-ring::before{
   border-color:rgba(196,164,107,0.2);
 }
 
-/* ── BOTTOM PANEL BUTTONS ─────────────── */
-/* Transparent click zones over the 7 circles already in the image */
+/* ══════════════════════════════════════
+   BOTTOM BUTTONS
+══════════════════════════════════════ */
 .bottom-layer{
   position:absolute;
-  /* Panel is at ~80% down, centered horizontally */
   bottom:clamp(8px,7.5vh,64px);
   left:50%;transform:translateX(-50%);
   z-index:10;
-  display:flex;
-  align-items:center;
+  display:flex;align-items:center;
   gap:clamp(2px,1.8vw,22px);
-  pointer-events:none;
 }
-
 .bottom-btn{
-  pointer-events:all;
   cursor:pointer;
   display:flex;flex-direction:column;align-items:center;
-  gap:clamp(3px,0.5vw,6px);
-  padding:clamp(6px,1.2vw,14px) clamp(6px,1.2vw,14px);
+  justify-content:center;
+  padding:0;
   border-radius:50%;
   transition:all 0.25s;
   text-decoration:none;color:inherit;
-  /* Sits over the circle icons in the image */
   width:clamp(44px,6.5vw,80px);
   height:clamp(44px,6.5vw,80px);
-  justify-content:center;
+  position:relative;
 }
-.bottom-btn:hover{
+.bottom-btn:hover,.bottom-btn:active{
   background:rgba(196,164,107,0.1);
   box-shadow:0 0 24px rgba(196,164,107,0.3);
 }
@@ -165,135 +168,126 @@ html,body{
   transition:color 0.25s;
   white-space:nowrap;
   position:absolute;
-  bottom:-clamp(14px,2vw,22px);
+  bottom:-16px;left:50%;transform:translateX(-50%);
 }
-.bottom-btn:hover .bottom-btn-label{
-  color:rgba(196,164,107,0.8);
-}
+.bottom-btn:hover .bottom-btn-label,
+.bottom-btn:active .bottom-btn-label{color:rgba(196,164,107,0.8);}
 
-/* ── GLASS DOOR ───────────────────────── */
-.portal-door{
-  position:fixed;inset:0;z-index:500;
-  pointer-events:none;display:none;
+/* ══════════════════════════════════════
+   GLASS DOOR — ELEVATOR MODEL
+   Door stays CLOSED while page loads.
+   Opens only when destination is ready.
+══════════════════════════════════════ */
+#portal-door{
+  position:fixed;inset:0;z-index:600;
+  pointer-events:none;
+  display:none;
   overflow:hidden;
 }
-.portal-door.opening{display:block;pointer-events:all;}
+#portal-door.active{display:block;pointer-events:all;}
 
 .door-left,.door-right{
   position:absolute;top:0;bottom:0;width:50%;
+  /* Deep black glass */
   background:linear-gradient(160deg,
-    rgba(4,3,2,0.97) 0%,
-    rgba(12,9,5,0.98) 50%,
-    rgba(6,4,2,0.97) 100%
+    rgba(4,3,2,0.99) 0%,
+    rgba(10,7,4,0.99) 50%,
+    rgba(4,3,2,0.99) 100%
   );
-  transition:transform 1.15s cubic-bezier(0.77,0,0.18,1);
+  transition:transform 1.0s cubic-bezier(0.77,0,0.18,1);
+  will-change:transform;
 }
 .door-left{
   left:0;
-  border-right:1px solid rgba(196,164,107,0.4);
+  border-right:1px solid rgba(196,164,107,0.45);
   transform:translateX(0);
 }
 .door-right{
   right:0;
-  border-left:1px solid rgba(196,164,107,0.4);
+  border-left:1px solid rgba(196,164,107,0.45);
   transform:translateX(0);
 }
 
-/* Golden geometric engravings */
-.door-left::before{
+/* Grid engravings */
+.door-left::before,.door-right::before{
   content:'';position:absolute;inset:0;
   background:
-    repeating-linear-gradient(0deg, transparent 0, transparent 60px, rgba(196,164,107,0.025) 60px, rgba(196,164,107,0.025) 61px),
-    repeating-linear-gradient(90deg, transparent 0, transparent 80px, rgba(196,164,107,0.015) 80px, rgba(196,164,107,0.015) 81px);
+    repeating-linear-gradient(0deg,transparent 0,transparent 58px,rgba(196,164,107,0.03) 58px,rgba(196,164,107,0.03) 59px),
+    repeating-linear-gradient(90deg,transparent 0,transparent 78px,rgba(196,164,107,0.02) 78px,rgba(196,164,107,0.02) 79px);
 }
-.door-right::before{
-  content:'';position:absolute;inset:0;
-  background:
-    repeating-linear-gradient(0deg, transparent 0, transparent 60px, rgba(196,164,107,0.025) 60px, rgba(196,164,107,0.025) 61px),
-    repeating-linear-gradient(90deg, transparent 0, transparent 80px, rgba(196,164,107,0.015) 80px, rgba(196,164,107,0.015) 81px);
-}
-
-/* Vertical gold accent line near center seam */
+/* Vertical gold accent */
 .door-left::after{
   content:'';position:absolute;
-  right:clamp(16px,3.5vw,52px);top:8%;bottom:8%;
+  right:clamp(14px,3vw,48px);top:8%;bottom:8%;
   width:1px;
-  background:linear-gradient(to bottom,
-    transparent,rgba(196,164,107,0.55) 25%,
-    rgba(196,164,107,0.7) 50%,
-    rgba(196,164,107,0.55) 75%,transparent
-  );
-  box-shadow:0 0 8px rgba(196,164,107,0.3);
+  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.6) 25%,rgba(196,164,107,0.75) 50%,rgba(196,164,107,0.6) 75%,transparent);
+  box-shadow:0 0 10px rgba(196,164,107,0.3);
 }
 .door-right::after{
   content:'';position:absolute;
-  left:clamp(16px,3.5vw,52px);top:8%;bottom:8%;
+  left:clamp(14px,3vw,48px);top:8%;bottom:8%;
   width:1px;
-  background:linear-gradient(to bottom,
-    transparent,rgba(196,164,107,0.55) 25%,
-    rgba(196,164,107,0.7) 50%,
-    rgba(196,164,107,0.55) 75%,transparent
-  );
-  box-shadow:0 0 8px rgba(196,164,107,0.3);
+  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.6) 25%,rgba(196,164,107,0.75) 50%,rgba(196,164,107,0.6) 75%,transparent);
+  box-shadow:0 0 10px rgba(196,164,107,0.3);
 }
 
-/* Gold engraving SVGs on doors */
+/* Engraving SVGs */
 .door-engraving{
-  position:absolute;top:50%;
-  transform:translateY(-50%);
-  opacity:0.2;
-  width:clamp(60px,8vw,140px);
+  position:absolute;top:50%;transform:translateY(-50%);
+  opacity:0.18;
+  width:clamp(60px,8vw,130px);
 }
-.door-left .door-engraving{right:clamp(30px,5vw,80px);}
-.door-right .door-engraving{left:clamp(30px,5vw,80px);}
+.door-left .door-engraving{right:clamp(28px,5vw,80px);}
+.door-right .door-engraving{left:clamp(28px,5vw,80px);}
 
-/* Door handle */
+/* Handle */
 .door-handle{
   position:absolute;top:50%;transform:translateY(-50%);
-  width:clamp(10px,1.5vw,20px);height:clamp(32px,5vw,64px);
-  border:1px solid rgba(196,164,107,0.6);
-  background:rgba(196,164,107,0.12);
+  width:clamp(8px,1.2vw,16px);height:clamp(28px,4.5vw,56px);
+  border:1px solid rgba(196,164,107,0.65);
+  background:rgba(196,164,107,0.1);
   box-shadow:0 0 8px rgba(196,164,107,0.2);
-  transition:opacity 0.4s;
+  transition:opacity 0.3s;
 }
-.door-left .door-handle{right:clamp(4px,0.8vw,12px);}
-.door-right .door-handle{left:clamp(4px,0.8vw,12px);}
+.door-left .door-handle{right:clamp(3px,0.6vw,10px);}
+.door-right .door-handle{left:clamp(3px,0.6vw,10px);}
 
 /* Center seam glow */
 .door-seam{
   position:absolute;top:0;bottom:0;left:50%;
   width:2px;transform:translateX(-50%);
-  background:linear-gradient(to bottom,
-    transparent,rgba(196,164,107,0.7) 20%,
-    rgba(196,164,107,0.9) 50%,
-    rgba(196,164,107,0.7) 80%,transparent
-  );
-  box-shadow:0 0 16px rgba(196,164,107,0.5);
-  z-index:2;transition:opacity 0.5s;
+  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.8) 20%,rgba(196,164,107,1) 50%,rgba(196,164,107,0.8) 80%,transparent);
+  box-shadow:0 0 18px rgba(196,164,107,0.6);
+  z-index:2;
+  transition:opacity 0.4s;
 }
 
 /* OPEN STATE */
-.portal-door.open .door-left{transform:translateX(-100%);}
-.portal-door.open .door-right{transform:translateX(100%);}
-.portal-door.open .door-seam{opacity:0;}
-.portal-door.open .door-handle{opacity:0;}
+#portal-door.open .door-left{transform:translateX(-100%);}
+#portal-door.open .door-right{transform:translateX(100%);}
+#portal-door.open .door-seam{opacity:0;}
+#portal-door.open .door-handle{opacity:0;}
 
-/* ── PAGE FADE ────────────────────────── */
-#page-fade{
-  position:fixed;inset:0;z-index:400;
-  background:#000;opacity:0;pointer-events:none;
-  transition:opacity 0.55s ease;
+/* ══════════════════════════════════════
+   PAGE TRANSITION LAYER
+   Black screen that sits behind the door.
+   New page loads underneath it.
+══════════════════════════════════════ */
+#transition-frame{
+  position:fixed;inset:0;z-index:550;
+  background:#000;
+  display:none;
 }
-#page-fade.fading{opacity:1;pointer-events:all;}
+#transition-frame.active{display:block;}
 
-/* ── CORNER TEXT ─────────────────────── */
+/* ══════════════════════════════════════
+   CORNER TEXT
+══════════════════════════════════════ */
 .corner{
   position:absolute;z-index:15;
   font-size:clamp(6px,0.7vw,9px);
   letter-spacing:0.25em;text-transform:uppercase;
-  color:rgba(196,164,107,0.3);
-  pointer-events:none;
-  font-weight:300;
+  color:rgba(196,164,107,0.3);pointer-events:none;
 }
 .corner-bl{bottom:clamp(6px,1.5vh,18px);left:clamp(10px,1.5vw,20px);}
 .corner-br{bottom:clamp(6px,1.5vh,18px);right:clamp(10px,1.5vw,20px);}
@@ -301,11 +295,8 @@ html,body{
 </head>
 <body>
 
-<!-- Page fade -->
-<div id="page-fade"></div>
-
-<!-- Glass doors -->
-<div class="portal-door" id="portal-door">
+<!-- GLASS DOOR -->
+<div id="portal-door">
   <div class="door-seam"></div>
   <div class="door-left">
     <svg class="door-engraving" viewBox="0 0 100 360">
@@ -317,7 +308,6 @@ html,body{
       <line x1="32" y1="180" x2="68" y2="180" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <line x1="50" y1="162" x2="50" y2="198" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <rect x="18" y="228" width="64" height="96" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.5"/>
-      <line x1="8" y1="320" x2="92" y2="320" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <polygon points="50,12 58,24 42,24" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.5"/>
     </svg>
     <div class="door-handle"></div>
@@ -332,129 +322,223 @@ html,body{
       <line x1="32" y1="180" x2="68" y2="180" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <line x1="50" y1="162" x2="50" y2="198" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <rect x="18" y="228" width="64" height="96" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.5"/>
-      <line x1="8" y1="320" x2="92" y2="320" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
       <polygon points="50,12 58,24 42,24" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.5"/>
     </svg>
     <div class="door-handle"></div>
   </div>
 </div>
 
-<!-- STAGE -->
-<div id="stage">
-  <div class="stage-bg"></div>
+<!-- BLACK TRANSITION FRAME (behind door, in front of hall) -->
+<div id="transition-frame"></div>
 
-  <!-- Corner text -->
+<!-- ═══════════ DESKTOP STAGE ═══════════ -->
+<div id="stage-desktop">
+  <div class="stage-bg"></div>
   <div class="corner corner-bl">Est. 2026 · Veritas · Ratio · Fide</div>
   <div class="corner corner-br">MMXXVI</div>
+  <div class="portal-layer" id="portal-layer-desk"></div>
+  <div class="bottom-layer" id="bottom-desk">
+    <div class="bottom-btn" onclick="openPortal('shield.html')" title="Shield"><span class="bottom-btn-label">Shield</span></div>
+    <div class="bottom-btn" onclick="openPortal('architecture.html')" title="Architecture"><span class="bottom-btn-label">Architecture</span></div>
+    <div class="bottom-btn" onclick="openPortal('signal.html')" title="Signal"><span class="bottom-btn-label">Signal</span></div>
+    <div class="bottom-btn" onclick="openPortal('doctrine.html')" title="Doctrine"><span class="bottom-btn-label">Doctrine</span></div>
+    <div class="bottom-btn" onclick="openPortal('institution.html')" title="Institution"><span class="bottom-btn-label">Institution</span></div>
+    <div class="bottom-btn" onclick="openPortal('network.html')" title="Network"><span class="bottom-btn-label">Network</span></div>
+    <div class="bottom-btn" onclick="openPortal('join.html')" title="Join"><span class="bottom-btn-label">Join</span></div>
+  </div>
+</div>
 
-  <!-- Portal interactive layer -->
-  <div class="portal-layer" id="portal-layer"></div>
-
-  <!-- Bottom buttons — transparent overlays on the 7 circles in image -->
-  <div class="bottom-layer">
-    <div class="bottom-btn" onclick="navigate('shield.html')" title="Shield" style="position:relative;">
-      <span class="bottom-btn-label">Shield</span>
+<!-- ═══════════ MOBILE STAGE ═══════════ -->
+<div id="stage-mobile">
+  <!-- Wide panoramic canvas — user swipes horizontally -->
+  <div class="mobile-canvas" id="mobile-canvas">
+    <!-- Portals and bottom buttons injected by JS -->
+    <div class="corner corner-bl" style="position:absolute;">Est. 2026 · Veritas · Ratio · Fide</div>
+    <div class="portal-layer" id="portal-layer-mob"></div>
+    <div class="bottom-layer" id="bottom-mob">
+      <div class="bottom-btn" onclick="openPortal('shield.html')" title="Shield"><span class="bottom-btn-label">Shield</span></div>
+      <div class="bottom-btn" onclick="openPortal('architecture.html')" title="Architecture"><span class="bottom-btn-label">Architecture</span></div>
+      <div class="bottom-btn" onclick="openPortal('signal.html')" title="Signal"><span class="bottom-btn-label">Signal</span></div>
+      <div class="bottom-btn" onclick="openPortal('doctrine.html')" title="Doctrine"><span class="bottom-btn-label">Doctrine</span></div>
+      <div class="bottom-btn" onclick="openPortal('institution.html')" title="Institution"><span class="bottom-btn-label">Institution</span></div>
+      <div class="bottom-btn" onclick="openPortal('network.html')" title="Network"><span class="bottom-btn-label">Network</span></div>
+      <div class="bottom-btn" onclick="openPortal('join.html')" title="Join"><span class="bottom-btn-label">Join</span></div>
     </div>
-    <div class="bottom-btn" onclick="navigate('architecture.html')" title="Architecture" style="position:relative;">
-      <span class="bottom-btn-label">Architecture</span>
-    </div>
-    <div class="bottom-btn" onclick="navigate('signal.html')" title="Signal" style="position:relative;">
-      <span class="bottom-btn-label">Signal</span>
-    </div>
-    <div class="bottom-btn" onclick="navigate('doctrine.html')" title="Doctrine" style="position:relative;">
-      <span class="bottom-btn-label">Doctrine</span>
-    </div>
-    <div class="bottom-btn" onclick="navigate('institution.html')" title="Institution" style="position:relative;">
-      <span class="bottom-btn-label">Institution</span>
-    </div>
-    <div class="bottom-btn" onclick="navigate('network.html')" title="Network" style="position:relative;">
-      <span class="bottom-btn-label">Network</span>
-    </div>
-    <div class="bottom-btn" onclick="navigate('join.html')" title="Join" style="position:relative;">
-      <span class="bottom-btn-label">Join</span>
-    </div>
+  </div>
+  <!-- Swipe arrows -->
+  <div class="swipe-hint right" id="swipe-right">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="rgba(196,164,107,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6l6 6-6 6" stroke="rgba(196,164,107,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="swipe-hint left" id="swipe-left" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="rgba(196,164,107,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 6l-6 6 6 6" stroke="rgba(196,164,107,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────
-// PORTAL DEFINITIONS
-// Positions calibrated to arch icon locations
-// in the 1280×853 background image.
-// X,Y as percentage of viewport.
-// ─────────────────────────────────────────
+// ════════════════════════════════════════════
+// PORTAL DATA
+// ════════════════════════════════════════════
 const portals = [
   { label:'Shield',      page:'shield.html',       x:10.2, y:41 },
   { label:'Registry',    page:'registry.html',      x:20.8, y:38.5 },
   { label:'Signal',      page:'signal.html',        x:31.2, y:36.5 },
   { label:'Gateway',     page:'gateway.html',       x:41.0, y:35 },
-  // center arch (50%) is the main arch — no portal, that's Maya's platform
   { label:'Institution', page:'institution.html',   x:59.0, y:35 },
   { label:'Network',     page:'network.html',       x:68.8, y:36.5 },
   { label:'Protocol',    page:'protocol.html',      x:79.2, y:38.5 },
-  // Far right arch
   { label:'Doctrine',    page:'doctrine.html',      x:89.5, y:41 },
 ];
 
-const layer = document.getElementById('portal-layer');
-portals.forEach(p => {
-  const el = document.createElement('div');
-  el.className = 'portal';
-  el.style.cssText = `left:${p.x}%;top:${p.y}%;`;
-  el.innerHTML = `
-    <div class="portal-hit">
-      <span class="portal-label">${p.label}</span>
-      <div class="portal-ring"></div>
-    </div>`;
-  el.addEventListener('click', () => openPortal(p.page));
-  layer.appendChild(el);
-});
+// ════════════════════════════════════════════
+// DEVICE DETECTION
+// Portrait mobile = mobile mode
+// Everything else = desktop mode
+// ════════════════════════════════════════════
+function isMobilePortrait(){
+  return window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+}
 
-// ─────────────────────────────────────────
-// DOOR + FADE NAVIGATION
-// ─────────────────────────────────────────
-const door  = document.getElementById('portal-door');
-const fade  = document.getElementById('page-fade');
-let   busy  = false;
+const deskStage = document.getElementById('stage-desktop');
+const mobStage  = document.getElementById('stage-mobile');
 
-function openPortal(page) {
-  if (busy) return;
-  busy = true;
-  // Show doors closed
-  door.style.display = 'block';
-  door.classList.remove('open');
-  void door.offsetWidth; // force reflow
+function buildPortals(layerId, scaleFn){
+  const layer = document.getElementById(layerId);
+  layer.innerHTML = '';
+  portals.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'portal';
+    const pos = scaleFn(p.x, p.y);
+    el.style.cssText = `left:${pos.x};top:${pos.y};`;
+    el.innerHTML = `<div class="portal-hit"><span class="portal-label">${p.label}</span><div class="portal-ring"></div></div>`;
+    el.addEventListener('click', () => openPortal(p.page));
+    layer.appendChild(el);
+  });
+}
 
-  // Tiny delay then open
+function initDesktop(){
+  deskStage.style.display = 'block';
+  mobStage.style.display  = 'none';
+  buildPortals('portal-layer-desk', (x,y) => ({ x:`${x}%`, y:`${y}%` }));
+}
+
+function initMobile(){
+  deskStage.style.display = 'none';
+  mobStage.style.display  = 'block';
+
+  const canvas = document.getElementById('mobile-canvas');
+  // Canvas is 300vw wide — portals map to full width of canvas
+  buildPortals('portal-layer-mob', (x,y) => ({
+    x: `${x}%`,   // % of canvas (300vw)
+    y: `${y}vh`
+  }));
+
+  // Bottom layer — make it span the full canvas width
+  const bottomMob = document.getElementById('bottom-mob');
+  bottomMob.style.width = '100%';
+  bottomMob.style.justifyContent = 'space-around';
+  bottomMob.style.left = '0';
+  bottomMob.style.transform = 'none';
+  bottomMob.style.padding = '0 4vw';
+
+  // Swipe hint — show for 4 seconds then fade
+  const swipeR = document.getElementById('swipe-right');
+  const swipeL = document.getElementById('swipe-left');
   setTimeout(() => {
-    door.classList.add('open');
-    // After doors fully open → fade black → navigate
-    setTimeout(() => {
-      fade.classList.add('fading');
-      setTimeout(() => { window.location.href = page; }, 540);
-    }, 1050);
-  }, 60);
+    swipeR.style.opacity = '0';
+    swipeL.style.opacity = '0';
+  }, 4000);
+
+  // Show left arrow once user has scrolled
+  mobStage.addEventListener('scroll', () => {
+    const scrolled = mobStage.scrollLeft > 20;
+    const atEnd    = mobStage.scrollLeft > (canvas.offsetWidth - mobStage.offsetWidth - 20);
+    swipeL.style.display = scrolled ? 'flex' : 'none';
+    swipeR.style.display = atEnd   ? 'none' : 'flex';
+  }, { passive:true });
 }
 
-function navigate(page) {
-  if (busy) return;
+// Init on load and on resize/orientation change
+function init(){
+  if(isMobilePortrait()) initMobile();
+  else initDesktop();
+}
+window.addEventListener('load', init);
+window.addEventListener('resize', init);
+window.addEventListener('orientationchange', () => setTimeout(init, 300));
+
+// ════════════════════════════════════════════
+// ELEVATOR DOOR NAVIGATION
+// The door CLOSES first (instant).
+// Page loads behind the closed door.
+// Door OPENS only when page is ready (iframe trick).
+// ════════════════════════════════════════════
+const door      = document.getElementById('portal-door');
+const transFr   = document.getElementById('transition-frame');
+let busy = false;
+
+function openPortal(targetPage){
+  if(busy) return;
   busy = true;
-  fade.classList.add('fading');
-  setTimeout(() => { window.location.href = page; }, 540);
+
+  // Step 1: Show closed door immediately (no animation — it just appears, already closed)
+  door.classList.remove('open');
+  door.classList.add('active');
+  transFr.classList.add('active');
+
+  // Step 2: Preload the target page in a hidden iframe
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:none;z-index:555;opacity:0;';
+  document.body.appendChild(iframe);
+
+  // When iframe is loaded, open the door to reveal it
+  iframe.onload = function(){
+    // Short pause so user sees door closed for a beat
+    setTimeout(() => {
+      iframe.style.opacity = '1';
+      // Slide doors open
+      door.classList.add('open');
+      // After door fully open, navigate for real so browser state is correct
+      setTimeout(() => {
+        window.location.href = targetPage;
+      }, 1100);
+    }, 200);
+  };
+
+  // Fallback: if iframe takes too long, just navigate
+  const fallback = setTimeout(() => {
+    door.classList.add('open');
+    setTimeout(() => { window.location.href = targetPage; }, 1100);
+  }, 3000);
+
+  iframe.src = targetPage;
+  // Clear fallback if iframe loads first
+  iframe.onload = function(){
+    clearTimeout(fallback);
+    setTimeout(() => {
+      iframe.style.opacity = '1';
+      door.classList.add('open');
+      setTimeout(() => { window.location.href = targetPage; }, 1100);
+    }, 200);
+  };
 }
 
-// ─────────────────────────────────────────
+// ════════════════════════════════════════════
 // FADE IN ON LOAD
-// ─────────────────────────────────────────
+// Reset any door state from previous session
+// ════════════════════════════════════════════
 window.addEventListener('load', () => {
-  fade.style.opacity = '1';
-  fade.style.transition = 'none';
-  fade.style.pointerEvents = 'all';
+  // Always reset door state when hall loads
+  door.classList.remove('active','open');
+  transFr.classList.remove('active');
+  busy = false;
+
+  // Fade in the hall
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'none';
   requestAnimationFrame(() => {
     setTimeout(() => {
-      fade.style.transition = 'opacity 0.9s ease';
-      fade.style.opacity = '0';
-      setTimeout(() => { fade.style.pointerEvents = 'none'; }, 920);
+      document.body.style.transition = 'opacity 0.9s ease';
+      document.body.style.opacity = '1';
     }, 80);
   });
 });

@@ -263,13 +263,13 @@ section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
 
   /* ─── REVEAL ─── */
   .reveal {
-    opacity: 0; transform: translateY(40px);
+    opacity: 1; transform: translateY(40px);
     transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal.visible { opacity: 1; transform: none; }
-  .reveal-fade { opacity: 0; transition: opacity 1.1s ease; }
+  .reveal-fade { opacity: 1; transition: opacity 1.1s ease; }
   .reveal-fade.visible { opacity: 1; }
-  .reveal-type { opacity: 0; }
+  .reveal-type { opacity: 1; }
   .reveal-type.visible { opacity: 1; }
   .typewriter-cursor {
     display: inline-block; width: 2px; height: 0.85em;
@@ -658,7 +658,14 @@ section { padding: clamp(60px, 10vw, 130px) clamp(20px, 6vw, 80px); }
     section { padding: 160px 80px; }
   }
 
-  /* ═══ RESPONSIVE — AUTO-ADAPTS TO ALL DEVICES ═══ */
+  
+  /* MOBILE HERO FIX — ensure text always visible */
+  @media(max-width:768px){
+    .reveal, .reveal-fade, .reveal-type { opacity: 1 !important; transform: none !important; }
+    .hero-eyebrow, .hero-title, .hero-sub, .hero-pillars, .hero-cta-group { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+    .hero-shield { width: 120px !important; height: 120px !important; margin-bottom: 28px; }
+  }
+/* ═══ RESPONSIVE — AUTO-ADAPTS TO ALL DEVICES ═══ */
   @media(max-width:1024px){
     nav{padding:0 24px}
     .nav-links li:nth-child(n+4){display:none}
@@ -1674,7 +1681,8 @@ const revealObserver = new IntersectionObserver((entries) => {
     if (el.classList.contains('reveal-type')) {
       const text = el.getAttribute('data-text') || el.textContent.trim();
       const alsoFadeUp = Math.random() < 0.4;
-      if (alsoFadeUp) {
+      var isMobile = window.innerWidth <= 768;
+      if (alsoFadeUp && !isMobile) {
         el.style.transform = 'translateY(30px)';
         el.style.transition = 'transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease';
         el.style.opacity = '0';
@@ -1685,6 +1693,7 @@ const revealObserver = new IntersectionObserver((entries) => {
         });
       } else {
         el.style.opacity = '1';
+        el.style.transform = 'none';
         typeWriter(el, text, 26);
       }
       revealObserver.unobserve(el);
@@ -1829,5 +1838,19 @@ document.querySelectorAll('.reveal, .reveal-fade, .reveal-type').forEach(el => r
   </section>
 
 <script src="/lunara-security.js"></script>
+
+<script>
+// VISIBILITY FALLBACK — runs 800ms after load, forces all reveal elements visible
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.querySelectorAll('.reveal,.reveal-fade,.reveal-type').forEach(function(el){
+      if(getComputedStyle(el).opacity === '0'){
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+  }, 800);
+});
+</script>
 </body>
 </html>

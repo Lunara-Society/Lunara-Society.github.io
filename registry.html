@@ -1,471 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lunara Registry — Verified Participants</title>
-  <meta name="description" content="The Lunara Registry. Verified businesses and AI agencies participating in the Lunara Protocol. Trust is infrastructure.">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://lunarasociety.com/registry">
-  <link rel="icon" href="shield-logo.jpg" type="image/jpeg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy — Lunara Society</title>
+<meta name="description" content="Lunara Society — Trust Coordination Institution. Est. 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
+  --black:#000;--black-soft:#080604;--black-mid:#0f0d0a;
+  --white:#fff;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);
+  --white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);--white-15:rgba(255,255,255,0.15);
+  --border:rgba(196,164,107,0.2);
+}
+html{scroll-behavior:smooth;height:100%}
+body{
+  background:var(--black-soft);
+  font-family:'Inter',sans-serif;font-weight:300;
+  color:var(--white-90);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+img{max-width:100%;height:auto;display:block}
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Lunara Registry",
-    "url": "https://lunarasociety.com/registry",
-    "description": "The Lunara Registry. Verified businesses and AI agencies participating in the Lunara Protocol.",
-    "isPartOf": { "@type": "WebSite", "url": "https://lunarasociety.com" }
-  }
-  </script>
+/* FADE IN */
+body{animation:pageIn 0.6s ease forwards;}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
 
-  <style>
-    :root {
-      --black: #000000;
-      --black-mid: #0A0A0A;
-      --black-soft: #0f0f0f;
-      --gold: #C4A46B;
-      --gold-light: #D4B47B;
-      --white: #FFFFFF;
-      --text-dim: rgba(255,255,255,0.55);
-      --text-faint: rgba(255,255,255,0.25);
-      --border-gold: rgba(196,164,107,0.22);
-      --border-white: rgba(255,255,255,0.07);
-    }
+/* BACK NAV */
+.page-nav{
+  position:fixed;top:0;left:0;right:0;
+  height:52px;
+  background:rgba(0,0,0,0.88);
+  border-bottom:1px solid rgba(196,164,107,0.12);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,48px);
+  z-index:100;
+  backdrop-filter:blur(12px);
+}
+.back-link{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(196,164,107,0.6);transition:color 0.2s;
+  cursor:pointer;
+}
+.back-link:hover{color:var(--gold);}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+}
+.nav-right{
+  display:flex;gap:clamp(12px,3vw,32px);
+}
+.nav-link{
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(196,164,107,0.45);transition:color 0.2s;cursor:pointer;
+}
+.nav-link:hover{color:var(--gold);}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* PAGE CONTENT */
+.page-wrap{
+  padding-top:52px;
+  min-height:100vh;
+}
+.page-inner{
+  max-width:960px;
+  margin:0 auto;
+  padding:clamp(48px,8vw,96px) clamp(20px,5vw,64px);
+}
 
-    html { scroll-behavior: smooth; }
+/* SECTION COMPONENTS */
+.eyebrow{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(12px,2vw,20px);
+}
+.page-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,5vw,64px);
+  font-weight:300;line-height:1.15;
+  color:var(--white);
+  margin-bottom:clamp(16px,3vw,28px);
+}
+.page-sub{
+  font-size:clamp(13px,1.6vw,16px);
+  color:var(--white-50);line-height:1.85;
+  margin-bottom:clamp(32px,5vw,56px);
+  max-width:680px;
+}
+.gold-rule{
+  width:clamp(60px,8vw,120px);height:1px;
+  background:linear-gradient(to right,var(--gold),transparent);
+  margin:clamp(24px,4vw,40px) 0;
+}
 
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+/* CARDS */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(clamp(200px,30vw,280px),1fr));
+  gap:clamp(12px,2vw,24px);
+  margin-top:clamp(24px,4vw,40px);
+}
+.card{
+  border:1px solid var(--border);
+  padding:clamp(20px,3vw,32px);
+  background:rgba(196,164,107,0.02);
+  transition:border-color 0.2s, background 0.2s;
+}
+.card:hover{border-color:rgba(196,164,107,0.4);background:rgba(196,164,107,0.04);}
+.card-num{
+  font-size:9px;letter-spacing:3px;color:rgba(196,164,107,0.4);
+  font-family:monospace;margin-bottom:14px;
+}
+.card-title{
+  font-size:clamp(13px,1.5vw,15px);font-weight:500;
+  color:var(--white);margin-bottom:10px;letter-spacing:0.5px;
+}
+.card-text{
+  font-size:clamp(12px,1.3vw,13px);color:var(--white-50);line-height:1.7;
+}
 
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 60px;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-gold);
-    }
-    .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-    .nav-shield { width: 44px; height: 44px; object-fit: contain; opacity: 0.9; }
-    .nav-wordmark { font-size: 10px; letter-spacing: 0.45em; color: rgba(255,255,255,0.7); text-transform: uppercase; font-family: 'Inter', sans-serif; }
-    .nav-right { display: flex; align-items: center; gap: 32px; }
-    .nav-back { font-size: 10px; letter-spacing: 0.35em; color: rgba(255,255,255,0.4); text-transform: uppercase; text-decoration: none; transition: color 0.2s; }
-    .nav-back:hover { color: var(--gold); }
-    .nav-apply {
-      font-size: 10px; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase;
-      text-decoration: none; padding: 10px 20px; border: 1px solid rgba(196,164,107,0.4);
-      border-radius: 3px; transition: all 0.2s;
-    }
-    .nav-apply:hover { background: rgba(196,164,107,0.08); border-color: rgba(196,164,107,0.7); }
+/* STEP LIST */
+.step-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+.step-item{
+  display:flex;align-items:flex-start;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(16px,2.5vw,28px) clamp(16px,2.5vw,28px);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.step-item:last-child{border-bottom:none;}
+.step-item:hover{background:rgba(196,164,107,0.025);}
+.step-num{
+  font-size:10px;font-family:monospace;
+  color:rgba(196,164,107,0.4);flex-shrink:0;
+  padding-top:2px;min-width:24px;
+}
+.step-title{
+  font-size:clamp(13px,1.5vw,15px);font-weight:500;
+  color:var(--white);margin-bottom:6px;
+}
+.step-text{font-size:clamp(12px,1.3vw,13px);color:var(--white-50);line-height:1.7;}
 
-    /* HERO */
-    .hero {
-      padding: 160px 60px 80px;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .hero-label {
-      font-size: 9px; letter-spacing: 0.55em; color: var(--gold);
-      text-transform: uppercase; margin-bottom: 24px;
-    }
-    .hero-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(40px, 6vw, 72px);
-      font-weight: 300; line-height: 1.1;
-      color: var(--white); margin-bottom: 24px;
-    }
-    .hero-body {
-      font-size: 15px; color: var(--text-dim);
-      line-height: 1.85; max-width: 560px; margin-bottom: 48px;
-    }
-    .hero-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin-bottom: 64px;
-    }
+/* DOCTRINE ITEMS */
+.doctrine-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+.doctrine-item{
+  display:flex;align-items:flex-start;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(18px,3vw,32px) clamp(16px,2.5vw,28px);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.doctrine-item:last-child{border-bottom:none;}
+.doctrine-item:hover{background:rgba(196,164,107,0.03);}
+.doctrine-num{
+  font-size:10px;font-family:monospace;
+  color:rgba(196,164,107,0.4);flex-shrink:0;
+  padding-top:3px;
+}
+.doctrine-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(16px,2vw,20px);
+  font-weight:300;color:var(--white-70);
+  line-height:1.55;font-style:italic;
+}
 
-    /* STATS ROW */
-    .stats-row {
-      display: flex; gap: 0;
-      border: 1px solid var(--border-gold);
-      border-radius: 8px; overflow: hidden;
-      margin-bottom: 72px;
-    }
-    .stat-item {
-      flex: 1; padding: 28px 32px;
-      border-right: 1px solid var(--border-gold);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-label { font-size: 9px; letter-spacing: 0.4em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 8px; }
-    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--white); line-height: 1; }
-    .stat-sub { font-size: 10px; color: rgba(196,164,107,0.6); margin-top: 4px; }
+/* CTA BUTTON */
+.cta-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:clamp(12px,2vw,18px) clamp(24px,4vw,40px);
+  background:var(--gold);color:var(--black);
+  font-size:clamp(10px,1.2vw,12px);letter-spacing:3px;text-transform:uppercase;
+  font-weight:500;transition:all 0.25s;cursor:pointer;border:none;
+  margin-top:clamp(24px,4vw,40px);
+}
+.cta-btn:hover{background:var(--gold-bright);transform:translateY(-2px);box-shadow:0 8px 32px rgba(196,164,107,0.25);}
+.cta-link{
+  display:inline-flex;align-items:center;gap:10px;
+  color:var(--gold);font-size:clamp(10px,1.2vw,12px);letter-spacing:3px;text-transform:uppercase;
+  border:1px solid var(--border);
+  padding:clamp(10px,1.5vw,14px) clamp(20px,3vw,32px);
+  transition:all 0.2s;margin-top:16px;
+}
+.cta-link:hover{border-color:var(--gold);}
 
-    /* REGISTRY TABLE */
-    .registry-section { max-width: 1100px; margin: 0 auto; padding: 0 60px 80px; }
-    .section-label-sm {
-      font-size: 9px; letter-spacing: 0.5em; color: var(--gold);
-      text-transform: uppercase; margin-bottom: 32px;
-    }
+/* REGISTRY CODE */
+.registry-block{
+  background:rgba(196,164,107,0.04);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  padding:clamp(16px,3vw,28px);
+  margin-top:clamp(20px,3vw,32px);
+  font-family:monospace;
+  font-size:clamp(10px,1.2vw,12px);
+  color:var(--white-70);line-height:1.8;
+  overflow-x:auto;
+}
+.registry-label{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(196,164,107,0.4);margin-bottom:12px;
+}
 
-    .registry-header {
-      display: grid;
-      grid-template-columns: 160px 1fr 140px 120px 100px;
-      gap: 0; padding: 12px 20px;
-      border-bottom: 1px solid var(--border-gold);
-      margin-bottom: 0;
-    }
-    .registry-header span {
-      font-size: 9px; letter-spacing: 0.4em; color: var(--text-faint); text-transform: uppercase;
-    }
+/* PRICE TIER */
+.price-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(clamp(180px,28vw,260px),1fr));
+  gap:clamp(12px,2vw,20px);
+  margin-top:clamp(24px,4vw,40px);
+}
+.price-tier{
+  border:1px solid var(--border);
+  padding:clamp(20px,3vw,32px);
+  transition:border-color 0.2s;
+}
+.price-tier:hover{border-color:var(--gold);}
+.tier-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.tier-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4vw,40px);color:var(--white);margin-bottom:6px;
+}
+.tier-desc{font-size:11px;color:var(--white-30);}
 
-    .registry-row {
-      display: grid;
-      grid-template-columns: 160px 1fr 140px 120px 100px;
-      gap: 0; padding: 20px 20px;
-      border-bottom: 1px solid var(--border-white);
-      transition: background 0.2s;
-      align-items: center;
-    }
-    .registry-row:hover { background: rgba(196,164,107,0.03); }
+/* FOOTER */
+.page-footer{
+  border-top:1px solid rgba(196,164,107,0.1);
+  padding:clamp(16px,3vw,28px) clamp(20px,5vw,64px);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+  background:rgba(0,0,0,0.4);
+}
+.footer-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.3);}
+.footer-links{display:flex;gap:clamp(12px,2.5vw,28px);flex-wrap:wrap;}
+.footer-link{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;transition:color 0.2s;}
+.footer-link:hover{color:var(--gold);}
 
-    .reg-id { font-size: 11px; color: var(--gold); font-family: 'Cormorant Garamond', serif; letter-spacing: 0.05em; }
-    .reg-entity { }
-    .reg-entity-name { font-size: 14px; color: var(--white); margin-bottom: 2px; }
-    .reg-entity-domain { font-size: 11px; color: var(--text-faint); }
-    .reg-industry { font-size: 12px; color: var(--text-dim); }
-    .reg-status { }
-    .status-badge {
-      display: inline-block; padding: 3px 10px;
-      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
-      border-radius: 2px;
-    }
-    .status-active { background: rgba(196,164,107,0.12); color: var(--gold); border: 1px solid rgba(196,164,107,0.3); }
-    .status-pending { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.08); }
-    .status-founding { background: rgba(196,164,107,0.08); color: rgba(196,164,107,0.8); border: 1px solid rgba(196,164,107,0.2); }
-    .reg-date { font-size: 11px; color: var(--text-faint); }
-
-    /* EMPTY STATE */
-    .registry-empty {
-      padding: 80px 20px; text-align: center;
-      border: 1px solid var(--border-white);
-      border-radius: 8px; margin-top: 0;
-    }
-    .registry-empty-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px; font-weight: 300;
-      color: rgba(255,255,255,0.3); margin-bottom: 12px;
-    }
-    .registry-empty-body {
-      font-size: 12px; color: var(--text-faint);
-      line-height: 1.8; margin-bottom: 28px;
-    }
-    .registry-empty-note {
-      font-size: 10px; letter-spacing: 0.3em;
-      color: rgba(196,164,107,0.4); text-transform: uppercase;
-    }
-
-    /* FOUNDING NOTICE */
-    .founding-notice {
-      max-width: 1100px; margin: 0 auto 80px;
-      padding: 0 60px;
-    }
-    .founding-box {
-      background: var(--black-soft);
-      border: 1px solid var(--border-gold);
-      border-radius: 10px; padding: 48px 48px;
-      position: relative; overflow: hidden;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
-    }
-    .founding-box::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-    .founding-box::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-    .founding-label { font-size: 9px; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
-    .founding-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--white); line-height: 1.3; margin-bottom: 16px; }
-    .founding-body { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
-    .founding-cta { text-align: right; }
-    .founding-price { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; color: var(--white); line-height: 1; margin-bottom: 4px; }
-    .founding-price-note { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 28px; }
-    .btn-apply {
-      display: inline-block; padding: 16px 36px;
-      background: rgba(196,164,107,0.1); border: 1px solid rgba(196,164,107,0.5);
-      color: var(--gold); text-decoration: none;
-      font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase;
-      font-family: 'Inter', sans-serif; font-weight: 300; border-radius: 4px;
-      transition: all 0.25s;
-    }
-    .btn-apply:hover { background: rgba(196,164,107,0.15); border-color: rgba(196,164,107,0.8); }
-
-    /* PROTOCOL INFO */
-    .protocol-section { max-width: 1100px; margin: 0 auto 80px; padding: 0 60px; }
-    .protocol-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
-    .protocol-card {
-      background: var(--black-soft); border: 1px solid var(--border-white);
-      border-radius: 8px; padding: 24px;
-    }
-    .protocol-card-num { font-size: 9px; letter-spacing: 0.4em; color: var(--gold); margin-bottom: 8px; }
-    .protocol-card-title { font-size: 14px; color: var(--white); margin-bottom: 6px; font-family: 'Cormorant Garamond', serif; font-weight: 300; }
-    .protocol-card-body { font-size: 11px; color: var(--text-faint); line-height: 1.7; }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border-gold);
-      padding: 28px 60px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .footer-left { display: flex; align-items: center; gap: 12px; }
-    .footer-shield { width: 28px; height: 28px; object-fit: contain; opacity: 0.6; }
-    .footer-wordmark { font-size: 9px; letter-spacing: 0.4em; color: var(--text-faint); text-transform: uppercase; }
-    .footer-right { font-size: 10px; color: var(--text-faint); }
-    .footer-right a { color: var(--gold); text-decoration: none; opacity: 0.7; }
-    .footer-right a:hover { opacity: 1; }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      nav { padding: 14px 20px; }
-      .nav-back { display: none; }
-      .hero { padding: 120px 24px 60px; }
-      .registry-section { padding: 0 24px 60px; }
-      .founding-notice { padding: 0 24px; }
-      .protocol-section { padding: 0 24px; }
-      footer { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
-      .stats-row { flex-direction: column; }
-      .stat-item { border-right: none; border-bottom: 1px solid var(--border-gold); }
-      .stat-item:last-child { border-bottom: none; }
-      .registry-header { display: none; }
-      .registry-row {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
-        gap: 8px 16px; padding: 20px 16px;
-      }
-      .founding-box { grid-template-columns: 1fr; gap: 32px; padding: 32px 28px; }
-      .founding-cta { text-align: left; }
-      .protocol-grid { grid-template-columns: 1fr; }
-    }
-  
-  /* ═══ RESPONSIVE — AUTO-ADAPTS TO ALL DEVICES ═══ */
-  @media(max-width:1024px){
-    nav{padding:0 24px}
-    .nav-links li:nth-child(n+4){display:none}
-  }
-  @media(max-width:768px){
-    nav{padding:0 16px;height:56px}
-    .nav-links{display:none}
-    nav .nav-cta{padding:8px 14px;font-size:11px}
-    /* hamburger hint */
-    nav::after{content:"☰";color:rgba(196,164,107,0.7);font-size:20px;margin-left:12px;cursor:pointer}
-    section,div.hero,.hero,.steps-section,.cta-section{padding-left:16px!important;padding-right:16px!important}
-    h1,.hero-title{font-size:clamp(28px,8vw,48px)!important}
-    h2,.hero-title{font-size:clamp(22px,6vw,36px)!important}
-    .card-grid{grid-template-columns:1fr!important}
-    .dash-sidebar{display:none!important}
-    .dash-main{margin-left:0!important;padding:20px!important}
-    .auth-panel{padding:28px 16px!important;margin:0 12px}
-    .example-box,.code-block{overflow-x:auto}
-    .final-badges{flex-direction:column;align-items:stretch}
-    footer{flex-direction:column;text-align:center;padding:24px 16px}
-    .flow-connector{padding:4px 0}
-    .flow-line{height:32px}
-  }
-  @media(max-width:480px){
-    .nav-wordmark{font-size:12px;letter-spacing:1px}
-    .hero-label,.dash-section-title,.auth-label{font-size:9px;letter-spacing:2px}
-    .step-card,.card{padding:20px 14px}
-    .example-row{flex-direction:column;gap:2px}
-    .example-val{text-align:left!important;max-width:100%!important}
-    .cta-price{font-size:36px}
-    .cta-btn{padding:14px 28px;font-size:11px}
-    table.data-table{font-size:11px}
-    .data-table th,.data-table td{padding:8px}
-  }
-  /* Ensure images never overflow */
-  img{max-width:100%;height:auto}
-  /* Smooth scrolling & tap targets */
-  *{-webkit-tap-highlight-color:transparent}
-  a,button{min-height:44px;display:inline-flex;align-items:center}
-  /* Input zoom fix on iOS */
-  input,select,textarea{font-size:16px!important}
+@media(max-width:600px){
+  .card-grid{grid-template-columns:1fr;}
+  .price-grid{grid-template-columns:1fr;}
+  .page-footer{flex-direction:column;align-items:flex-start;}
+}
 
 </style>
 </head>
 <body>
-  <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
-
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">
-    <img src="shield-logo.jpg" alt="Lunara" class="nav-shield">
-    <span class="nav-wordmark">Lunara Society</span>
-  </a>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
+<nav class="page-nav">
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
+  <span class="nav-logo">Lunara Society</span>
   <div class="nav-right">
-    <a href="/" class="nav-back">← Back</a>
-    <a href="/#obtain-shield" class="nav-apply">Obtain the Shield</a>
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
   </div>
 </nav>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-label">Lunara Registry · Est. 2026</div>
-  <h1 class="hero-title">The Verified<br>Participant Record.</h1>
-  <p class="hero-body">Every entry in this Registry represents a business that has defined how it wishes to be approached. Identity declared. Preferences published. Trust signals active.</p>
-  <div class="hero-divider"></div>
-
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-item">
-      <div class="stat-label">Registered Participants</div>
-      <div class="stat-value" id="count-participants">0</div>
-      <div class="stat-sub">of 10 founding slots</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Registry Status</div>
-      <div class="stat-value" style="font-size:22px;padding-top:8px;">Active</div>
-      <div class="stat-sub">Founding period open</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Protocol Version</div>
-      <div class="stat-value" style="font-size:22px;padding-top:8px;">v1.0</div>
-      <div class="stat-sub">Lunara Protocol</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Last Updated</div>
-      <div class="stat-value" style="font-size:18px;padding-top:12px;" id="last-updated">June 2026</div>
-      <div class="stat-sub">lunarasociety.com/registry</div>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTRY TABLE -->
-<div class="registry-section">
-  <div class="section-label-sm">Verified Participants</div>
-
-  <div class="registry-header">
-    <span>Lunara ID</span>
-    <span>Entity</span>
-    <span>Industry</span>
-    <span>Status</span>
-    <span>Activated</span>
-  </div>
-
-  <!-- EMPTY STATE — shown until first participant -->
-  <div class="registry-empty" id="registry-empty">
-    <div class="registry-empty-title">The Registry opens with its first participant.</div>
-    <div class="registry-empty-body">
-      The first entry in any registry is the most significant.<br>
-      It defines the standard everything else is measured against.
-    </div>
-    <div class="registry-empty-note">Founding slots · 0 of 10 filled</div>
-  </div>
-
-  <!-- PARTICIPANT ROWS WILL BE INSERTED HERE BY ROSARIO AS THEY JOIN -->
-  <!-- Example row format (hidden until populated):
-  <div class="registry-row">
-    <div class="reg-id">LUN-BUS-000001</div>
-    <div class="reg-entity">
-      <div class="reg-entity-name">Business Name</div>
-      <div class="reg-entity-domain">domain.com</div>
-    </div>
-    <div class="reg-industry">Industry</div>
-    <div class="reg-status"><span class="status-badge status-active">Active</span></div>
-    <div class="reg-date">Jun 2026</div>
-  </div>
-  -->
-</div>
-
-<!-- FOUNDING NOTICE -->
-<div class="founding-notice">
-  <div class="founding-box">
-    <div>
-      <div class="founding-label">Founding Participant Program</div>
-      <h2 class="founding-title">The first 10 participants<br>shape the standard.</h2>
-      <p class="founding-body">Founding status is permanent. It is recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
-    </div>
-    <div class="founding-cta">
-      <div class="founding-price">$25</div>
-      <div class="founding-price-note">One-time · Founding Rate</div>
-      <a href="https://www.paypal.com/paypalme/junoagattis/25" target="_blank" rel="noopener" class="btn-apply">Apply via PayPal</a>
-      <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.2);">or write to rosario@lunarasociety.com</div>
-      <div style="margin-top:8px;">
-        <a href="https://checkout.revolut.com/pay/5496592e-4d80-429c-bb59-9354e2c52cff" target="_blank" rel="noopener" style="font-size:10px;color:rgba(196,164,107,0.4);text-decoration:none;">Also available via Revolut</a>
+<div class="page-wrap">
+  <div class="page-inner">
+    <p class="eyebrow">Legacy</p>
+    <h1 class="page-title">The Public Record</h1>
+    <p class="page-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
+    <div class="gold-rule"></div>
+    <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin-bottom:clamp(20px,3vw,32px);">
+      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+        <div class="card-num">Status</div><div class="card-title">Active</div>
+        <div class="card-text">Founding period open</div>
+      </div>
+      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+        <div class="card-num">Founding Slots</div><div class="card-title">0 of 10</div>
+        <div class="card-text">First 10 are permanent founding participants</div>
+      </div>
+      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+        <div class="card-num">Protocol Version</div><div class="card-title">v1.0</div>
+        <div class="card-text">Lunara Protocol · Active</div>
       </div>
     </div>
+    <div class="registry-block">
+      <div class="registry-label">Live registry entry format — LUN-PROTO-1.0</div>{
+  "lunara_id":              "LUN-BUS-2026-XXXXXXX",
+  "entity_name":            "Your Business",
+  "domain":                 "yourdomain.com",
+  "verification_status":    "verified",
+  "shield_status":          "active",
+  "registry_date":          "2026-XX-XX",
+  "trust_tier":             "founding_participant",
+  "ai_interaction_policy":  "structured_inquiry_only",
+  "communication_policy":   "declared",
+  "protocol_version":       "LUN-PROTO-1.0"
+}</div>
+    <div class="gold-rule"></div>
+    <h2 class="page-title" style="font-size:clamp(20px,2.8vw,36px);">Founding Participant Program</h2>
+    <p class="page-sub">The first 10 participants shape the standard. Founding status is permanent — recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
+    <div class="card-grid">
+      <div class="card"><div class="card-num">Lunara ID</div><div class="card-title">Permanent Identity</div><div class="card-text">A permanent verified identity assigned to the participant. Format: LUN-BUS-000XXX</div></div>
+      <div class="card"><div class="card-num">Entity Identity</div><div class="card-title">Machine-Readable</div><div class="card-text">Business name, domain, and industry classification — indexed and AI-queryable.</div></div>
+      <div class="card"><div class="card-num">Trust Signals</div><div class="card-title">Reputation</div><div class="card-text">Interaction history and reputation signals that compound over time into institutional memory.</div></div>
+    </div>
+    <div class="gold-rule"></div>
+    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
   </div>
+  <footer class="page-footer">
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
+    <div class="footer-links">
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
+      <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
+    </div>
+  </footer>
 </div>
-
-<!-- WHAT THE REGISTRY CONTAINS -->
-<div class="protocol-section">
-  <div class="section-label-sm">What Each Registry Entry Contains</div>
-  <div class="protocol-grid">
-    <div class="protocol-card">
-      <div class="protocol-card-num">01</div>
-      <div class="protocol-card-title">Lunara ID</div>
-      <div class="protocol-card-body">A permanent verified identity assigned to the participant. Format: LUN-BUS-000XXX</div>
-    </div>
-    <div class="protocol-card">
-      <div class="protocol-card-num">02</div>
-      <div class="protocol-card-title">Entity Identity</div>
-      <div class="protocol-card-body">Business name, domain, and industry classification — machine-readable and indexed.</div>
-    </div>
-    <div class="protocol-card">
-      <div class="protocol-card-num">03</div>
-      <div class="protocol-card-title">Participation Status</div>
-      <div class="protocol-card-body">Active, Founding, or Pending — reflecting the current state within the Lunara Protocol.</div>
-    </div>
-    <div class="protocol-card">
-      <div class="protocol-card-num">04</div>
-      <div class="protocol-card-title">Communication Preferences</div>
-      <div class="protocol-card-body">How the business prefers to receive contact from external systems and AI agencies.</div>
-    </div>
-    <div class="protocol-card">
-      <div class="protocol-card-num">05</div>
-      <div class="protocol-card-title">Verification Status</div>
-      <div class="protocol-card-body">Confirmed by Lunara Society. Participation is verified, not assumed.</div>
-    </div>
-    <div class="protocol-card">
-      <div class="protocol-card-num">06</div>
-      <div class="protocol-card-title">Trust Signals</div>
-      <div class="protocol-card-body">Interaction history and reputation signals that compound over time into institutional memory.</div>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-left">
-    <img src="shield-logo.jpg" alt="Shield" class="footer-shield">
-    <span class="footer-wordmark">Lunara Society</span>
-  </div>
-  <div class="footer-right">
-    © 2026 &nbsp;·&nbsp; <a href="/">lunarasociety.com</a> &nbsp;·&nbsp; Trust is infrastructure.
-  </div>
-</footer>
-
 <script>
-// Update last-updated date
-const d = new Date();
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-document.getElementById('last-updated').textContent = months[d.getMonth()] + ' ' + d.getFullYear();
-</script>
-<script src="/lunara-security.js"></script>
-<script>
-function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
-window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+function fadeNav(url){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.pointerEvents='all';
+  setTimeout(function(){window.location.href=url;},520);
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.transition='none';
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      f.style.transition='opacity 0.8s ease';
+      f.style.opacity='0';
+      setTimeout(function(){f.style.pointerEvents='none';},820);
+    },60);
+  });
+});
 </script>
 </body>
 </html>

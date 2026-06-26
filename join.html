@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Join — Lunara Society</title>
+<title>Sanctum — Lunara Society</title>
+<meta name="description" content="Lunara Society — Trust Coordination Institution. Est. 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="shield-logo.jpg">
@@ -246,19 +247,20 @@ body{animation:pageIn 0.6s ease forwards;}
 </style>
 </head>
 <body>
-<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
-  <div class="back-link" onclick="fadeNavigate('index.html')">← Enter the Hall</div>
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
   <span class="nav-logo">Lunara Society</span>
   <div class="nav-right">
-    <span class="nav-link" onclick="fadeNavigate('shield.html')">Shield</span>
-    <span class="nav-link" onclick="fadeNavigate('registry.html')">Registry</span>
-    <span class="nav-link" onclick="fadeNavigate('member.html')">Member</span>
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
   </div>
 </nav>
 <div class="page-wrap">
   <div class="page-inner">
-    <p class="eyebrow">Join the Institution</p>
+    <p class="eyebrow">Sanctum</p>
     <h1 class="page-title">Founding participants define<br>the standard everyone else follows.</h1>
     <p class="page-sub">The Lunara registry is live. The protocol is forming. The founding cohort is building the foundation of a trust institution that will outlast any single technology cycle.</p>
     <div class="gold-rule"></div>
@@ -280,23 +282,38 @@ body{animation:pageIn 0.6s ease forwards;}
       </div>
     </div>
     <div class="gold-rule"></div>
-    <p class="page-sub" style="margin-bottom:16px;">Apply via PayPal or write directly to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a>. Also available via Revolut.</p>
-    <a href="https://paypal.com/paypalme/junoagattis/25" class="cta-btn" style="display:inline-flex;">Apply via PayPal →</a>
-    <div onclick="fadeNavigate('member.html')" class="cta-link" style="display:inline-flex;margin-top:16px;">Already a member? Access your area →</div>
+    <p class="page-sub" style="margin-bottom:8px;">Apply via PayPal or write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a>. Also available via Revolut.</p>
+    <a href="https://paypal.com/paypalme/junoagattis/25" class="cta-btn" style="display:inline-flex;">Proceed via PayPal →</a>
+    <br>
+    <span onclick="fadeNav('member.html')" class="cta-link" style="display:inline-flex;cursor:pointer;margin-top:16px;">Already a member? Access your area →</span>
   </div>
   <footer class="page-footer">
-    <span class="footer-text">Lunara Society · Est. 2026 · MMXXVI</span>
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
     <div class="footer-links">
-      <span class="footer-link" onclick="fadeNavigate('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNavigate('member.html')">Member Area</span>
-      <span class="footer-link" onclick="fadeNavigate('shield.html')">How It Works</span>
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
     </div>
   </footer>
 </div>
 <script>
-function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
-window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+function fadeNav(url){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.pointerEvents='all';
+  setTimeout(function(){window.location.href=url;},520);
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.transition='none';
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      f.style.transition='opacity 0.8s ease';
+      f.style.opacity='0';
+      setTimeout(function(){f.style.pointerEvents='none';},820);
+    },60);
+  });
+});
 </script>
 </body>
 </html>

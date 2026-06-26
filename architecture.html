@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Architecture — Lunara Society</title>
+<title>Knowledge — Lunara Society</title>
+<meta name="description" content="Lunara Society — Trust Coordination Institution. Est. 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="shield-logo.jpg">
@@ -246,19 +247,20 @@ body{animation:pageIn 0.6s ease forwards;}
 </style>
 </head>
 <body>
-<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
-  <div class="back-link" onclick="fadeNavigate('index.html')">← Enter the Hall</div>
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
   <span class="nav-logo">Lunara Society</span>
   <div class="nav-right">
-    <span class="nav-link" onclick="fadeNavigate('shield.html')">Shield</span>
-    <span class="nav-link" onclick="fadeNavigate('registry.html')">Registry</span>
-    <span class="nav-link" onclick="fadeNavigate('member.html')">Member</span>
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
   </div>
 </nav>
 <div class="page-wrap">
   <div class="page-inner">
-    <p class="eyebrow">Architecture</p>
+    <p class="eyebrow">Knowledge</p>
     <h1 class="page-title">Five Pillars of<br>the Institution</h1>
     <p class="page-sub">Every component of Lunara Society exists to solve a specific problem in the autonomous economy. Together they form the trust coordination layer the world is missing.</p>
     <div class="gold-rule"></div>
@@ -270,29 +272,44 @@ body{animation:pageIn 0.6s ease forwards;}
       <div class="card"><div class="card-num">05 / PROTOCOL</div><div class="card-title">Standards</div><div class="card-text">The Lunara Protocol — the emerging standard for AI-to-business interaction. Those who adopt it early define the rules everyone else will follow.</div></div>
     </div>
     <div class="gold-rule"></div>
-    <h2 class="page-title" style="font-size:clamp(20px,3vw,36px);">The Truth Behind the Architecture</h2>
-    <div class="card-grid" style="margin-top:24px;">
+    <h2 class="page-title" style="font-size:clamp(22px,3vw,38px);">The Truth</h2>
+    <p class="page-sub" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.2vw,26px);font-style:italic;color:rgba(255,255,255,0.65);">As intelligence becomes abundant, trust becomes scarce.</p>
+    <div class="card-grid" style="margin-top:clamp(20px,3vw,32px);">
       <div class="card"><div class="card-title">AI agents are contacting businesses</div><div class="card-text">Autonomous systems now reach inboxes, forms, and communication channels without identification, consent, or accountability.</div></div>
       <div class="card"><div class="card-title">Businesses have no declared response</div><div class="card-text">No communication policy. No preference declaration. No trust protocol. Businesses are invisible to the machines that matter most.</div></div>
       <div class="card"><div class="card-title">The infrastructure gap is growing</div><div class="card-text">Every day without a declared identity is another day without protection. The window for founding participants closes as the network grows.</div></div>
       <div class="card"><div class="card-title">Lunara is the response</div><div class="card-text">The trust coordination layer between businesses and the autonomous economy. Built for the era where machines make decisions humans used to make.</div></div>
     </div>
     <div class="gold-rule"></div>
-    <div onclick="fadeNavigate('join.html')" class="cta-btn" style="display:inline-flex;">Obtain the Shield →</div>
+    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
   </div>
   <footer class="page-footer">
-    <span class="footer-text">Lunara Society · Est. 2026 · MMXXVI</span>
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
     <div class="footer-links">
-      <span class="footer-link" onclick="fadeNavigate('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNavigate('member.html')">Member Area</span>
-      <span class="footer-link" onclick="fadeNavigate('shield.html')">How It Works</span>
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
     </div>
   </footer>
 </div>
 <script>
-function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
-window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+function fadeNav(url){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.pointerEvents='all';
+  setTimeout(function(){window.location.href=url;},520);
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.transition='none';
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      f.style.transition='opacity 0.8s ease';
+      f.style.opacity='0';
+      setTimeout(function(){f.style.pointerEvents='none';},820);
+    },60);
+  });
+});
 </script>
 </body>
 </html>

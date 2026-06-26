@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gateway — Lunara Society</title>
+<title>Journal — Lunara Society</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="shield-logo.jpg">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+<style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
   --black:#000;--black-soft:#080604;--black-mid:#0f0d0a;
@@ -242,48 +241,47 @@ body{animation:pageIn 0.6s ease forwards;}
   .price-grid{grid-template-columns:1fr;}
   .page-footer{flex-direction:column;align-items:flex-start;}
 }
-
 </style>
 </head>
 <body>
-<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
-  <div class="back-link" onclick="fadeNavigate('index.html')">← Enter the Hall</div>
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
   <span class="nav-logo">Lunara Society</span>
   <div class="nav-right">
-    <span class="nav-link" onclick="fadeNavigate('shield.html')">Shield</span>
-    <span class="nav-link" onclick="fadeNavigate('registry.html')">Registry</span>
-    <span class="nav-link" onclick="fadeNavigate('member.html')">Member</span>
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
   </div>
 </nav>
 <div class="page-wrap">
   <div class="page-inner">
-    <p class="eyebrow">Gateway</p>
+    <p class="eyebrow">Journal</p>
     <h1 class="page-title">The Verified<br>Access Channel</h1>
-    <p class="page-sub">Gateway is the structured channel through which compliant AI agents may contact your business. Every interaction through the Gateway is documented, accountable, and structured — not anonymous.</p>
+    <p class="page-sub">Gateway is the structured channel through which compliant AI agents may contact your business. Every interaction is documented, accountable, and structured — not anonymous.</p>
     <div class="gold-rule"></div>
     <div class="step-list">
       <div class="step-item"><span class="step-num">01</span><div><div class="step-title">AI agent queries your registry record</div><div class="step-text">Before initiating contact, the agent verifies your identity, shield status, and declared communication preferences.</div></div></div>
       <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Contact is routed through declared channels only</div><div class="step-text">Your Communication Policy specifies which channels you accept. Agents that comply route through those channels only.</div></div></div>
       <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Interaction is logged and attributed</div><div class="step-text">Every Gateway interaction is recorded — agent identity, timestamp, channel, purpose. Accountability is structural.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Non-compliant agents are flagged</div><div class="step-text">Agents that bypass the Gateway and contact you without verification are flagged in the Lunara system. Your protection is active.</div></div></div>
+      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Non-compliant agents are flagged</div><div class="step-text">Agents that bypass the Gateway are flagged in the Lunara system. Your protection is active.</div></div></div>
     </div>
     <div class="gold-rule"></div>
-    <div onclick="fadeNavigate('join.html')" class="cta-btn" style="display:inline-flex;">Declare Your Gateway →</div>
+    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Declare Your Gateway →</span>
   </div>
   <footer class="page-footer">
-    <span class="footer-text">Lunara Society · Est. 2026 · MMXXVI</span>
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI</span>
     <div class="footer-links">
-      <span class="footer-link" onclick="fadeNavigate('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNavigate('member.html')">Member Area</span>
-      <span class="footer-link" onclick="fadeNavigate('shield.html')">How It Works</span>
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
     </div>
   </footer>
 </div>
 <script>
-function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
-window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+function fadeNav(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
+window.addEventListener('DOMContentLoaded',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.8s ease';f.style.opacity='0';setTimeout(function(){f.style.pointerEvents='none';},820);},60);});});
 </script>
 </body>
 </html>

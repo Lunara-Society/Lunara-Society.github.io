@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Shield — Lunara Society</title>
+<title>Initiation — Lunara Society</title>
+<meta name="description" content="Lunara Society — Trust Coordination Institution. Est. 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="shield-logo.jpg">
@@ -246,57 +247,72 @@ body{animation:pageIn 0.6s ease forwards;}
 </style>
 </head>
 <body>
-<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
-  <div class="back-link" onclick="fadeNavigate('index.html')">← Enter the Hall</div>
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
   <span class="nav-logo">Lunara Society</span>
   <div class="nav-right">
-    <span class="nav-link" onclick="fadeNavigate('registry.html')">Registry</span>
-    <span class="nav-link" onclick="fadeNavigate('member.html')">Member</span>
-    <span class="nav-link" onclick="fadeNavigate('join.html')">Join</span>
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
   </div>
 </nav>
 <div class="page-wrap">
   <div class="page-inner">
-    <p class="eyebrow">The Shield</p>
+    <p class="eyebrow">Initiation</p>
     <h1 class="page-title">Your Business.<br>Declared. Protected. Found.</h1>
     <p class="page-sub">The Shield is not a product. It is a status. A permanent record that your business exists, operates with integrity, and has declared how it engages with intelligent systems.</p>
     <div class="gold-rule"></div>
     <div class="step-list">
-      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">Permanent Lunara ID assigned to your business</div><div class="step-text">A unique institutional identifier — LUN-BUS-YYYY-NNNNN — permanently assigned to your business and registered in the Lunara database.</div></div></div>
+      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">Permanent Lunara ID assigned to your business</div><div class="step-text">A unique institutional identifier — LUN-BUS-YYYY-NNNNN — permanently assigned and registered in the Lunara database.</div></div></div>
       <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Registry entry published — machine-readable and AI-queryable</div><div class="step-text">Your record is publicly accessible. AI systems can query it to verify your identity and communication preferences before initiating contact.</div></div></div>
       <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Communication Policy declared and live on your domain</div><div class="step-text">A structured document specifying which channels you accept, what response times to expect, and how AI agents should interact with your business.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">AI Discovery Stack deployed — llms.txt, ai.json, identity.json</div><div class="step-text">The machine-readable files that AI systems read before making decisions about your business. Your identity, declared and discoverable.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Shield Status badge activated — verified, protected, institutional</div><div class="step-text">Your shield status is active. You are visible to the systems that matter. Protected from undeclared interactions.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Member Area access granted — manage all settings permanently</div><div class="step-text">A private dashboard where you manage your shield status, review AI interaction logs, and update your preferences as the protocol evolves.</div></div></div>
+      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">AI Discovery Stack deployed — llms.txt, ai.json, identity.json</div><div class="step-text">The machine-readable files AI systems read before making decisions about your business. Your identity, declared and discoverable.</div></div></div>
+      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Shield Status badge activated</div><div class="step-text">Verified, protected, institutional. You are visible to the systems that matter.</div></div></div>
+      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Member Area access granted</div><div class="step-text">A private dashboard to manage your shield status, review AI interaction logs, and update preferences as the protocol evolves.</div></div></div>
     </div>
     <div class="gold-rule"></div>
-    <h2 class="page-title" style="font-size:clamp(22px,3vw,40px);">Chapter XI: The Shield Experience</h2>
-    <div class="step-list" style="margin-top:24px;">
+    <h2 class="page-title" style="font-size:clamp(22px,3vw,40px);">Chapter XI — The Shield Experience</h2>
+    <div class="step-list" style="margin-top:clamp(16px,3vw,28px);">
       <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You complete the founding participant process</div><div class="step-text">One-time participation fee. No subscription. No hidden costs. You become part of the founding cohort.</div></div></div>
       <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Your Lunara ID is assigned</div><div class="step-text">A permanent institutional identifier — LUN-BUS-YYYY-NNNNN — issued to your business and registered in the Lunara database.</div></div></div>
-      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Your registry record goes live</div><div class="step-text">Publicly accessible. Machine-readable. AI systems can query your record to verify your identity and communication preferences before initiating contact.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Your Communication Policy is declared</div><div class="step-text">A structured document specifying which channels you accept, what response times to expect, and how AI agents should interact with your business.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">AI Discovery Stack is deployed to your domain</div><div class="step-text">llms.txt, ai.json, and identity.json — the files that AI systems read before making decisions about your business.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">You receive Member Area access</div><div class="step-text">A private dashboard where you manage your shield status, review AI interaction logs, and update your preferences as the protocol evolves.</div></div></div>
+      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Your registry record goes live</div><div class="step-text">Publicly accessible. Machine-readable. AI systems can query your record to verify your identity before initiating contact.</div></div></div>
+      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Your Communication Policy is declared</div><div class="step-text">Specifies which channels you accept, expected response times, and how AI agents should interact with your business.</div></div></div>
+      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">AI Discovery Stack deployed to your domain</div><div class="step-text">llms.txt, ai.json, and identity.json — the files AI systems read before making decisions about your business.</div></div></div>
+      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Member Area access</div><div class="step-text">Manage shield status, review AI interaction logs, and update preferences as the protocol evolves.</div></div></div>
       <div class="step-item"><span class="step-num">07</span><div><div class="step-title">Your institutional record is permanent</div><div class="step-text">Unlike social profiles and reviews, your Lunara record cannot be deleted, manipulated, or ignored. It is structural. It is yours. It lasts.</div></div></div>
     </div>
     <div class="gold-rule"></div>
-    <div onclick="fadeNavigate('join.html')" class="cta-btn" style="display:inline-flex;">Obtain the Shield →</div>
-    <a href="shield-demonstration.html" class="cta-link" style="display:inline-flex;margin-left:16px;">See Full Demonstration →</a>
+    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
   </div>
   <footer class="page-footer">
-    <span class="footer-text">Lunara Society · Est. 2026 · MMXXVI</span>
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
     <div class="footer-links">
-      <span class="footer-link" onclick="fadeNavigate('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNavigate('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
+      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
     </div>
   </footer>
 </div>
 <script>
-function fadeNavigate(url){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.pointerEvents='all';setTimeout(function(){window.location.href=url;},520);}
-window.addEventListener('load',function(){var f=document.getElementById('page-fade');f.style.opacity='1';f.style.transition='none';requestAnimationFrame(function(){setTimeout(function(){f.style.transition='opacity 0.7s ease';f.style.opacity='0';},80);});});
+function fadeNav(url){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.pointerEvents='all';
+  setTimeout(function(){window.location.href=url;},520);
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var f=document.getElementById('page-fade');
+  f.style.opacity='1';f.style.transition='none';
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      f.style.transition='opacity 0.8s ease';
+      f.style.opacity='0';
+      setTimeout(function(){f.style.pointerEvents='none';},820);
+    },60);
+  });
+});
 </script>
 </body>
 </html>

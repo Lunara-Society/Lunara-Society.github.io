@@ -585,8 +585,10 @@ html,body{
 
   <!-- Architectural footer -->
   <div id="footer-strip">
-    <span>© 2026 Lunara Society &nbsp;·&nbsp; Est. MMXXVI</span>
+    <span>© 2026 Lunara Society. All Rights Reserved. &nbsp;·&nbsp; Est. MMXXVI &nbsp;·&nbsp; Reg. No. LUN-INST-2026-001</span>
     <span>
+      <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+      <a href="terms.html">Terms</a> &nbsp;·&nbsp;
       <a href="registry.html">Registry</a> &nbsp;·&nbsp;
       <a href="member.html">Members</a> &nbsp;·&nbsp;
       <a href="contact.html">Contact</a> &nbsp;·&nbsp;
@@ -693,20 +695,16 @@ let busy = false;
 function navigate(targetPage){
   if(busy) return;
   busy = true;
-  // Floor energy pulse toward selected portal
   triggerFloorEnergy();
-  // Snap door closed
+  // 1. Snap door closed instantly
   door.classList.remove('open');
   door.classList.add('armed');
-  // Load destination
-  const ifr = document.createElement('iframe');
-  ifr.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:none;z-index:760;opacity:0;pointer-events:none;';
-  document.body.appendChild(ifr);
-  let gone = false;
-  function depart(){ if(gone)return; gone=true; clearTimeout(fb); setTimeout(()=>{ door.classList.add('open'); setTimeout(()=>{ window.location.href=targetPage; },1100); },160); }
-  const fb = setTimeout(depart, 2800);
-  ifr.onload = depart;
-  ifr.src = targetPage;
+  // 2. Wait for door to fully close (no open) then hard-navigate
+  // Door CSS transition is 1.05s — navigate after 1.2s so new page appears BEHIND closed door
+  // New page does its own fade-in — door stays closed until new page opens it
+  setTimeout(()=>{
+    window.location.href = targetPage;
+  }, 1200);
 }
 
 // ── FLOOR ENERGY CANVAS ───────────────────────────────────
@@ -1021,6 +1019,83 @@ function emergencyReveal(){
   if(insc){ insc.style.transition='opacity 1.2s ease'; insc.style.opacity='1'; }
   document.querySelectorAll('.mark').forEach(m=>{ m.style.opacity='1'; });
 }
+
+// ══════════════════════════════════════════
+// CONTENT PROTECTION
+// ══════════════════════════════════════════
+
+// Disable right-click
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Disable text selection globally (CSS already handles most, JS catches rest)
+document.addEventListener('selectstart', e => e.preventDefault());
+
+// Disable drag
+document.addEventListener('dragstart', e => e.preventDefault());
+
+// Disable common keyboard shortcuts
+document.addEventListener('keydown', e => {
+  // Ctrl/Cmd + C, X, U, S, A, P
+  if((e.ctrlKey || e.metaKey) && ['c','x','u','s','a','p','C','X','U','S','A','P'].includes(e.key)){
+    e.preventDefault(); return false;
+  }
+  // F12 devtools
+  if(e.key === 'F12'){ e.preventDefault(); return false; }
+  // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (devtools)
+  if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c','I','J','C'].includes(e.key)){
+    e.preventDefault(); return false;
+  }
+  // PrintScreen
+  if(e.key === 'PrintScreen'){ e.preventDefault(); return false; }
+});
+
+// Disable print
+window.addEventListener('beforeprint', e => { e.preventDefault(); document.body.innerHTML=''; });
+
+// Disable iOS long-press save image
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+// Watermark overlay — invisible normally, appears on screenshot attempt
+// CSS-based invisible watermark baked into every render
+(function injectWatermark(){
+  const wm = document.createElement('div');
+  wm.id = 'wm-overlay';
+  wm.style.cssText = [
+    'position:fixed','inset:0','z-index:9998',
+    'pointer-events:none','user-select:none',
+    'background:transparent',
+    'opacity:0.018',
+    'font-family:Cormorant Garamond,serif',
+    'display:flex','flex-direction:column',
+    'justify-content:space-around',
+    'overflow:hidden'
+  ].join(';');
+  // Diagonal repeating watermark text
+  const rows = Math.ceil(window.innerHeight / 80) + 2;
+  for(let i=0;i<rows;i++){
+    const row = document.createElement('div');
+    row.style.cssText = 'white-space:nowrap;transform:rotate(-18deg);color:rgba(196,164,107,0.9);font-size:clamp(11px,1.2vw,15px);letter-spacing:0.3em;text-transform:uppercase;margin-left:-10%;width:120%;';
+    row.textContent = ('Lunara Society  ©2026  lunarasociety.com  ').repeat(12);
+    wm.appendChild(row);
+  }
+  document.body.appendChild(wm);
+})();
+
+// Devtools detection — redirect if opened
+(function detectDevtools(){
+  const threshold = 160;
+  setInterval(()=>{
+    if(window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold){
+      // Devtools likely open — blur content
+      document.getElementById('hall') && (document.getElementById('hall').style.filter='blur(12px)');
+    } else {
+      document.getElementById('hall') && (document.getElementById('hall').style.filter='');
+    }
+  }, 1500);
+})();
+
 </script>
 </body>
 </html>

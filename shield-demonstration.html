@@ -157,6 +157,25 @@ body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
   /* Input zoom fix on iOS */
   input,select,textarea{font-size:16px!important}
 
+
+/* Content protection */
+body{
+  -webkit-user-select:none !important;
+  -moz-user-select:none !important;
+  -ms-user-select:none !important;
+  user-select:none !important;
+  -webkit-touch-callout:none !important;
+}
+/* Allow text select only in inputs */
+input,textarea{
+  -webkit-user-select:text !important;
+  user-select:text !important;
+}
+/* Print protection */
+@media print{
+  body{ display:none !important; }
+}
+
 </style>
 </head>
 <body>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Use — Lunara Society</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--border:rgba(196,164,107,0.15);}
+body{background:#000;font-family:'Inter',sans-serif;font-weight:300;color:rgba(255,255,255,0.75);-webkit-font-smoothing:antialiased;min-height:100vh;-webkit-user-select:none;user-select:none;}
+@media print{body{display:none!important;}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,48px);height:60px;background:rgba(0,0,0,0.96);border-bottom:1px solid rgba(196,164,107,0.15);}
+.back{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196,164,107,0.5);cursor:pointer;text-decoration:none;}
+.back:hover{color:var(--gold);}
+.nav-logo{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.wrap{max-width:780px;margin:0 auto;padding:100px clamp(20px,4vw,48px) 80px;}
+.eyebrow{font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,48px);font-weight:300;color:#fff;margin-bottom:12px;line-height:1.2;}
+.date{font-size:11px;letter-spacing:0.2em;color:rgba(255,255,255,0.3);margin-bottom:40px;}
+.rule{width:clamp(40px,6vw,80px);height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:32px 0;}
+h2{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,2vw,22px);font-weight:400;color:rgba(255,255,255,0.9);margin:32px 0 12px;}
+p{font-size:clamp(13px,1.4vw,15px);line-height:1.8;color:rgba(255,255,255,0.6);margin-bottom:16px;}
+a{color:var(--gold);text-decoration:none;}
+.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="back" href="index.html">← Return to Hall</a>
+  <span class="nav-logo">Lunara Society</span>
+</nav>
+<div class="wrap">
+  <p class="eyebrow">Legal</p>
+  <h1>Terms of Use</h1>
+  <p class="date">Effective Date: 1 January 2026 &nbsp;·&nbsp; Last Updated: June 2026</p>
+  <div class="rule"></div>
+  <h2>1. Acceptance</h2>
+  <p>By accessing lunarasociety.com you agree to these Terms. If you do not agree, do not use this site.</p>
+  <h2>2. Intellectual Property</h2>
+  <p>All content on this website — including but not limited to text, design, imagery, the Hall architecture, the Lunara Protocol specification, iconography, and all written doctrine — is the exclusive property of Lunara Society. © 2026 Lunara Society. All Rights Reserved. No content may be copied, reproduced, distributed, republished, scraped, or used without prior written permission.</p>
+  <h2>3. Prohibited Use</h2>
+  <p>You may not: copy or reproduce any content; reverse-engineer or extract the design or protocol; use automated tools to scrape or harvest content; attempt to circumvent security measures; impersonate the institution or use the Lunara name without authorisation.</p>
+  <h2>4. Registry Membership</h2>
+  <p>Registry membership is subject to separate terms communicated during the application process. Registry records are permanent. Membership fees are non-refundable once a Lunara ID has been issued.</p>
+  <h2>5. Disclaimer</h2>
+  <p>The institution provides information in good faith. We make no warranties regarding completeness or fitness for a particular purpose. Lunara Society is not liable for decisions made based on information published on this site.</p>
+  <h2>6. Modifications</h2>
+  <p>We reserve the right to modify these terms at any time. Continued use of the site constitutes acceptance of any changes.</p>
+  <h2>7. Contact</h2>
+  <p>Legal enquiries: <a href="mailto:rosario@lunarasociety.com">rosario@lunarasociety.com</a></p>
+  <div class="rule"></div>
+  <div class="footer">
+    <span>© 2026 Lunara Society. All Rights Reserved.</span>
+    <span><a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="contact.html">Contact</a></span>
+  </div>
+</div>
+<script>
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j'].includes(e.key.toLowerCase()))){e.preventDefault();}});
+window.addEventListener('beforeprint',e=>{document.body.style.display='none';});
+</script>
+</body>
+</html>

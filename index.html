@@ -24,7 +24,7 @@ html,body{
   color:#fff;
   -webkit-font-smoothing:antialiased;
   overflow:hidden;
-  touch-action:none;
+  touch-action:auto;
 }
 
 /* ════════════════════════════════════════
@@ -469,13 +469,16 @@ html,body{
   overflow-x:scroll;overflow-y:hidden;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
+  touch-action:pan-x;
 }
 #mob-scroll::-webkit-scrollbar{display:none;}
 #mob-canvas{
   position:relative;
   height:100%;
   width:300vw;
-  background:url('hall-bg.png') center center / auto 100% no-repeat;
+  /* cover the full 300vw canvas — image stretches across entire panorama */
+  background:url('hall-bg.png') center center / cover no-repeat;
+  background-size: 300vw 100%;
 }
 </style>
 </head>
@@ -631,7 +634,10 @@ const CONSOLE_DATA = [
 ];
 
 // ── DEVICE DETECTION ─────────────────────────────────────
-const isMob = () => window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+const isMob = () => {
+  // Portrait mobile: width < 900 AND taller than wide
+  return window.innerWidth < 900 && window.innerHeight > window.innerWidth;
+};
 
 // ── BUILD PORTALS ─────────────────────────────────────────
 function buildPortals(layerId, xFn, yFn){
@@ -923,7 +929,12 @@ function runArrival(){
 
 // ── MOBILE INIT ───────────────────────────────────────────
 function initMobile(){
-  document.getElementById('hall').style.display = 'none';
+  // Hide desktop elements
+  var hallEl = document.getElementById('hall');
+  if(hallEl) hallEl.style.display = 'none';
+  // Hide arrival overlay — not used for mobile
+  var arrEl = document.getElementById('arrival');
+  if(arrEl){ arrEl.style.opacity='0'; arrEl.style.pointerEvents='none'; }
   const ms = document.getElementById('mob-scroll');
   ms.style.display = 'block';
 
@@ -951,9 +962,9 @@ function initMobile(){
     }
   }, 65000);
 
-  // Fade in mobile
+  // Fade in mobile — show immediately, no opacity trick needed
   var ms2 = document.getElementById('mob-scroll');
-  if(ms2){ ms2.style.opacity='0'; ms2.style.transition='opacity 1.2s ease'; setTimeout(()=>{ms2.style.opacity='1';},80); }
+  if(ms2){ ms2.style.opacity='1'; }
 }
 
 // ── DESKTOP INIT ──────────────────────────────────────────

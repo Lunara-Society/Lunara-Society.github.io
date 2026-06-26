@@ -34,7 +34,9 @@ html,body{
 #arrival{
   position:fixed;inset:0;z-index:900;
   background:#000;
+  opacity:1;
   pointer-events:all;
+  transition:opacity 1.8s ease;
 }
 
 /* The faint golden seam that appears at 0.5s */
@@ -54,7 +56,6 @@ html,body{
 #hall{
   position:fixed;inset:0;
   opacity:0;
-  /* Camera starts aimed at center, will shift subtly */
   will-change:transform;
 }
 
@@ -860,8 +861,8 @@ function runArrival(){
 
   // 2.5s — arrival overlay fades, revealing reflections
   setTimeout(()=>{
-    arrival.style.transition = 'opacity 1.8s ease';
     arrival.style.opacity = '0';
+    arrival.style.pointerEvents = 'none';
   }, 2500);
 
   // 3.0s — console rises from marble
@@ -950,19 +951,17 @@ function initMobile(){
     }
   }, 65000);
 
-  // Fade in
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'none';
-  setTimeout(()=>{
-    document.body.style.transition = 'opacity 1.2s ease';
-    document.body.style.opacity = '1';
-  },100);
+  // Fade in mobile
+  var ms2 = document.getElementById('mob-scroll');
+  if(ms2){ ms2.style.opacity='0'; ms2.style.transition='opacity 1.2s ease'; setTimeout(()=>{ms2.style.opacity='1';},80); }
 }
 
 // ── DESKTOP INIT ──────────────────────────────────────────
 function initDesktop(){
-  document.getElementById('mob-scroll').style.display = 'none';
-  document.getElementById('hall').style.display = 'block';
+  var ms = document.getElementById('mob-scroll');
+  var h  = document.getElementById('hall');
+  if(ms) ms.style.display = 'none';
+  if(h)  h.style.display  = 'block';
   buildPortals('portal-layer', x=>`${x}%`, y=>`${y}%`);
   buildConsole('console-inner');
   parallaxTick();
@@ -979,9 +978,25 @@ function init(){
   else        initDesktop();
 }
 
-window.addEventListener('DOMContentLoaded', init);
-window.addEventListener('resize',           ()=>{ if(!busy) init(); });
-window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ if(!busy) init(); },350); });
+// Use load (not DOMContentLoaded) so image is ready before sequence starts
+window.addEventListener('load', function(){
+  try { init(); } catch(e){ emergencyReveal(); console.error('Hall init error:',e); }
+});
+window.addEventListener('resize',           ()=>{ if(!busy){ try{init();}catch(e){} } });
+window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ if(!busy){ try{init();}catch(e){} } },350); });
+
+// Emergency fallback — if anything fails, just show the hall
+function emergencyReveal(){
+  var a = document.getElementById('arrival');
+  var h = document.getElementById('hall');
+  if(a){ a.style.transition='opacity 1.2s ease'; a.style.opacity='0'; setTimeout(()=>{a.style.pointerEvents='none';},1300); }
+  if(h){ h.style.transition='opacity 1.2s ease'; h.style.opacity='1'; }
+  var cw = document.getElementById('console-wrap');
+  if(cw){ cw.style.transition='transform 1.2s ease'; cw.style.transform='translateY(0)'; }
+  var insc = document.getElementById('inscription');
+  if(insc){ insc.style.transition='opacity 1.2s ease'; insc.style.opacity='1'; }
+  document.querySelectorAll('.mark').forEach(m=>{ m.style.opacity='1'; });
+}
 </script>
 </body>
 </html>

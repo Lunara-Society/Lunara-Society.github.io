@@ -622,8 +622,9 @@ html,body{
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  LUNARA SOCIETY — LIVING HALL v2
-//  Part 1 + Part 2 Implementation
+//  LUNARA SOCIETY — LIVING HALL v3
+//  Part 1 + Part 2 + Part 3 Implementation
+//  Navigation, Transitions, Microinteractions
 // ═══════════════════════════════════════════════════════
 
 // ── PORTAL DATA ──────────────────────────────────────────
@@ -650,7 +651,6 @@ const CONSOLE_DATA = [
 
 // ── DEVICE DETECTION ─────────────────────────────────────
 const isMob = () => {
-  // Any phone/tablet regardless of orientation
   return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth < 1200);
 };
 
@@ -659,16 +659,18 @@ function buildPortals(layerId, xFn, yFn){
   const layer = document.getElementById(layerId);
   if(!layer) return;
   layer.innerHTML = '';
-  PORTALS.forEach(p => {
+  PORTALS.forEach((p,i) => {
     const el = document.createElement('div');
     el.className = 'portal';
+    el.dataset.page = p.page;
+    el.dataset.idx = i;
     el.style.cssText = `left:${xFn(p.x)};top:${yFn(p.y)};pointer-events:all;`;
     el.innerHTML = `<div class="portal-hit">
       <span class="portal-label">${p.label}</span>
       <div class="portal-ring"></div>
     </div>`;
-    el.addEventListener('click',   () => navigate(p.page));
-    el.addEventListener('touchend', e => { e.preventDefault(); navigate(p.page); });
+    el.addEventListener('click',    () => activateNavigation(p.page, el, 'portal'));
+    el.addEventListener('touchend', e  => { e.preventDefault(); activateNavigation(p.page, el, 'portal'); });
     layer.appendChild(el);
   });
 }
@@ -681,177 +683,383 @@ function buildConsole(innerId){
   CONSOLE_DATA.forEach(b => {
     const d = document.createElement('div');
     d.className = 'cbtn';
+    d.dataset.page = b.page;
     d.innerHTML = `<div class="cicon">${b.svg}</div><span class="clabel">${b.label}</span>`;
-    d.addEventListener('click',    () => navigate(b.page));
-    d.addEventListener('touchend', e => { e.preventDefault(); navigate(b.page); });
+    d.addEventListener('click',    () => activateNavigation(b.page, d, 'console'));
+    d.addEventListener('touchend', e  => { e.preventDefault(); activateNavigation(b.page, d, 'console'); });
     el.appendChild(d);
   });
 }
 
-// ── ELEVATOR DOOR NAVIGATION ──────────────────────────────
-const door = document.getElementById('door');
-let busy = false;
+// ═══════════════════════════════════════════════════════
+// PART 3 — FULL CINEMATIC NAVIGATION ENGINE
+// ═══════════════════════════════════════════════════════
 
-function navigate(targetPage){
+const door  = document.getElementById('door');
+let busy    = false;
+let navRaf  = null;
+
+// ── STEP 1–7: FULL SEQUENCE ───────────────────────────────
+function activateNavigation(targetPage, triggerEl, source){
   if(busy) return;
   busy = true;
-  triggerFloorEnergy();
-  // 1. Snap door closed instantly
-  door.classList.remove('open');
-  door.classList.add('armed');
-  // 2. Wait for door to fully close (no open) then hard-navigate
-  // Door CSS transition is 1.05s — navigate after 1.2s so new page appears BEHIND closed door
-  // New page does its own fade-in — door stays closed until new page opens it
-  setTimeout(()=>{
-    window.location.href = targetPage;
-  }, 1200);
+
+  // ── STEP 1: 150–250ms pause — building acknowledges ──────
+  setTimeout(() => {
+
+    // ── STEP 2: Selected element sharpens (not brighter) ──
+    sharpenElement(triggerEl, source);
+
+    // ── STEP 3: Floor energy pathway awakens ──────────────
+    // Begins at same time as sharpening
+    triggerFloorEnergy(triggerEl, source);
+
+    // ── STEP 4: Nearby architecture reacts ────────────────
+    // 350ms after selection
+    setTimeout(() => architectureReacts(triggerEl, source), 350);
+
+    // ── STEP 5: Portal activates — geometry aligns ────────
+    // 800ms in
+    setTimeout(() => portalActivates(targetPage, source), 800);
+
+    // ── STEP 6: Camera begins moving toward portal ────────
+    // 1400ms in
+    setTimeout(() => cameraApproach(targetPage), 1400);
+
+    // ── STEP 7: Camera passes through — light fills screen ─
+    // 2500ms in — door closes, white fill, navigate
+    setTimeout(() => departThroughPortal(targetPage), 2500);
+
+  }, 180); // Step 1 pause
 }
 
-// ── FLOOR ENERGY CANVAS ───────────────────────────────────
-function triggerFloorEnergy(){
+// ── STEP 2: SHARPEN — engraving becomes more defined ─────
+function sharpenElement(el, source){
+  if(!el) return;
+  if(source === 'portal'){
+    const ring  = el.querySelector('.portal-ring');
+    const label = el.querySelector('.portal-label');
+    if(ring){
+      ring.style.transition = 'all 0.22s cubic-bezier(0.4,0,0.2,1)';
+      ring.style.borderColor = 'rgba(196,164,107,0.9)';
+      ring.style.boxShadow   = '0 0 28px rgba(196,164,107,0.35), 0 0 2px rgba(255,240,200,0.5)';
+    }
+    if(label){
+      label.style.transition  = 'all 0.22s ease';
+      label.style.color       = 'rgba(255,240,200,0.95)';
+      label.style.letterSpacing = '0.34em';
+      label.style.textShadow  = '0 0 18px rgba(196,164,107,0.6)';
+    }
+  } else {
+    // Console button
+    const icon = el.querySelector('.cicon');
+    if(icon){
+      icon.style.transition  = 'all 0.2s ease';
+      icon.style.borderColor = 'rgba(196,164,107,0.85)';
+      icon.style.background  = 'rgba(196,164,107,0.08)';
+      icon.style.boxShadow   = '0 0 20px rgba(196,164,107,0.3), inset 0 1px 3px rgba(0,0,0,0.5)';
+      // Subtle depression
+      icon.style.transform   = 'translateY(1px)';
+      setTimeout(()=>{ icon.style.transform = 'translateY(0)'; }, 220);
+    }
+  }
+}
+
+// ── STEP 3: FLOOR ENERGY — light travels through marble ──
+function triggerFloorEnergy(triggerEl, source){
   const c = document.getElementById('floor-energy');
   if(!c) return;
+  c.width  = c.offsetWidth;
+  c.height = c.offsetHeight;
   const ctx = c.getContext('2d');
-  c.width = c.offsetWidth; c.height = c.offsetHeight;
+
+  // Determine target X based on element position
+  let targetX = c.width * 0.5;
+  if(triggerEl){
+    const rect = triggerEl.getBoundingClientRect();
+    targetX    = rect.left + rect.width / 2;
+  }
+
+  // Origin: console center (bottom)
+  const originX = c.width  * 0.5;
+  const originY = c.height * 0.98;
+  const destY   = c.height * 0.35;
+
   c.style.opacity = '1';
   let prog = 0;
-  const cx = c.width/2, cy = c.height;
-  const draw = () => {
-    ctx.clearRect(0,0,c.width,c.height);
-    prog = Math.min(prog + 0.018, 1);
-    const len = prog * (c.height * 0.35);
-    const grad = ctx.createLinearGradient(cx, cy, cx, cy - len);
-    grad.addColorStop(0,'rgba(196,164,107,0)');
-    grad.addColorStop(0.5,'rgba(196,164,107,0.22)');
-    grad.addColorStop(1,'rgba(196,164,107,0)');
+  const dur = 900; // ms
+  let start = null;
+
+  function draw(ts){
+    if(!start) start = ts;
+    prog = Math.min((ts - start) / dur, 1);
+    const ease = prog < 0.5
+      ? 2 * prog * prog
+      : 1 - Math.pow(-2 * prog + 2, 2) / 2;
+
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const currentY = originY - (originY - destY) * ease;
+    const currentX = originX + (targetX - originX) * ease * 0.6;
+
+    // Main beam
+    const grad = ctx.createLinearGradient(originX, originY, currentX, currentY);
+    grad.addColorStop(0,   'rgba(196,164,107,0)');
+    grad.addColorStop(0.4, 'rgba(196,164,107,0.18)');
+    grad.addColorStop(1,   'rgba(255,240,200,0.08)');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 1;
+    ctx.lineWidth   = 1;
+    ctx.lineCap     = 'round';
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx, cy - len);
+    ctx.moveTo(originX, originY);
+    ctx.lineTo(currentX, currentY);
     ctx.stroke();
-    // Side tendrils
-    const tLen = len * 0.4;
-    [-1,1].forEach(dir => {
-      const tGrad = ctx.createLinearGradient(cx, cy - len*0.3, cx + dir*tLen*0.6, cy - len*0.3 - tLen*0.5);
-      tGrad.addColorStop(0,'rgba(196,164,107,0.12)');
-      tGrad.addColorStop(1,'rgba(196,164,107,0)');
-      ctx.strokeStyle = tGrad;
-      ctx.lineWidth = 0.5;
+
+    // Tendrils — diverge from midpoint
+    const mx = originX + (currentX - originX) * 0.55;
+    const my = originY + (currentY - originY) * 0.55;
+    [[1,0.35],[−1,0.28]].forEach(([dir, opa]) => {
+      const tg = ctx.createLinearGradient(mx, my, mx + dir*40*ease, my - 30*ease);
+      tg.addColorStop(0, `rgba(196,164,107,${opa*ease})`);
+      tg.addColorStop(1, 'rgba(196,164,107,0)');
+      ctx.strokeStyle = tg;
+      ctx.lineWidth   = 0.5;
       ctx.beginPath();
-      ctx.moveTo(cx, cy - len*0.3);
-      ctx.lineTo(cx + dir*tLen*0.6, cy - len*0.3 - tLen*0.5);
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx + dir*40*ease, my - 30*ease);
       ctx.stroke();
     });
-    if(prog < 1) requestAnimationFrame(draw);
-    else setTimeout(()=>{ c.style.opacity='0'; ctx.clearRect(0,0,c.width,c.height); },600);
-  };
-  requestAnimationFrame(draw);
+
+    if(prog < 1){
+      navRaf = requestAnimationFrame(draw);
+    } else {
+      // Fade out floor energy after arrival
+      setTimeout(()=>{
+        c.style.transition = 'opacity 0.6s ease';
+        c.style.opacity    = '0';
+      }, 800);
+    }
+  }
+  navRaf = requestAnimationFrame(draw);
+}
+
+// ── STEP 4: ARCHITECTURE REACTS ───────────────────────────
+function architectureReacts(triggerEl, source){
+  // Ceiling brightens
+  const ceil = document.getElementById('ceiling-life');
+  if(ceil){
+    ceil.style.transition = 'opacity 0.7s ease';
+    ceil.style.opacity    = '1';
+  }
+  // Floor reflections deepen
+  const fl = document.getElementById('floor-life');
+  if(fl){
+    fl.style.transition = 'opacity 0.7s ease';
+    fl.style.opacity    = '1';
+  }
+  // Portal pulse brightens
+  const pp = document.getElementById('portal-pulse');
+  if(pp){
+    pp.style.transition = 'opacity 0.5s ease, transform 0.8s ease';
+    pp.style.opacity    = '0.6';
+    pp.style.transform  = 'translate(-50%,-60%) scale(1.15)';
+  }
+  // Other portals dim slightly — attention focuses
+  document.querySelectorAll('.portal').forEach(p => {
+    if(p !== triggerEl){
+      p.style.transition = 'opacity 0.6s ease';
+      p.style.opacity    = '0.35';
+    }
+  });
+}
+
+// ── STEP 5: PORTAL ACTIVATES — geometry aligns ────────────
+function portalActivates(targetPage, source){
+  // Find the target portal if it exists
+  const portals = document.querySelectorAll('.portal');
+  portals.forEach(p => {
+    if(p.dataset && p.dataset.page === targetPage){
+      const ring = p.querySelector('.portal-ring');
+      if(ring){
+        ring.style.transition  = 'all 0.5s cubic-bezier(0.4,0,0.2,1)';
+        ring.style.borderColor = 'rgba(255,240,200,0.9)';
+        ring.style.boxShadow   =
+          '0 0 40px rgba(196,164,107,0.55), 0 0 80px rgba(196,164,107,0.2), 0 0 4px rgba(255,255,240,0.6)';
+        ring.style.background  = 'rgba(196,164,107,0.06)';
+      }
+    }
+  });
+}
+
+// ── STEP 6: CAMERA APPROACH — cinematic, heavy, smooth ────
+let camApproachActive = false;
+function cameraApproach(targetPage){
+  camApproachActive = true;
+  const bg = document.getElementById('hall-bg');
+  if(!bg || camReduced) return;
+
+  // Determine which direction to push (which portal)
+  let targetXPct = 50; // default center
+  PORTALS.forEach(p => {
+    if(p.page === targetPage) targetXPct = p.x;
+  });
+
+  // Camera starts breathing position, now moves toward portal
+  // Slow zoom in + drift toward target x
+  const startScale = 1.003;
+  const endScale   = 1.06;  // subtle zoom — cinematic, not game
+  const startX     = 0;
+  const endX       = (targetXPct - 50) * -0.04; // drift left or right gently
+  const endY       = -0.8; // slight upward drift (approaching)
+
+  const dur  = 1200; // ms
+  let start  = null;
+
+  function camFrame(ts){
+    if(!start) start = ts;
+    if(!camApproachActive) return;
+    const prog = Math.min((ts - start) / dur, 1);
+    // Ease-in: camera gains momentum
+    const ease = prog * prog * prog; // cubic ease-in
+    const sc   = startScale + (endScale - startScale) * ease;
+    const tx   = startX  + (endX  - startX)  * ease;
+    const ty   = endY * ease;
+    bg.style.transform = `translate(${tx}%, ${ty}%) scale(${sc})`;
+    if(prog < 1) requestAnimationFrame(camFrame);
+  }
+  requestAnimationFrame(camFrame);
+}
+
+// ── STEP 7: DEPART — light fills screen, navigate ─────────
+function departThroughPortal(targetPage){
+  camApproachActive = false;
+
+  // Light fill overlay — white/gold light blooms from center
+  const fill = document.createElement('div');
+  fill.id = 'depart-fill';
+  fill.style.cssText = [
+    'position:fixed','inset:0','z-index:850',
+    'background:radial-gradient(ellipse 60% 60% at 50% 42%, rgba(255,245,220,0.0) 0%, transparent 100%)',
+    'pointer-events:none','opacity:0',
+    'transition:none'
+  ].join(';');
+  document.body.appendChild(fill);
+
+  // Close door
+  door.classList.remove('open');
+  door.classList.add('armed');
+
+  // Bloom the light through the door seam
+  setTimeout(() => {
+    fill.style.transition = 'opacity 0.7s ease-in';
+    fill.style.opacity    = '0.85';
+    fill.style.background = 'radial-gradient(ellipse 80% 80% at 50% 40%, rgba(255,248,225,0.7) 0%, rgba(196,164,107,0.3) 40%, transparent 70%)';
+  }, 100);
+
+  // Navigate — page appears behind closed door
+  setTimeout(() => {
+    window.location.href = targetPage;
+  }, 1150);
+}
+
+// ── FLOOR ENERGY (standalone — for non-portal calls) ──────
+function triggerFloorEnergy_simple(){
+  triggerFloorEnergy(null, 'console');
 }
 
 // ── DUST MOTES ────────────────────────────────────────────
 function spawnDust(){
   const container = document.getElementById('dust');
   if(!container) return;
-  // Only 3-5 motes at a time, very sparse
   const count = 3 + Math.floor(Math.random()*3);
   for(let i=0;i<count;i++){
     setTimeout(()=>{
-      const m = document.createElement('div');
+      const m   = document.createElement('div');
       m.className = 'mote';
-      // Place inside a light shaft (center 20-60% x, top 10-40% y)
       m.style.left = (20 + Math.random()*40)+'%';
       m.style.top  = (10 + Math.random()*30)+'%';
       container.appendChild(m);
-      // Slow float upward
       const dur = 8000 + Math.random()*6000;
       m.animate([
-        {opacity:0, transform:'translateY(0px)'},
-        {opacity:0.6, transform:'translateY(-'+Math.round(40+Math.random()*60)+'px)', offset:0.3},
-        {opacity:0, transform:'translateY(-'+Math.round(80+Math.random()*80)+'px)'}
+        {opacity:0,    transform:'translateY(0px)'},
+        {opacity:0.6,  transform:`translateY(-${Math.round(40+Math.random()*60)}px)`, offset:0.3},
+        {opacity:0,    transform:`translateY(-${Math.round(80+Math.random()*80)}px)`}
       ],{duration:dur,easing:'linear',fill:'forwards'}).onfinish = ()=>m.remove();
     }, i * 1400 + Math.random()*800);
   }
 }
 
-// ── CAMERA BREATHING ──────────────────────────────────────
-// Very subtle. Center-aimed. Slow breathing + tiny vertical drift.
+// ── CAMERA BREATHING (idle) ────────────────────────────────
 let camT = 0;
 let camReduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 function cameraTick(){
-  if(camReduced) return;
+  if(camReduced || camApproachActive) return;
   camT += 0.00025;
   const bg = document.getElementById('hall-bg');
   if(!bg) return;
-  // Horizontal: tiny left-right
-  const hx = Math.sin(camT * 0.7) * 0.18;  // ±0.18%
-  const vy = Math.sin(camT * 0.4) * 0.12;   // ±0.12%
-  // Subtle scale breath
+  const hx = Math.sin(camT * 0.7)  * 0.18;
+  const vy = Math.sin(camT * 0.4)  * 0.12;
   const sc = 1 + Math.sin(camT * 0.55) * 0.003;
   bg.style.transform = `translate(${hx}%, ${vy}%) scale(${sc})`;
   requestAnimationFrame(cameraTick);
 }
 
-// ── CURSOR PARALLAX (desktop) ─────────────────────────────
+// ── CURSOR PARALLAX (desktop — extremely subtle per spec) ──
 let mouseX = 0.5, mouseY = 0.5;
-let targetX = 0.5, targetY = 0.5;
+let tgtX   = 0.5, tgtY   = 0.5;
 document.addEventListener('mousemove', e => {
   mouseX = e.clientX / window.innerWidth;
   mouseY = e.clientY / window.innerHeight;
 });
 function parallaxTick(){
   if(camReduced){ requestAnimationFrame(parallaxTick); return; }
-  targetX += (mouseX - targetX) * 0.04;
-  targetY += (mouseY - targetY) * 0.04;
+  // Very slow follow — barely noticeable (spec: user should barely notice)
+  tgtX += (mouseX - tgtX) * 0.025;
+  tgtY += (mouseY - tgtY) * 0.025;
   const ceilEl  = document.getElementById('ceiling-life');
   const floorEl = document.getElementById('floor-life');
-  if(ceilEl)  ceilEl.style.transform  = `translateX(calc(-50% + ${(targetX-0.5)*-6}px))`;
-  if(floorEl) floorEl.style.transform = `translateX(calc(-50% + ${(targetX-0.5)*4}px))`;
+  // Max 4px movement — extremely subtle
+  if(ceilEl)  ceilEl.style.transform  = `translateX(calc(-50% + ${(tgtX-0.5)*-4}px))`;
+  if(floorEl) floorEl.style.transform = `translateX(calc(-50% + ${(tgtX-0.5)*3}px))`;
   requestAnimationFrame(parallaxTick);
 }
 
 // ── HIDDEN EVENTS ─────────────────────────────────────────
 function scheduleHiddenEvents(){
-  // 2 min: observatory flickers
   setTimeout(()=>{
     const el = document.getElementById('hidden-observatory');
     if(!el) return;
-    el.style.transition = 'opacity 3s ease'; el.style.opacity='1';
-    setTimeout(()=>{ el.style.opacity='0'; }, 4000);
+    el.style.transition='opacity 3s ease'; el.style.opacity='1';
+    setTimeout(()=>{ el.style.opacity='0'; },4000);
   }, 120000);
-
-  // 8 min: hidden symbol reveals
   setTimeout(()=>{
     const el = document.getElementById('hidden-symbol');
     if(!el) return;
     el.style.transition='opacity 6s ease'; el.style.opacity='0.18';
-    setTimeout(()=>{ el.style.opacity='0'; }, 12000);
+    setTimeout(()=>{ el.style.opacity='0'; },12000);
   }, 480000);
-
-  // 10 min: sealed doorway light
   setTimeout(()=>{
     const el = document.getElementById('hidden-doorway');
     if(!el) return;
     el.style.transition='opacity 4s ease'; el.style.opacity='1';
-    setTimeout(()=>{ el.style.opacity='0'; }, 8000);
+    setTimeout(()=>{ el.style.opacity='0'; },8000);
   }, 600000);
 }
 
-// ── CONSOLE RISE ─────────────────────────────────────────
-// After 2s: hairline seams appear. Stone separates. Console rises.
+// ── CONSOLE RISE ──────────────────────────────────────────
 function riseConsole(){
-  const wrap = document.getElementById('console-wrap');
+  const wrap   = document.getElementById('console-wrap');
   const footer = document.getElementById('footer-strip');
   if(!wrap) return;
   wrap.style.transition = 'transform 2.1s cubic-bezier(0.22,1,0.36,1)';
   wrap.style.transform  = 'translateY(0)';
   if(footer){
     footer.style.transition = 'opacity 1.4s ease';
-    footer.style.opacity = '1';
+    footer.style.opacity    = '1';
   }
 }
 
-// ── ARRIVAL SEQUENCE ─────────────────────────────────────
+// ── ARRIVAL SEQUENCE ──────────────────────────────────────
 function runArrival(){
   const arrival = document.getElementById('arrival');
   const seam    = document.getElementById('arrival-seam');
@@ -862,120 +1070,145 @@ function runArrival(){
   const pulse   = document.getElementById('portal-pulse');
   const marks   = document.querySelectorAll('.mark');
 
-  // 0.0s — black. Silence.
-  // 0.5s — faint golden seam appears
+  // 0.5s — golden seam
   setTimeout(()=>{
     seam.style.transition = 'opacity 0.8s ease, transform 1.8s ease';
-    seam.style.opacity = '1';
-    seam.style.transform = 'translate(-50%,-50%) scaleX(1)';
-  }, 500);
+    seam.style.opacity    = '1';
+    seam.style.transform  = 'translate(-50%,-50%) scaleX(1)';
+  },500);
 
-  // 1.5s — hall begins emerging from darkness
+  // 1.5s — hall emerges
   setTimeout(()=>{
     hall.style.transition = 'opacity 2.2s cubic-bezier(0.4,0,0.2,1)';
-    hall.style.opacity = '1';
-  }, 1500);
+    hall.style.opacity    = '1';
+  },1500);
 
-  // 2.5s — arrival overlay fades, revealing reflections
+  // 2.5s — arrival fades
   setTimeout(()=>{
-    arrival.style.opacity = '0';
+    arrival.style.opacity     = '0';
     arrival.style.pointerEvents = 'none';
-  }, 2500);
+  },2500);
 
-  // 3.0s — console rises from marble
-  setTimeout(() => {
-    arrival.style.pointerEvents = 'none';
-    riseConsole();
-  }, 3000);
+  // 3.0s — console rises
+  setTimeout(()=>{ riseConsole(); },3000);
 
-  // 3.5s — ceiling glow begins
+  // 3.5s — ceiling
   setTimeout(()=>{
     ceil.style.transition = 'opacity 3s ease';
-    ceil.style.opacity = '1';
-  }, 3500);
+    ceil.style.opacity    = '1';
+  },3500);
 
-  // 4.5s — central portal first soft pulse
+  // 4.5s — portal pulse
   setTimeout(()=>{
     pulse.style.transition = 'opacity 1.5s ease, transform 4s ease';
-    pulse.style.opacity = '0.8';
-    pulse.style.transform = 'translate(-50%,-60%) scale(1.3)';
+    pulse.style.opacity    = '0.8';
+    pulse.style.transform  = 'translate(-50%,-60%) scale(1.3)';
     setTimeout(()=>{
-      pulse.style.opacity = '0.2';
+      pulse.style.opacity   = '0.2';
       pulse.style.transform = 'translate(-50%,-60%) scale(1)';
-    }, 2000);
-  }, 4500);
+    },2000);
+  },4500);
 
-  // 5.0s — inscription + marks appear. Hall at rest.
+  // 5.0s — inscription + marks + floor
   setTimeout(()=>{
     if(insc){ insc.style.transition='opacity 2s ease'; insc.style.opacity='1'; }
     marks.forEach(m=>{ m.style.transition='opacity 2s ease'; m.style.opacity='1'; });
-    // Floor life
     floor.style.transition = 'opacity 4s ease';
-    floor.style.opacity = '0.8';
-  }, 5000);
+    floor.style.opacity    = '0.8';
+  },5000);
 
-  // 6s — camera breathing begins
-  setTimeout(()=>{ cameraTick(); }, 6000);
+  // 6s — camera breathing
+  setTimeout(()=>{ cameraTick(); },6000);
 
-  // 7s — first dust motes
+  // 7s — dust
   setTimeout(()=>{
     spawnDust();
     setInterval(spawnDust, 22000 + Math.random()*8000);
-  }, 7000);
+  },7000);
 
-  // 20s — floor reflections deepen
-  setTimeout(()=>{
-    floor.style.opacity = '1';
-  }, 20000);
+  // 20s — floor deepens
+  setTimeout(()=>{ floor.style.opacity='1'; },20000);
 
-  // 60s+ ongoing: subtle periodic ceiling pulse (rare)
+  // Periodic ceiling pulse (rare, idle)
   setInterval(()=>{
-    if(Math.random() > 0.7){
+    if(!camApproachActive && Math.random()>0.7){
       ceil.style.transition = 'opacity 8s ease';
-      ceil.style.opacity = String(0.5 + Math.random()*0.5);
-      setTimeout(()=>{ ceil.style.opacity='0.6'; }, 10000);
+      ceil.style.opacity    = String(0.5 + Math.random()*0.5);
+      setTimeout(()=>{ ceil.style.opacity='0.6'; },10000);
     }
-  }, 35000);
+  },35000);
+}
+
+// ── MOBILE INERTIA SCROLL — "heavy stone platform" ────────
+function initMobileInertia(){
+  const ms = document.getElementById('mob-scroll');
+  if(!ms) return;
+  // Remove any existing scroll snap / physics that causes rubber-band
+  ms.style.scrollBehavior = 'auto';
+  // iOS momentum is fine; Android: apply custom inertia if needed
+  // The key: remove aggressive momentum, add weight
+  let isDown = false, startX = 0, scrollLeft = 0;
+  let velX = 0, lastX = 0, lastTime = 0;
+
+  ms.addEventListener('touchstart', e => {
+    isDown     = true;
+    startX     = e.touches[0].pageX;
+    scrollLeft = ms.scrollLeft;
+    velX       = 0;
+    lastX      = startX;
+    lastTime   = Date.now();
+  }, { passive: true });
+
+  ms.addEventListener('touchmove', e => {
+    if(!isDown) return;
+    const x    = e.touches[0].pageX;
+    const now  = Date.now();
+    const dt   = now - lastTime;
+    if(dt > 0) velX = (lastX - x) / dt;
+    lastX      = x;
+    lastTime   = now;
+    ms.scrollLeft = scrollLeft + (startX - x);
+  }, { passive: true });
+
+  ms.addEventListener('touchend', () => {
+    isDown = false;
+    // Apply heavy inertia — like pushing a stone platform
+    // Dampen velocity significantly (0.92 decay per frame)
+    let raf;
+    function inertia(){
+      velX *= 0.88; // heavy damping per spec
+      if(Math.abs(velX) < 0.02){ cancelAnimationFrame(raf); return; }
+      ms.scrollLeft += velX * 16;
+      raf = requestAnimationFrame(inertia);
+    }
+    raf = requestAnimationFrame(inertia);
+  });
 }
 
 // ── MOBILE INIT ───────────────────────────────────────────
 function initMobile(){
-  // Hide desktop elements
   var hallEl = document.getElementById('hall');
   if(hallEl) hallEl.style.display = 'none';
-  // Hide arrival overlay — not used for mobile
-  var arrEl = document.getElementById('arrival');
+  var arrEl  = document.getElementById('arrival');
   if(arrEl){ arrEl.style.opacity='0'; arrEl.style.pointerEvents='none'; }
   const ms = document.getElementById('mob-scroll');
-  ms.style.display = 'block';
+  ms.style.display  = 'block';
+  ms.style.opacity  = '1';
 
-  buildPortals('mob-portal-layer',
-    x => `${x}%`,
-    y => `${y}vh`
-  );
+  buildPortals('mob-portal-layer', x=>`${x}%`, y=>`${y}vh`);
   buildConsole('mob-console-inner');
+  initMobileInertia();
 
-  // Swipe hint
+  // Swipe hint — first visit only
+  const hintShown = sessionStorage.getItem('lun_hint');
   const hint = document.getElementById('swipe-hint');
-  hint.style.display = 'flex';
-  setTimeout(()=>{ hint.classList.add('show'); }, 800);
-  setTimeout(()=>{ hint.classList.remove('show'); }, 5800);
-  setTimeout(()=>{ hint.style.display='none'; }, 6600);
-
-  // Re-show hint if idle >60s without scrolling
-  let scrolled = false;
-  ms.addEventListener('scroll',()=>{ scrolled=true; }, {once:true, passive:true});
-  setTimeout(()=>{
-    if(!scrolled){
-      hint.style.display='flex';
-      setTimeout(()=>{ hint.classList.add('show'); },100);
-      setTimeout(()=>{ hint.classList.remove('show'); hint.style.display='none'; },5500);
-    }
-  }, 65000);
-
-  // Fade in mobile — show immediately, no opacity trick needed
-  var ms2 = document.getElementById('mob-scroll');
-  if(ms2){ ms2.style.opacity='1'; }
+  if(!hintShown && hint){
+    hint.style.display = 'flex';
+    setTimeout(()=>{ hint.classList.add('show'); },800);
+    setTimeout(()=>{ hint.classList.remove('show'); },5800);
+    setTimeout(()=>{ hint.style.display='none'; },6600);
+    sessionStorage.setItem('lun_hint','1');
+  }
 }
 
 // ── DESKTOP INIT ──────────────────────────────────────────
@@ -991,88 +1224,53 @@ function initDesktop(){
   scheduleHiddenEvents();
 }
 
-// ── INIT ──────────────────────────────────────────────────
-function init(){
-  // Reset door on hall load
-  door.classList.remove('armed','open');
-  busy = false;
-  if(isMob()) initMobile();
-  else        initDesktop();
-}
-
-// Use load (not DOMContentLoaded) so image is ready before sequence starts
-window.addEventListener('load', function(){
-  try { init(); } catch(e){ emergencyReveal(); console.error('Hall init error:',e); }
-});
-window.addEventListener('resize',           ()=>{ if(!busy){ try{init();}catch(e){} } });
-window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ if(!busy){ try{init();}catch(e){} } },350); });
-
-// Emergency fallback — if anything fails, just show the hall
+// ── EMERGENCY FALLBACK ─────────────────────────────────────
 function emergencyReveal(){
-  var a = document.getElementById('arrival');
-  var h = document.getElementById('hall');
+  var a  = document.getElementById('arrival');
+  var h  = document.getElementById('hall');
+  var cw = document.getElementById('console-wrap');
+  var insc = document.getElementById('inscription');
   if(a){ a.style.transition='opacity 1.2s ease'; a.style.opacity='0'; setTimeout(()=>{a.style.pointerEvents='none';},1300); }
   if(h){ h.style.transition='opacity 1.2s ease'; h.style.opacity='1'; }
-  var cw = document.getElementById('console-wrap');
   if(cw){ cw.style.transition='transform 1.2s ease'; cw.style.transform='translateY(0)'; }
-  var insc = document.getElementById('inscription');
   if(insc){ insc.style.transition='opacity 1.2s ease'; insc.style.opacity='1'; }
   document.querySelectorAll('.mark').forEach(m=>{ m.style.opacity='1'; });
 }
 
+// ── INIT ──────────────────────────────────────────────────
+function init(){
+  door.classList.remove('armed','open');
+  busy              = false;
+  camApproachActive = false;
+  if(isMob()) initMobile();
+  else        initDesktop();
+}
+
+window.addEventListener('load', function(){
+  try { init(); } catch(e){ emergencyReveal(); console.error('Hall init error:',e); }
+});
+window.addEventListener('resize',            ()=>{ if(!busy){ try{init();}catch(e){} } });
+window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ if(!busy){ try{init();}catch(e){} } },350); });
+
 // ══════════════════════════════════════════
 // CONTENT PROTECTION
 // ══════════════════════════════════════════
-
-// Disable right-click
 document.addEventListener('contextmenu', e => e.preventDefault());
-
-// Disable text selection globally (CSS already handles most, JS catches rest)
 document.addEventListener('selectstart', e => e.preventDefault());
-
-// Disable drag
-document.addEventListener('dragstart', e => e.preventDefault());
-
-// Disable common keyboard shortcuts
+document.addEventListener('dragstart',   e => e.preventDefault());
 document.addEventListener('keydown', e => {
-  // Ctrl/Cmd + C, X, U, S, A, P
-  if((e.ctrlKey || e.metaKey) && ['c','x','u','s','a','p','C','X','U','S','A','P'].includes(e.key)){
-    e.preventDefault(); return false;
-  }
-  // F12 devtools
-  if(e.key === 'F12'){ e.preventDefault(); return false; }
-  // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (devtools)
-  if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c','I','J','C'].includes(e.key)){
-    e.preventDefault(); return false;
-  }
-  // PrintScreen
-  if(e.key === 'PrintScreen'){ e.preventDefault(); return false; }
+  if((e.ctrlKey||e.metaKey) && ['c','x','u','s','a','p','C','X','U','S','A','P'].includes(e.key)){ e.preventDefault(); return false; }
+  if(e.key==='F12'){ e.preventDefault(); return false; }
+  if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c','I','J','C'].includes(e.key)){ e.preventDefault(); return false; }
+  if(e.key==='PrintScreen'){ e.preventDefault(); return false; }
 });
-
-// Disable print
 window.addEventListener('beforeprint', e => { e.preventDefault(); document.body.innerHTML=''; });
+document.addEventListener('touchstart', e => { if(e.touches.length > 1) e.preventDefault(); },{ passive:false });
 
-// Disable iOS long-press save image
-document.addEventListener('touchstart', e => {
-  if(e.touches.length > 1) e.preventDefault();
-}, { passive: false });
-
-// Watermark overlay — invisible normally, appears on screenshot attempt
-// CSS-based invisible watermark baked into every render
 (function injectWatermark(){
   const wm = document.createElement('div');
   wm.id = 'wm-overlay';
-  wm.style.cssText = [
-    'position:fixed','inset:0','z-index:9998',
-    'pointer-events:none','user-select:none',
-    'background:transparent',
-    'opacity:0.018',
-    'font-family:Cormorant Garamond,serif',
-    'display:flex','flex-direction:column',
-    'justify-content:space-around',
-    'overflow:hidden'
-  ].join(';');
-  // Diagonal repeating watermark text
+  wm.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;user-select:none;background:transparent;opacity:0.018;font-family:Cormorant Garamond,serif;display:flex;flex-direction:column;justify-content:space-around;overflow:hidden;';
   const rows = Math.ceil(window.innerHeight / 80) + 2;
   for(let i=0;i<rows;i++){
     const row = document.createElement('div');
@@ -1083,17 +1281,17 @@ document.addEventListener('touchstart', e => {
   document.body.appendChild(wm);
 })();
 
-// Devtools detection — redirect if opened
 (function detectDevtools(){
   const threshold = 160;
   setInterval(()=>{
     if(window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold){
-      // Devtools likely open — blur content
-      document.getElementById('hall') && (document.getElementById('hall').style.filter='blur(12px)');
+      const h = document.getElementById('hall');
+      if(h) h.style.filter='blur(12px)';
     } else {
-      document.getElementById('hall') && (document.getElementById('hall').style.filter='');
+      const h = document.getElementById('hall');
+      if(h) h.style.filter='';
     }
-  }, 1500);
+  },1500);
 })();
 
 </script>

@@ -176,6 +176,16 @@ input,textarea{
   body{ display:none !important; }
 }
 
+
+/* Mobile nav fix */
+@media (max-width: 640px) {
+  nav { padding: 0 12px !important; }
+  .nav-wordmark, .nav-logo { font-size: 10px !important; letter-spacing: 1.5px !important; }
+  .nav-right { display: none !important; }
+  /* Hide portal links in nav */
+  nav a:not(.back):not(.back-link):not([href="index.html"]) { display: none !important; }
+}
+
 </style>
 </head>
 <body>

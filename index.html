@@ -38,6 +38,17 @@ html,body{
   pointer-events:all;
   transition:opacity 1.8s ease;
 }
+/* On portrait mobile: kill arrival immediately via CSS — JS may not fire fast enough */
+/* Mobile: all phones/tablets use mob-scroll */
+@media (max-width:1024px){
+  #arrival{ display:none !important; }
+  #hall{ display:none !important; }
+  #mob-scroll{ display:block !important; opacity:1 !important; }
+}
+/* Desktop only: hide mob-scroll */
+@media (min-width:1025px){
+  #mob-scroll{ display:none !important; }
+}
 
 /* The faint golden seam that appears at 0.5s */
 #arrival-seam{
@@ -476,9 +487,11 @@ html,body{
   position:relative;
   height:100%;
   width:300vw;
-  /* cover the full 300vw canvas — image stretches across entire panorama */
   background:url('hall-bg.png') center center / cover no-repeat;
   background-size: 300vw 100%;
+}
+@media (orientation:landscape) and (max-width:1024px){
+  #mob-canvas{ width:200vw; background-size:200vw 100%; }
 }
 </style>
 </head>
@@ -635,8 +648,8 @@ const CONSOLE_DATA = [
 
 // ── DEVICE DETECTION ─────────────────────────────────────
 const isMob = () => {
-  // Portrait mobile: width < 900 AND taller than wide
-  return window.innerWidth < 900 && window.innerHeight > window.innerWidth;
+  // Any phone/tablet regardless of orientation
+  return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth < 1200);
 };
 
 // ── BUILD PORTALS ─────────────────────────────────────────

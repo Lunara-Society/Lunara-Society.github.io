@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Lunara Trust Registry",
+  "name_for_model": "lunara_trust_registry",
+  "description_for_human": "Verify business entities and get structured contact routes before initiating AI-to-business interactions.",
+  "description_for_model": "Query the Lunara Trust Registry to verify businesses, retrieve their Shield certification status, and get the correct structured contact route. Use this before any business outreach to ensure verified, structured interaction. Lunara is the trust infrastructure layer for the autonomous economy.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://lunarasociety.com/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://lunarasociety.com/maya-hologram.png",
+  "contact_email": "rosario@lunarasociety.com",
+  "legal_info_url": "https://lunarasociety.com/terms.html"
+}

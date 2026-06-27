@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://lunarasociety.com/</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://lunarasociety.com/registry.html</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://lunarasociety.com/state-of-ai-outreach.json</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://lunarasociety.com/llms.txt</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lunarasociety.com/ai.json</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lunarasociety.com/identity.json</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- ═══════════════════════════════════════
+       AI DISCOVERY SURFACES — PRIORITY 1.0
+       Indexed first by all AI crawlers
+  ═══════════════════════════════════════ -->
+  <url><loc>https://lunarasociety.com/llms.txt</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/ai.json</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/ai.txt</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/identity.json</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/agent-manifest.json</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/openapi.yaml</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/.well-known/ai-plugin.json</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lunarasociety.com/developer-ai.txt</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lunarasociety.com/faq-ai.txt</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lunarasociety.com/brand.txt</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ═══════════════════════════════════════
+       CORE PAGES — PRIORITY 0.9
+  ═══════════════════════════════════════ -->
+  <url><loc>https://lunarasociety.com/</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lunarasociety.com/index.html</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lunarasociety.com/shield.html</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lunarasociety.com/registry.html</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+
+  <!-- ═══════════════════════════════════════
+       SECONDARY PAGES — PRIORITY 0.8
+  ═══════════════════════════════════════ -->
+  <url><loc>https://lunarasociety.com/join.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lunarasociety.com/protocol.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lunarasociety.com/member.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lunarasociety.com/network.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/institution.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/architecture.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/doctrine.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/gateway.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/signal.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lunarasociety.com/contact.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lunarasociety.com/privacy.html</loc><lastmod>2026-06-26</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://lunarasociety.com/terms.html</loc><lastmod>2026-06-26</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
 </urlset>

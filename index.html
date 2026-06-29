@@ -19,12 +19,13 @@
 <meta name="description" content="Lunara Society. Trust Coordination Institution. Est. 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
+
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --gold:#C4A46B;
   --gold-bright:#E2C47A;
-  --gold-warm:#D4A853;
   --gold-dim:rgba(196,164,107,0.15);
   --black:#000;
   --deep:#020100;
@@ -32,486 +33,338 @@
 html,body{
   width:100%;height:100%;
   background:#000;
-  font-family:'Inter',sans-serif;font-weight:300;
+  font-family:"Inter",sans-serif;font-weight:300;
   color:#fff;
   -webkit-font-smoothing:antialiased;
   overflow:hidden;
-  touch-action:auto;
 }
 
-/* ════════════════════════════════════════
-   CINEMATIC ARRIVAL OVERLAY
-   Covers everything. Lifts on arrival sequence.
-════════════════════════════════════════ */
+/* DEVICE SWITCH */
+#hall-wrap{display:none;}
+#mob-wrap{display:none;}
+
+@media (max-width:1024px){
+  #mob-wrap{display:flex !important;}
+  #hall-wrap{display:none !important;}
+}
+@media (min-width:1025px){
+  #hall-wrap{display:flex !important;}
+  #mob-wrap{display:none !important;}
+}
+
+/* ARRIVAL OVERLAY */
 #arrival{
   position:fixed;inset:0;z-index:900;
-  background:#000;
-  opacity:1;
-  pointer-events:all;
+  background:#000;opacity:1;pointer-events:all;
   transition:opacity 1.8s ease;
 }
-/* On portrait mobile: kill arrival immediately via CSS — JS may not fire fast enough */
-/* Mobile: all phones/tablets use mob-scroll */
 @media (max-width:1024px){
-  #arrival{ display:none !important; }
-  #hall{ display:none !important; }
-  #mob-scroll{ display:block !important; opacity:1 !important; }
+  #arrival{display:none !important;}
 }
-/* Desktop only: hide mob-scroll */
-@media (min-width:1025px){
-  #mob-scroll{ display:none !important; }
-}
-
-/* The faint golden seam that appears at 0.5s */
 #arrival-seam{
-  position:absolute;
-  top:50%;left:50%;
+  position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%) scaleX(0);
   width:clamp(120px,20vw,260px);height:1px;
   background:linear-gradient(to right,transparent,rgba(196,164,107,0.55),transparent);
   opacity:0;
-  transition:none;
 }
 
-/* ════════════════════════════════════════
-   MAIN STAGE
-════════════════════════════════════════ */
-#hall{
-  position:fixed;inset:0;
-  opacity:0;
-  will-change:transform;
-}
-
-/* Background image — the hall */
-#hall-bg{
-  position:absolute;
-  /* Slightly oversized so camera can breathe */
-  inset:-3%;width:106%;height:106%;
-  background:url('hall-bg.png') center center / cover no-repeat;
-  transform-origin:50% 50%;
-  will-change:transform;
-}
-
-/* ════════════════════════════════════════
-   LIVING ATMOSPHERE LAYERS
-════════════════════════════════════════ */
-/* Ceiling orrery glow — begins at 3.5s */
-#ceiling-life{
-  position:absolute;
-  top:0;left:50%;transform:translateX(-50%);
-  width:52%;height:30%;
-  background:radial-gradient(ellipse 70% 80% at 50% 5%,
-    rgba(196,164,107,0.065) 0%,
-    rgba(196,164,107,0.02) 60%,
-    transparent 100%
-  );
-  opacity:0;
-  will-change:opacity;
-  pointer-events:none;
-  z-index:2;
-}
-
-/* Floor reflections */
-#floor-life{
-  position:absolute;
-  bottom:0;left:50%;transform:translateX(-50%);
-  width:72%;height:42%;
-  background:radial-gradient(ellipse 80% 70% at 50% 100%,
-    rgba(196,164,107,0.055) 0%,
-    rgba(196,164,107,0.015) 55%,
-    transparent 100%
-  );
-  opacity:0;
-  will-change:opacity;
-  pointer-events:none;
-  z-index:2;
-}
-
-/* Central portal pulse */
-#portal-pulse{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-60%);
-  width:clamp(40px,5vw,80px);height:clamp(40px,5vw,80px);
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(255,240,200,0.12) 0%,transparent 70%);
-  opacity:0;
-  pointer-events:none;
-  z-index:3;
-  will-change:opacity,transform;
-}
-
-/* Dust motes — rare, in light shafts */
-#dust{
-  position:absolute;inset:0;z-index:2;
-  pointer-events:none;
-  overflow:hidden;
-}
-.mote{
-  position:absolute;
-  width:1px;height:1px;
-  background:rgba(255,245,220,0.7);
-  border-radius:50%;
-  opacity:0;
-  will-change:transform,opacity;
-}
-
-/* Hidden event layers */
-#hidden-observatory{
-  position:absolute;
-  top:8%;right:5%;
-  width:clamp(30px,4vw,60px);height:clamp(30px,4vw,60px);
-  background:radial-gradient(circle,rgba(196,164,107,0.18) 0%,transparent 70%);
-  opacity:0;pointer-events:none;z-index:3;
-}
-#hidden-symbol{
-  position:absolute;
-  top:38%;left:50%;transform:translate(-50%,-50%);
-  opacity:0;pointer-events:none;z-index:3;
-}
-#hidden-doorway{
-  position:absolute;
-  bottom:20%;right:2%;
-  width:clamp(8px,1.2vw,18px);height:clamp(20px,3vw,40px);
-  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.12),transparent);
-  opacity:0;pointer-events:none;z-index:3;
-}
-
-/* Floor energy lines — travel from console to portal */
-#floor-energy{
-  position:absolute;inset:0;z-index:3;
-  pointer-events:none;
-  overflow:hidden;
-}
-
-/* ════════════════════════════════════════
-   INSCRIPTION
-════════════════════════════════════════ */
-#inscription{
-  position:absolute;
-  top:clamp(8px,3.2vh,32px);
-  left:50%;transform:translateX(-50%);
-  z-index:10;pointer-events:none;
-  white-space:nowrap;
-  opacity:0;
-}
-#inscription span{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(7px,0.85vw,11px);
-  letter-spacing:0.38em;text-transform:uppercase;
-  color:rgba(196,164,107,0.22);
-  font-style:italic;font-weight:300;
-}
-
-/* ════════════════════════════════════════
-   PORTAL INTERACTIVE LAYER
-════════════════════════════════════════ */
-#portal-layer{
-  position:absolute;inset:0;z-index:10;
-  pointer-events:none;
-}
-.portal{
-  position:absolute;
-  pointer-events:all;
-  cursor:pointer;
-  transform:translate(-50%,-50%);
-  padding:10px;
-  transition:all 0.2s;
-}
-.portal-hit{
-  display:flex;flex-direction:column;align-items:center;
-  justify-content:flex-end;
-  gap:clamp(4px,0.7vw,9px);
-  width:clamp(48px,7.5vw,96px);
-  height:clamp(64px,10vw,120px);
-}
-.portal-label{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(7px,0.8vw,11px);
-  letter-spacing:0.28em;text-transform:uppercase;
-  color:rgba(196,164,107,0);
-  transition:color 0.5s, text-shadow 0.5s;
-  text-align:center;white-space:nowrap;
-  font-style:italic;font-weight:300;
-}
-.portal-ring{
-  width:clamp(36px,5.2vw,68px);height:clamp(36px,5.2vw,68px);
-  border-radius:50%;
-  border:1px solid rgba(196,164,107,0);
-  transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
-  position:relative;background:transparent;
-}
-.portal-ring::before{
-  content:'';position:absolute;inset:-5px;border-radius:50%;
-  border:1px solid rgba(196,164,107,0);
-  transition:all 0.5s;
-}
-/* Dormant — very faint inner glow, barely visible */
-.portal-ring::after{
-  content:'';position:absolute;inset:8px;border-radius:50%;
-  background:radial-gradient(circle,rgba(196,164,107,0.03) 0%,transparent 70%);
-  transition:all 0.5s;
-}
-
-/* AWAKE */
-.portal:hover .portal-label,
-.portal.awakened .portal-label{
-  color:rgba(196,164,107,0.88);
-  text-shadow:0 0 14px rgba(196,164,107,0.4);
-}
-.portal:hover .portal-ring,
-.portal.awakened .portal-ring{
-  border-color:rgba(196,164,107,0.5);
-  box-shadow:0 0 20px rgba(196,164,107,0.22),0 0 40px rgba(196,164,107,0.08);
-  background:rgba(196,164,107,0.03);
-}
-.portal:hover .portal-ring::before,
-.portal.awakened .portal-ring::before{
-  border-color:rgba(196,164,107,0.15);
-}
-.portal:hover .portal-ring::after{
-  background:radial-gradient(circle,rgba(196,164,107,0.08) 0%,transparent 70%);
-}
-
-/* ════════════════════════════════════════
-   FLOOR CONSOLE
-════════════════════════════════════════ */
-#console-wrap{
-  position:absolute;
-  bottom:0;left:0;right:0;
-  z-index:10;
-  display:flex;align-items:flex-end;justify-content:center;
-  /* console rises from marble — starts below viewport */
-  transform:translateY(120%);
-  padding-bottom:clamp(4px,2vh,22px);
-}
-#console-inner{
-  display:flex;align-items:center;justify-content:space-between;
-  width:clamp(280px,86vw,1020px);
-  padding:0 clamp(3px,1.2vw,16px);
-  position:relative;
-}
-/* Hairline seam above console */
-#console-inner::before{
-  content:'';position:absolute;
-  top:-clamp(6px,1.2vh,14px);left:0;right:0;height:1px;
-  background:linear-gradient(to right,transparent,rgba(196,164,107,0.18) 20%,rgba(196,164,107,0.28) 50%,rgba(196,164,107,0.18) 80%,transparent);
-}
-
-.cbtn{
-  cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;
-  gap:clamp(2px,0.4vh,5px);
-  flex:1;min-width:0;
-  padding:clamp(3px,0.7vh,8px) 0;
-  position:relative;
-  transition:background 0.4s;
-  border-radius:2px;
-}
-.cbtn:hover,.cbtn:active{
-  background:rgba(196,164,107,0.04);
-}
-/* Carved divider */
-.cbtn+.cbtn::before{
-  content:'';position:absolute;left:0;top:18%;bottom:18%;
-  width:1px;background:rgba(196,164,107,0.07);
-}
-.cicon{
-  width:clamp(26px,3.8vw,48px);height:clamp(26px,3.8vw,48px);
-  border-radius:50%;
-  border:1px solid rgba(196,164,107,0.2);
-  background:rgba(0,0,0,0.4);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;overflow:hidden;
-  transition:border-color 0.4s,box-shadow 0.4s,background 0.4s;
-  /* Subtle engraving depression on click */
-}
-.cicon svg{
-  width:52%;height:52%;
-  opacity:0.45;
-  transition:opacity 0.4s;
-}
-.cbtn:hover .cicon,.cbtn:active .cicon{
-  border-color:rgba(196,164,107,0.5);
-  background:rgba(196,164,107,0.06);
-  box-shadow:0 0 14px rgba(196,164,107,0.18);
-}
-.cbtn:hover .cicon svg,.cbtn:active .cicon svg{opacity:0.88;}
-/* Click depression */
-.cbtn:active .cicon{
-  box-shadow:inset 0 1px 4px rgba(0,0,0,0.6);
-  transform:translateY(1px);
-}
-.clabel{
-  font-size:clamp(5px,0.6vw,7.5px);
-  letter-spacing:0.22em;text-transform:uppercase;
-  color:rgba(196,164,107,0.28);
-  transition:color 0.4s;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  max-width:100%;
-}
-.cbtn:hover .clabel,.cbtn:active .clabel{color:rgba(196,164,107,0.75);}
-
-/* Architectural footer strip */
-#footer-strip{
-  position:absolute;bottom:0;left:0;right:0;
-  z-index:9;
-  padding:clamp(3px,0.6vh,8px) clamp(12px,2vw,28px);
-  display:flex;justify-content:space-between;align-items:center;
-  pointer-events:none;
-  opacity:0;
-  background:rgba(0,0,0,0.35);
-  border-top:1px solid rgba(196,164,107,0.06);
-}
-#footer-strip span,#footer-strip a{
-  font-size:clamp(5px,0.55vw,7px);
-  letter-spacing:0.22em;text-transform:uppercase;
-  color:rgba(196,164,107,0.18);
-  text-decoration:none;
-  font-family:'Inter',sans-serif;
-  pointer-events:all;
-  transition:color 0.3s;
-}
-#footer-strip a:hover{color:rgba(196,164,107,0.55);}
-
-/* ════════════════════════════════════════
-   CORNER MARKS
-════════════════════════════════════════ */
-.mark{
-  position:absolute;z-index:10;
-  font-size:clamp(5.5px,0.6vw,8px);
-  letter-spacing:0.28em;text-transform:uppercase;
-  color:rgba(196,164,107,0.18);pointer-events:none;
-  font-weight:300;opacity:0;
-}
-.mark-bl{bottom:clamp(14px,3.5vh,36px);left:clamp(8px,1.2vw,16px);}
-.mark-br{bottom:clamp(14px,3.5vh,36px);right:clamp(8px,1.2vw,16px);text-align:right;}
-
-/* ════════════════════════════════════════
-   GLASS DOOR — ELEVATOR
-════════════════════════════════════════ */
-#door{
-  position:fixed;inset:0;z-index:800;
-  visibility:hidden;overflow:hidden;
-}
+/* GLASS DOOR */
+#door{position:fixed;inset:0;z-index:800;visibility:hidden;overflow:hidden;}
 #door.armed{visibility:visible;pointer-events:all;}
 .dleft,.dright{
   position:absolute;top:0;bottom:0;width:50%;
   background:linear-gradient(168deg,rgba(3,2,1,0.99) 0%,rgba(9,6,3,0.99) 50%,rgba(3,2,1,0.99) 100%);
-  will-change:transform;
-  transition:transform 1.05s cubic-bezier(0.76,0,0.24,1);
 }
-.dleft{
-  left:0;border-right:1px solid rgba(196,164,107,0.5);transform:translateX(0);
-}
-.dright{
-  right:0;border-left:1px solid rgba(196,164,107,0.5);transform:translateX(0);
-}
-.dleft::before,.dright::before{
-  content:'';position:absolute;inset:0;
-  background:
-    repeating-linear-gradient(0deg,transparent,transparent 54px,rgba(196,164,107,0.025) 54px,rgba(196,164,107,0.025) 55px),
-    repeating-linear-gradient(90deg,transparent,transparent 72px,rgba(196,164,107,0.018) 72px,rgba(196,164,107,0.018) 73px);
-}
-.dleft::after{
-  content:'';position:absolute;
-  right:clamp(12px,2.5vw,40px);top:8%;bottom:8%;width:1px;
-  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.6) 25%,rgba(196,164,107,0.78) 50%,rgba(196,164,107,0.6) 75%,transparent);
-  box-shadow:0 0 10px rgba(196,164,107,0.22);
-}
-.dright::after{
-  content:'';position:absolute;
-  left:clamp(12px,2.5vw,40px);top:8%;bottom:8%;width:1px;
-  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.6) 25%,rgba(196,164,107,0.78) 50%,rgba(196,164,107,0.6) 75%,transparent);
-  box-shadow:0 0 10px rgba(196,164,107,0.22);
-}
-.deng{
-  position:absolute;top:50%;transform:translateY(-50%);
-  opacity:0.15;width:clamp(50px,7vw,110px);
-}
-.dleft .deng{right:clamp(22px,4vw,64px);}
-.dright .deng{left:clamp(22px,4vw,64px);}
+.dleft{left:0;transform:scaleX(0);transform-origin:left center;}
+.dright{right:0;transform:scaleX(0);transform-origin:right center;}
+.deng{position:absolute;top:50%;transform:translateY(-50%);width:clamp(40px,6vw,80px);opacity:0.4;}
+.dleft .deng{right:clamp(6px,1vw,14px);}
+.dright .deng{left:clamp(6px,1vw,14px);}
 .dhandle{
-  position:absolute;top:50%;transform:translateY(-50%);
-  width:clamp(6px,0.9vw,13px);height:clamp(22px,3.5vw,48px);
-  border:1px solid rgba(196,164,107,0.6);
-  background:rgba(196,164,107,0.08);
-  box-shadow:0 0 7px rgba(196,164,107,0.12);
-  transition:opacity 0.3s;
+  position:absolute;top:50%;
+  width:3px;height:clamp(30px,5vh,55px);
+  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.5),transparent);
+  border-radius:2px;transform:translateY(-50%);
 }
-.dleft .dhandle{right:clamp(2px,0.4vw,7px);}
-.dright .dhandle{left:clamp(2px,0.4vw,7px);}
-.dseam{
-  position:absolute;top:0;bottom:0;left:50%;
-  width:2px;transform:translateX(-50%);
-  background:linear-gradient(to bottom,transparent,rgba(196,164,107,0.9) 18%,rgba(196,164,107,1) 50%,rgba(196,164,107,0.9) 82%,transparent);
-  box-shadow:0 0 18px rgba(196,164,107,0.5);z-index:2;
-  transition:opacity 0.35s;
-}
-#door.open .dleft{transform:translateX(-100%);}
-#door.open .dright{transform:translateX(100%);}
-#door.open .dseam{opacity:0;}
-#door.open .dhandle{opacity:0;}
+.dleft .dhandle{right:0;}
+.dright .dhandle{left:0;}
 
-/* ════════════════════════════════════════
-   MOBILE SWIPE HINT
-════════════════════════════════════════ */
-#swipe-hint{
-  position:fixed;
-  bottom:clamp(60px,12vh,100px);
-  left:50%;transform:translateX(-50%);
-  z-index:20;pointer-events:none;
-  display:none;
-  flex-direction:column;align-items:center;gap:6px;
-  opacity:0;
-  transition:opacity 0.6s;
-}
-#swipe-hint.show{opacity:1;}
-#swipe-hint span{
-  font-size:clamp(7px,1.8vw,10px);
-  letter-spacing:0.3em;text-transform:uppercase;
-  color:rgba(196,164,107,0.5);
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-}
-.swipe-arrows{
-  display:flex;align-items:center;gap:2px;
-  animation:swipeBreath 1.4s ease-in-out infinite alternate;
-}
-@keyframes swipeBreath{
-  from{opacity:0.3;transform:translateX(-4px);}
-  to{opacity:1;transform:translateX(4px);}
-}
-.swipe-arrows svg{width:22px;height:22px;}
-
-/* ════════════════════════════════════════
-   MOBILE SCROLL CONTAINER
-════════════════════════════════════════ */
-#mob-scroll{
-  display:none;
+/* DESKTOP HALL WRAP */
+#hall-wrap{
   position:fixed;inset:0;
-  overflow-x:scroll;overflow-y:hidden;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-  touch-action:pan-x;
+  flex-direction:row;
+  opacity:0;
+  transition:opacity 1.4s ease;
 }
-#mob-scroll::-webkit-scrollbar{display:none;}
-#mob-canvas{
-  position:relative;
-  height:100%;
-  width:300vw;
-  background:url('hall-bg.png') center center / cover no-repeat;
-  background-size: 300vw 100%;
+#hall-bg{
+  position:absolute;inset:0;
+  background:url("bg-desktop.jpg") center center / cover no-repeat;
+  z-index:0;
 }
-@media (orientation:landscape) and (max-width:1024px){
-  #mob-canvas{ width:200vw; background-size:200vw 100%; }
+#ceiling-life{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:60%;height:35%;
+  background:radial-gradient(ellipse 70% 80% at 50% 5%,rgba(196,164,107,0.055) 0%,transparent 100%);
+  opacity:0;pointer-events:none;z-index:2;transition:opacity 2s ease;
 }
+#floor-life{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:72%;height:42%;
+  background:radial-gradient(ellipse 80% 70% at 50% 100%,rgba(196,164,107,0.04) 0%,transparent 100%);
+  opacity:0;pointer-events:none;z-index:2;transition:opacity 2.2s ease;
+}
+#portal-pulse{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-60%);
+  width:clamp(40px,5vw,80px);height:clamp(40px,5vw,80px);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,240,200,0.1) 0%,transparent 70%);
+  opacity:0;pointer-events:none;z-index:3;
+}
+#dust{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
+.mote{position:absolute;width:1px;height:1px;background:rgba(255,245,220,0.7);border-radius:50%;opacity:0;}
+
+/* INSCRIPTION */
+#inscription{
+  position:absolute;
+  top:clamp(8px,2.8vh,28px);left:50%;transform:translateX(-50%);
+  z-index:10;pointer-events:none;white-space:nowrap;opacity:0;
+  transition:opacity 1.5s ease;
+}
+#inscription span{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(7px,0.8vw,10px);
+  letter-spacing:0.38em;text-transform:uppercase;
+  color:rgba(196,164,107,0.2);font-style:italic;font-weight:300;
+}
+
+/* CORNER MARK */
+.mark{
+  position:absolute;z-index:10;
+  font-size:clamp(5px,0.55vw,7px);
+  letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(196,164,107,0.15);pointer-events:none;font-weight:300;opacity:0;
+}
+.mark-br{bottom:clamp(12px,2.5vh,28px);right:clamp(10px,1.5vw,20px);text-align:right;}
+
+/* SIDE PANEL */
+#side-panel{
+  position:absolute;left:0;top:0;bottom:0;
+  width:clamp(155px,13vw,210px);
+  z-index:20;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:clamp(22px,4.5vh,56px) 0 clamp(14px,3vh,36px) 0;
+  background:linear-gradient(to right,rgba(0,0,0,0.85) 0%,rgba(2,1,0,0.7) 65%,transparent 100%);
+  border-right:1px solid rgba(196,164,107,0.07);
+  opacity:0;transition:opacity 0.8s ease;
+}
+#side-panel.revealed{opacity:1;}
+
+.panel-wordmark{padding:0 0 0 clamp(14px,2vw,26px);}
+.panel-wordmark-title{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(10px,0.95vw,14px);
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(196,164,107,0.72);font-weight:400;display:block;margin-bottom:4px;
+}
+.panel-wordmark-sub{
+  font-size:clamp(6px,0.52vw,7.5px);
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:rgba(196,164,107,0.26);display:block;
+}
+.panel-rule{
+  height:1px;
+  margin:clamp(10px,2vh,20px) clamp(10px,1.5vw,20px) clamp(10px,2vh,20px) clamp(14px,2vw,26px);
+  background:linear-gradient(to right,rgba(196,164,107,0.22),transparent);
+}
+
+#panel-nav{
+  flex:1;display:flex;flex-direction:column;gap:0;
+  padding:0 0 0 clamp(14px,2vw,26px);overflow:hidden;
+}
+.pnav-link{
+  display:flex;align-items:center;gap:clamp(6px,0.8vw,10px);
+  padding:clamp(4px,0.9vh,8px) clamp(6px,0.8vw,12px) clamp(4px,0.9vh,8px) 0;
+  cursor:pointer;position:relative;
+  border-bottom:1px solid rgba(196,164,107,0.04);
+  text-decoration:none;transition:all 0.28s;
+}
+.pnav-link:first-child{border-top:1px solid rgba(196,164,107,0.04);}
+.pnav-link::before{
+  content:"";position:absolute;left:-clamp(14px,2vw,26px);top:50%;
+  transform:translateY(-50%);
+  width:2px;height:0;
+  background:rgba(196,164,107,0.65);
+  transition:height 0.22s ease;
+}
+.pnav-link:hover::before{height:55%;}
+.pnav-icon{
+  width:clamp(15px,1.5vw,20px);height:clamp(15px,1.5vw,20px);
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.16);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:border-color 0.28s,box-shadow 0.28s,background 0.28s;
+}
+.pnav-icon svg{width:55%;height:55%;opacity:0.38;transition:opacity 0.28s;}
+.pnav-label{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(8px,0.8vw,11px);
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(196,164,107,0.35);
+  font-style:italic;font-weight:300;
+  transition:color 0.28s,text-shadow 0.28s;white-space:nowrap;
+}
+.pnav-link:hover .pnav-icon{
+  border-color:rgba(196,164,107,0.52);
+  box-shadow:0 0 10px rgba(196,164,107,0.14);
+  background:rgba(196,164,107,0.05);
+}
+.pnav-link:hover .pnav-icon svg{opacity:0.85;}
+.pnav-link:hover .pnav-label{
+  color:rgba(196,164,107,0.88);
+  text-shadow:0 0 12px rgba(196,164,107,0.3);
+}
+
+.panel-foot{padding:0 0 0 clamp(14px,2vw,26px);}
+.panel-foot-line{
+  font-size:clamp(5px,0.48vw,6.5px);
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(196,164,107,0.16);display:block;margin-bottom:2px;
+}
+.panel-foot-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.panel-foot-links a{
+  font-size:clamp(5px,0.46vw,6.5px);
+  letter-spacing:0.16em;text-transform:uppercase;
+  color:rgba(196,164,107,0.18);text-decoration:none;transition:color 0.2s;
+}
+.panel-foot-links a:hover{color:rgba(196,164,107,0.55);}
+
+/* MOBILE WRAP */
+#mob-wrap{
+  position:fixed;inset:0;
+  flex-direction:column;
+  overflow:hidden;
+  opacity:0;transition:opacity 1s ease;
+}
+#mob-bg{
+  position:absolute;inset:0;
+  background:url("bg-mobile.jpg") center center / cover no-repeat;
+  z-index:0;
+}
+#mob-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0) 38%,
+    rgba(0,0,0,0.5) 65%,
+    rgba(0,0,0,0.85) 100%
+  );
+  z-index:1;pointer-events:none;
+}
+#mob-wordmark{
+  position:absolute;
+  top:clamp(20px,5.5vh,50px);
+  left:50%;transform:translateX(-50%);
+  z-index:10;text-align:center;white-space:nowrap;
+}
+.mwm-title{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(12px,4vw,20px);
+  letter-spacing:0.36em;text-transform:uppercase;
+  color:rgba(196,164,107,0.68);font-style:italic;font-weight:300;display:block;
+}
+.mwm-sub{
+  font-size:clamp(6px,2.2vw,9px);
+  letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(196,164,107,0.26);display:block;margin-top:4px;
+}
+#mob-inscription{
+  position:absolute;top:clamp(65px,13vh,105px);
+  left:50%;transform:translateX(-50%);
+  z-index:10;pointer-events:none;white-space:nowrap;
+}
+#mob-inscription span{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(6px,2vw,8px);
+  letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(196,164,107,0.13);font-style:italic;
+}
+#mob-mark{
+  position:absolute;top:clamp(10px,2.5vh,20px);right:clamp(12px,4vw,22px);
+  z-index:10;
+  font-size:clamp(5px,1.6vw,7px);
+  letter-spacing:0.22em;text-transform:uppercase;
+  color:rgba(196,164,107,0.14);font-family:"Inter",sans-serif;
+}
+
+/* MOBILE NAV */
+#mob-nav{
+  position:absolute;bottom:0;left:0;right:0;
+  z-index:10;
+  padding-bottom:clamp(14px,4.5vh,34px);
+}
+#mob-nav::before{
+  content:"";display:block;height:1px;
+  margin:0 clamp(14px,5vw,32px) clamp(10px,2vh,16px);
+  background:linear-gradient(to right,transparent,rgba(196,164,107,0.2) 30%,rgba(196,164,107,0.26) 50%,rgba(196,164,107,0.2) 70%,transparent);
+}
+#mob-nav-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:0;
+  padding:0 clamp(2px,1vw,8px);
+}
+.mnav-item{
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(3px,0.8vw,5px);
+  padding:clamp(5px,1.2vh,10px) 1px;
+  cursor:pointer;text-decoration:none;position:relative;
+  transition:all 0.22s;
+}
+.mnav-item::after{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:0;height:1px;
+  background:rgba(196,164,107,0.55);
+  transition:width 0.22s;
+}
+.mnav-item:active::after,.mnav-item:hover::after{width:55%;}
+.mnav-icon{
+  width:clamp(24px,6.5vw,34px);height:clamp(24px,6.5vw,34px);
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.16);
+  background:rgba(0,0,0,0.32);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:border-color 0.22s,box-shadow 0.22s,background 0.22s;
+}
+.mnav-icon svg{width:52%;height:52%;opacity:0.4;transition:opacity 0.22s;}
+.mnav-label{
+  font-size:clamp(5.5px,1.7vw,7.5px);
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(196,164,107,0.3);text-align:center;
+  white-space:nowrap;font-family:"Inter",sans-serif;
+  transition:color 0.22s;
+}
+.mnav-item:active .mnav-icon,.mnav-item:hover .mnav-icon{
+  border-color:rgba(196,164,107,0.52);
+  box-shadow:0 0 10px rgba(196,164,107,0.16);
+  background:rgba(196,164,107,0.05);
+}
+.mnav-item:active .mnav-icon svg,.mnav-item:hover .mnav-icon svg{opacity:0.85;}
+.mnav-item:active .mnav-label,.mnav-item:hover .mnav-label{color:rgba(196,164,107,0.82);}
+
+/* MOBILE TRANSITION DOOR */
+#mob-door{
+  position:fixed;inset:0;z-index:800;
+  background:#000;opacity:0;pointer-events:none;
+  transition:opacity 0.48s ease;
+}
+#mob-door.closing{opacity:1;pointer-events:all;}
 </style>
 
-<!-- ═══════════════════════════════════════════════════
-     LUNARA SOCIETY — SCHEMA.ORG STRUCTURED DATA
-     Installed: 2026-06-26 by Raven
-     Makes Lunara citable by ChatGPT, Gemini, Perplexity
-═══════════════════════════════════════════════════ -->
+<!-- SCHEMA.ORG -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -519,82 +372,23 @@ html,body{
   "name": "Lunara Society",
   "alternateName": "Lunara",
   "url": "https://lunarasociety.com",
-  "description": "Lunara Society builds trust coordination infrastructure for the autonomous economy. We operate the open web trust registry, AI citation certification platform (Shield), and institutional intelligence engine that businesses and AI systems need to operate with verified trust at scale.",
+  "description": "Lunara Society builds trust coordination infrastructure for the autonomous economy.",
   "foundingDate": "2026",
   "email": "maya@lunarasociety.com",
-  "knowsAbout": [
-    "AI Trust Infrastructure",
-    "Entity Verification",
-    "Agentic Economy",
-    "Trust Registry",
-    "AI Citation Optimization",
-    "Business Identity for AI Systems",
-    "Autonomous Economy",
-    "Shield Certification",
-    "Institutional Intelligence"
-  ],
-  "sameAs": [
-    "https://lunarasociety.com",
-    "https://linkedin.com/in/lunara-society-aa216b41a"
-  ],
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://lunarasociety.com/maya-hologram.png"
-  },
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "email": "maya@lunarasociety.com",
-    "contactType": "general inquiry"
-  },
-  "hasOfferCatalog": {
-    "@type": "OfferCatalog",
-    "name": "Lunara Products",
-    "itemListElement": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Shield",
-          "description": "AI citation certification platform. Makes organizations discoverable and citable by ChatGPT, Gemini, and Perplexity."
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Lunara Trust Registry",
-          "description": "Open web trust registry for the autonomous economy. Entity verification for AI systems."
-        }
-      }
-    ]
-  }
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Lunara Society",
-  "url": "https://lunarasociety.com",
-  "description": "Trust coordination infrastructure for the autonomous economy.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Lunara Society"
-  }
+  "knowsAbout": ["AI Trust Infrastructure","Entity Verification","Agentic Economy","Trust Registry","AI Citation Optimization","Business Identity for AI Systems","Autonomous Economy","Shield Certification","Institutional Intelligence"],
+  "sameAs": ["https://lunarasociety.com","https://linkedin.com/in/lunara-society-aa216b41a"],
+  "logo": {"@type": "ImageObject","url": "https://lunarasociety.com/shield-logo.jpg"}
 }
 </script>
 
 </head>
 <body>
 
-<!-- ARRIVAL OVERLAY -->
-<div id="arrival">
-  <div id="arrival-seam"></div>
-</div>
+<!-- ARRIVAL OVERLAY (desktop) -->
+<div id="arrival"><div id="arrival-seam"></div></div>
 
 <!-- GLASS DOOR -->
 <div id="door">
-  <div class="dseam"></div>
   <div class="dleft">
     <svg class="deng" viewBox="0 0 100 380">
       <rect x="6" y="6" width="88" height="368" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="0.5"/>
@@ -603,11 +397,6 @@ html,body{
       <circle cx="50" cy="190" r="22" fill="none" stroke="rgba(196,164,107,0.75)" stroke-width="0.5"/>
       <circle cx="50" cy="190" r="10" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.4"/>
       <circle cx="50" cy="190" r="3" fill="rgba(196,164,107,0.28)"/>
-      <line x1="28" y1="190" x2="72" y2="190" stroke="rgba(196,164,107,0.3)" stroke-width="0.4"/>
-      <line x1="50" y1="168" x2="50" y2="212" stroke="rgba(196,164,107,0.3)" stroke-width="0.4"/>
-      <line x1="34" y1="174" x2="66" y2="206" stroke="rgba(196,164,107,0.12)" stroke-width="0.3"/>
-      <line x1="66" y1="174" x2="34" y2="206" stroke="rgba(196,164,107,0.12)" stroke-width="0.3"/>
-      <rect x="16" y="240" width="68" height="100" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.4"/>
       <polygon points="50,10 56,20 44,20" fill="none" stroke="rgba(196,164,107,0.55)" stroke-width="0.4"/>
       <polygon points="50,370 56,360 44,360" fill="none" stroke="rgba(196,164,107,0.55)" stroke-width="0.4"/>
     </svg>
@@ -621,11 +410,6 @@ html,body{
       <circle cx="50" cy="190" r="22" fill="none" stroke="rgba(196,164,107,0.75)" stroke-width="0.5"/>
       <circle cx="50" cy="190" r="10" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.4"/>
       <circle cx="50" cy="190" r="3" fill="rgba(196,164,107,0.28)"/>
-      <line x1="28" y1="190" x2="72" y2="190" stroke="rgba(196,164,107,0.3)" stroke-width="0.4"/>
-      <line x1="50" y1="168" x2="50" y2="212" stroke="rgba(196,164,107,0.3)" stroke-width="0.4"/>
-      <line x1="34" y1="174" x2="66" y2="206" stroke="rgba(196,164,107,0.12)" stroke-width="0.3"/>
-      <line x1="66" y1="174" x2="34" y2="206" stroke="rgba(196,164,107,0.12)" stroke-width="0.3"/>
-      <rect x="16" y="240" width="68" height="100" fill="none" stroke="rgba(196,164,107,0.5)" stroke-width="0.4"/>
       <polygon points="50,10 56,20 44,20" fill="none" stroke="rgba(196,164,107,0.55)" stroke-width="0.4"/>
       <polygon points="50,370 56,360 44,360" fill="none" stroke="rgba(196,164,107,0.55)" stroke-width="0.4"/>
     </svg>
@@ -633,759 +417,300 @@ html,body{
   </div>
 </div>
 
-<!-- MAIN HALL -->
-<div id="hall">
+<!-- DESKTOP HALL WRAP -->
+<div id="hall-wrap">
   <div id="hall-bg"></div>
-
-  <!-- Atmosphere -->
   <div id="ceiling-life"></div>
   <div id="floor-life"></div>
   <div id="portal-pulse"></div>
   <div id="dust"></div>
-  <canvas id="floor-energy" style="position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;opacity:0;"></canvas>
-
-  <!-- Hidden events -->
-  <div id="hidden-observatory"></div>
-  <div id="hidden-symbol">
-    <svg width="clamp(30px,4vw,60px)" height="clamp(30px,4vw,60px)" viewBox="0 0 60 60" fill="none">
-      <circle cx="30" cy="30" r="28" stroke="rgba(196,164,107,0.7)" stroke-width="0.5"/>
-      <path d="M30 2 L30 58 M2 30 L58 30" stroke="rgba(196,164,107,0.4)" stroke-width="0.4"/>
-      <circle cx="30" cy="30" r="14" stroke="rgba(196,164,107,0.5)" stroke-width="0.4"/>
-      <circle cx="30" cy="30" r="4" fill="rgba(196,164,107,0.3)"/>
-    </svg>
-  </div>
-  <div id="hidden-doorway"></div>
-
-  <!-- Inscription -->
-  <div id="inscription">
-    <span>Per Scientiam &nbsp;·&nbsp; Per Ordinem &nbsp;·&nbsp; Per Legatum</span>
-  </div>
-
-  <!-- Corner marks -->
-  <div class="mark mark-bl" id="mark-bl">Est. 2026 &nbsp;·&nbsp; Veritas &nbsp;·&nbsp; Ratio &nbsp;·&nbsp; Fide</div>
+  <div id="inscription"><span>Per Scientiam &nbsp;&middot;&nbsp; Per Ordinem &nbsp;&middot;&nbsp; Per Legatum</span></div>
   <div class="mark mark-br" id="mark-br">MMXXVI</div>
 
-  <!-- Portals -->
-  <div id="portal-layer"></div>
-
-  <!-- Console -->
-  <div id="console-wrap">
-    <div id="console-inner"></div>
-  </div>
-
-  <!-- Architectural footer -->
-  <div id="footer-strip">
-    <span>© 2026 Lunara Society. All Rights Reserved. &nbsp;·&nbsp; Est. MMXXVI &nbsp;·&nbsp; Reg. No. LUN-INST-2026-001</span>
-    <span>
-      <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
-      <a href="terms.html">Terms</a> &nbsp;·&nbsp;
-      <a href="registry.html">Registry</a> &nbsp;·&nbsp;
-      <a href="member.html">Members</a> &nbsp;·&nbsp;
-      <a href="contact.html">Contact</a> &nbsp;·&nbsp;
-      <a href="mailto:maya@lunarasociety.com">maya@lunarasociety.com</a>
-    </span>
-  </div>
-</div>
-
-<!-- MOBILE SCROLL -->
-<div id="mob-scroll">
-  <div id="mob-canvas">
-    <div id="mob-portal-layer" style="position:absolute;inset:0;z-index:10;pointer-events:none;"></div>
-    <div id="mob-console" style="position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding-bottom:8px;">
-      <div id="mob-console-inner" style="display:flex;width:100%;justify-content:space-around;padding:0 4vw;"></div>
+  <!-- SIDE PANEL -->
+  <div id="side-panel">
+    <div class="panel-wordmark">
+      <span class="panel-wordmark-title">Lunara Society</span>
+      <span class="panel-wordmark-sub">Trust Coordination Institution</span>
+    </div>
+    <div class="panel-rule"></div>
+    <nav id="panel-nav">
+      <a class="pnav-link" href="shield.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg></div>
+        <span class="pnav-label">Initiation</span>
+      </a>
+      <a class="pnav-link" href="architecture.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><polygon points="12,2 20,8 17,18 7,18 4,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="8" x2="20" y2="8"/></svg></div>
+        <span class="pnav-label">Knowledge</span>
+      </a>
+      <a class="pnav-link" href="doctrine.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v3H4z"/><path d="M4 7v13h16V7"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+        <span class="pnav-label">Archives</span>
+      </a>
+      <a class="pnav-link" href="registry.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><ellipse cx="12" cy="9" rx="5" ry="7"/><path d="M7 16c-2 1-3 2.5-3 4h16c0-1.5-1-3-3-4"/></svg></div>
+        <span class="pnav-label">Legacy</span>
+      </a>
+      <a class="pnav-link" href="institution.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div>
+        <span class="pnav-label">Society</span>
+      </a>
+      <a class="pnav-link" href="join.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M3 12h18M12 3l9 9-9 9"/></svg></div>
+        <span class="pnav-label">Sanctum</span>
+      </a>
+      <a class="pnav-link" href="member.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/><path d="M13 15h5"/></svg></div>
+        <span class="pnav-label">Membership</span>
+      </a>
+      <a class="pnav-link" href="signal.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></div>
+        <span class="pnav-label">Events</span>
+      </a>
+      <a class="pnav-link" href="gateway.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v16H4z"/><path d="M8 4v16"/><path d="M12 8h4"/><path d="M12 12h4"/><path d="M12 16h2"/></svg></div>
+        <span class="pnav-label">Journal</span>
+      </a>
+      <a class="pnav-link" href="contact.html">
+        <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="pnav-label">Contact</span>
+      </a>
+    </nav>
+    <div class="panel-foot">
+      <span class="panel-foot-line">Est. 2026 &middot; Veritas &middot; Ratio &middot; Fide</span>
+      <span class="panel-foot-line">&copy; 2026 Lunara Society</span>
+      <div class="panel-foot-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="registry.html">Registry</a>
+        <a href="contact.html">Contact</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MOBILE SWIPE HINT -->
-<div id="swipe-hint">
-  <div class="swipe-arrows">
-    <svg viewBox="0 0 22 22" fill="none">
-      <path d="M5 11h12M13 7l4 4-4 4" stroke="rgba(196,164,107,0.85)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg viewBox="0 0 22 22" fill="none" style="opacity:0.4;margin-left:-6px;">
-      <path d="M5 11h12M13 7l4 4-4 4" stroke="rgba(196,164,107,0.85)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+<!-- MOBILE WRAP -->
+<div id="mob-wrap">
+  <div id="mob-bg"></div>
+  <div id="mob-overlay"></div>
+  <div id="mob-wordmark">
+    <span class="mwm-title">Lunara Society</span>
+    <span class="mwm-sub">Trust Coordination Institution</span>
   </div>
-  <span>Swipe to Explore</span>
+  <div id="mob-inscription"><span>Per Scientiam &middot; Per Ordinem &middot; Per Legatum</span></div>
+  <div id="mob-mark">MMXXVI &middot; Est. 2026</div>
+  <nav id="mob-nav">
+    <div id="mob-nav-grid">
+      <a class="mnav-item" href="shield.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg></div>
+        <span class="mnav-label">Initiation</span>
+      </a>
+      <a class="mnav-item" href="architecture.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><polygon points="12,2 20,8 17,18 7,18 4,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="8" x2="20" y2="8"/></svg></div>
+        <span class="mnav-label">Knowledge</span>
+      </a>
+      <a class="mnav-item" href="doctrine.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v3H4z"/><path d="M4 7v13h16V7"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+        <span class="mnav-label">Archives</span>
+      </a>
+      <a class="mnav-item" href="registry.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><ellipse cx="12" cy="9" rx="5" ry="7"/><path d="M7 16c-2 1-3 2.5-3 4h16c0-1.5-1-3-3-4"/></svg></div>
+        <span class="mnav-label">Legacy</span>
+      </a>
+      <a class="mnav-item" href="institution.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div>
+        <span class="mnav-label">Society</span>
+      </a>
+      <a class="mnav-item" href="join.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M3 12h18M12 3l9 9-9 9"/></svg></div>
+        <span class="mnav-label">Sanctum</span>
+      </a>
+      <a class="mnav-item" href="member.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/></svg></div>
+        <span class="mnav-label">Membership</span>
+      </a>
+      <a class="mnav-item" href="signal.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></div>
+        <span class="mnav-label">Events</span>
+      </a>
+      <a class="mnav-item" href="gateway.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v16H4z"/><path d="M8 4v16"/><path d="M12 8h4"/><path d="M12 12h4"/><path d="M12 16h2"/></svg></div>
+        <span class="mnav-label">Journal</span>
+      </a>
+      <a class="mnav-item" href="contact.html">
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="mnav-label">Contact</span>
+      </a>
+    </div>
+  </nav>
+  <div id="mob-door"></div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  LUNARA SOCIETY — LIVING HALL v3
-//  Part 1 + Part 2 + Part 3 Implementation
-//  Navigation, Transitions, Microinteractions
-// ═══════════════════════════════════════════════════════
+const isMob = () => window.innerWidth <= 1024;
 
-// ── PORTAL DATA ──────────────────────────────────────────
-const PORTALS = [
-  { label:'Initiation', page:'shield.html',       x:9.0,  y:43 },
-  { label:'Knowledge',  page:'architecture.html', x:21.0, y:40 },
-  { label:'Archives',   page:'doctrine.html',     x:32.0, y:38 },
-  { label:'Legacy',     page:'registry.html',     x:68.0, y:38 },
-  { label:'Society',    page:'institution.html',  x:79.0, y:40 },
-  { label:'Sanctum',    page:'join.html',         x:91.0, y:43 },
-];
-
-// ── CONSOLE DATA — 8 distinct carved symbols ─────────────
-const CONSOLE_DATA = [
-  { label:'Knowledge', page:'architecture.html', svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><polygon points="12,2 20,8 17,18 7,18 4,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="7" y1="18" x2="17" y2="18"/></svg>' },
-  { label:'Archives',  page:'doctrine.html',     svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><path d="M4 4h16v3H4z"/><path d="M4 7v13h16V7"/><path d="M9 11h6"/><path d="M9 15h4"/><path d="M6 4V2"/><path d="M18 4V2"/></svg>' },
-  { label:'Legacy',    page:'registry.html',     svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><ellipse cx="12" cy="9" rx="5" ry="7"/><path d="M7 16c-2 1-3 2.5-3 4h16c0-1.5-1-3-3-4"/><line x1="9" y1="5" x2="7" y2="3"/><line x1="15" y1="5" x2="17" y2="3"/></svg>' },
-  { label:'Society',   page:'institution.html',  svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
-  { label:'Membership',page:'member.html',       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/><path d="M13 15h5"/><path d="M13 13h3"/></svg>' },
-  { label:'Events',    page:'signal.html',       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7.1" y2="7.1"/><line x1="16.9" y1="16.9" x2="19.1" y2="19.1"/><line x1="4.9" y1="19.1" x2="7.1" y2="16.9"/><line x1="16.9" y1="7.1" x2="19.1" y2="4.9"/></svg>' },
-  { label:'Journal',   page:'gateway.html',      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><path d="M4 4h16v16H4z"/><path d="M8 4v16"/><path d="M12 8h4"/><path d="M12 12h4"/><path d="M12 16h2"/></svg>' },
-  { label:'Contact',   page:'contact.html',      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="17" y2="8"/><line x1="12" y1="3" x2="7" y2="8"/></svg>' },
-];
-
-// ── DEVICE DETECTION ─────────────────────────────────────
-const isMob = () => {
-  return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth < 1200);
-};
-
-// ── BUILD PORTALS ─────────────────────────────────────────
-function buildPortals(layerId, xFn, yFn){
-  const layer = document.getElementById(layerId);
-  if(!layer) return;
-  layer.innerHTML = '';
-  PORTALS.forEach((p,i) => {
-    const el = document.createElement('div');
-    el.className = 'portal';
-    el.dataset.page = p.page;
-    el.dataset.idx = i;
-    el.style.cssText = `left:${xFn(p.x)};top:${yFn(p.y)};pointer-events:all;`;
-    el.innerHTML = `<div class="portal-hit">
-      <span class="portal-label">${p.label}</span>
-      <div class="portal-ring"></div>
-    </div>`;
-    el.addEventListener('click',    () => activateNavigation(p.page, el, 'portal'));
-    el.addEventListener('touchend', e  => { e.preventDefault(); activateNavigation(p.page, el, 'portal'); });
-    layer.appendChild(el);
-  });
-}
-
-// ── BUILD CONSOLE ─────────────────────────────────────────
-function buildConsole(innerId){
-  const el = document.getElementById(innerId);
-  if(!el) return;
-  el.innerHTML = '';
-  CONSOLE_DATA.forEach(b => {
-    const d = document.createElement('div');
-    d.className = 'cbtn';
-    d.dataset.page = b.page;
-    d.innerHTML = `<div class="cicon">${b.svg}</div><span class="clabel">${b.label}</span>`;
-    d.addEventListener('click',    () => activateNavigation(b.page, d, 'console'));
-    d.addEventListener('touchend', e  => { e.preventDefault(); activateNavigation(b.page, d, 'console'); });
-    el.appendChild(d);
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// PART 3 — FULL CINEMATIC NAVIGATION ENGINE
-// ═══════════════════════════════════════════════════════
-
-const door  = document.getElementById('door');
-let busy    = false;
-let navRaf  = null;
-
-// ── STEP 1–7: FULL SEQUENCE ───────────────────────────────
-function activateNavigation(targetPage, triggerEl, source){
-  if(busy) return;
-  busy = true;
-
-  // ── STEP 1: 150–250ms pause — building acknowledges ──────
-  setTimeout(() => {
-
-    // ── STEP 2: Selected element sharpens (not brighter) ──
-    sharpenElement(triggerEl, source);
-
-    // ── STEP 3: Floor energy pathway awakens ──────────────
-    // Begins at same time as sharpening
-    triggerFloorEnergy(triggerEl, source);
-
-    // ── STEP 4: Nearby architecture reacts ────────────────
-    // 350ms after selection
-    setTimeout(() => architectureReacts(triggerEl, source), 350);
-
-    // ── STEP 5: Portal activates — geometry aligns ────────
-    // 800ms in
-    setTimeout(() => portalActivates(targetPage, source), 800);
-
-    // ── STEP 6: Camera begins moving toward portal ────────
-    // 1400ms in
-    setTimeout(() => cameraApproach(targetPage), 1400);
-
-    // ── STEP 7: Camera passes through — light fills screen ─
-    // 2500ms in — door closes, white fill, navigate
-    setTimeout(() => departThroughPortal(targetPage), 2500);
-
-  }, 180); // Step 1 pause
-}
-
-// ── STEP 2: SHARPEN — engraving becomes more defined ─────
-function sharpenElement(el, source){
-  if(!el) return;
-  if(source === 'portal'){
-    const ring  = el.querySelector('.portal-ring');
-    const label = el.querySelector('.portal-label');
-    if(ring){
-      ring.style.transition = 'all 0.22s cubic-bezier(0.4,0,0.2,1)';
-      ring.style.borderColor = 'rgba(196,164,107,0.9)';
-      ring.style.boxShadow   = '0 0 28px rgba(196,164,107,0.35), 0 0 2px rgba(255,240,200,0.5)';
-    }
-    if(label){
-      label.style.transition  = 'all 0.22s ease';
-      label.style.color       = 'rgba(255,240,200,0.95)';
-      label.style.letterSpacing = '0.34em';
-      label.style.textShadow  = '0 0 18px rgba(196,164,107,0.6)';
-    }
-  } else {
-    // Console button
-    const icon = el.querySelector('.cicon');
-    if(icon){
-      icon.style.transition  = 'all 0.2s ease';
-      icon.style.borderColor = 'rgba(196,164,107,0.85)';
-      icon.style.background  = 'rgba(196,164,107,0.08)';
-      icon.style.boxShadow   = '0 0 20px rgba(196,164,107,0.3), inset 0 1px 3px rgba(0,0,0,0.5)';
-      // Subtle depression
-      icon.style.transform   = 'translateY(1px)';
-      setTimeout(()=>{ icon.style.transform = 'translateY(0)'; }, 220);
-    }
-  }
-}
-
-// ── STEP 3: FLOOR ENERGY — light travels through marble ──
-function triggerFloorEnergy(triggerEl, source){
-  const c = document.getElementById('floor-energy');
-  if(!c) return;
-  c.width  = c.offsetWidth;
-  c.height = c.offsetHeight;
-  const ctx = c.getContext('2d');
-
-  // Determine target X based on element position
-  let targetX = c.width * 0.5;
-  if(triggerEl){
-    const rect = triggerEl.getBoundingClientRect();
-    targetX    = rect.left + rect.width / 2;
-  }
-
-  // Origin: console center (bottom)
-  const originX = c.width  * 0.5;
-  const originY = c.height * 0.98;
-  const destY   = c.height * 0.35;
-
-  c.style.opacity = '1';
-  let prog = 0;
-  const dur = 900; // ms
-  let start = null;
-
-  function draw(ts){
-    if(!start) start = ts;
-    prog = Math.min((ts - start) / dur, 1);
-    const ease = prog < 0.5
-      ? 2 * prog * prog
-      : 1 - Math.pow(-2 * prog + 2, 2) / 2;
-
-    ctx.clearRect(0, 0, c.width, c.height);
-
-    const currentY = originY - (originY - destY) * ease;
-    const currentX = originX + (targetX - originX) * ease * 0.6;
-
-    // Main beam
-    const grad = ctx.createLinearGradient(originX, originY, currentX, currentY);
-    grad.addColorStop(0,   'rgba(196,164,107,0)');
-    grad.addColorStop(0.4, 'rgba(196,164,107,0.18)');
-    grad.addColorStop(1,   'rgba(255,240,200,0.08)');
-    ctx.strokeStyle = grad;
-    ctx.lineWidth   = 1;
-    ctx.lineCap     = 'round';
-    ctx.beginPath();
-    ctx.moveTo(originX, originY);
-    ctx.lineTo(currentX, currentY);
-    ctx.stroke();
-
-    // Tendrils — diverge from midpoint
-    const mx = originX + (currentX - originX) * 0.55;
-    const my = originY + (currentY - originY) * 0.55;
-    [[1,0.35],[−1,0.28]].forEach(([dir, opa]) => {
-      const tg = ctx.createLinearGradient(mx, my, mx + dir*40*ease, my - 30*ease);
-      tg.addColorStop(0, `rgba(196,164,107,${opa*ease})`);
-      tg.addColorStop(1, 'rgba(196,164,107,0)');
-      ctx.strokeStyle = tg;
-      ctx.lineWidth   = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(mx, my);
-      ctx.lineTo(mx + dir*40*ease, my - 30*ease);
-      ctx.stroke();
-    });
-
-    if(prog < 1){
-      navRaf = requestAnimationFrame(draw);
-    } else {
-      // Fade out floor energy after arrival
-      setTimeout(()=>{
-        c.style.transition = 'opacity 0.6s ease';
-        c.style.opacity    = '0';
-      }, 800);
-    }
-  }
-  navRaf = requestAnimationFrame(draw);
-}
-
-// ── STEP 4: ARCHITECTURE REACTS ───────────────────────────
-function architectureReacts(triggerEl, source){
-  // Ceiling brightens
-  const ceil = document.getElementById('ceiling-life');
-  if(ceil){
-    ceil.style.transition = 'opacity 0.7s ease';
-    ceil.style.opacity    = '1';
-  }
-  // Floor reflections deepen
-  const fl = document.getElementById('floor-life');
-  if(fl){
-    fl.style.transition = 'opacity 0.7s ease';
-    fl.style.opacity    = '1';
-  }
-  // Portal pulse brightens
-  const pp = document.getElementById('portal-pulse');
-  if(pp){
-    pp.style.transition = 'opacity 0.5s ease, transform 0.8s ease';
-    pp.style.opacity    = '0.6';
-    pp.style.transform  = 'translate(-50%,-60%) scale(1.15)';
-  }
-  // Other portals dim slightly — attention focuses
-  document.querySelectorAll('.portal').forEach(p => {
-    if(p !== triggerEl){
-      p.style.transition = 'opacity 0.6s ease';
-      p.style.opacity    = '0.35';
-    }
-  });
-}
-
-// ── STEP 5: PORTAL ACTIVATES — geometry aligns ────────────
-function portalActivates(targetPage, source){
-  // Find the target portal if it exists
-  const portals = document.querySelectorAll('.portal');
-  portals.forEach(p => {
-    if(p.dataset && p.dataset.page === targetPage){
-      const ring = p.querySelector('.portal-ring');
-      if(ring){
-        ring.style.transition  = 'all 0.5s cubic-bezier(0.4,0,0.2,1)';
-        ring.style.borderColor = 'rgba(255,240,200,0.9)';
-        ring.style.boxShadow   =
-          '0 0 40px rgba(196,164,107,0.55), 0 0 80px rgba(196,164,107,0.2), 0 0 4px rgba(255,255,240,0.6)';
-        ring.style.background  = 'rgba(196,164,107,0.06)';
-      }
-    }
-  });
-}
-
-// ── STEP 6: CAMERA APPROACH — cinematic, heavy, smooth ────
-let camApproachActive = false;
-function cameraApproach(targetPage){
-  camApproachActive = true;
-  const bg = document.getElementById('hall-bg');
-  if(!bg || camReduced) return;
-
-  // Determine which direction to push (which portal)
-  let targetXPct = 50; // default center
-  PORTALS.forEach(p => {
-    if(p.page === targetPage) targetXPct = p.x;
-  });
-
-  // Camera starts breathing position, now moves toward portal
-  // Slow zoom in + drift toward target x
-  const startScale = 1.003;
-  const endScale   = 1.06;  // subtle zoom — cinematic, not game
-  const startX     = 0;
-  const endX       = (targetXPct - 50) * -0.04; // drift left or right gently
-  const endY       = -0.8; // slight upward drift (approaching)
-
-  const dur  = 1200; // ms
-  let start  = null;
-
-  function camFrame(ts){
-    if(!start) start = ts;
-    if(!camApproachActive) return;
-    const prog = Math.min((ts - start) / dur, 1);
-    // Ease-in: camera gains momentum
-    const ease = prog * prog * prog; // cubic ease-in
-    const sc   = startScale + (endScale - startScale) * ease;
-    const tx   = startX  + (endX  - startX)  * ease;
-    const ty   = endY * ease;
-    bg.style.transform = `translate(${tx}%, ${ty}%) scale(${sc})`;
-    if(prog < 1) requestAnimationFrame(camFrame);
-  }
-  requestAnimationFrame(camFrame);
-}
-
-// ── STEP 7: DEPART — light fills screen, navigate ─────────
-function departThroughPortal(targetPage){
-  camApproachActive = false;
-
-  // Light fill overlay — white/gold light blooms from center
-  const fill = document.createElement('div');
-  fill.id = 'depart-fill';
-  fill.style.cssText = [
-    'position:fixed','inset:0','z-index:850',
-    'background:radial-gradient(ellipse 60% 60% at 50% 42%, rgba(255,245,220,0.0) 0%, transparent 100%)',
-    'pointer-events:none','opacity:0',
-    'transition:none'
-  ].join(';');
-  document.body.appendChild(fill);
-
-  // Close door
-  door.classList.remove('open');
-  door.classList.add('armed');
-
-  // Bloom the light through the door seam
-  setTimeout(() => {
-    fill.style.transition = 'opacity 0.7s ease-in';
-    fill.style.opacity    = '0.85';
-    fill.style.background = 'radial-gradient(ellipse 80% 80% at 50% 40%, rgba(255,248,225,0.7) 0%, rgba(196,164,107,0.3) 40%, transparent 70%)';
-  }, 100);
-
-  // Navigate — page appears behind closed door
-  setTimeout(() => {
-    window.location.href = targetPage;
-  }, 1150);
-}
-
-// ── FLOOR ENERGY (standalone — for non-portal calls) ──────
-function triggerFloorEnergy_simple(){
-  triggerFloorEnergy(null, 'console');
-}
-
-// ── DUST MOTES ────────────────────────────────────────────
-function spawnDust(){
-  const container = document.getElementById('dust');
-  if(!container) return;
-  const count = 3 + Math.floor(Math.random()*3);
-  for(let i=0;i<count;i++){
-    setTimeout(()=>{
-      const m   = document.createElement('div');
-      m.className = 'mote';
-      m.style.left = (20 + Math.random()*40)+'%';
-      m.style.top  = (10 + Math.random()*30)+'%';
-      container.appendChild(m);
-      const dur = 8000 + Math.random()*6000;
-      m.animate([
-        {opacity:0,    transform:'translateY(0px)'},
-        {opacity:0.6,  transform:`translateY(-${Math.round(40+Math.random()*60)}px)`, offset:0.3},
-        {opacity:0,    transform:`translateY(-${Math.round(80+Math.random()*80)}px)`}
-      ],{duration:dur,easing:'linear',fill:'forwards'}).onfinish = ()=>m.remove();
-    }, i * 1400 + Math.random()*800);
-  }
-}
-
-// ── CAMERA BREATHING (idle) ────────────────────────────────
-let camT = 0;
-let camReduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-function cameraTick(){
-  if(camReduced || camApproachActive) return;
-  camT += 0.00025;
-  const bg = document.getElementById('hall-bg');
-  if(!bg) return;
-  const hx = Math.sin(camT * 0.7)  * 0.18;
-  const vy = Math.sin(camT * 0.4)  * 0.12;
-  const sc = 1 + Math.sin(camT * 0.55) * 0.003;
-  bg.style.transform = `translate(${hx}%, ${vy}%) scale(${sc})`;
-  requestAnimationFrame(cameraTick);
-}
-
-// ── CURSOR PARALLAX (desktop — extremely subtle per spec) ──
-let mouseX = 0.5, mouseY = 0.5;
-let tgtX   = 0.5, tgtY   = 0.5;
-document.addEventListener('mousemove', e => {
-  mouseX = e.clientX / window.innerWidth;
-  mouseY = e.clientY / window.innerHeight;
-});
-function parallaxTick(){
-  if(camReduced){ requestAnimationFrame(parallaxTick); return; }
-  // Very slow follow — barely noticeable (spec: user should barely notice)
-  tgtX += (mouseX - tgtX) * 0.025;
-  tgtY += (mouseY - tgtY) * 0.025;
-  const ceilEl  = document.getElementById('ceiling-life');
-  const floorEl = document.getElementById('floor-life');
-  // Max 4px movement — extremely subtle
-  if(ceilEl)  ceilEl.style.transform  = `translateX(calc(-50% + ${(tgtX-0.5)*-4}px))`;
-  if(floorEl) floorEl.style.transform = `translateX(calc(-50% + ${(tgtX-0.5)*3}px))`;
-  requestAnimationFrame(parallaxTick);
-}
-
-// ── HIDDEN EVENTS ─────────────────────────────────────────
-function scheduleHiddenEvents(){
-  setTimeout(()=>{
-    const el = document.getElementById('hidden-observatory');
-    if(!el) return;
-    el.style.transition='opacity 3s ease'; el.style.opacity='1';
-    setTimeout(()=>{ el.style.opacity='0'; },4000);
-  }, 120000);
-  setTimeout(()=>{
-    const el = document.getElementById('hidden-symbol');
-    if(!el) return;
-    el.style.transition='opacity 6s ease'; el.style.opacity='0.18';
-    setTimeout(()=>{ el.style.opacity='0'; },12000);
-  }, 480000);
-  setTimeout(()=>{
-    const el = document.getElementById('hidden-doorway');
-    if(!el) return;
-    el.style.transition='opacity 4s ease'; el.style.opacity='1';
-    setTimeout(()=>{ el.style.opacity='0'; },8000);
-  }, 600000);
-}
-
-// ── CONSOLE RISE ──────────────────────────────────────────
-function riseConsole(){
-  const wrap   = document.getElementById('console-wrap');
-  const footer = document.getElementById('footer-strip');
-  if(!wrap) return;
-  wrap.style.transition = 'transform 2.1s cubic-bezier(0.22,1,0.36,1)';
-  wrap.style.transform  = 'translateY(0)';
-  if(footer){
-    footer.style.transition = 'opacity 1.4s ease';
-    footer.style.opacity    = '1';
-  }
-}
-
-// ── ARRIVAL SEQUENCE ──────────────────────────────────────
-function runArrival(){
-  const arrival = document.getElementById('arrival');
-  const seam    = document.getElementById('arrival-seam');
-  const hall    = document.getElementById('hall');
-  const insc    = document.getElementById('inscription');
-  const ceil    = document.getElementById('ceiling-life');
-  const floor   = document.getElementById('floor-life');
-  const pulse   = document.getElementById('portal-pulse');
-  const marks   = document.querySelectorAll('.mark');
-
-  // 0.5s — golden seam
-  setTimeout(()=>{
-    seam.style.transition = 'opacity 0.8s ease, transform 1.8s ease';
-    seam.style.opacity    = '1';
-    seam.style.transform  = 'translate(-50%,-50%) scaleX(1)';
-  },500);
-
-  // 1.5s — hall emerges
-  setTimeout(()=>{
-    hall.style.transition = 'opacity 2.2s cubic-bezier(0.4,0,0.2,1)';
-    hall.style.opacity    = '1';
-  },1500);
-
-  // 2.5s — arrival fades
-  setTimeout(()=>{
-    arrival.style.opacity     = '0';
-    arrival.style.pointerEvents = 'none';
-  },2500);
-
-  // 3.0s — console rises
-  setTimeout(()=>{ riseConsole(); },3000);
-
-  // 3.5s — ceiling
-  setTimeout(()=>{
-    ceil.style.transition = 'opacity 3s ease';
-    ceil.style.opacity    = '1';
-  },3500);
-
-  // 4.5s — portal pulse
-  setTimeout(()=>{
-    pulse.style.transition = 'opacity 1.5s ease, transform 4s ease';
-    pulse.style.opacity    = '0.8';
-    pulse.style.transform  = 'translate(-50%,-60%) scale(1.3)';
-    setTimeout(()=>{
-      pulse.style.opacity   = '0.2';
-      pulse.style.transform = 'translate(-50%,-60%) scale(1)';
-    },2000);
-  },4500);
-
-  // 5.0s — inscription + marks + floor
-  setTimeout(()=>{
-    if(insc){ insc.style.transition='opacity 2s ease'; insc.style.opacity='1'; }
-    marks.forEach(m=>{ m.style.transition='opacity 2s ease'; m.style.opacity='1'; });
-    floor.style.transition = 'opacity 4s ease';
-    floor.style.opacity    = '0.8';
-  },5000);
-
-  // 6s — camera breathing
-  setTimeout(()=>{ cameraTick(); },6000);
-
-  // 7s — dust
-  setTimeout(()=>{
-    spawnDust();
-    setInterval(spawnDust, 22000 + Math.random()*8000);
-  },7000);
-
-  // 20s — floor deepens
-  setTimeout(()=>{ floor.style.opacity='1'; },20000);
-
-  // Periodic ceiling pulse (rare, idle)
-  setInterval(()=>{
-    if(!camApproachActive && Math.random()>0.7){
-      ceil.style.transition = 'opacity 8s ease';
-      ceil.style.opacity    = String(0.5 + Math.random()*0.5);
-      setTimeout(()=>{ ceil.style.opacity='0.6'; },10000);
-    }
-  },35000);
-}
-
-// ── MOBILE INERTIA SCROLL — "heavy stone platform" ────────
-function initMobileInertia(){
-  const ms = document.getElementById('mob-scroll');
-  if(!ms) return;
-  // Remove any existing scroll snap / physics that causes rubber-band
-  ms.style.scrollBehavior = 'auto';
-  // iOS momentum is fine; Android: apply custom inertia if needed
-  // The key: remove aggressive momentum, add weight
-  let isDown = false, startX = 0, scrollLeft = 0;
-  let velX = 0, lastX = 0, lastTime = 0;
-
-  ms.addEventListener('touchstart', e => {
-    isDown     = true;
-    startX     = e.touches[0].pageX;
-    scrollLeft = ms.scrollLeft;
-    velX       = 0;
-    lastX      = startX;
-    lastTime   = Date.now();
-  }, { passive: true });
-
-  ms.addEventListener('touchmove', e => {
-    if(!isDown) return;
-    const x    = e.touches[0].pageX;
-    const now  = Date.now();
-    const dt   = now - lastTime;
-    if(dt > 0) velX = (lastX - x) / dt;
-    lastX      = x;
-    lastTime   = now;
-    ms.scrollLeft = scrollLeft + (startX - x);
-  }, { passive: true });
-
-  ms.addEventListener('touchend', () => {
-    isDown = false;
-    // Apply heavy inertia — like pushing a stone platform
-    // Dampen velocity significantly (0.92 decay per frame)
-    let raf;
-    function inertia(){
-      velX *= 0.88; // heavy damping per spec
-      if(Math.abs(velX) < 0.02){ cancelAnimationFrame(raf); return; }
-      ms.scrollLeft += velX * 16;
-      raf = requestAnimationFrame(inertia);
-    }
-    raf = requestAnimationFrame(inertia);
-  });
-}
-
-// ── MOBILE INIT ───────────────────────────────────────────
+// MOBILE
 function initMobile(){
-  var hallEl = document.getElementById('hall');
-  if(hallEl) hallEl.style.display = 'none';
-  var arrEl  = document.getElementById('arrival');
-  if(arrEl){ arrEl.style.opacity='0'; arrEl.style.pointerEvents='none'; }
-  const ms = document.getElementById('mob-scroll');
-  ms.style.display  = 'block';
-  ms.style.opacity  = '1';
+  const wrap = document.getElementById("mob-wrap");
+  requestAnimationFrame(() => { wrap.style.opacity = "1"; });
 
-  buildPortals('mob-portal-layer', x=>`${x}%`, y=>`${y}vh`);
-  buildConsole('mob-console-inner');
-  initMobileInertia();
-
-  // Swipe hint — first visit only
-  const hintShown = sessionStorage.getItem('lun_hint');
-  const hint = document.getElementById('swipe-hint');
-  if(!hintShown && hint){
-    hint.style.display = 'flex';
-    setTimeout(()=>{ hint.classList.add('show'); },800);
-    setTimeout(()=>{ hint.classList.remove('show'); },5800);
-    setTimeout(()=>{ hint.style.display='none'; },6600);
-    sessionStorage.setItem('lun_hint','1');
-  }
+  document.querySelectorAll(".mnav-item").forEach(link => {
+    link.addEventListener("click", function(e){
+      const href = this.getAttribute("href");
+      if(!href || href === "#") return;
+      e.preventDefault();
+      document.getElementById("mob-door").classList.add("closing");
+      setTimeout(() => { window.location.href = href; }, 480);
+    });
+    // touch feedback
+    link.addEventListener("touchstart", function(){ this.style.opacity = "0.7"; }, {passive:true});
+    link.addEventListener("touchend", function(){ this.style.opacity = "1"; }, {passive:true});
+  });
 }
 
-// ── DESKTOP INIT ──────────────────────────────────────────
+// DESKTOP
 function initDesktop(){
-  var ms = document.getElementById('mob-scroll');
-  var h  = document.getElementById('hall');
-  if(ms) ms.style.display = 'none';
-  if(h)  h.style.display  = 'block';
-  buildPortals('portal-layer', x=>`${x}%`, y=>`${y}%`);
-  buildConsole('console-inner');
-  parallaxTick();
-  runArrival();
-  scheduleHiddenEvents();
+  const hall   = document.getElementById("hall-wrap");
+  const arrival = document.getElementById("arrival");
+  const seam   = document.getElementById("arrival-seam");
+  const panel  = document.getElementById("side-panel");
+  const insc   = document.getElementById("inscription");
+  const markBr = document.getElementById("mark-br");
+  const ceil   = document.getElementById("ceiling-life");
+  const flr    = document.getElementById("floor-life");
+  const pulse  = document.getElementById("portal-pulse");
+
+  // 0.5s seam
+  setTimeout(() => {
+    seam.style.transition = "transform 0.85s ease, opacity 0.4s ease";
+    seam.style.opacity = "1";
+    seam.style.transform = "translate(-50%,-50%) scaleX(1)";
+  }, 500);
+
+  // 1.6s hall
+  setTimeout(() => { hall.style.opacity = "1"; }, 1600);
+
+  // 2.3s arrival lifts
+  setTimeout(() => {
+    arrival.style.opacity = "0";
+    setTimeout(() => { arrival.style.display = "none"; }, 1900);
+  }, 2300);
+
+  // 3.2s atmosphere
+  setTimeout(() => {
+    ceil.style.opacity = "1";
+    flr.style.opacity  = "1";
+  }, 3200);
+
+  // 3.8s panel
+  setTimeout(() => { panel.classList.add("revealed"); }, 3800);
+
+  // 4.3s inscription + mark
+  setTimeout(() => {
+    insc.style.opacity = "1";
+    if(markBr){ markBr.style.transition="opacity 1.5s ease"; markBr.style.opacity="1"; }
+  }, 4300);
+
+  // 4.8s pulse
+  setTimeout(() => {
+    pulse.style.transition = "opacity 1s ease";
+    pulse.style.opacity = "0.55";
+    animatePulse(pulse);
+  }, 4800);
+
+  spawnDust();
+
+  // Wire panel nav to door
+  document.querySelectorAll(".pnav-link").forEach(link => {
+    link.addEventListener("click", function(e){
+      const href = this.getAttribute("href");
+      if(!href || href === "#") return;
+      e.preventDefault();
+      armDoor(href);
+    });
+  });
 }
 
-// ── EMERGENCY FALLBACK ─────────────────────────────────────
-function emergencyReveal(){
-  var a  = document.getElementById('arrival');
-  var h  = document.getElementById('hall');
-  var cw = document.getElementById('console-wrap');
-  var insc = document.getElementById('inscription');
-  if(a){ a.style.transition='opacity 1.2s ease'; a.style.opacity='0'; setTimeout(()=>{a.style.pointerEvents='none';},1300); }
-  if(h){ h.style.transition='opacity 1.2s ease'; h.style.opacity='1'; }
-  if(cw){ cw.style.transition='transform 1.2s ease'; cw.style.transform='translateY(0)'; }
-  if(insc){ insc.style.transition='opacity 1.2s ease'; insc.style.opacity='1'; }
-  document.querySelectorAll('.mark').forEach(m=>{ m.style.opacity='1'; });
+function animatePulse(el){
+  let v = 0.55, d = 1;
+  setInterval(() => {
+    v += d * 0.007;
+    if(v > 0.75){ d = -1; }
+    if(v < 0.3){ d = 1; }
+    el.style.opacity = v;
+    const s = 1 + (v - 0.5) * 0.1;
+    el.style.transform = "translate(-50%,-60%) scale(" + s + ")";
+  }, 60);
 }
 
-// ── INIT ──────────────────────────────────────────────────
-function init(){
-  door.classList.remove('armed','open');
-  busy              = false;
-  camApproachActive = false;
-  if(isMob()) initMobile();
-  else        initDesktop();
-}
-
-window.addEventListener('load', function(){
-  try { init(); } catch(e){ emergencyReveal(); console.error('Hall init error:',e); }
-});
-window.addEventListener('resize',            ()=>{ if(!busy){ try{init();}catch(e){} } });
-window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ if(!busy){ try{init();}catch(e){} } },350); });
-
-// ══════════════════════════════════════════
-// CONTENT PROTECTION
-// ══════════════════════════════════════════
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => e.preventDefault());
-document.addEventListener('dragstart',   e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if((e.ctrlKey||e.metaKey) && ['c','x','u','s','a','p','C','X','U','S','A','P'].includes(e.key)){ e.preventDefault(); return false; }
-  if(e.key==='F12'){ e.preventDefault(); return false; }
-  if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c','I','J','C'].includes(e.key)){ e.preventDefault(); return false; }
-  if(e.key==='PrintScreen'){ e.preventDefault(); return false; }
-});
-window.addEventListener('beforeprint', e => { e.preventDefault(); document.body.innerHTML=''; });
-document.addEventListener('touchstart', e => { if(e.touches.length > 1) e.preventDefault(); },{ passive:false });
-
-(function injectWatermark(){
-  const wm = document.createElement('div');
-  wm.id = 'wm-overlay';
-  wm.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;user-select:none;background:transparent;opacity:0.018;font-family:Cormorant Garamond,serif;display:flex;flex-direction:column;justify-content:space-around;overflow:hidden;';
-  const rows = Math.ceil(window.innerHeight / 80) + 2;
-  for(let i=0;i<rows;i++){
-    const row = document.createElement('div');
-    row.style.cssText = 'white-space:nowrap;transform:rotate(-18deg);color:rgba(196,164,107,0.9);font-size:clamp(11px,1.2vw,15px);letter-spacing:0.3em;text-transform:uppercase;margin-left:-10%;width:120%;';
-    row.textContent = ('Lunara Society  ©2026  lunarasociety.com  ').repeat(12);
-    wm.appendChild(row);
+function spawnDust(){
+  const c = document.getElementById("dust");
+  if(!c) return;
+  for(let i=0;i<14;i++){
+    setTimeout(()=>{
+      const m = document.createElement("div");
+      m.className = "mote";
+      m.style.left = (18 + Math.random()*64) + "%";
+      m.style.top  = (12 + Math.random()*58) + "%";
+      c.appendChild(m);
+      animateMote(m);
+    }, i * 700);
   }
-  document.body.appendChild(wm);
-})();
+}
 
-(function detectDevtools(){
-  const threshold = 160;
-  setInterval(()=>{
-    if(window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold){
-      const h = document.getElementById('hall');
-      if(h) h.style.filter='blur(12px)';
-    } else {
-      const h = document.getElementById('hall');
-      if(h) h.style.filter='';
-    }
-  },1500);
-})();
+function animateMote(el){
+  const dur = 9000 + Math.random()*14000;
+  const delay = Math.random()*4000;
+  const dx = (Math.random()-0.5)*38;
+  const dy = -(18 + Math.random()*58);
+  setTimeout(()=>{
+    el.style.transition = "transform " + dur + "ms linear, opacity " + (dur*0.3) + "ms ease";
+    el.style.opacity = (0.28 + Math.random()*0.5).toString();
+    el.style.transform = "translate(" + dx + "px," + dy + "px)";
+    setTimeout(()=>{
+      el.style.opacity = "0";
+      setTimeout(()=>{
+        el.style.transform = ""; el.style.transition = "none";
+        el.style.left = (18 + Math.random()*64) + "%";
+        el.style.top  = (12 + Math.random()*58) + "%";
+        animateMote(el);
+      }, 1000);
+    }, dur*0.78);
+  }, delay);
+}
 
+function armDoor(href){
+  const door  = document.getElementById("door");
+  const left  = door.querySelector(".dleft");
+  const right = door.querySelector(".dright");
+  door.classList.add("armed");
+  left.style.transition  = "transform 0.72s cubic-bezier(0.77,0,0.18,1)";
+  right.style.transition = "transform 0.72s cubic-bezier(0.77,0,0.18,1)";
+  requestAnimationFrame(()=>{
+    left.style.transform  = "scaleX(1)";
+    right.style.transform = "scaleX(1)";
+  });
+  setTimeout(()=>{ window.location.href = href; }, 740);
+}
+
+// BOOT
+try {
+  if(isMob()){ initMobile(); } else { initDesktop(); }
+} catch(err){
+  console.error("Lunara boot err:", err);
+  const hw = document.getElementById("hall-wrap");
+  const mw = document.getElementById("mob-wrap");
+  const ar = document.getElementById("arrival");
+  if(isMob()){ if(mw) mw.style.opacity="1"; }
+  else { if(hw) hw.style.opacity="1"; if(ar) ar.style.display="none"; const sp=document.getElementById("side-panel"); if(sp) sp.classList.add("revealed"); }
+}
+
+window.addEventListener("resize", ()=>{
+  const hw = document.getElementById("hall-wrap");
+  const mw = document.getElementById("mob-wrap");
+  if(isMob()){ hw.style.display="none"; mw.style.display="flex"; }
+  else { hw.style.display="flex"; mw.style.display="none"; }
+});
 </script>
-
-<script src="/visitor-signal.js" defer></script>
 </body>
 </html>

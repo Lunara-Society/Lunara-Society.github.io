@@ -273,12 +273,12 @@ html,body{
   font-family:"Cormorant Garamond",serif;
   font-size:clamp(12px,4vw,20px);
   letter-spacing:0.36em;text-transform:uppercase;
-  color:rgba(196,164,107,0.68);font-style:italic;font-weight:300;display:block;
+  color:rgba(196,164,107,0.85);font-style:italic;font-weight:300;display:block;
 }
 .mwm-sub{
   font-size:clamp(6px,2.2vw,9px);
   letter-spacing:0.28em;text-transform:uppercase;
-  color:rgba(196,164,107,0.26);display:block;margin-top:4px;
+  color:rgba(196,164,107,0.45);display:block;margin-top:4px;
 }
 #mob-inscription{
   position:absolute;top:clamp(65px,13vh,105px);
@@ -308,7 +308,7 @@ html,body{
 #mob-nav::before{
   content:"";display:block;height:1px;
   margin:0 clamp(14px,5vw,32px) clamp(10px,2vh,16px);
-  background:linear-gradient(to right,transparent,rgba(196,164,107,0.2) 30%,rgba(196,164,107,0.26) 50%,rgba(196,164,107,0.2) 70%,transparent);
+  background:linear-gradient(to right,transparent,rgba(196,164,107,0.35) 30%,rgba(196,164,107,0.45) 50%,rgba(196,164,107,0.35) 70%,transparent);
 }
 #mob-nav-grid{
   display:grid;
@@ -333,27 +333,27 @@ html,body{
 .mnav-icon{
   width:clamp(24px,6.5vw,34px);height:clamp(24px,6.5vw,34px);
   border-radius:50%;
-  border:1px solid rgba(196,164,107,0.16);
-  background:rgba(0,0,0,0.32);
+  border:1px solid rgba(196,164,107,0.35);
+  background:rgba(0,0,0,0.28);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
   transition:border-color 0.22s,box-shadow 0.22s,background 0.22s;
 }
-.mnav-icon svg{width:52%;height:52%;opacity:0.4;transition:opacity 0.22s;}
+.mnav-icon svg{width:52%;height:52%;opacity:0.72;transition:opacity 0.22s;}
 .mnav-label{
   font-size:clamp(5.5px,1.7vw,7.5px);
   letter-spacing:0.15em;text-transform:uppercase;
-  color:rgba(196,164,107,0.3);text-align:center;
+  color:rgba(196,164,107,0.62);text-align:center;
   white-space:nowrap;font-family:"Inter",sans-serif;
   transition:color 0.22s;
 }
 .mnav-item:active .mnav-icon,.mnav-item:hover .mnav-icon{
-  border-color:rgba(196,164,107,0.52);
-  box-shadow:0 0 10px rgba(196,164,107,0.16);
-  background:rgba(196,164,107,0.05);
+  border-color:rgba(196,164,107,0.7);
+  box-shadow:0 0 14px rgba(196,164,107,0.3);
+  background:rgba(196,164,107,0.08);
 }
 .mnav-item:active .mnav-icon svg,.mnav-item:hover .mnav-icon svg{opacity:0.85;}
-.mnav-item:active .mnav-label,.mnav-item:hover .mnav-label{color:rgba(196,164,107,0.82);}
+.mnav-item:active .mnav-label,.mnav-item:hover .mnav-label{color:rgba(196,164,107,1);text-shadow:0 0 10px rgba(196,164,107,0.5);}
 
 /* MOBILE TRANSITION DOOR */
 #mob-door{
@@ -506,23 +506,23 @@ html,body{
         <span class="mnav-label">Initiation</span>
       </a>
       <a class="mnav-item" href="architecture.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><polygon points="12,2 20,8 17,18 7,18 4,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="8" x2="20" y2="8"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></svg></div>
         <span class="mnav-label">Knowledge</span>
       </a>
       <a class="mnav-item" href="doctrine.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v3H4z"/><path d="M4 7v13h16V7"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M6 3h12v18H6z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/><path d="M6 3c0-1 1.5-1 3-1s3 0 3 1"/></svg></div>
         <span class="mnav-label">Archives</span>
       </a>
       <a class="mnav-item" href="registry.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><ellipse cx="12" cy="9" rx="5" ry="7"/><path d="M7 16c-2 1-3 2.5-3 4h16c0-1.5-1-3-3-4"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="8" cy="10" r="4"/><path d="M12 10h8"/><path d="M18 10v4"/><path d="M15 10v3"/></svg></div>
         <span class="mnav-label">Legacy</span>
       </a>
       <a class="mnav-item" href="institution.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><line x1="12" y1="3" x2="12" y2="5"/><line x1="3" y1="5" x2="21" y2="5"/><line x1="5" y1="5" x2="5" y2="19"/><line x1="10" y1="5" x2="10" y2="19"/><line x1="14" y1="5" x2="14" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/><line x1="3" y1="19" x2="21" y2="19"/></svg></div>
         <span class="mnav-label">Society</span>
       </a>
       <a class="mnav-item" href="join.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M3 12h18M12 3l9 9-9 9"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M5 21V10a7 7 0 0 1 14 0v11"/><line x1="5" y1="21" x2="19" y2="21"/><line x1="12" y1="10" x2="12" y2="21"/></svg></div>
         <span class="mnav-label">Sanctum</span>
       </a>
       <a class="mnav-item" href="member.html">
@@ -530,11 +530,11 @@ html,body{
         <span class="mnav-label">Membership</span>
       </a>
       <a class="mnav-item" href="signal.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></div>
         <span class="mnav-label">Events</span>
       </a>
       <a class="mnav-item" href="gateway.html">
-        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v16H4z"/><path d="M8 4v16"/><path d="M12 8h4"/><path d="M12 12h4"/><path d="M12 16h2"/></svg></div>
+        <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M2 6h9v14H2z"/><path d="M13 6h9v14h-9z"/><path d="M11 6v14"/><path d="M5 10h4"/><path d="M5 14h3"/><path d="M15 10h4"/><path d="M15 14h3"/></svg></div>
         <span class="mnav-label">Journal</span>
       </a>
       <a class="mnav-item" href="contact.html">

@@ -1718,16 +1718,26 @@ tickClock(); setInterval(tickClock,30000);
 })();
 
 // ── BOOT ─────────────────────────────────────────────
-window.addEventListener('load',function(){
+function bootComplete(){
+  var boot=document.getElementById('boot');
+  var shell=document.getElementById('shell');
+  if(!boot||!shell) return;
+  boot.classList.add('out');
   setTimeout(function(){
-    document.getElementById('boot').classList.add('out');
-    setTimeout(function(){
-      document.getElementById('boot').style.display='none';
-      document.getElementById('shell').classList.add('on');
-      spawnDust();
-    },1050);
-  },2200);
+    boot.style.display='none';
+    shell.classList.add('on');
+    try{spawnDust();}catch(e){}
+  },900);
+}
+// Fire on DOMContentLoaded (faster, doesn't wait for images)
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(bootComplete, 1800);
 });
+// Hard fallback: force boot off after 4s no matter what
+setTimeout(function(){
+  var boot=document.getElementById('boot');
+  if(boot&&boot.style.display!=='none'){bootComplete();}
+},4000);
 
 // ── DUST ─────────────────────────────────────────────
 function spawnDust(){

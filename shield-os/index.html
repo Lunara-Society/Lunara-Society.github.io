@@ -46,7 +46,7 @@ html,body{
 /* ── BOOT ───────────────────────────────────── */
 #boot{
   position:fixed;inset:0;z-index:999;background:#000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  display:none !important;
   transition:opacity 1s ease;
 }
 #boot.out{opacity:0;pointer-events:none;}
@@ -65,7 +65,7 @@ html,body{
 @keyframes bSweep{0%{margin-left:-100%;}100%{margin-left:100%;}}
 
 /* ── SHELL ──────────────────────────────────── */
-#shell{position:fixed;inset:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none;}
+#shell{position:fixed;inset:0;opacity:1;transition:opacity 0.8s ease;pointer-events:auto;}
 #shell.on{opacity:1;pointer-events:all;}
 #bg{position:absolute;inset:0;background:url("/shield-os/bg-mobile.jpg") center/cover;z-index:0;}
 #veil{
@@ -1717,27 +1717,14 @@ tickClock(); setInterval(tickClock,30000);
   document.getElementById('today-date').textContent=months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
 })();
 
-// ── BOOT ─────────────────────────────────────────────
-function bootComplete(){
+// ── BOOT — SKIPPED, SHELL LOADS IMMEDIATELY ───────────
+document.addEventListener('DOMContentLoaded',function(){
   var boot=document.getElementById('boot');
   var shell=document.getElementById('shell');
-  if(!boot||!shell) return;
-  boot.classList.add('out');
-  setTimeout(function(){
-    boot.style.display='none';
-    shell.classList.add('on');
-    try{spawnDust();}catch(e){}
-  },900);
-}
-// Fire on DOMContentLoaded (faster, doesn't wait for images)
-document.addEventListener('DOMContentLoaded',function(){
-  setTimeout(bootComplete, 1800);
+  if(boot) boot.style.display='none';
+  if(shell){ shell.style.opacity='1'; shell.style.pointerEvents='auto'; shell.classList.add('on'); }
+  try{spawnDust();}catch(e){}
 });
-// Hard fallback: force boot off after 4s no matter what
-setTimeout(function(){
-  var boot=document.getElementById('boot');
-  if(boot&&boot.style.display!=='none'){bootComplete();}
-},4000);
 
 // ── DUST ─────────────────────────────────────────────
 function spawnDust(){

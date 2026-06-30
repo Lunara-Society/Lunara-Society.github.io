@@ -70,5 +70,83 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j'].includes(e.key.toLowerCase()))){e.preventDefault();}});
 window.addEventListener('beforeprint',e=>{document.body.style.display='none';});
 </script>
+
+<!-- MOBILE BACK BUTTON — injected by Rosario 2026-06-30 -->
+<style>
+#mob-back-btn{
+  display:none;
+  position:fixed;
+  bottom:clamp(24px,5vh,40px);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9000;
+  background:rgba(0,0,0,0.82);
+  border:1px solid rgba(196,164,107,0.45);
+  border-radius:40px;
+  padding:12px 28px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+  transition:border-color 0.22s, box-shadow 0.22s;
+  text-decoration:none;
+}
+#mob-back-btn:active{
+  border-color:rgba(196,164,107,0.85);
+  box-shadow:0 0 18px rgba(196,164,107,0.25);
+}
+#mob-back-btn .back-arrow{
+  font-size:16px;
+  color:rgba(196,164,107,0.85);
+  line-height:1;
+}
+#mob-back-btn .back-text{
+  font-family:"Inter",sans-serif;
+  font-size:9px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(196,164,107,0.72);
+}
+/* Only show on mobile */
+@media (min-width:641px){ #mob-back-btn{ display:none !important; } }
+@media (max-width:640px){ #mob-back-btn{ display:flex !important; } }
+</style>
+<div id="mob-back-btn" onclick="goHome()">
+  <span class="back-arrow">&#8592;</span>
+  <span class="back-text" id="mob-back-label">Return to Hall</span>
+</div>
+<script>
+// Intercept device back button — send to index.html not browser history
+(function(){
+  if(window.innerWidth > 640) return;
+  // Push a state so we have something to intercept
+  history.pushState({lunaraPage: true}, '', window.location.href);
+  window.addEventListener('popstate', function(e){
+    goHome();
+  });
+})();
+
+function goHome(){
+  var f = document.getElementById('page-fade');
+  if(f){
+    f.style.opacity='1'; f.style.pointerEvents='all';
+    setTimeout(function(){ window.location.href='index.html'; }, 480);
+  } else {
+    window.location.href='index.html';
+  }
+}
+
+// Language label for back button
+(function(){
+  var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0,2);
+  var labels = {
+    es:'Volver al Inicio', fr:'Retour à l'Accueil', pt:'Voltar ao Início',
+    de:'Zurück zur Startseite', it:'Torna alla Home', ar:'العودة للرئيسية',
+    zh:'返回首页', ja:'ホームへ戻る', ko:'홈으로 돌아가기', ru:'На главную'
+  };
+  var el = document.getElementById('mob-back-label');
+  if(el && labels[lang]) el.textContent = labels[lang];
+})();
+</script>
+<!-- END MOBILE BACK BUTTON -->
 </body>
 </html>

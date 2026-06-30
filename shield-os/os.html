@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shield OS — Lunara Society</title>
+<link rel="manifest" href="/shield-os/manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<script>
+// Kill ALL old service workers and caches immediately
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});
+  if(window.caches) caches.keys().then(function(k){k.forEach(function(c){caches.delete(c);});});
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+
+/* SHELL */
+#shell{position:fixed;inset:0;display:flex;flex-direction:column;background:#0a0806;}
+
+/* TOP BAR */
+#topbar{
+  flex-shrink:0;
+  background:#0d0b07;
+  border-bottom:1px solid rgba(196,164,107,0.3);
+  padding:14px 18px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tb-left{}
+.tb-org{font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(196,164,107,0.7);margin-bottom:3px;}
+.tb-name{font-size:15px;letter-spacing:0.25em;text-transform:uppercase;color:#C4A46B;font-weight:300;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-time{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.05em;}
+.tb-bell{width:22px;height:22px;border:1px solid rgba(196,164,107,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#C4A46B;cursor:pointer;}
+
+/* SCROLL CONTENT */
+#content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px 100px;}
+
+/* CARDS */
+.sec-label{font-size:7px;letter-spacing:0.28em;text-transform:uppercase;color:#C4A46B;margin:20px 0 10px 2px;display:block;}
+.sec-label:first-child{margin-top:4px;}
+
+.card{
+  background:#131008;
+  border:1px solid rgba(196,164,107,0.25);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:10px;
+}
+.card-label{font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:#C4A46B;margin-bottom:6px;display:block;}
+.card-title{font-size:17px;color:#ffffff;margin-bottom:6px;font-weight:300;letter-spacing:0.04em;}
+.card-text{font-size:12px;color:rgba(255,255,255,0.82);line-height:1.65;}
+
+/* ALERT CARDS */
+.alert-card{
+  background:#1a0a08;
+  border:1px solid rgba(220,80,70,0.35);
+  border-left:3px solid rgba(220,80,70,0.8);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:10px;
+}
+.alert-label{font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:#E05040;margin-bottom:5px;display:block;}
+.alert-text{font-size:12px;color:#ffffff;line-height:1.65;}
+
+/* STATS GRID */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat{background:#131008;border:1px solid rgba(196,164,107,0.25);border-radius:12px;padding:14px 8px;text-align:center;}
+.stat-num{font-size:28px;color:#C4A46B;line-height:1;margin-bottom:5px;}
+.stat-lbl{font-size:6px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);}
+
+/* BOTTOM NAV */
+#bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#0d0b07;
+  border-top:1px solid rgba(196,164,107,0.2);
+  display:flex;
+  padding:8px 0 max(env(safe-area-inset-bottom),12px);
+  z-index:50;
+}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:4px 0;}
+.bni svg{width:18px;height:18px;stroke:rgba(196,164,107,0.5);fill:none;stroke-width:1.5;transition:stroke 0.2s;}
+.bni span{font-size:6px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(196,164,107,0.5);transition:color 0.2s;}
+.bni.active svg{stroke:#C4A46B;}
+.bni.active span{color:#C4A46B;}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* INSTALL MODAL */
+#inst-modal{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.88);
+  align-items:center;justify-content:center;
+}
+#inst-modal.show{display:flex;}
+.inst-box{
+  background:#131008;border:1px solid rgba(196,164,107,0.5);
+  border-radius:20px;padding:32px 24px;margin:24px;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  max-width:320px;width:100%;text-align:center;
+}
+.inst-logo{width:56px;height:56px;border:1px solid rgba(196,164,107,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.inst-title{font-size:20px;color:#C4A46B;letter-spacing:0.1em;}
+.inst-sub{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;}
+.inst-btn{width:100%;background:rgba(196,164,107,0.12);border:1px solid rgba(196,164,107,0.55);border-radius:40px;padding:14px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C4A46B;cursor:pointer;}
+.inst-skip{font-size:10px;color:rgba(255,255,255,0.35);cursor:pointer;padding:4px;}
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="tb-left">
+      <div class="tb-org">Lunara Society</div>
+      <div class="tb-name">Shield OS</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-time" id="clock">--:--</div>
+      <div class="tb-bell">🔔</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- HOME SCREEN -->
+    <div class="screen active" id="s-home">
+      <span class="sec-label">Critical Alerts</span>
+
+      <div class="alert-card">
+        <span class="alert-label">Regulatory — 33 Days</span>
+        <div class="alert-text">EU AI Act enforcement active Aug 2. Shield compliance positioning required. Rosario assigned.</div>
+      </div>
+
+      <div class="card">
+        <span class="card-label">Decision Required</span>
+        <div class="card-text">Op. Black Ice report complete. Sypher awaits distribution authorization from Founder.</div>
+      </div>
+
+      <span class="sec-label">Operational Metrics</span>
+      <div class="stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Active Agents</div></div>
+        <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Live Projects</div></div>
+        <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Investigations</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">Open Tasks</div></div>
+        <div class="stat"><div class="stat-num" style="color:#50c878;">12</div><div class="stat-lbl">Completed</div></div>
+        <div class="stat"><div class="stat-num" style="font-size:14px;color:rgba(196,164,107,0.6);">Pre-Rev</div><div class="stat-lbl">Revenue</div></div>
+      </div>
+
+      <span class="sec-label">Latest Intelligence</span>
+      <div class="card">
+        <span class="card-label">Intel Feed — Sypher</span>
+        <div class="card-title">AI Regulatory Shift</div>
+        <div class="card-text">EU AI Act enforcement begins August 2. Lunara's positioning may provide competitive advantage in compliance narrative.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Intel Feed — Aegis</span>
+        <div class="card-title">Security Audit Complete</div>
+        <div class="card-text">All public-facing systems passed Q2 security review. No critical vulnerabilities detected.</div>
+      </div>
+    </div>
+
+    <!-- AGENTS SCREEN -->
+    <div class="screen" id="s-agents">
+      <span class="sec-label">Active Agents</span>
+      <div class="card">
+        <span class="card-label">Chief Executive Intelligence</span>
+        <div class="card-title">Rosario</div>
+        <div class="card-text">Strategic coordination and institutional decision authority. Currently overseeing EU compliance positioning.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Institutional Representative</span>
+        <div class="card-title">Maya</div>
+        <div class="card-text">Public communication, social media, and community engagement. Managing all external channels.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Intelligence & Research</span>
+        <div class="card-title">Sypher</div>
+        <div class="card-text">Monitoring global AI regulatory landscape and competitive intelligence. Op. Black Ice report awaiting distribution.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Security Operations</span>
+        <div class="card-title">Aegis</div>
+        <div class="card-text">Platform security, authentication systems, and threat monitoring. Q2 audit complete.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Institutional Memory</span>
+        <div class="card-title">Raven</div>
+        <div class="card-text">Archives all approved communications, decisions, and institutional records.</div>
+      </div>
+    </div>
+
+    <!-- COMMAND SCREEN -->
+    <div class="screen" id="s-command">
+      <span class="sec-label">Executive Command</span>
+      <div class="card">
+        <span class="card-label">Pending Authorization</span>
+        <div class="card-title">Op. Black Ice Distribution</div>
+        <div class="card-text">Sypher's investigation report is complete. Authorize distribution to core team or escalate to full institutional release.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Pending Decision</span>
+        <div class="card-title">EU AI Act Response</div>
+        <div class="card-text">Rosario has prepared 3 strategic response options. Review required before Aug 2 enforcement date.</div>
+      </div>
+      <div class="card">
+        <span class="card-label">Open Task</span>
+        <div class="card-title">Shield OS Deployment</div>
+        <div class="card-text">Private institutional command interface now operational. PWA installation available via Chrome.</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- BOTTOM NAV -->
+  <div id="bnav">
+    <div class="bni active" data-screen="s-home" onclick="nav(this,'s-home')">
+      <svg viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v9h5v-5h4v5h5v-9"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="bni" data-screen="s-agents" onclick="nav(this,'s-agents')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Agents</span>
+    </div>
+    <div class="bni" data-screen="s-command" onclick="nav(this,'s-command')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      <span>Command</span>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL MODAL -->
+<div id="inst-modal">
+  <div class="inst-box">
+    <div class="inst-logo">⚔</div>
+    <div class="inst-title">Install Shield OS</div>
+    <div class="inst-sub">Add to your home screen.<br>Launches fullscreen — no browser bar.</div>
+    <div class="inst-btn" id="inst-btn" onclick="doInstall()">Add to Home Screen</div>
+    <div class="inst-skip" onclick="dismissInstall()">Not now</div>
+  </div>
+</div>
+
+<script>
+// Clock
+function tick(){
+  var d=new Date();
+  var h=d.getHours().toString().padStart(2,'0');
+  var m=d.getMinutes().toString().padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m;
+}
+tick(); setInterval(tick,10000);
+
+// Nav
+function nav(el,screen){
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById(screen).classList.add('active');
+}
+
+// PWA Install
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredPrompt=e;
+  setTimeout(function(){
+    document.getElementById('inst-modal').classList.add('show');
+  },1500);
+});
+function doInstall(){
+  document.getElementById('inst-modal').classList.remove('show');
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;}
+}
+function dismissInstall(){
+  document.getElementById('inst-modal').classList.remove('show');
+}
+window.addEventListener('appinstalled',function(){
+  document.getElementById('inst-modal').classList.remove('show');
+});
+</script>
+</body>
+</html>

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+// Kill old service workers immediately
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  });
+}
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
@@ -1698,11 +1710,7 @@ document.getElementById('drive-search-input').addEventListener('input', function
 
 <script>
 // ── SERVICE WORKER ────────────────────────────────────
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/shield-os/sw.js',{scope:'/shield-os/'}).catch(function(){});
-  });
-}
+// Service worker disabled
 
 // ── CLOCK ─────────────────────────────────────────────
 function tickClock(){

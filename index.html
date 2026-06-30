@@ -712,5 +712,121 @@ window.addEventListener("resize", ()=>{
   else { hw.style.display="flex"; mw.style.display="none"; }
 });
 </script>
+
+<!-- LANGUAGE AUTO-DETECTION — Rosario 2026-06-30 -->
+<script>
+(function(){
+  var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0,2);
+  if(lang === 'en') return; // English is default — no changes needed
+
+  // Translation table — panel nav labels + wordmark
+  var translations = {
+    es: {
+      title:'Lunara Society', sub:'Institución de Coordinación de Confianza',
+      insc:'Por el Conocimiento · Por el Orden · Por el Legado',
+      nav:['Iniciación','Conocimiento','Archivos','Legado','Sociedad','Sanctum','Membresía','Eventos','Diario','Contacto'],
+      back:'Volver al Inicio'
+    },
+    fr: {
+      title:'Lunara Society', sub:'Institution de Coordination de Confiance',
+      insc:'Par le Savoir · Par l'Ordre · Par l'Héritage',
+      nav:['Initiation','Connaissance','Archives','Héritage','Société','Sanctuaire','Adhésion','Événements','Journal','Contact'],
+      back:'Retour à l'Accueil'
+    },
+    pt: {
+      title:'Lunara Society', sub:'Instituição de Coordenação de Confiança',
+      insc:'Pelo Conhecimento · Pela Ordem · Pelo Legado',
+      nav:['Iniciação','Conhecimento','Arquivos','Legado','Sociedade','Sanctum','Associação','Eventos','Diário','Contato'],
+      back:'Voltar ao Início'
+    },
+    de: {
+      title:'Lunara Society', sub:'Vertrauenskoordinationsinstitution',
+      insc:'Durch Wissen · Durch Ordnung · Durch Erbe',
+      nav:['Einweihung','Wissen','Archive','Erbe','Gesellschaft','Sanctum','Mitgliedschaft','Ereignisse','Journal','Kontakt'],
+      back:'Zurück zur Startseite'
+    },
+    it: {
+      title:'Lunara Society', sub:'Istituzione di Coordinamento della Fiducia',
+      insc:'Per la Conoscenza · Per l'Ordine · Per l'Eredità',
+      nav:['Iniziazione','Conoscenza','Archivi','Eredità','Società','Sanctum','Iscrizione','Eventi','Diario','Contatto'],
+      back:'Torna alla Home'
+    },
+    ar: {
+      title:'لوناره سوسايتي', sub:'مؤسسة تنسيق الثقة',
+      insc:'بالمعرفة · بالنظام · بالإرث',
+      nav:['التهيئة','المعرفة','الأرشيف','الإرث','المجتمع','المقدس','العضوية','الأحداث','المجلة','اتصل'],
+      back:'العودة للرئيسية'
+    },
+    zh: {
+      title:'卢娜拉学会', sub:'信任协调机构',
+      insc:'以知识 · 以秩序 · 以传承',
+      nav:['启迪','知识','档案','传承','学会','圣殿','会员','活动','日志','联系'],
+      back:'返回首页'
+    },
+    ja: {
+      title:'ルナラ・ソサエティ', sub:'信頼協調機関',
+      insc:'知識によって · 秩序によって · 遺産によって',
+      nav:['入会','知識','アーカイブ','遺産','学会','聖域','会員','イベント','日誌','連絡'],
+      back:'ホームへ戻る'
+    },
+    ko: {
+      title:'루나라 소사이어티', sub:'신뢰 조정 기관',
+      insc:'지식으로 · 질서로 · 유산으로',
+      nav:['입문','지식','아카이브','유산','학회','성소','회원','이벤트','일지','연락'],
+      back:'홈으로 돌아가기'
+    },
+    ru: {
+      title:'Общество Лунара', sub:'Институт Координации Доверия',
+      insc:'Через Знание · Через Порядок · Через Наследие',
+      nav:['Посвящение','Знание','Архивы','Наследие','Общество','Sanctum','Членство','События','Журнал','Контакт'],
+      back:'На главную'
+    }
+  };
+
+  var t = translations[lang];
+  if(!t) return;
+
+  // Apply after DOM ready
+  function applyTranslations(){
+    // Wordmark — desktop panel
+    var wt = document.querySelector('.panel-wordmark-title');
+    var ws = document.querySelector('.panel-wordmark-sub');
+    if(wt) wt.textContent = t.title;
+    if(ws) ws.textContent = t.sub;
+
+    // Wordmark — mobile
+    var mwt = document.querySelector('.mwm-title');
+    var mws = document.querySelector('.mwm-sub');
+    if(mwt) mwt.textContent = t.title;
+    if(mws) mws.textContent = t.sub;
+
+    // Inscription — desktop
+    var insc = document.querySelector('#inscription span');
+    if(insc) insc.textContent = t.insc;
+
+    // Inscription — mobile
+    var minsc = document.querySelector('#mob-inscription span');
+    if(minsc) minsc.textContent = t.insc;
+
+    // Panel nav labels — desktop
+    var pLabels = document.querySelectorAll('.pnav-label');
+    pLabels.forEach(function(el, i){ if(t.nav[i]) el.textContent = t.nav[i]; });
+
+    // Mobile nav labels
+    var mLabels = document.querySelectorAll('.mnav-label');
+    mLabels.forEach(function(el, i){ if(t.nav[i]) el.textContent = t.nav[i]; });
+
+    // Store for inner pages to use
+    try { sessionStorage.setItem('lunara_lang', lang); sessionStorage.setItem('lunara_back', t.back); } catch(e){}
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', applyTranslations);
+  } else {
+    applyTranslations();
+  }
+})();
+</script>
+<!-- END LANGUAGE DETECTION -->
 </body>
 </html>

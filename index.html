@@ -832,6 +832,9 @@ window.addEventListener("resize", ()=>{
 <!-- ROSARIO CHAT WIDGET — begin -->
 <style>
 #rosario-widget-root{position:fixed;z-index:9999;right:18px;bottom:18px;font-family:"Inter",sans-serif;}
+@media (max-width:1024px){
+  #rosario-widget-root{bottom:calc(14px + 4.5vh + 118px);right:12px;}
+}
 #rosario-trigger{
   width:64px;height:64px;border-radius:50%;
   cursor:pointer;position:relative;
@@ -927,7 +930,7 @@ window.addEventListener("resize", ()=>{
 
 @media (max-width:480px){
   #rosario-panel{width:calc(100vw - 24px);right:-6px;height:60vh;}
-  #rosario-widget-root{right:14px;bottom:14px;}
+  #rosario-widget-root{right:10px;}
 }
 </style>
 

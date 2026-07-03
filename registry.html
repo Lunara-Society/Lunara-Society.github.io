@@ -309,19 +309,19 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Legacy</p>
-    <h1 class="page-title">The Public Record</h1>
+    <h1 class="page-title typewriter">The Public Record</h1>
     <p class="page-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
     <div class="gold-rule"></div>
     <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin-bottom:clamp(20px,3vw,32px);">
-      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+      <div class="card reveal" style="flex:1;min-width:clamp(140px,25vw,200px);">
         <div class="card-num">Status</div><div class="card-title">Active</div>
         <div class="card-text">Founding period open</div>
       </div>
-      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+      <div class="card reveal" style="flex:1;min-width:clamp(140px,25vw,200px);">
         <div class="card-num">Founding Slots</div><div class="card-title">0 of 10</div>
         <div class="card-text">First 10 are permanent founding participants</div>
       </div>
-      <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
+      <div class="card reveal" style="flex:1;min-width:clamp(140px,25vw,200px);">
         <div class="card-num">Protocol Version</div><div class="card-title">v1.0</div>
         <div class="card-text">Lunara Protocol · Active</div>
       </div>
@@ -373,7 +373,7 @@ input,textarea{
       }
     });
     </script>
-    <div class="registry-block">
+    <div class="registry-block reveal">
       <div class="registry-label">Live registry entry format — LUN-PROTO-1.0</div>{
   "lunara_id":              "LUN-BUS-2026-XXXXXXX",
   "entity_name":            "Your Business",
@@ -389,7 +389,7 @@ input,textarea{
     <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.8vw,36px);">Founding Participant Program</h2>
     <p class="page-sub">The first 10 participants shape the standard. Founding status is permanent — recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
-    <div class="card-grid">
+    <div class="card-grid reveal">
       <div class="card"><div class="card-num">Lunara ID</div><div class="card-title">Permanent Identity</div><div class="card-text">A permanent verified identity assigned to the participant. Format: LUN-BUS-000XXX</div></div>
       <div class="card"><div class="card-num">Entity Identity</div><div class="card-title">Machine-Readable</div><div class="card-text">Business name, domain, and industry classification — indexed and AI-queryable.</div></div>
       <div class="card"><div class="card-num">Trust Signals</div><div class="card-title">Reputation</div><div class="card-text">Interaction history and reputation signals that compound over time into institutional memory.</div></div>
@@ -503,5 +503,85 @@ function goHome(){
 })();
 </script>
 <!-- END MOBILE BACK BUTTON -->
+
+<style>
+/* ELITE REVEAL SYSTEM */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity 1.3s cubic-bezier(.19,1,.22,1), transform 1.3s cubic-bezier(.19,1,.22,1);
+  will-change:opacity, transform;
+}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+
+/* TYPEWRITER CURSOR */
+.tw-cursor::after{
+  content:'|';
+  display:inline-block;
+  margin-left:5px;
+  color:var(--gold);
+  animation:tw-blink 0.9s steps(1) infinite;
+}
+@keyframes tw-blink{50%{opacity:0;}}
+
+/* subtle luxurious hover lift on interactive blocks */
+.card, .price-tier, .step-item, .doctrine-item{
+  transition:background 0.35s ease, border-color 0.35s ease, transform 0.6s cubic-bezier(.19,1,.22,1);
+}
+</style>
+<script>
+(function(){
+  function typewriterHTML(el, speed){
+    speed = speed || 32;
+    var html = el.innerHTML;
+    el.innerHTML = '';
+    el.classList.add('tw-cursor');
+    var i = 0;
+    function step(){
+      if(i >= html.length){ el.classList.remove('tw-cursor'); return; }
+      if(html[i] === '<'){
+        var close = html.indexOf('>', i);
+        if(close === -1){ close = html.length - 1; }
+        el.innerHTML += html.slice(i, close+1);
+        i = close+1;
+      } else {
+        el.innerHTML += html[i];
+        i++;
+      }
+      setTimeout(step, speed);
+    }
+    step();
+  }
+
+  function initReveal(){
+    var items = document.querySelectorAll('.reveal');
+    items.forEach(function(el, i){
+      el.style.transitionDelay = ((i % 6) * 90) + 'ms';
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  function initTypewriter(){
+    document.querySelectorAll('.typewriter').forEach(function(el){
+      typewriterHTML(el, 30);
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ initReveal(); initTypewriter(); });
+  } else {
+    initReveal(); initTypewriter();
+  }
+})();
+</script>
+
 </body>
 </html>

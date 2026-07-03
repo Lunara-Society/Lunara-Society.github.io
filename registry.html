@@ -326,6 +326,53 @@ input,textarea{
         <div class="card-text">Lunara Protocol · Active</div>
       </div>
     </div>
+    <div class="gold-rule"></div>
+    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Look up a business</h2>
+    <p class="page-sub">Check the real, current status of any applicant or member — this queries the live registry directly, not a cached claim.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;max-width:520px;">
+      <input type="text" id="reg-lookup-input" placeholder="Domain or Lunara reference ID" style="flex:1;min-width:200px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <button id="reg-lookup-btn" class="cta-btn" style="border:none;cursor:pointer;">Check status →</button>
+    </div>
+    <div id="reg-lookup-result" style="font-size:13px;color:var(--white-70);line-height:1.6;margin-bottom:12px;"></div>
+    <div class="gold-rule"></div>
+    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Certified businesses</h2>
+    <div id="reg-live-list" style="font-size:13px;color:var(--white-70);line-height:1.8;margin:16px 0;">Loading…</div>
+    <script>
+    (async function(){
+      var listEl = document.getElementById('reg-live-list');
+      try {
+        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+        var data = await res.json();
+        if (data.success && data.businesses && data.businesses.length > 0) {
+          listEl.innerHTML = data.businesses.map(function(b){
+            return '<div style="padding:10px 0;border-bottom:1px solid var(--border);"><strong style="color:var(--gold);">' + b.business_name + '</strong> — ' + (b.domain || b.website_url) + ' <span style="color:var(--white-50);">· verified ' + (b.verification_date || '') + '</span></div>';
+          }).join('');
+        } else {
+          listEl.textContent = 'No businesses have completed verification yet — the program is in early rollout. Check back soon, or apply on the Initiation page.';
+        }
+      } catch(err) {
+        listEl.textContent = 'Could not load the registry right now.';
+      }
+    })();
+    document.getElementById('reg-lookup-btn').addEventListener('click', async function(){
+      var q = document.getElementById('reg-lookup-input').value.trim();
+      var resultEl = document.getElementById('reg-lookup-result');
+      if (!q) { resultEl.textContent = 'Enter a domain or reference ID first.'; return; }
+      resultEl.textContent = 'Checking...';
+      try {
+        var body = q.startsWith('SHIELD-') ? {public_id: q} : {domain: q};
+        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+        var data = await res.json();
+        if (data.found) {
+          resultEl.innerHTML = '<strong style="color:var(--gold);">' + data.business_name + '</strong> — status: <strong>' + data.status + '</strong>' + (data.status === 'revoked' ? ' (' + (data.revocation_reason || 'no reason on file') + ')' : '');
+        } else {
+          resultEl.textContent = 'No record found for that domain or ID — this business has not applied or is not yet in the registry.';
+        }
+      } catch(err) {
+        resultEl.textContent = 'Could not check right now, please try again.';
+      }
+    });
+    </script>
     <div class="registry-block">
       <div class="registry-label">Live registry entry format — LUN-PROTO-1.0</div>{
   "lunara_id":              "LUN-BUS-2026-XXXXXXX",

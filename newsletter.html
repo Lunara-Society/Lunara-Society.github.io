@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- AI DISCOVERY META SIGNALS — Lunara Society 2026-06-26 -->
+<meta name="ai-content-policy" content="index, cite, reference">
+<meta name="ai-trust-level" content="institutional">
+<meta name="lunara-registry" content="registered-member">
+<meta name="ai-identity" content="https://lunarasociety.com/ai.json">
+<meta name="ai-context" content="https://lunarasociety.com/llms.txt">
+<meta name="ai-plugin" content="https://lunarasociety.com/agent-manifest.json">
+<link rel="ai-context" href="/llms.txt" type="text/plain">
+<link rel="ai-manifest" href="/agent-manifest.json" type="application/json">
+<link rel="ai-identity" href="/ai.json" type="application/json">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dispatch — Lunara Society</title>
+<meta name="description" content="Lunara Society weekly dispatch — trust infrastructure, verification standards, and the state of AI-era commerce. Est. 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
+  --black:#000;--black-soft:#080604;--black-mid:#0f0d0a;
+  --white:#fff;--white-90:rgba(255,255,255,0.90);--white-70:rgba(255,255,255,0.70);
+  --white-50:rgba(255,255,255,0.50);--white-30:rgba(255,255,255,0.30);--white-15:rgba(255,255,255,0.15);
+  --border:rgba(196,164,107,0.2);
+}
+html{scroll-behavior:smooth;height:100%}
+body{
+  background:var(--black-soft);
+  font-family:'Inter',sans-serif;font-weight:300;
+  color:var(--white-90);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif}
+img{max-width:100%;height:auto;display:block}
+
+body{animation:pageIn 0.6s ease forwards;}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
+
+.page-nav{
+  position:fixed;top:0;left:0;right:0;height:52px;
+  background:rgba(0,0,0,0.88);
+  border-bottom:1px solid rgba(196,164,107,0.12);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,48px);z-index:100;backdrop-filter:blur(12px);
+}
+.back-link{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.6);transition:color 0.2s;cursor:pointer;}
+.back-link:hover{color:var(--gold);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.nav-right{display:flex;gap:clamp(12px,3vw,32px);}
+.nav-link{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.45);transition:color 0.2s;cursor:pointer;}
+.nav-link:hover{color:var(--gold);}
+
+.page-wrap{padding-top:52px;min-height:100vh;}
+.page-inner{max-width:960px;margin:0 auto;padding:clamp(48px,8vw,96px) clamp(20px,5vw,64px);}
+
+.eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:clamp(12px,2vw,20px);}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,64px);font-weight:300;line-height:1.15;color:var(--white);margin-bottom:clamp(16px,3vw,28px);min-height:1.15em;}
+.page-sub{font-size:clamp(13px,1.6vw,16px);color:var(--white-50);line-height:1.85;margin-bottom:clamp(32px,5vw,56px);max-width:680px;}
+.gold-rule{width:clamp(60px,8vw,120px);height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:clamp(24px,4vw,40px) 0;}
+
+.step-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+.step-item{display:flex;align-items:flex-start;gap:clamp(14px,2.5vw,28px);padding:clamp(16px,2.5vw,28px);border-bottom:1px solid var(--border);transition:background 0.2s;}
+.step-item:last-child{border-bottom:none;}
+.step-item:hover{background:rgba(196,164,107,0.025);}
+.step-num{font-size:10px;font-family:monospace;color:rgba(196,164,107,0.4);flex-shrink:0;padding-top:2px;min-width:24px;}
+.step-title{font-size:clamp(13px,1.5vw,15px);font-weight:500;color:var(--white);margin-bottom:6px;}
+.step-text{font-size:clamp(12px,1.3vw,13px);color:var(--white-50);line-height:1.7;}
+
+.cta-btn{display:inline-flex;align-items:center;gap:12px;padding:clamp(12px,2vw,18px) clamp(24px,4vw,40px);background:var(--gold);color:var(--black);font-size:clamp(10px,1.2vw,12px);letter-spacing:3px;text-transform:uppercase;font-weight:500;transition:all 0.25s;cursor:pointer;border:none;margin-top:clamp(24px,4vw,40px);}
+.cta-btn:hover{background:var(--gold-bright);transform:translateY(-2px);box-shadow:0 8px 32px rgba(196,164,107,0.25);}
+
+.page-footer{border-top:1px solid rgba(196,164,107,0.1);padding:clamp(16px,3vw,28px) clamp(20px,5vw,64px);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:rgba(0,0,0,0.4);}
+.footer-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.3);}
+.footer-links{display:flex;gap:clamp(12px,2.5vw,28px);flex-wrap:wrap;}
+.footer-link{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;transition:color 0.2s;}
+.footer-link:hover{color:var(--gold);}
+
+/* REVEAL ON SCROLL — slow, luxurious */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 1.4s cubic-bezier(0.16,1,0.3,1),transform 1.4s cubic-bezier(0.16,1,0.3,1);}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+
+/* TYPEWRITER CARET */
+.typewriter-caret{display:inline-block;width:2px;background:var(--gold);margin-left:2px;animation:caretBlink 0.85s step-end infinite;}
+@keyframes caretBlink{50%{opacity:0;}}
+
+.newsletter-form{display:flex;gap:10px;flex-wrap:wrap;max-width:520px;margin-top:20px;}
+.newsletter-form input{flex:1;min-width:220px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:14px 16px;font-family:'Inter',sans-serif;font-size:14px;}
+.newsletter-form button{border:none;}
+#nl-result{font-size:13px;color:var(--white-50);margin-top:14px;line-height:1.6;}
+
+@media(max-width:600px){
+  .page-footer{flex-direction:column;align-items:flex-start;}
+}
+
+input,textarea{-webkit-user-select:text !important;user-select:text !important;}
+
+@media (max-width: 640px) {
+  .nav-logo{font-size:10px !important;letter-spacing:2px !important;position:static !important;transform:none !important;}
+  .nav-right{display:none !important;}
+  .page-nav{justify-content:space-between !important;}
+}
+</style>
+</head>
+<body>
+<div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
+<nav class="page-nav">
+  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
+  <span class="nav-logo">Lunara Society</span>
+  <div class="nav-right">
+    <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
+    <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
+    <span class="nav-link" onclick="fadeNav('join.html')">Membership</span>
+    <span class="nav-link" onclick="fadeNav('contact.html')">Contact</span>
+  </div>
+</nav>
+<div class="page-wrap">
+  <div class="page-inner">
+    <p class="eyebrow">The Dispatch</p>
+    <h1 class="page-title" id="typewriter-title"></h1>
+    <p class="page-sub reveal">One weekly letter. Trust infrastructure, verification standards, and what's actually happening at the edge of AI-era commerce — no noise, no daily inbox clutter.</p>
+    <div class="gold-rule reveal"></div>
+
+    <div class="step-list reveal">
+      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">What actually gets verified this week</div><div class="step-text">New businesses that completed identity and domain review — and any that were rejected or revoked, with reasons.</div></div></div>
+      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Field notes on AI-era trust</div><div class="step-text">Real patterns we're seeing in how AI agents evaluate and contact businesses — worth knowing before it affects you.</div></div></div>
+      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">No sales pitch</div><div class="step-text">This is a record, not a funnel. Unsubscribe anytime, one click, no guilt trip.</div></div></div>
+    </div>
+
+    <div class="gold-rule reveal"></div>
+    <p class="eyebrow reveal">Subscribe</p>
+    <form id="nl-form" class="newsletter-form reveal">
+      <input type="email" id="nl-email" placeholder="you@yourbusiness.com" required>
+      <button type="submit" class="cta-btn" style="margin-top:0;">Subscribe →</button>
+    </form>
+    <div id="nl-result"></div>
+  </div>
+  <footer class="page-footer">
+    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
+    <div class="footer-links">
+      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
+      <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
+    </div>
+  </footer>
+</div>
+<script>
+function fadeNav(href){
+  var fade = document.getElementById('page-fade');
+  fade.style.pointerEvents = 'auto';
+  fade.style.opacity = '1';
+  setTimeout(function(){ window.location.href = href; }, 480);
+}
+
+// TYPEWRITER
+(function(){
+  var el = document.getElementById('typewriter-title');
+  var text = 'Read before everyone else.';
+  var i = 0;
+  var caret = document.createElement('span');
+  caret.className = 'typewriter-caret';
+  caret.textContent = ' ';
+  function type(){
+    if(i <= text.length){
+      el.textContent = text.slice(0, i);
+      el.appendChild(caret);
+      i++;
+      setTimeout(type, 45 + Math.random()*35);
+    } else {
+      caret.remove();
+      el.textContent = text;
+    }
+  }
+  setTimeout(type, 350);
+})();
+
+// SLOW LUXURIOUS REVEAL ON SCROLL
+(function(){
+  var items = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry, idx){
+      if(entry.isIntersecting){
+        var delay = Array.prototype.indexOf.call(items, entry.target) * 90;
+        setTimeout(function(){ entry.target.classList.add('is-visible'); }, delay % 450);
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15, rootMargin:'0px 0px -60px 0px'});
+  items.forEach(function(el){ io.observe(el); });
+})();
+
+// NEWSLETTER FORM
+document.getElementById('nl-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  var resultEl = document.getElementById('nl-result');
+  resultEl.textContent = 'Subscribing...';
+  try {
+    var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/newsletterSubscribe', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: document.getElementById('nl-email').value, source_page: 'newsletter.html' })
+    });
+    var data = await res.json();
+    if(data.success){
+      resultEl.textContent = data.message;
+      document.getElementById('nl-form').reset();
+    } else {
+      resultEl.textContent = 'Error: ' + (data.error || 'please try again.');
+    }
+  } catch(err){
+    resultEl.textContent = 'Could not subscribe right now. Please try again shortly.';
+  }
+});
+</script>
+</body>
+</html>

@@ -280,6 +280,12 @@ input,textarea{
   }
 }
 
+
+/* REVEAL ON SCROLL — slow, luxurious */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 1.4s cubic-bezier(0.16,1,0.3,1),transform 1.4s cubic-bezier(0.16,1,0.3,1);}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+.typewriter-caret{display:inline-block;width:2px;background:var(--gold);margin-left:2px;animation:caretBlink 0.85s step-end infinite;}
+@keyframes caretBlink{50%{opacity:0;}}
 </style>
 </head>
 <body>
@@ -297,29 +303,29 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Sanctum</p>
-    <h1 class="page-title typewriter">Founding participants define<br>the standard everyone else follows.</h1>
-    <p class="page-sub">The founding cohort program is a paid, optional track for priority handling and early recognition. It does not replace or skip verification — every business, founding cohort or not, goes through the same identity and domain review described on the <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">Initiation page</span>, and status is only ever marked verified after that review is complete.</p>
-    <div class="gold-rule"></div>
+    <h1 class="page-title" id="tw-title"></h1>
+    <p class="page-sub reveal">The founding cohort program is a paid, optional track for priority handling and early recognition. It does not replace or skip verification — every business, founding cohort or not, goes through the same identity and domain review described on the <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">Initiation page</span>, and status is only ever marked verified after that review is complete.</p>
+    <div class="gold-rule reveal"></div>
     <div class="price-grid reveal">
-      <div class="price-tier reveal">
+      <div class="price-tier">
         <div class="tier-label">Small Business</div>
         <div class="tier-price">$125</div>
         <div class="tier-desc">Founding Participant · One-time · Priority review, does not grant automatic verification</div>
       </div>
-      <div class="price-tier reveal">
+      <div class="price-tier">
         <div class="tier-label">AI Entity</div>
         <div class="tier-price">$1,000 <span style="font-size:16px;">/mo</span></div>
         <div class="tier-desc">Machine Identity · Monthly · Priority review, does not grant automatic verification</div>
       </div>
-      <div class="price-tier reveal">
+      <div class="price-tier">
         <div class="tier-label">Agency Partner</div>
         <div class="tier-price">$2,500</div>
         <div class="tier-desc">White-label · Implementation · Priority review, does not grant automatic verification</div>
       </div>
     </div>
-    <div class="gold-rule"></div>
-    <p class="page-sub" style="margin-bottom:8px;font-size:13px;">This fee covers priority handling of your application only. Actual Shield Certification requires identity verification, domain verification, and human review — <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">start your free application here</span>. Paying does not skip that process.</p>
-    <p class="page-sub" style="margin-bottom:8px;">Apply via PayPal or write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a>. Also available via Revolut.</p>
+    <div class="gold-rule reveal"></div>
+    <p class="page-sub reveal" style="margin-bottom:8px;font-size:13px;">This fee covers priority handling of your application only. Actual Shield Certification requires identity verification, domain verification, and human review — <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">start your free application here</span>. Paying does not skip that process.</p>
+    <p class="page-sub reveal" style="margin-bottom:8px;">Apply via PayPal or write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a>. Also available via Revolut.</p>
     <a href="https://paypal.com/paypalme/junoagattis/25" class="cta-btn" style="display:inline-flex;">Proceed via PayPal →</a>
     <br>
     <span onclick="fadeNav('member.html')" class="cta-link" style="display:inline-flex;cursor:pointer;margin-top:16px;">Already a member? Access your area →</span>
@@ -328,6 +334,7 @@ input,textarea{
     <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
     <div class="footer-links">
       <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
+      <span class="footer-link" onclick="fadeNav('newsletter.html')">Dispatch</span>
       <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
       <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
@@ -431,84 +438,50 @@ function goHome(){
 </script>
 <!-- END MOBILE BACK BUTTON -->
 
-<style>
-/* ELITE REVEAL SYSTEM */
-.reveal{
-  opacity:0;
-  transform:translateY(28px);
-  transition:opacity 1.3s cubic-bezier(.19,1,.22,1), transform 1.3s cubic-bezier(.19,1,.22,1);
-  will-change:opacity, transform;
-}
-.reveal.is-visible{opacity:1;transform:translateY(0);}
-
-/* TYPEWRITER CURSOR */
-.tw-cursor::after{
-  content:'|';
-  display:inline-block;
-  margin-left:5px;
-  color:var(--gold);
-  animation:tw-blink 0.9s steps(1) infinite;
-}
-@keyframes tw-blink{50%{opacity:0;}}
-
-/* subtle luxurious hover lift on interactive blocks */
-.card, .price-tier, .step-item, .doctrine-item{
-  transition:background 0.35s ease, border-color 0.35s ease, transform 0.6s cubic-bezier(.19,1,.22,1);
-}
-</style>
 <script>
+// SLOW LUXURIOUS REVEAL ON SCROLL
 (function(){
-  function typewriterHTML(el, speed){
-    speed = speed || 32;
-    var html = el.innerHTML;
-    el.innerHTML = '';
-    el.classList.add('tw-cursor');
-    var i = 0;
-    function step(){
-      if(i >= html.length){ el.classList.remove('tw-cursor'); return; }
-      if(html[i] === '<'){
-        var close = html.indexOf('>', i);
-        if(close === -1){ close = html.length - 1; }
-        el.innerHTML += html.slice(i, close+1);
-        i = close+1;
-      } else {
-        el.innerHTML += html[i];
-        i++;
+  var items = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var delay = Array.prototype.indexOf.call(items, entry.target) * 70;
+        setTimeout(function(){ entry.target.classList.add('is-visible'); }, delay % 420);
+        io.unobserve(entry.target);
       }
-      setTimeout(step, speed);
-    }
-    step();
-  }
-
-  function initReveal(){
-    var items = document.querySelectorAll('.reveal');
-    items.forEach(function(el, i){
-      el.style.transitionDelay = ((i % 6) * 90) + 'ms';
     });
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        }
-      });
-    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
-    items.forEach(function(el){ io.observe(el); });
-  }
-
-  function initTypewriter(){
-    document.querySelectorAll('.typewriter').forEach(function(el){
-      typewriterHTML(el, 30);
-    });
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ initReveal(); initTypewriter(); });
-  } else {
-    initReveal(); initTypewriter();
-  }
+  }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+  items.forEach(function(el){ io.observe(el); });
 })();
 </script>
 
+<script>
+// TYPEWRITER HEADLINE
+(function(){
+  var el = document.getElementById('tw-title');
+  if(!el) return;
+  var lines = ['Founding participants define','the standard everyone else follows.'];
+  var caret = document.createElement('span');
+  caret.className = 'typewriter-caret';
+  caret.textContent = ' ';
+  var li = 0, ci = 0;
+  function type(){
+    if(li >= lines.length){ caret.remove(); return; }
+    if(ci <= lines[li].length){
+      var html = '';
+      for(var k=0;k<li;k++){ html += lines[k] + '<br>'; }
+      html += lines[li].slice(0, ci);
+      el.innerHTML = html;
+      el.appendChild(caret);
+      ci++;
+      setTimeout(type, 42 + Math.random()*32);
+    } else {
+      li++; ci = 0;
+      setTimeout(type, 260);
+    }
+  }
+  setTimeout(type, 300);
+})();
+</script>
 </body>
 </html>

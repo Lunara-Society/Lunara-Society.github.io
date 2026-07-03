@@ -309,30 +309,66 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Initiation</p>
-    <h1 class="page-title">Your Business.<br>Declared. Protected. Found.</h1>
-    <p class="page-sub">The Shield is not a product. It is a status. A permanent record that your business exists, operates with integrity, and has declared how it engages with intelligent systems.</p>
+    <h1 class="page-title">Your Business.<br>Verified. Accountable. Found.</h1>
+    <p class="page-sub">The Shield is a status you earn through verification, not a badge you buy. A reviewer checks your business registration and domain before anything goes live — and certification can be revoked if standards are later violated.</p>
     <div class="gold-rule"></div>
+    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">How verification actually works</h2>
     <div class="step-list">
-      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">Permanent Lunara ID assigned to your business</div><div class="step-text">A unique institutional identifier — LUN-BUS-YYYY-NNNNN — permanently assigned and registered in the Lunara database.</div></div></div>
-      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Registry entry published — machine-readable and AI-queryable</div><div class="step-text">Your record is publicly accessible. AI systems can query it to verify your identity and communication preferences before initiating contact.</div></div></div>
-      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Communication Policy declared and live on your domain</div><div class="step-text">A structured document specifying which channels you accept, what response times to expect, and how AI agents should interact with your business.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">AI Discovery Stack deployed — llms.txt, ai.json, identity.json</div><div class="step-text">The machine-readable files AI systems read before making decisions about your business. Your identity, declared and discoverable.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Shield Status badge activated</div><div class="step-text">Verified, protected, institutional. You are visible to the systems that matter.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Member Area access granted</div><div class="step-text">A private dashboard to manage your shield status, review AI interaction logs, and update preferences as the protocol evolves.</div></div></div>
+      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You submit an application</div><div class="step-text">Business name, website, domain, legal registration number, and contact email. Free to apply — no payment required to be reviewed.</div></div></div>
+      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Identity verification</div><div class="step-text">Your legal business registration is checked against official records before anything is marked verified.</div></div></div>
+      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Domain verification</div><div class="step-text">We confirm you actually control the domain you're applying under, via DNS or a verified email at that domain.</div></div></div>
+      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Human review — no automatic approval</div><div class="step-text">A reviewer checks the evidence and signs their name to the decision. Applications are not approved automatically, by an AI, or on payment.</div></div></div>
+      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Decision: approved, rejected, or sent back for more evidence</div><div class="step-text">Only approved applications receive a public Lunara ID and a registry entry. Rejections can be appealed with additional evidence.</div></div></div>
+      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Public, checkable registry entry</div><div class="step-text">Anyone — a customer, a journalist, another AI system — can look up your status directly. Status shown is always the true current status.</div></div></div>
+      <div class="step-item"><span class="step-num">07</span><div><div class="step-title">Ongoing accountability</div><div class="step-text">Certification can be reviewed and revoked if standards are later violated. Permanent and unaccountable are not the same thing — ours is accountable.</div></div></div>
     </div>
     <div class="gold-rule"></div>
-    <h2 class="page-title" style="font-size:clamp(22px,3vw,40px);">Chapter XI — The Shield Experience</h2>
-    <div class="step-list" style="margin-top:clamp(16px,3vw,28px);">
-      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You complete the founding participant process</div><div class="step-text">One-time participation fee. No subscription. No hidden costs. You become part of the founding cohort.</div></div></div>
-      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Your Lunara ID is assigned</div><div class="step-text">A permanent institutional identifier — LUN-BUS-YYYY-NNNNN — issued to your business and registered in the Lunara database.</div></div></div>
-      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Your registry record goes live</div><div class="step-text">Publicly accessible. Machine-readable. AI systems can query your record to verify your identity before initiating contact.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Your Communication Policy is declared</div><div class="step-text">Specifies which channels you accept, expected response times, and how AI agents should interact with your business.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">AI Discovery Stack deployed to your domain</div><div class="step-text">llms.txt, ai.json, and identity.json — the files AI systems read before making decisions about your business.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Member Area access</div><div class="step-text">Manage shield status, review AI interaction logs, and update preferences as the protocol evolves.</div></div></div>
-      <div class="step-item"><span class="step-num">07</span><div><div class="step-title">Your institutional record is permanent</div><div class="step-text">Unlike social profiles and reviews, your Lunara record cannot be deleted, manipulated, or ignored. It is structural. It is yours. It lasts.</div></div></div>
-    </div>
+    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Apply for Shield Certification</h2>
+    <p class="page-sub">This starts the real review process above. It does not grant instant status — you'll get an application ID and a pending status while we verify.</p>
+    <form id="shield-apply-form" style="display:flex;flex-direction:column;gap:14px;max-width:520px;margin-top:20px;">
+      <input type="text" id="sa-business-name" placeholder="Business legal name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="url" id="sa-website" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="text" id="sa-domain" placeholder="Domain (e.g. yourbusiness.com)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="email" id="sa-email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="text" id="sa-regnum" placeholder="Legal registration number" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="text" id="sa-country" placeholder="Registration country" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <button type="submit" class="cta-btn" style="border:none;">Submit application →</button>
+      <div id="sa-result" style="font-size:13px;color:var(--white-70);line-height:1.6;"></div>
+    </form>
+    <script>
+    document.getElementById('shield-apply-form').addEventListener('submit', async function(e){
+      e.preventDefault();
+      var resultEl = document.getElementById('sa-result');
+      resultEl.textContent = 'Submitting...';
+      try {
+        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldApply', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            business_name: document.getElementById('sa-business-name').value,
+            website_url: document.getElementById('sa-website').value,
+            domain: document.getElementById('sa-domain').value,
+            contact_email: document.getElementById('sa-email').value,
+            legal_registration_number: document.getElementById('sa-regnum').value,
+            registration_country: document.getElementById('sa-country').value
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          resultEl.innerHTML = 'Application received. Your reference ID is <strong style="color:var(--gold);">' + data.public_id + '</strong> — status: pending review. ' + data.message;
+          document.getElementById('shield-apply-form').reset();
+        } else {
+          resultEl.textContent = 'Error: ' + (data.error || 'Something went wrong, please try again.');
+        }
+      } catch(err) {
+        resultEl.textContent = 'Could not submit right now. Please try again shortly.';
+      }
+    });
+    </script>
     <div class="gold-rule"></div>
-    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
+    <p class="page-sub" style="font-size:13px;">Founding Participant is a separate, optional paid program for priority handling and cohort recognition — it does not grant verified status by itself. Every business, paid or not, goes through the same identity and domain review above.</p>
+    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">About Founding Participation →</span>
+
   </div>
   <footer class="page-footer">
     <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>

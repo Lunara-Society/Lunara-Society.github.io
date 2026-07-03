@@ -309,23 +309,23 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Initiation</p>
-    <h1 class="page-title">Your Business.<br>Verified. Accountable. Found.</h1>
+    <h1 class="page-title typewriter">Your Business.<br>Verified. Accountable. Found.</h1>
     <p class="page-sub">The Shield is a status you earn through verification, not a badge you buy. A reviewer checks your business registration and domain before anything goes live — and certification can be revoked if standards are later violated.</p>
     <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">How verification actually works</h2>
-    <div class="step-list">
-      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You submit an application</div><div class="step-text">Business name, website, domain, legal registration number, and contact email. Free to apply — no payment required to be reviewed.</div></div></div>
-      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Identity verification</div><div class="step-text">Your legal business registration is checked against official records before anything is marked verified.</div></div></div>
-      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Domain verification</div><div class="step-text">We confirm you actually control the domain you're applying under, via DNS or a verified email at that domain.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Human review — no automatic approval</div><div class="step-text">A reviewer checks the evidence and signs their name to the decision. Applications are not approved automatically, by an AI, or on payment.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Decision: approved, rejected, or sent back for more evidence</div><div class="step-text">Only approved applications receive a public Lunara ID and a registry entry. Rejections can be appealed with additional evidence.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Public, checkable registry entry</div><div class="step-text">Anyone — a customer, a journalist, another AI system — can look up your status directly. Status shown is always the true current status.</div></div></div>
-      <div class="step-item"><span class="step-num">07</span><div><div class="step-title">Ongoing accountability</div><div class="step-text">Certification can be reviewed and revoked if standards are later violated. Permanent and unaccountable are not the same thing — ours is accountable.</div></div></div>
+    <div class="step-list reveal">
+      <div class="step-item reveal"><span class="step-num">01</span><div><div class="step-title">You submit an application</div><div class="step-text">Business name, website, domain, legal registration number, and contact email. Free to apply — no payment required to be reviewed.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">02</span><div><div class="step-title">Identity verification</div><div class="step-text">Your legal business registration is checked against official records before anything is marked verified.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">03</span><div><div class="step-title">Domain verification</div><div class="step-text">We confirm you actually control the domain you're applying under, via DNS or a verified email at that domain.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">04</span><div><div class="step-title">Human review — no automatic approval</div><div class="step-text">A reviewer checks the evidence and signs their name to the decision. Applications are not approved automatically, by an AI, or on payment.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">05</span><div><div class="step-title">Decision: approved, rejected, or sent back for more evidence</div><div class="step-text">Only approved applications receive a public Lunara ID and a registry entry. Rejections can be appealed with additional evidence.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">06</span><div><div class="step-title">Public, checkable registry entry</div><div class="step-text">Anyone — a customer, a journalist, another AI system — can look up your status directly. Status shown is always the true current status.</div></div></div>
+      <div class="step-item reveal"><span class="step-num">07</span><div><div class="step-title">Ongoing accountability</div><div class="step-text">Certification can be reviewed and revoked if standards are later violated. Permanent and unaccountable are not the same thing — ours is accountable.</div></div></div>
     </div>
     <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Apply for Shield Certification</h2>
     <p class="page-sub">This starts the real review process above. It does not grant instant status — you'll get an application ID and a pending status while we verify.</p>
-    <form id="shield-apply-form" style="display:flex;flex-direction:column;gap:14px;max-width:520px;margin-top:20px;">
+    <form id="shield-apply-form" class="reveal" style="display:flex;flex-direction:column;gap:14px;max-width:520px;margin-top:20px;">
       <input type="text" id="sa-business-name" placeholder="Business legal name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <input type="url" id="sa-website" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <input type="text" id="sa-domain" placeholder="Domain (e.g. yourbusiness.com)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
@@ -476,5 +476,85 @@ function goHome(){
 })();
 </script>
 <!-- END MOBILE BACK BUTTON -->
+
+<style>
+/* ELITE REVEAL SYSTEM */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity 1.3s cubic-bezier(.19,1,.22,1), transform 1.3s cubic-bezier(.19,1,.22,1);
+  will-change:opacity, transform;
+}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+
+/* TYPEWRITER CURSOR */
+.tw-cursor::after{
+  content:'|';
+  display:inline-block;
+  margin-left:5px;
+  color:var(--gold);
+  animation:tw-blink 0.9s steps(1) infinite;
+}
+@keyframes tw-blink{50%{opacity:0;}}
+
+/* subtle luxurious hover lift on interactive blocks */
+.card, .price-tier, .step-item, .doctrine-item{
+  transition:background 0.35s ease, border-color 0.35s ease, transform 0.6s cubic-bezier(.19,1,.22,1);
+}
+</style>
+<script>
+(function(){
+  function typewriterHTML(el, speed){
+    speed = speed || 32;
+    var html = el.innerHTML;
+    el.innerHTML = '';
+    el.classList.add('tw-cursor');
+    var i = 0;
+    function step(){
+      if(i >= html.length){ el.classList.remove('tw-cursor'); return; }
+      if(html[i] === '<'){
+        var close = html.indexOf('>', i);
+        if(close === -1){ close = html.length - 1; }
+        el.innerHTML += html.slice(i, close+1);
+        i = close+1;
+      } else {
+        el.innerHTML += html[i];
+        i++;
+      }
+      setTimeout(step, speed);
+    }
+    step();
+  }
+
+  function initReveal(){
+    var items = document.querySelectorAll('.reveal');
+    items.forEach(function(el, i){
+      el.style.transitionDelay = ((i % 6) * 90) + 'ms';
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  function initTypewriter(){
+    document.querySelectorAll('.typewriter').forEach(function(el){
+      typewriterHTML(el, 30);
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ initReveal(); initTypewriter(); });
+  } else {
+    initReveal(); initTypewriter();
+  }
+})();
+</script>
+
 </body>
 </html>

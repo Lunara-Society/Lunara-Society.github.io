@@ -293,11 +293,11 @@ input,textarea{
 }
 
 
-/* REVEAL ON SCROLL — slow, luxurious */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 1.4s cubic-bezier(0.16,1,0.3,1),transform 1.4s cubic-bezier(0.16,1,0.3,1);}
+/* IMMERSION — reveal + typewriter */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 1.3s cubic-bezier(0.16,1,0.3,1),transform 1.3s cubic-bezier(0.16,1,0.3,1);}
 .reveal.is-visible{opacity:1;transform:translateY(0);}
-.typewriter-caret{display:inline-block;width:2px;background:var(--gold);margin-left:2px;animation:caretBlink 0.85s step-end infinite;}
-@keyframes caretBlink{50%{opacity:0;}}
+.typewriter-cursor{display:inline-block;width:1px;background:var(--gold);margin-left:2px;animation:tw-blink 0.9s step-end infinite;}
+@keyframes tw-blink{50%{opacity:0;}}
 </style>
 </head>
 <body>
@@ -315,9 +315,9 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Legacy</p>
-    <h1 class="page-title" id="tw-title"></h1>
-    <p class="page-sub reveal">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
-    <div class="gold-rule reveal"></div>
+    <h1 class="page-title">The Public Record</h1>
+    <p class="page-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
+    <div class="gold-rule"></div>
     <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin-bottom:clamp(20px,3vw,32px);">
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
         <div class="card-num">Status</div><div class="card-title">Active</div>
@@ -332,15 +332,15 @@ input,textarea{
         <div class="card-text">Lunara Protocol · Active</div>
       </div>
     </div>
-    <div class="gold-rule reveal"></div>
+    <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Look up a business</h2>
-    <p class="page-sub reveal">Check the real, current status of any applicant or member — this queries the live registry directly, not a cached claim.</p>
+    <p class="page-sub">Check the real, current status of any applicant or member — this queries the live registry directly, not a cached claim.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;max-width:520px;">
       <input type="text" id="reg-lookup-input" placeholder="Domain or Lunara reference ID" style="flex:1;min-width:200px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <button id="reg-lookup-btn" class="cta-btn" style="border:none;cursor:pointer;">Check status →</button>
     </div>
     <div id="reg-lookup-result" style="font-size:13px;color:var(--white-70);line-height:1.6;margin-bottom:12px;"></div>
-    <div class="gold-rule reveal"></div>
+    <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Certified businesses</h2>
     <div id="reg-live-list" style="font-size:13px;color:var(--white-70);line-height:1.8;margin:16px 0;">Loading…</div>
     <script>
@@ -379,7 +379,7 @@ input,textarea{
       }
     });
     </script>
-    <div class="registry-block reveal">
+    <div class="registry-block">
       <div class="registry-label">Live registry entry format — LUN-PROTO-1.0</div>{
   "lunara_id":              "LUN-BUS-2026-XXXXXXX",
   "entity_name":            "Your Business",
@@ -392,24 +392,24 @@ input,textarea{
   "communication_policy":   "declared",
   "protocol_version":       "LUN-PROTO-1.0"
 }</div>
-    <div class="gold-rule reveal"></div>
+    <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.8vw,36px);">Founding Participant Program</h2>
-    <p class="page-sub reveal">The first 10 participants shape the standard. Founding status is permanent — recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
-    <div class="card-grid reveal">
+    <p class="page-sub">The first 10 participants shape the standard. Founding status is permanent — recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
+    <div class="card-grid">
       <div class="card"><div class="card-num">Lunara ID</div><div class="card-title">Permanent Identity</div><div class="card-text">A permanent verified identity assigned to the participant. Format: LUN-BUS-000XXX</div></div>
       <div class="card"><div class="card-num">Entity Identity</div><div class="card-title">Machine-Readable</div><div class="card-text">Business name, domain, and industry classification — indexed and AI-queryable.</div></div>
       <div class="card"><div class="card-num">Trust Signals</div><div class="card-title">Reputation</div><div class="card-text">Interaction history and reputation signals that compound over time into institutional memory.</div></div>
     </div>
-    <div class="gold-rule reveal"></div>
+    <div class="gold-rule"></div>
     <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
   </div>
   <footer class="page-footer">
     <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
     <div class="footer-links">
       <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNav('newsletter.html')">Dispatch</span>
       <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
       <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
+      <span class="footer-link" onclick="fadeNav('newsletter.html')">Dispatch</span>
       <a href="mailto:maya@lunarasociety.com" class="footer-link">Contact</a>
     </div>
   </footer>
@@ -433,6 +433,53 @@ window.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
+<script>
+// IMMERSION — scroll reveal
+(function(){
+  var els = document.querySelectorAll('.step-item, .card, .price-tier, .doctrine-item, .registry-block, #shield-apply-form, #reg-lookup-btn, #reg-live-list');
+  var counters = {};
+  els.forEach(function(el){
+    el.classList.add('reveal');
+    var parent = el.parentElement;
+    var key = parent ? (parent.className || 'root') : 'root';
+    counters[key] = (counters[key]||0);
+    el.style.transitionDelay = (counters[key]*70) + 'ms';
+    counters[key]++;
+  });
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12});
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+// IMMERSION — typewriter on eyebrow
+(function(){
+  var el = document.querySelector('.eyebrow');
+  if(!el) return;
+  var text = el.textContent;
+  el.textContent = '';
+  var cursor = document.createElement('span');
+  cursor.className = 'typewriter-cursor';
+  cursor.textContent = '\u00A0';
+  el.after(cursor);
+  var i = 0;
+  function tick(){
+    if(i <= text.length){
+      el.textContent = text.slice(0, i);
+      i++;
+      setTimeout(tick, 55);
+    } else {
+      setTimeout(function(){ cursor.remove(); }, 1200);
+    }
+  }
+  tick();
+})();
+</script>
 <!-- MOBILE BACK BUTTON — injected by Rosario 2026-06-30 -->
 <style>
 #mob-back-btn{
@@ -510,51 +557,5 @@ function goHome(){
 })();
 </script>
 <!-- END MOBILE BACK BUTTON -->
-
-<script>
-// SLOW LUXURIOUS REVEAL ON SCROLL
-(function(){
-  var items = document.querySelectorAll('.reveal');
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(entry.isIntersecting){
-        var delay = Array.prototype.indexOf.call(items, entry.target) * 70;
-        setTimeout(function(){ entry.target.classList.add('is-visible'); }, delay % 420);
-        io.unobserve(entry.target);
-      }
-    });
-  }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
-  items.forEach(function(el){ io.observe(el); });
-})();
-</script>
-
-<script>
-// TYPEWRITER HEADLINE
-(function(){
-  var el = document.getElementById('tw-title');
-  if(!el) return;
-  var lines = ['The Public Record'];
-  var caret = document.createElement('span');
-  caret.className = 'typewriter-caret';
-  caret.textContent = ' ';
-  var li = 0, ci = 0;
-  function type(){
-    if(li >= lines.length){ caret.remove(); return; }
-    if(ci <= lines[li].length){
-      var html = '';
-      for(var k=0;k<li;k++){ html += lines[k] + '<br>'; }
-      html += lines[li].slice(0, ci);
-      el.innerHTML = html;
-      el.appendChild(caret);
-      ci++;
-      setTimeout(type, 42 + Math.random()*32);
-    } else {
-      li++; ci = 0;
-      setTimeout(type, 260);
-    }
-  }
-  setTimeout(type, 300);
-})();
-</script>
 </body>
 </html>

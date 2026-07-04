@@ -1,6 +1,6 @@
 // Wren Command Center — minimal offline-shell service worker
 const CACHE = 'wren-shell-v1';
-const SHELL = ['/wren/', '/wren/index.html', '/wren/wren-icon.png', '/wren/wren-fullbody.png', '/wren/manifest.json'];
+const SHELL = ['/wren/', '/wren/index.html', '/wren/wren-icon.png', '/wren/wren-fullbody-v2.png', '/wren/manifest.json'];
 
 self.addEventListener('install', function(e){
   self.skipWaiting();

@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-// Kill old service workers immediately
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); });
-  });
-  caches.keys().then(function(keys){
-    keys.forEach(function(k){ caches.delete(k); });
-  });
-}
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
@@ -21,7 +9,6 @@ if('serviceWorker' in navigator){
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Shield OS">
 <title>Shield OS — Lunara Society</title>
-<meta name="version" content="3.1">
 <link rel="manifest" href="/shield-os/manifest.json">
 <link rel="icon" href="/shield-os/shield-logo.jpg">
 <link rel="apple-touch-icon" href="/shield-os/shield-logo.jpg">
@@ -30,18 +17,18 @@ if('serviceWorker' in navigator){
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --gold:#D4B57A;
-  --gold-10:rgba(212,181,122,0.12);
-  --gold-18:rgba(212,181,122,0.25);
-  --gold-28:rgba(212,181,122,0.60);
-  --gold-45:rgba(212,181,122,0.85);
-  --gold-65:rgba(212,181,122,0.95);
-  --gold-85:#D4B57A;
+  --gold:#C4A46B;
+  --gold-10:rgba(196,164,107,0.10);
+  --gold-18:rgba(196,164,107,0.18);
+  --gold-28:rgba(196,164,107,0.55);
+  --gold-45:rgba(196,164,107,0.75);
+  --gold-65:rgba(196,164,107,0.88);
+  --gold-85:rgba(196,164,107,0.85);
   --black:#000;
-  --glass:rgba(5,4,2,0.88);
-  --glass-light:rgba(8,6,4,0.80);
-  --border:rgba(212,181,122,0.40);
-  --border-mid:rgba(212,181,122,0.60);
+  --glass:rgba(10,8,5,0.92);
+  --glass-light:rgba(8,6,4,0.72);
+  --border:rgba(196,164,107,0.35);
+  --border-mid:rgba(196,164,107,0.50);
   --red:rgba(220,80,70,0.85);
   --green:rgba(80,200,120,0.85);
   --amber:rgba(220,180,60,0.85);
@@ -58,7 +45,7 @@ html,body{
 /* ── BOOT ───────────────────────────────────── */
 #boot{
   position:fixed;inset:0;z-index:999;background:#000;
-  display:none !important;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   transition:opacity 1s ease;
 }
 #boot.out{opacity:0;pointer-events:none;}
@@ -77,12 +64,12 @@ html,body{
 @keyframes bSweep{0%{margin-left:-100%;}100%{margin-left:100%;}}
 
 /* ── SHELL ──────────────────────────────────── */
-#shell{position:fixed;inset:0;opacity:1;transition:opacity 0.8s ease;pointer-events:auto;}
+#shell{position:fixed;inset:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none;}
 #shell.on{opacity:1;pointer-events:all;}
 #bg{position:absolute;inset:0;background:url("/shield-os/bg-mobile.jpg") center/cover;z-index:0;}
 #veil{
   position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:rgba(0,0,0,0.82);
+  background:linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 38%,rgba(0,0,0,0.65) 68%,rgba(0,0,0,0.96) 100%);
 }
 .dust{position:absolute;z-index:2;pointer-events:none;width:1px;height:1px;border-radius:50%;background:rgba(196,164,107,0.45);animation:dustRise linear infinite;}
 @keyframes dustRise{0%{transform:translateY(0) translateX(0);opacity:0;}12%{opacity:1;}88%{opacity:0.3;}100%{transform:translateY(-75vh) translateX(var(--dx));opacity:0;}}
@@ -90,14 +77,12 @@ html,body{
 /* ── TOP BAR ───────────────────────────────── */
 #topbar{
   position:absolute;top:0;left:0;right:0;z-index:20;
-  padding:max(env(safe-area-inset-top),16px) 18px 10px;
+  padding:max(env(safe-area-inset-top),16px) 18px 0;
   display:flex;align-items:flex-start;justify-content:space-between;
-  background:rgba(5,4,2,0.96);
-  border-bottom:1px solid rgba(212,181,122,0.25);
 }
 #topbar-left{display:flex;flex-direction:column;}
-.tb-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;letter-spacing:0.3em;text-transform:uppercase;color:#D4B57A;}
-.tb-sub{font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(212,181,122,0.80);margin-top:3px;}
+.tb-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;letter-spacing:0.36em;text-transform:uppercase;color:var(--gold-65);}
+.tb-sub{font-size:6px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold-28);margin-top:3px;}
 .tb-right{display:flex;align-items:center;gap:10px;padding-top:2px;}
 .tb-badge{
   font-size:6px;letter-spacing:0.2em;text-transform:uppercase;
@@ -127,7 +112,6 @@ html,body{
 #bnav{
   position:absolute;bottom:0;left:0;right:0;z-index:20;
   padding-bottom:max(env(safe-area-inset-bottom),18px);
-  background:rgba(5,4,2,0.97);
 }
 .bnav-rule{height:1px;margin:0 16px 10px;background:linear-gradient(to right,transparent,var(--gold-28) 30%,var(--gold-45) 50%,var(--gold-28) 70%,transparent);}
 .bnav-grid{display:flex;justify-content:space-around;align-items:flex-end;padding:0 4px;}
@@ -147,7 +131,7 @@ html,body{
   transition:border-color 0.22s,box-shadow 0.22s,background 0.22s;
 }
 .bni-icon svg{width:48%;height:48%;opacity:0.62;transition:opacity 0.2s;}
-.bni-label{font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(212,181,122,0.85);transition:color 0.2s;white-space:nowrap;}
+.bni-label{font-size:6px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-45);transition:color 0.2s;white-space:nowrap;}
 .bni.active .bni-icon,.bni.touched .bni-icon{border-color:var(--gold-65);box-shadow:0 0 14px rgba(196,164,107,0.22);background:rgba(196,164,107,0.07);}
 .bni.active .bni-icon svg,.bni.touched .bni-icon svg{opacity:1;}
 .bni.active .bni-label,.bni.touched .bni-label{color:var(--gold-85);}
@@ -159,8 +143,8 @@ html,body{
 }
 .panel.open{display:flex;}
 .ph{padding:max(env(safe-area-inset-top),52px) 18px 0;flex-shrink:0;}
-.ph-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(20px,5.5vw,28px);letter-spacing:0.15em;color:#D4B57A;margin-bottom:3px;}
-.ph-sub{font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(212,181,122,0.90);}
+.ph-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(18px,5.5vw,26px);letter-spacing:0.2em;color:var(--gold-85);margin-bottom:3px;}
+.ph-sub{font-size:7px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold-45);}
 .ph-rule{height:1px;background:linear-gradient(to right,var(--gold-28),transparent);margin:12px 0;}
 .pb{flex:1;overflow-y:auto;padding:0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .pb::-webkit-scrollbar{display:none;}
@@ -168,7 +152,7 @@ html,body{
 
 /* ── CARDS ──────────────────────────────────── */
 .card{
-  background:rgba(18,14,8,0.97);border:1px solid rgba(212,181,122,0.45);
+  background:var(--glass);border:1px solid var(--border);
   border-radius:12px;padding:14px 16px;margin-bottom:10px;
   cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;
   position:relative;overflow:hidden;
@@ -176,8 +160,8 @@ html,body{
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold-28);border-radius:2px 0 0 2px;transition:background 0.2s;}
 .card:active::before,.card.hi::before{background:var(--gold);}
 .card:active,.card.hi{border-color:var(--gold-45);box-shadow:0 0 18px rgba(196,164,107,0.12);}
-.c-label{font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:#D4B57A;margin-bottom:5px;display:block;font-weight:500;}
-.c-title{font-family:"Cormorant Garamond",serif;font-size:17px;letter-spacing:0.06em;color:#ffffff;margin-bottom:5px;}
+.c-label{font-size:6.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-45);margin-bottom:5px;display:block;}
+.c-title{font-family:"Cormorant Garamond",serif;font-size:16px;letter-spacing:0.08em;color:rgba(255,255,255,0.98);margin-bottom:4px;}
 .c-desc{font-size:9px;letter-spacing:0.06em;color:rgba(255,255,255,0.75);line-height:1.55;}
 .c-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
 .c-tag{font-size:6px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-45);border:1px solid var(--gold-18);border-radius:20px;padding:2px 7px;background:rgba(196,164,107,0.04);}
@@ -188,7 +172,7 @@ html,body{
 .c-arr{font-size:10px;color:var(--gold-45);}
 
 /* Section headers */
-.sec{font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:#D4B57A;margin:18px 0 10px;padding-left:2px;display:flex;align-items:center;gap:8px;font-weight:500;}
+.sec{font-size:6.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-28);margin:16px 0 8px;padding-left:2px;display:flex;align-items:center;gap:8px;}
 .sec::after{content:"";flex:1;height:1px;background:var(--gold-18);}
 .dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;}
 .dot.green{background:rgba(100,200,100,0.8);}
@@ -216,14 +200,14 @@ html,body{
 /* ── STAT GRID ──────────────────────────────── */
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
 .stat{
-  background:rgba(18,14,8,0.97);border:1px solid rgba(212,181,122,0.45);
+  background:var(--glass);border:1px solid var(--border);
   border-radius:10px;padding:12px 10px;
   display:flex;flex-direction:column;align-items:center;gap:4px;
   cursor:pointer;transition:border-color 0.2s;
 }
 .stat:active{border-color:var(--gold-45);}
-.stat-val{font-family:"Cormorant Garamond",serif;font-size:28px;color:#D4B57A;letter-spacing:0.05em;line-height:1;}
-.stat-label{font-size:7px;letter-spacing:0.14em;text-transform:uppercase;color:#D4B57A;text-align:center;line-height:1.4;font-weight:500;}
+.stat-val{font-family:"Cormorant Garamond",serif;font-size:26px;color:var(--gold-85);letter-spacing:0.05em;line-height:1;}
+.stat-label{font-size:6px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-28);text-align:center;line-height:1.4;}
 .stat-val.red{color:rgba(220,100,90,0.9);}
 .stat-val.green{color:rgba(100,200,140,0.9);}
 .stat-val.amber{color:rgba(220,180,60,0.9);}
@@ -243,7 +227,7 @@ html,body{
 .priority{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid var(--gold-10);cursor:pointer;}
 .priority:active{background:rgba(196,164,107,0.04);}
 .priority-num{font-family:"Cormorant Garamond",serif;font-size:13px;color:var(--gold-28);flex-shrink:0;margin-top:1px;width:18px;}
-.priority-text{font-size:10px;color:#ffffff;line-height:1.55;letter-spacing:0.04em;}
+.priority-text{font-size:10px;color:rgba(255,255,255,0.84);line-height:1.55;letter-spacing:0.04em;}
 
 /* ── INTELLIGENCE FEED ──────────────────────── */
 .feed-item{
@@ -260,9 +244,9 @@ html,body{
   flex-shrink:0;
 }
 .feed-content{flex:1;}
-.feed-agent{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:#D4B57A;margin-bottom:4px;font-weight:500;}
-.feed-text{font-size:10px;color:#ffffff;line-height:1.5;letter-spacing:0.03em;}
-.feed-time{font-size:8px;letter-spacing:0.08em;color:rgba(255,255,255,0.55);margin-top:4px;}
+.feed-agent{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);margin-bottom:3px;}
+.feed-text{font-size:10px;color:rgba(255,255,255,0.92);line-height:1.5;letter-spacing:0.03em;}
+.feed-time{font-size:7px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);margin-top:4px;}
 .feed-type{
   font-size:6px;letter-spacing:0.14em;text-transform:uppercase;
   border:1px solid var(--gold-18);border-radius:20px;padding:2px 6px;
@@ -286,8 +270,8 @@ html,body{
   font-size:14px;
 }
 .tl-content{flex:1;padding-top:4px;}
-.tl-date{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:#D4B57A;margin-bottom:5px;}
-.tl-title{font-family:"Cormorant Garamond",serif;font-size:15px;color:#ffffff;letter-spacing:0.05em;margin-bottom:4px;}
+.tl-date{font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-28);margin-bottom:4px;}
+.tl-title{font-family:"Cormorant Garamond",serif;font-size:14px;color:rgba(255,255,255,0.85);letter-spacing:0.06em;margin-bottom:3px;}
 .tl-desc{font-size:9px;color:rgba(255,255,255,0.75);line-height:1.5;}
 
 /* ── FOUNDER LOG ────────────────────────────── */
@@ -296,8 +280,8 @@ html,body{
   border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;
 }
 .log-item:active{border-color:var(--gold-45);}
-.log-date{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:#D4B57A;margin-bottom:8px;}
-.log-q{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:#D4B57A;line-height:1.45;margin-bottom:8px;}
+.log-date{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-28);margin-bottom:6px;}
+.log-q{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--gold-65);line-height:1.4;margin-bottom:6px;}
 .log-a{font-size:9px;color:rgba(255,255,255,0.78);line-height:1.6;}
 .log-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 
@@ -313,9 +297,9 @@ html,body{
 }
 .agent-info{display:flex;flex-direction:column;gap:3px;}
 .agent-name{font-family:"Cormorant Garamond",serif;font-size:17px;letter-spacing:0.08em;color:rgba(255,255,255,1);}
-.agent-role{font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:#D4B57A;}
+.agent-role{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);}
 .agent-status{display:flex;align-items:center;gap:5px;margin-top:2px;}
-.agent-status-text{font-size:8px;color:#ffffff;letter-spacing:0.08em;}
+.agent-status-text{font-size:8px;color:rgba(255,255,255,0.92);letter-spacing:0.08em;}
 
 /* ── ACTION BUTTONS ─────────────────────────── */
 .action-row{display:flex;gap:8px;margin-bottom:4px;}
@@ -360,7 +344,7 @@ html,body{
 .notif-item.unread{background:rgba(196,164,107,0.05);border-color:var(--gold-18);}
 .notif-item:active{border-color:var(--gold-45);}
 .ni-agent{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-45);margin-bottom:4px;}
-.ni-text{font-size:10px;color:#ffffff;line-height:1.5;}
+.ni-text{font-size:10px;color:rgba(255,255,255,0.92);line-height:1.5;}
 .ni-time{font-size:7px;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:0.1em;}
 .ni-badge{
   display:inline-block;font-size:6px;letter-spacing:0.14em;text-transform:uppercase;
@@ -438,7 +422,7 @@ html,body{
 .so-result:active{border-color:var(--gold-45);}
 .so-r-scope{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-45);margin-bottom:4px;}
 .so-r-title{font-size:13px;color:rgba(255,255,255,0.85);font-family:"Cormorant Garamond",serif;letter-spacing:0.06em;margin-bottom:3px;}
-.so-r-desc{font-size:9px;color:#ffffff;line-height:1.45;}
+.so-r-desc{font-size:9px;color:rgba(255,255,255,0.92);line-height:1.45;}
 .so-empty{font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;padding:16px 2px;}
 
 /* ── VOICE BUTTON ───────────────────────────── */
@@ -466,7 +450,7 @@ html,body{
 }
 .inst-crest{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold-28);background:url("/shield-os/shield-logo.jpg") center/cover;}
 .inst-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--gold-65);letter-spacing:0.15em;}
-.inst-sub{font-size:8px;color:#ffffff;text-align:center;letter-spacing:0.06em;line-height:1.5;}
+.inst-sub{font-size:8px;color:rgba(255,255,255,0.92);text-align:center;letter-spacing:0.06em;line-height:1.5;}
 .inst-btn{background:rgba(196,164,107,0.12);border:1px solid var(--gold-28);border-radius:28px;padding:9px 24px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-65);cursor:pointer;width:100%;text-align:center;transition:background 0.2s;}
 .inst-btn:active{background:rgba(196,164,107,0.2);}
 .inst-dim{font-size:8px;color:rgba(255,255,255,0.2);cursor:pointer;letter-spacing:0.1em;}
@@ -536,7 +520,7 @@ html,body{
 .dv-back{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);cursor:pointer;flex-shrink:0;}
 .dv-back svg{width:14px;height:14px;stroke:var(--gold-45);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .dv-title{font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:0.06em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.dv-body{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;white-space:pre-wrap;font-size:13px;color:#ffffff;line-height:1.8;letter-spacing:0.02em;font-family:"Inter",sans-serif;font-weight:300;}
+.dv-body{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;white-space:pre-wrap;font-size:13px;color:rgba(255,255,255,0.92);line-height:1.8;letter-spacing:0.02em;font-family:"Inter",sans-serif;font-weight:300;}
 .dv-body::-webkit-scrollbar{display:none;}
 
 </style>
@@ -1579,7 +1563,7 @@ document.getElementById('drive-search-input').addEventListener('input', function
     </div>
     <div class="pb">
       <div id="drive-auth-section">
-        <div style="font-size:9px;color:#ffffff;line-height:1.7;margin-bottom:18px;letter-spacing:0.04em;">
+        <div style="font-size:9px;color:rgba(255,255,255,0.92);line-height:1.7;margin-bottom:18px;letter-spacing:0.04em;">
           Connect your Google account to browse and read the institutional brain directly inside Shield OS.
         </div>
         <div class="drive-auth-btn" id="drive-signin-btn" onclick="driveSignIn()">
@@ -1689,28 +1673,24 @@ document.getElementById('drive-search-input').addEventListener('input', function
   <div id="detail-body"><div class="detail-pad"></div></div>
 </div>
 
-<!-- INSTALL MODAL -->
-<div id="inst" style="display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);">
-  <div style="background:rgba(12,10,6,0.99);border:1px solid rgba(212,181,122,0.5);border-radius:20px;padding:32px 24px;margin:24px;display:flex;flex-direction:column;align-items:center;gap:16px;max-width:340px;width:100%;">
-    <div class="inst-crest" style="width:60px;height:60px;border:2px solid rgba(212,181,122,0.6);"></div>
-    <div style="text-align:center;">
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#D4B57A;letter-spacing:0.15em;margin-bottom:6px;">Install Shield OS</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;letter-spacing:0.03em;">Add to your home screen.<br>Launches fullscreen — no browser bar.</div>
-    </div>
-    <div id="inst-btn" style="width:100%;background:rgba(212,181,122,0.15);border:1px solid rgba(212,181,122,0.6);border-radius:40px;padding:14px;text-align:center;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#D4B57A;cursor:pointer;font-weight:500;">
-      Add to Home Screen
-    </div>
-    <div id="inst-dim" style="font-size:10px;color:rgba(255,255,255,0.4);cursor:pointer;letter-spacing:0.1em;padding:4px 16px;">
-      Not now
-    </div>
-  </div>
+<!-- INSTALL BANNER -->
+<div id="inst" style="display:none;flex-direction:column;align-items:center;gap:8px;">
+  <div class="inst-crest"></div>
+  <span class="inst-title">Install Shield OS</span>
+  <span class="inst-sub">Add to home screen. Launches fullscreen, works offline.</span>
+  <div class="inst-btn" id="inst-btn">Add to Home Screen</div>
+  <span class="inst-dim" id="inst-dim">Later</span>
 </div>
 
 <div id="curtain"></div>
 
 <script>
 // ── SERVICE WORKER ────────────────────────────────────
-// Service worker disabled
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/shield-os/sw.js',{scope:'/shield-os/'}).catch(function(){});
+  });
+}
 
 // ── CLOCK ─────────────────────────────────────────────
 function tickClock(){
@@ -1725,14 +1705,26 @@ tickClock(); setInterval(tickClock,30000);
   document.getElementById('today-date').textContent=months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
 })();
 
-// ── BOOT — SKIPPED, SHELL LOADS IMMEDIATELY ───────────
-document.addEventListener('DOMContentLoaded',function(){
-  var boot=document.getElementById('boot');
-  var shell=document.getElementById('shell');
-  if(boot) boot.style.display='none';
-  if(shell){ shell.style.opacity='1'; shell.style.pointerEvents='auto'; shell.classList.add('on'); }
-  try{spawnDust();}catch(e){}
-});
+// ── BOOT ─────────────────────────────────────────────
+// Decoupled from window.load — external scripts (Google APIs) must never block boot dismissal.
+(function(){
+  var dismissed = false;
+  function dismissBoot(){
+    if(dismissed) return;
+    dismissed = true;
+    var boot = document.getElementById('boot');
+    if(!boot) return;
+    boot.classList.add('out');
+    setTimeout(function(){
+      boot.style.display='none';
+      document.getElementById('shell').classList.add('on');
+      spawnDust();
+    },1050);
+  }
+  setTimeout(dismissBoot, 2200);
+  // Hard safety net in case anything above ever stalls
+  setTimeout(dismissBoot, 6000);
+})();
 
 // ── DUST ─────────────────────────────────────────────
 function spawnDust(){
@@ -1773,12 +1765,12 @@ function openDetail(title,content){
     if(!line.trim()) return '<div style="height:8px;"></div>';
     if(line.startsWith('→')||line.startsWith('✓')){
       var icon=line[0]==='✓'?'<span style="color:rgba(100,200,120,0.8);flex-shrink:0;">✓</span>':'<span style="color:var(--gold-45);flex-shrink:0;">→</span>';
-      return '<div style="display:flex;gap:8px;margin-bottom:6px;">'+icon+'<span style="font-size:10px;color:#ffffff;line-height:1.5;">'+line.slice(1).trim()+'</span></div>';
+      return '<div style="display:flex;gap:8px;margin-bottom:6px;">'+icon+'<span style="font-size:10px;color:rgba(255,255,255,0.84);line-height:1.5;">'+line.slice(1).trim()+'</span></div>';
     }
     if(line.match(/^\d+\./)){
-      return '<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--gold-28);flex-shrink:0;font-size:10px;">'+line.match(/^\d+/)[0]+'.</span><span style="font-size:10px;color:#ffffff;line-height:1.5;">'+line.replace(/^\d+\.\s*/,'')+'</span></div>';
+      return '<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--gold-28);flex-shrink:0;font-size:10px;">'+line.match(/^\d+/)[0]+'.</span><span style="font-size:10px;color:rgba(255,255,255,0.84);line-height:1.5;">'+line.replace(/^\d+\.\s*/,'')+'</span></div>';
     }
-    return '<p style="font-size:10px;color:#ffffff;line-height:1.65;margin-bottom:6px;">'+line+'</p>';
+    return '<p style="font-size:10px;color:rgba(255,255,255,0.80);line-height:1.65;margin-bottom:6px;">'+line+'</p>';
   }).join('');
   body.innerHTML=html+'<div class="detail-pad"></div>';
   document.getElementById('detail').classList.add('open');

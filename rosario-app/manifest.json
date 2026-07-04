@@ -1,0 +1,15 @@
+{
+  "name": "Rosario Command",
+  "short_name": "Rosario",
+  "description": "Live AI assistant for Lunara Society — connected to Rosario and the mission brain.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0b0f",
+  "theme_color": "#0b0b0f",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "https://lunarasociety.com/rosario-avatar.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "https://lunarasociety.com/rosario-avatar.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

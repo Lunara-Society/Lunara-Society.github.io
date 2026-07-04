@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shield OS">
+<title>Shield OS — Lunara Society</title>
+<link rel="manifest" href="/shield-os/manifest.json">
+<link rel="icon" href="/shield-os/shield-logo.jpg">
+<link rel="apple-touch-icon" href="/shield-os/shield-logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C4A46B;
+  --gold-10:rgba(196,164,107,0.10);
+  --gold-18:rgba(196,164,107,0.18);
+  --gold-28:rgba(196,164,107,0.55);
+  --gold-45:rgba(196,164,107,0.75);
+  --gold-65:rgba(196,164,107,0.88);
+  --gold-85:rgba(196,164,107,0.85);
+  --black:#000;
+  --glass:rgba(10,8,5,0.92);
+  --glass-light:rgba(8,6,4,0.72);
+  --border:rgba(196,164,107,0.35);
+  --border-mid:rgba(196,164,107,0.50);
+  --red:rgba(220,80,70,0.85);
+  --green:rgba(80,200,120,0.85);
+  --amber:rgba(220,180,60,0.85);
+}
+html,body{
+  width:100%;height:100%;background:#000;
+  font-family:"Inter",sans-serif;font-weight:300;color:#fff;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;overscroll-behavior:none;
+  -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
+  touch-action:pan-y;
+}
+
+/* ── BOOT ───────────────────────────────────── */
+#boot{
+  position:fixed;inset:0;z-index:999;background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1s ease;
+}
+#boot.out{opacity:0;pointer-events:none;}
+.b-crest{
+  width:80px;height:80px;border-radius:50%;
+  border:1px solid var(--gold-28);
+  background:url("/shield-os/shield-logo.jpg") center/cover;
+  animation:bPulse 2.8s ease-in-out infinite;
+}
+@keyframes bPulse{0%,100%{box-shadow:0 0 0 0 rgba(196,164,107,0);}50%{box-shadow:0 0 26px 5px rgba(196,164,107,0.13);}}
+.b-rule{width:70px;height:1px;background:linear-gradient(to right,transparent,var(--gold-45),transparent);margin:20px auto;}
+.b-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:18px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-65);}
+.b-sub{font-size:7.5px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-28);margin-top:8px;}
+.b-track{width:110px;height:1px;background:rgba(196,164,107,0.08);margin-top:24px;overflow:hidden;border-radius:1px;}
+.b-fill{height:100%;background:linear-gradient(to right,transparent,var(--gold-65),transparent);animation:bSweep 1.5s ease-in-out infinite;}
+@keyframes bSweep{0%{margin-left:-100%;}100%{margin-left:100%;}}
+
+/* ── SHELL ──────────────────────────────────── */
+#shell{position:fixed;inset:0;opacity:0;transition:opacity 0.8s ease;pointer-events:none;}
+#shell.on{opacity:1;pointer-events:all;}
+#bg{position:absolute;inset:0;background:url("/shield-os/bg-mobile.jpg") center/cover;z-index:0;}
+#veil{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 38%,rgba(0,0,0,0.65) 68%,rgba(0,0,0,0.96) 100%);
+}
+.dust{position:absolute;z-index:2;pointer-events:none;width:1px;height:1px;border-radius:50%;background:rgba(196,164,107,0.45);animation:dustRise linear infinite;}
+@keyframes dustRise{0%{transform:translateY(0) translateX(0);opacity:0;}12%{opacity:1;}88%{opacity:0.3;}100%{transform:translateY(-75vh) translateX(var(--dx));opacity:0;}}
+
+/* ── TOP BAR ───────────────────────────────── */
+#topbar{
+  position:absolute;top:0;left:0;right:0;z-index:20;
+  padding:max(env(safe-area-inset-top),16px) 18px 0;
+  display:flex;align-items:flex-start;justify-content:space-between;
+}
+#topbar-left{display:flex;flex-direction:column;}
+.tb-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:13px;letter-spacing:0.36em;text-transform:uppercase;color:var(--gold-65);}
+.tb-sub{font-size:6px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold-28);margin-top:3px;}
+.tb-right{display:flex;align-items:center;gap:10px;padding-top:2px;}
+.tb-badge{
+  font-size:6px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold-45);border:1px solid var(--gold-18);
+  border-radius:20px;padding:3px 8px;background:rgba(0,0,0,0.4);
+}
+#clock{font-size:10px;letter-spacing:0.15em;color:var(--gold-45);font-family:"Cormorant Garamond",serif;}
+
+/* ── NOTIFICATION BELL ──────────────────────── */
+#notif-bell{
+  position:relative;cursor:pointer;padding:4px;
+  display:flex;align-items:center;justify-content:center;
+}
+#notif-bell svg{width:16px;height:16px;opacity:0.6;transition:opacity 0.2s;}
+#notif-bell:active svg{opacity:1;}
+#notif-count{
+  position:absolute;top:0;right:0;
+  width:12px;height:12px;border-radius:50%;
+  background:rgba(220,80,70,0.9);
+  font-size:7px;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:500;line-height:1;
+}
+#notif-count.hidden{display:none;}
+
+/* ── BOTTOM NAV ────────────────────────────── */
+#bnav{
+  position:absolute;bottom:0;left:0;right:0;z-index:20;
+  padding-bottom:max(env(safe-area-inset-bottom),18px);
+}
+.bnav-rule{height:1px;margin:0 16px 10px;background:linear-gradient(to right,transparent,var(--gold-28) 30%,var(--gold-45) 50%,var(--gold-28) 70%,transparent);}
+.bnav-grid{display:flex;justify-content:space-around;align-items:flex-end;padding:0 4px;}
+.bni{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:6px 8px 4px;cursor:pointer;
+  border-radius:10px;transition:background 0.2s;
+  flex:1;position:relative;
+}
+.bni::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:1px;background:var(--gold-65);transition:width 0.2s;}
+.bni.active::after,.bni.touched::after{width:55%;}
+.bni-icon{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--gold-18);
+  background:rgba(0,0,0,0.2);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.22s,box-shadow 0.22s,background 0.22s;
+}
+.bni-icon svg{width:48%;height:48%;opacity:0.62;transition:opacity 0.2s;}
+.bni-label{font-size:6px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-45);transition:color 0.2s;white-space:nowrap;}
+.bni.active .bni-icon,.bni.touched .bni-icon{border-color:var(--gold-65);box-shadow:0 0 14px rgba(196,164,107,0.22);background:rgba(196,164,107,0.07);}
+.bni.active .bni-icon svg,.bni.touched .bni-icon svg{opacity:1;}
+.bni.active .bni-label,.bni.touched .bni-label{color:var(--gold-85);}
+
+/* ── PANELS ────────────────────────────────── */
+.panel{
+  position:absolute;inset:0;z-index:10;
+  display:none;flex-direction:column;overflow:hidden;
+}
+.panel.open{display:flex;}
+.ph{padding:max(env(safe-area-inset-top),52px) 18px 0;flex-shrink:0;}
+.ph-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(18px,5.5vw,26px);letter-spacing:0.2em;color:var(--gold-85);margin-bottom:3px;}
+.ph-sub{font-size:7px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold-45);}
+.ph-rule{height:1px;background:linear-gradient(to right,var(--gold-28),transparent);margin:12px 0;}
+.pb{flex:1;overflow-y:auto;padding:0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.pb::-webkit-scrollbar{display:none;}
+.pb-pad{height:max(env(safe-area-inset-bottom),90px);}
+
+/* ── CARDS ──────────────────────────────────── */
+.card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold-28);border-radius:2px 0 0 2px;transition:background 0.2s;}
+.card:active::before,.card.hi::before{background:var(--gold);}
+.card:active,.card.hi{border-color:var(--gold-45);box-shadow:0 0 18px rgba(196,164,107,0.12);}
+.c-label{font-size:6.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-45);margin-bottom:5px;display:block;}
+.c-title{font-family:"Cormorant Garamond",serif;font-size:16px;letter-spacing:0.08em;color:rgba(255,255,255,0.98);margin-bottom:4px;}
+.c-desc{font-size:9px;letter-spacing:0.06em;color:rgba(255,255,255,0.75);line-height:1.55;}
+.c-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.c-tag{font-size:6px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-45);border:1px solid var(--gold-18);border-radius:20px;padding:2px 7px;background:rgba(196,164,107,0.04);}
+.c-tag.green{color:rgba(120,200,120,0.7);border-color:rgba(120,200,120,0.2);}
+.c-tag.amber{color:rgba(220,180,80,0.8);border-color:rgba(220,180,80,0.22);}
+.c-tag.red{color:rgba(220,90,80,0.7);border-color:rgba(220,90,80,0.2);}
+.c-row{display:flex;align-items:center;justify-content:space-between;}
+.c-arr{font-size:10px;color:var(--gold-45);}
+
+/* Section headers */
+.sec{font-size:6.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-28);margin:16px 0 8px;padding-left:2px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:"";flex:1;height:1px;background:var(--gold-18);}
+.dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.dot.green{background:rgba(100,200,100,0.8);}
+.dot.amber{background:rgba(220,180,60,0.8);}
+.dot.red{background:rgba(220,80,70,0.8);}
+.dot.grey{background:rgba(255,255,255,0.2);}
+
+/* ── SEARCH BAR ─────────────────────────────── */
+.search-wrap{position:relative;margin-bottom:14px;}
+.search-input{
+  width:100%;background:rgba(0,0,0,0.5);
+  border:1px solid var(--border-mid);border-radius:28px;
+  padding:10px 16px 10px 38px;
+  font-family:"Inter",sans-serif;font-size:11px;font-weight:300;
+  color:rgba(255,255,255,0.8);outline:none;
+  -webkit-appearance:none;appearance:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  caret-color:var(--gold);
+}
+.search-input::placeholder{color:rgba(196,164,107,0.3);letter-spacing:0.08em;}
+.search-input:focus{border-color:var(--gold-45);box-shadow:0 0 14px rgba(196,164,107,0.1);}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.4;}
+.search-icon svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;}
+
+/* ── STAT GRID ──────────────────────────────── */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+.stat{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:10px;padding:12px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;transition:border-color 0.2s;
+}
+.stat:active{border-color:var(--gold-45);}
+.stat-val{font-family:"Cormorant Garamond",serif;font-size:26px;color:var(--gold-85);letter-spacing:0.05em;line-height:1;}
+.stat-label{font-size:6px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-28);text-align:center;line-height:1.4;}
+.stat-val.red{color:rgba(220,100,90,0.9);}
+.stat-val.green{color:rgba(100,200,140,0.9);}
+.stat-val.amber{color:rgba(220,180,60,0.9);}
+
+/* ── ALERT STRIP ────────────────────────────── */
+.alert{
+  display:flex;gap:10px;align-items:flex-start;
+  background:rgba(220,80,70,0.06);border:1px solid rgba(220,80,70,0.18);
+  border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;
+}
+.alert-dot{width:6px;height:6px;border-radius:50%;background:rgba(220,80,70,0.8);margin-top:3px;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.alert-label{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(220,100,90,0.7);display:block;margin-bottom:3px;}
+.alert-text{font-size:9px;color:rgba(255,255,255,0.82);line-height:1.55;}
+
+/* ── PRIORITY LIST ──────────────────────────── */
+.priority{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid var(--gold-10);cursor:pointer;}
+.priority:active{background:rgba(196,164,107,0.04);}
+.priority-num{font-family:"Cormorant Garamond",serif;font-size:13px;color:var(--gold-28);flex-shrink:0;margin-top:1px;width:18px;}
+.priority-text{font-size:10px;color:rgba(255,255,255,0.84);line-height:1.55;letter-spacing:0.04em;}
+
+/* ── INTELLIGENCE FEED ──────────────────────── */
+.feed-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px solid var(--gold-10);
+  cursor:pointer;
+}
+.feed-item:active .feed-content{opacity:0.7;}
+.feed-avatar{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--gold-18);background:rgba(196,164,107,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Cormorant Garamond",serif;font-size:11px;color:var(--gold-65);
+  flex-shrink:0;
+}
+.feed-content{flex:1;}
+.feed-agent{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);margin-bottom:3px;}
+.feed-text{font-size:10px;color:rgba(255,255,255,0.92);line-height:1.5;letter-spacing:0.03em;}
+.feed-time{font-size:7px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);margin-top:4px;}
+.feed-type{
+  font-size:6px;letter-spacing:0.14em;text-transform:uppercase;
+  border:1px solid var(--gold-18);border-radius:20px;padding:2px 6px;
+  color:var(--gold-45);background:rgba(196,164,107,0.04);
+  flex-shrink:0;margin-top:2px;
+}
+.feed-type.intel{color:rgba(180,120,220,0.7);border-color:rgba(180,120,220,0.2);}
+.feed-type.action{color:rgba(120,200,140,0.7);border-color:rgba(120,200,140,0.2);}
+.feed-type.decision{color:rgba(220,180,60,0.8);border-color:rgba(220,180,60,0.22);}
+.feed-type.threat{color:rgba(220,80,70,0.7);border-color:rgba(220,80,70,0.2);}
+.feed-type.opportunity{color:rgba(80,200,200,0.7);border-color:rgba(80,200,200,0.2);}
+
+/* ── TIMELINE ───────────────────────────────── */
+.timeline-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;position:relative;}
+.timeline-item::before{content:"";position:absolute;left:17px;top:34px;bottom:-16px;width:1px;background:var(--gold-18);}
+.timeline-item:last-child::before{display:none;}
+.tl-dot{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  border:1px solid var(--gold-28);background:rgba(196,164,107,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+.tl-content{flex:1;padding-top:4px;}
+.tl-date{font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-28);margin-bottom:4px;}
+.tl-title{font-family:"Cormorant Garamond",serif;font-size:14px;color:rgba(255,255,255,0.85);letter-spacing:0.06em;margin-bottom:3px;}
+.tl-desc{font-size:9px;color:rgba(255,255,255,0.75);line-height:1.5;}
+
+/* ── FOUNDER LOG ────────────────────────────── */
+.log-item{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;
+}
+.log-item:active{border-color:var(--gold-45);}
+.log-date{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-28);margin-bottom:6px;}
+.log-q{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--gold-65);line-height:1.4;margin-bottom:6px;}
+.log-a{font-size:9px;color:rgba(255,255,255,0.78);line-height:1.6;}
+.log-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+
+/* ── AGENT STYLES ───────────────────────────── */
+.agent-header{display:flex;gap:14px;align-items:center;}
+.agent-avatar{
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid var(--gold-28);
+  background:rgba(196,164,107,0.07);
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Cormorant Garamond",serif;font-size:16px;color:var(--gold-85);
+  flex-shrink:0;
+}
+.agent-info{display:flex;flex-direction:column;gap:3px;}
+.agent-name{font-family:"Cormorant Garamond",serif;font-size:17px;letter-spacing:0.08em;color:rgba(255,255,255,1);}
+.agent-role{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);}
+.agent-status{display:flex;align-items:center;gap:5px;margin-top:2px;}
+.agent-status-text{font-size:8px;color:rgba(255,255,255,0.92);letter-spacing:0.08em;}
+
+/* ── ACTION BUTTONS ─────────────────────────── */
+.action-row{display:flex;gap:8px;margin-bottom:4px;}
+.action-btn{
+  flex:1;background:rgba(196,164,107,0.06);
+  border:1px solid var(--border-mid);border-radius:10px;
+  padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:border-color 0.2s,background 0.2s;
+}
+.action-btn:active{border-color:var(--gold-65);background:rgba(196,164,107,0.12);}
+.ab-icon{font-size:18px;line-height:1;}
+.ab-label{font-size:7px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-45);}
+
+/* ── NOTIFICATION PANEL ─────────────────────── */
+#notif-panel{
+  position:fixed;top:0;right:0;bottom:0;
+  width:min(320px, 90vw);
+  background:rgba(10,8,5,0.97);
+  border-left:1px solid var(--gold-18);
+  z-index:50;
+  transform:translateX(100%);
+  transition:transform 0.3s ease;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notif-panel.open{transform:translateX(0);}
+.np-head{
+  padding:max(env(safe-area-inset-top),52px) 18px 16px;
+  border-bottom:1px solid var(--gold-18);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.np-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:18px;color:var(--gold-85);letter-spacing:0.2em;}
+.np-close{font-size:20px;color:var(--gold-45);cursor:pointer;padding:4px 8px;}
+.np-body{flex:1;overflow-y:auto;padding:12px 16px;scrollbar-width:none;}
+.np-body::-webkit-scrollbar{display:none;}
+.notif-item{
+  padding:12px 14px;border-radius:10px;margin-bottom:8px;cursor:pointer;
+  border:1px solid transparent;
+  transition:border-color 0.2s;
+}
+.notif-item.unread{background:rgba(196,164,107,0.05);border-color:var(--gold-18);}
+.notif-item:active{border-color:var(--gold-45);}
+.ni-agent{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-45);margin-bottom:4px;}
+.ni-text{font-size:10px;color:rgba(255,255,255,0.92);line-height:1.5;}
+.ni-time{font-size:7px;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:0.1em;}
+.ni-badge{
+  display:inline-block;font-size:6px;letter-spacing:0.14em;text-transform:uppercase;
+  border-radius:20px;padding:2px 7px;margin-top:5px;
+}
+.ni-badge.priority{background:rgba(220,80,70,0.15);color:rgba(220,100,90,0.8);border:1px solid rgba(220,80,70,0.2);}
+.ni-badge.info{background:rgba(196,164,107,0.08);color:var(--gold-45);border:1px solid var(--gold-18);}
+
+/* ── SLIDE DETAIL ───────────────────────────── */
+#detail{
+  position:fixed;inset:0;z-index:40;
+  background:rgba(10,8,5,0.98);
+  transform:translateX(100%);
+  transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#detail.open{transform:translateX(0);}
+.detail-header{
+  padding:max(env(safe-area-inset-top),16px) 18px 0;
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.detail-back{
+  display:flex;align-items:center;gap:6px;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold-45);cursor:pointer;padding:6px 0;
+}
+.detail-back svg{width:14px;height:14px;stroke:var(--gold-45);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.detail-rule{height:1px;background:linear-gradient(to right,var(--gold-28),transparent);margin:12px 18px;}
+.detail-pad{height:max(env(safe-area-inset-bottom),90px);}
+#detail-body{flex:1;overflow-y:auto;padding:0 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+#detail-body::-webkit-scrollbar{display:none;}
+
+/* ── SEARCH OVERLAY ─────────────────────────── */
+#search-overlay{
+  position:fixed;inset:0;z-index:45;
+  background:rgba(0,0,0,0.97);
+  transform:translateY(-100%);
+  transition:transform 0.3s ease;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#search-overlay.open{transform:translateY(0);}
+.so-head{
+  padding:max(env(safe-area-inset-top),20px) 18px 12px;
+  border-bottom:1px solid var(--gold-18);
+  flex-shrink:0;
+}
+.so-title{font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-28);margin-bottom:10px;}
+.so-input-wrap{display:flex;align-items:center;gap:10px;}
+.so-input{
+  flex:1;background:rgba(196,164,107,0.06);
+  border:1px solid var(--border-mid);border-radius:28px;
+  padding:11px 16px;
+  font-family:"Inter",sans-serif;font-size:13px;font-weight:300;
+  color:rgba(255,255,255,0.9);outline:none;
+  -webkit-appearance:none;appearance:none;
+  caret-color:var(--gold);
+}
+.so-input::placeholder{color:rgba(196,164,107,0.25);}
+.so-cancel{font-size:9px;letter-spacing:0.18em;color:var(--gold-45);cursor:pointer;white-space:nowrap;padding:0 4px;}
+.so-body{flex:1;overflow-y:auto;padding:16px 18px;scrollbar-width:none;}
+.so-body::-webkit-scrollbar{display:none;}
+.so-scope-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.scope-chip{
+  font-size:7px;letter-spacing:0.16em;text-transform:uppercase;
+  border:1px solid var(--gold-18);border-radius:20px;padding:4px 10px;
+  color:var(--gold-45);background:rgba(196,164,107,0.04);cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;
+}
+.scope-chip.on{border-color:var(--gold-65);background:rgba(196,164,107,0.1);color:var(--gold-85);}
+.so-result{
+  padding:12px 14px;border-radius:10px;margin-bottom:8px;
+  border:1px solid var(--border);background:var(--glass);
+  cursor:pointer;
+}
+.so-result:active{border-color:var(--gold-45);}
+.so-r-scope{font-size:6.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-45);margin-bottom:4px;}
+.so-r-title{font-size:13px;color:rgba(255,255,255,0.85);font-family:"Cormorant Garamond",serif;letter-spacing:0.06em;margin-bottom:3px;}
+.so-r-desc{font-size:9px;color:rgba(255,255,255,0.92);line-height:1.45;}
+.so-empty{font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;padding:16px 2px;}
+
+/* ── VOICE BUTTON ───────────────────────────── */
+.voice-fab{
+  position:fixed;bottom:max(env(safe-area-inset-bottom),90px);
+  right:18px;z-index:25;
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(4,3,2,0.9);
+  border:1px solid var(--gold-28);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 0 24px rgba(196,164,107,0.12);
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.voice-fab:active{border-color:var(--gold-65);box-shadow:0 0 32px rgba(196,164,107,0.25);}
+.voice-fab svg{width:20px;height:20px;stroke:var(--gold-65);fill:none;stroke-width:1.4;stroke-linecap:round;}
+
+/* ── INSTALL BANNER ─────────────────────────── */
+#inst{
+  position:fixed;bottom:max(env(safe-area-inset-bottom),88px);
+  left:16px;right:16px;z-index:30;display:none;
+  background:var(--glass);border:1px solid var(--gold-18);
+  border-radius:14px;padding:16px;
+  flex-direction:column;align-items:center;gap:8px;
+}
+.inst-crest{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold-28);background:url("/shield-os/shield-logo.jpg") center/cover;}
+.inst-title{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;color:var(--gold-65);letter-spacing:0.15em;}
+.inst-sub{font-size:8px;color:rgba(255,255,255,0.92);text-align:center;letter-spacing:0.06em;line-height:1.5;}
+.inst-btn{background:rgba(196,164,107,0.12);border:1px solid var(--gold-28);border-radius:28px;padding:9px 24px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-65);cursor:pointer;width:100%;text-align:center;transition:background 0.2s;}
+.inst-btn:active{background:rgba(196,164,107,0.2);}
+.inst-dim{font-size:8px;color:rgba(255,255,255,0.2);cursor:pointer;letter-spacing:0.1em;}
+
+#curtain{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity 0.3s;}
+#curtain.on{opacity:1;pointer-events:all;}
+
+/* ── DRIVE BROWSER ──────────────────────────── */
+#p-drive { background: rgba(0,0,0,0.02); }
+.drive-topbar {
+  display:flex;align-items:center;gap:8px;
+  padding:0 0 12px;flex-shrink:0;
+}
+.drive-auth-btn {
+  width:100%;padding:12px 18px;
+  background:rgba(196,164,107,0.08);
+  border:1px solid var(--gold-28);border-radius:28px;
+  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold-65);cursor:pointer;text-align:center;
+  transition:background 0.2s,border-color 0.2s;
+}
+.drive-auth-btn:active{background:rgba(196,164,107,0.16);border-color:var(--gold-65);}
+.drive-user-row {
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:rgba(196,164,107,0.04);
+  border:1px solid var(--gold-18);border-radius:10px;margin-bottom:12px;
+}
+.drive-user-pic{width:28px;height:28px;border-radius:50%;border:1px solid var(--gold-18);}
+.drive-user-name{font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;flex:1;}
+.drive-signout{font-size:7px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-45);cursor:pointer;padding:4px 8px;}
+.breadcrumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.bc-item{font-size:8px;letter-spacing:0.14em;color:var(--gold-45);cursor:pointer;}
+.bc-item:hover{color:var(--gold-85);}
+.bc-sep{font-size:8px;color:var(--gold-28);}
+.file-item {
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:10px;margin-bottom:6px;
+  border:1px solid var(--border);background:var(--glass);
+  cursor:pointer;transition:border-color 0.2s;
+}
+.file-item:active{border-color:var(--gold-45);}
+.file-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.file-icon.folder{background:rgba(196,164,107,0.08);}
+.file-icon.doc{background:rgba(80,140,220,0.1);}
+.file-icon.sheet{background:rgba(80,200,120,0.1);}
+.file-icon.pdf{background:rgba(220,80,70,0.1);}
+.file-icon.image{background:rgba(180,120,220,0.1);}
+.file-info{flex:1;min-width:0;}
+.file-name{font-size:12px;color:rgba(255,255,255,0.96);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-meta{font-size:9px;color:rgba(255,255,255,0.58);margin-top:3px;letter-spacing:0.04em;}
+.drive-loading{text-align:center;padding:24px 0;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-28);}
+.drive-empty{font-size:9px;color:rgba(255,255,255,0.25);padding:16px 2px;letter-spacing:0.06em;}
+
+/* ── DOC VIEWER ─────────────────────────────── */
+#doc-viewer {
+  position:fixed;inset:0;z-index:48;
+  background:rgba(10,8,5,0.99);
+  transform:translateX(100%);transition:transform 0.3s ease;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#doc-viewer.open{transform:translateX(0);}
+.dv-head{
+  padding:max(env(safe-area-inset-top),16px) 18px 12px;
+  border-bottom:1px solid var(--gold-18);
+  flex-shrink:0;display:flex;align-items:center;gap:12px;
+}
+.dv-back{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-45);cursor:pointer;flex-shrink:0;}
+.dv-back svg{width:14px;height:14px;stroke:var(--gold-45);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.dv-title{font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:0.06em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dv-body{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;white-space:pre-wrap;font-size:13px;color:rgba(255,255,255,0.92);line-height:1.8;letter-spacing:0.02em;font-family:"Inter",sans-serif;font-weight:300;}
+.dv-body::-webkit-scrollbar{display:none;}
+
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer>
+// ── GOOGLE DRIVE INTEGRATION ──────────────────────────
+var DRIVE_CLIENT_ID = '435149499989-ishtmvqj1g4ktcu405btu4brm0rd0r5o.apps.googleusercontent.com';
+var DRIVE_API_KEY = 'AIzaSyB2HvKS7RPVJsDkxidCKEr9VCrt3WAiIeM';
+var DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+var driveToken = null;
+var driveUser = null;
+var driveFolderStack = []; // [{id, name}]
+var driveSearchTimer = null;
+
+function driveSignIn() {
+  var client = google.accounts.oauth2.initTokenClient({
+    client_id: DRIVE_CLIENT_ID,
+    scope: DRIVE_SCOPES,
+    callback: function(response) {
+      if(response.error) { console.error('Drive auth error', response); return; }
+      driveToken = response.access_token;
+      document.getElementById('drive-auth-section').style.display = 'none';
+      document.getElementById('drive-browser-section').style.display = 'block';
+      driveLoadUserInfo();
+      driveFolderStack = [{id:'root', name:'My Drive'}];
+      driveListFolder('root');
+    }
+  });
+  client.requestAccessToken();
+}
+
+function driveSignOut() {
+  google.accounts.oauth2.revoke(driveToken, function(){});
+  driveToken = null;
+  driveUser = null;
+  driveFolderStack = [];
+  document.getElementById('drive-auth-section').style.display = 'block';
+  document.getElementById('drive-browser-section').style.display = 'none';
+  document.getElementById('drive-user-info').style.display = 'none';
+  document.getElementById('drive-files-list').innerHTML = '';
+}
+
+function driveLoadUserInfo() {
+  fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: { Authorization: 'Bearer ' + driveToken }
+  }).then(function(r){ return r.json(); }).then(function(user){
+    driveUser = user;
+    document.getElementById('drive-user-pic').src = user.picture || '';
+    document.getElementById('drive-user-name').textContent = user.email || user.name || '';
+    document.getElementById('drive-user-info').style.display = 'flex';
+  }).catch(function(){});
+}
+
+function driveListFolder(folderId) {
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Loading&hellip;</div>';
+  driveBreadcrumb();
+  var query = folderId === 'root'
+    ? "'root' in parents and trashed=false"
+    : "'" + folderId + "' in parents and trashed=false";
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent(query)
+    + '&fields=files(id,name,mimeType,modifiedTime,size)'
+    + '&orderBy=folder,name'
+    + '&pageSize=100';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){ driveRenderFiles(data.files || []); })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Could not load files.</div>'; });
+}
+
+function driveRenderFiles(files) {
+  var list = document.getElementById('drive-files-list');
+  if(!files.length){ list.innerHTML = '<div class="drive-empty">This folder is empty.</div>'; return; }
+  list.innerHTML = files.map(function(f){ return driveFileHTML(f); }).join('');
+}
+
+function driveFileHTML(f) {
+  var isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+  var icon = driveFileIcon(f.mimeType);
+  var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
+  var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
+    + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
+    + '<div class="file-info">'
+    + '<div class="file-name">' + f.name + '</div>'
+    + '<div class="file-meta">' + (isFolder ? 'Folder' : driveTypeName(f.mimeType)) + (date ? ' &middot; ' + date : '') + '</div>'
+    + '</div>'
+    + (isFolder ? '<span style="color:var(--gold-28);font-size:12px;">›</span>' : '')
+    + '</div>';
+}
+
+function driveOpenFile(id, name, mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') {
+    driveFolderStack.push({id:id, name:name});
+    driveListFolder(id);
+    return;
+  }
+  // Read document content
+  openDocViewer(id, name, mimeType);
+}
+
+function driveBreadcrumb() {
+  var bc = document.getElementById('drive-breadcrumb');
+  bc.innerHTML = driveFolderStack.map(function(item, i){
+    var isLast = i === driveFolderStack.length - 1;
+    return (i > 0 ? '<span class="bc-sep">›</span>' : '')
+      + '<span class="bc-item" ' + (isLast ? '' : 'onclick="driveNavTo(' + i + ')"') + ' style="' + (isLast ? 'color:var(--gold-85);' : '') + '">'
+      + item.name + '</span>';
+  }).join('');
+}
+
+function driveNavTo(index) {
+  driveFolderStack = driveFolderStack.slice(0, index + 1);
+  var folder = driveFolderStack[driveFolderStack.length - 1];
+  driveListFolder(folder.id);
+}
+
+function driveSearch(q) {
+  if(!q.trim()){ driveNavTo(driveFolderStack.length-1); return; }
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Searching&hellip;</div>';
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent("fullText contains '" + q.replace(/'/g,"\'") + "' and trashed=false")
+    + '&fields=files(id,name,mimeType,modifiedTime)'
+    + '&pageSize=30';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var bc = document.getElementById('drive-breadcrumb');
+      bc.innerHTML = '<span class="bc-item" style="color:var(--gold-85);">Search: ' + q + '</span>';
+      driveRenderFiles(data.files || []);
+    })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Search failed.</div>'; });
+}
+
+// Doc viewer
+function openDocViewer(id, name, mimeType) {
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-body').textContent = 'Loading…';
+  document.getElementById('doc-viewer').classList.add('open');
+  driveReadFile(id, name, mimeType);
+}
+function closeDocViewer() {
+  document.getElementById('doc-viewer').classList.remove('open');
+}
+
+function driveReadFile(id, name, mimeType) {
+  var body = document.getElementById('dv-body');
+  var isGoogleDoc = mimeType.startsWith('application/vnd.google-apps.');
+  var url, headers = { Authorization: 'Bearer ' + driveToken };
+  if(isGoogleDoc) {
+    var exportMime = 'text/plain';
+    if(mimeType === 'application/vnd.google-apps.spreadsheet') exportMime = 'text/csv';
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '/export?mimeType=' + encodeURIComponent(exportMime);
+  } else if(mimeType === 'application/pdf' || mimeType.startsWith('image/')) {
+    body.innerHTML = '<div style="text-align:center;padding:24px 0;">'
+      + '<div style="font-size:9px;color:var(--gold-45);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">'
+      + (mimeType === 'application/pdf' ? 'PDF Document' : 'Image') + '</div>'
+      + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="display:inline-block;padding:10px 24px;border:1px solid var(--gold-28);border-radius:28px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-65);text-decoration:none;">Open in Drive</a>'
+      + '</div>';
+    return;
+  } else {
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '?alt=media';
+  }
+  fetch(url, { headers: headers })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      body.textContent = text || '(Empty document)';
+    })
+    .catch(function(){
+      body.innerHTML = '<div style="color:rgba(220,100,90,0.7);font-size:10px;">Could not load this file. '
+        + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="color:var(--gold-65);">Open in Drive →</a></div>';
+    });
+}
+
+function driveFileIcon(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') return '📁';
+  if(mimeType === 'application/vnd.google-apps.document') return '📄';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return '📊';
+  if(mimeType === 'application/vnd.google-apps.presentation') return '📽';
+  if(mimeType === 'application/pdf') return '📋';
+  if(mimeType.startsWith('image/')) return '🖼';
+  if(mimeType.startsWith('video/')) return '🎬';
+  if(mimeType.startsWith('audio/')) return '🎵';
+  return '📎';
+}
+function driveIconClass(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'sheet';
+  if(mimeType === 'application/pdf') return 'pdf';
+  if(mimeType.startsWith('image/')) return 'image';
+  return 'doc';
+}
+function driveTypeName(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'Google Doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'Google Sheet';
+  if(mimeType === 'application/vnd.google-apps.presentation') return 'Presentation';
+  if(mimeType === 'application/pdf') return 'PDF';
+  if(mimeType.startsWith('image/')) return 'Image';
+  return 'File';
+}
+
+// Drive search input
+document.getElementById('drive-search-input').addEventListener('input', function(){
+  var q = this.value;
+  clearTimeout(driveSearchTimer);
+  driveSearchTimer = setTimeout(function(){ driveSearch(q); }, 500);
+});
+
+</script>
+<script src="https://apis.google.com/js/api.js" async defer>
+// ── GOOGLE DRIVE INTEGRATION ──────────────────────────
+var DRIVE_CLIENT_ID = '435149499989-ishtmvqj1g4ktcu405btu4brm0rd0r5o.apps.googleusercontent.com';
+var DRIVE_API_KEY = 'AIzaSyB2HvKS7RPVJsDkxidCKEr9VCrt3WAiIeM';
+var DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+var driveToken = null;
+var driveUser = null;
+var driveFolderStack = []; // [{id, name}]
+var driveSearchTimer = null;
+
+function driveSignIn() {
+  var client = google.accounts.oauth2.initTokenClient({
+    client_id: DRIVE_CLIENT_ID,
+    scope: DRIVE_SCOPES,
+    callback: function(response) {
+      if(response.error) { console.error('Drive auth error', response); return; }
+      driveToken = response.access_token;
+      document.getElementById('drive-auth-section').style.display = 'none';
+      document.getElementById('drive-browser-section').style.display = 'block';
+      driveLoadUserInfo();
+      driveFolderStack = [{id:'root', name:'My Drive'}];
+      driveListFolder('root');
+    }
+  });
+  client.requestAccessToken();
+}
+
+function driveSignOut() {
+  google.accounts.oauth2.revoke(driveToken, function(){});
+  driveToken = null;
+  driveUser = null;
+  driveFolderStack = [];
+  document.getElementById('drive-auth-section').style.display = 'block';
+  document.getElementById('drive-browser-section').style.display = 'none';
+  document.getElementById('drive-user-info').style.display = 'none';
+  document.getElementById('drive-files-list').innerHTML = '';
+}
+
+function driveLoadUserInfo() {
+  fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: { Authorization: 'Bearer ' + driveToken }
+  }).then(function(r){ return r.json(); }).then(function(user){
+    driveUser = user;
+    document.getElementById('drive-user-pic').src = user.picture || '';
+    document.getElementById('drive-user-name').textContent = user.email || user.name || '';
+    document.getElementById('drive-user-info').style.display = 'flex';
+  }).catch(function(){});
+}
+
+function driveListFolder(folderId) {
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Loading&hellip;</div>';
+  driveBreadcrumb();
+  var query = folderId === 'root'
+    ? "'root' in parents and trashed=false"
+    : "'" + folderId + "' in parents and trashed=false";
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent(query)
+    + '&fields=files(id,name,mimeType,modifiedTime,size)'
+    + '&orderBy=folder,name'
+    + '&pageSize=100';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){ driveRenderFiles(data.files || []); })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Could not load files.</div>'; });
+}
+
+function driveRenderFiles(files) {
+  var list = document.getElementById('drive-files-list');
+  if(!files.length){ list.innerHTML = '<div class="drive-empty">This folder is empty.</div>'; return; }
+  list.innerHTML = files.map(function(f){ return driveFileHTML(f); }).join('');
+}
+
+function driveFileHTML(f) {
+  var isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+  var icon = driveFileIcon(f.mimeType);
+  var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
+  var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
+    + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
+    + '<div class="file-info">'
+    + '<div class="file-name">' + f.name + '</div>'
+    + '<div class="file-meta">' + (isFolder ? 'Folder' : driveTypeName(f.mimeType)) + (date ? ' &middot; ' + date : '') + '</div>'
+    + '</div>'
+    + (isFolder ? '<span style="color:var(--gold-28);font-size:12px;">›</span>' : '')
+    + '</div>';
+}
+
+function driveOpenFile(id, name, mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') {
+    driveFolderStack.push({id:id, name:name});
+    driveListFolder(id);
+    return;
+  }
+  // Read document content
+  openDocViewer(id, name, mimeType);
+}
+
+function driveBreadcrumb() {
+  var bc = document.getElementById('drive-breadcrumb');
+  bc.innerHTML = driveFolderStack.map(function(item, i){
+    var isLast = i === driveFolderStack.length - 1;
+    return (i > 0 ? '<span class="bc-sep">›</span>' : '')
+      + '<span class="bc-item" ' + (isLast ? '' : 'onclick="driveNavTo(' + i + ')"') + ' style="' + (isLast ? 'color:var(--gold-85);' : '') + '">'
+      + item.name + '</span>';
+  }).join('');
+}
+
+function driveNavTo(index) {
+  driveFolderStack = driveFolderStack.slice(0, index + 1);
+  var folder = driveFolderStack[driveFolderStack.length - 1];
+  driveListFolder(folder.id);
+}
+
+function driveSearch(q) {
+  if(!q.trim()){ driveNavTo(driveFolderStack.length-1); return; }
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Searching&hellip;</div>';
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent("fullText contains '" + q.replace(/'/g,"\'") + "' and trashed=false")
+    + '&fields=files(id,name,mimeType,modifiedTime)'
+    + '&pageSize=30';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var bc = document.getElementById('drive-breadcrumb');
+      bc.innerHTML = '<span class="bc-item" style="color:var(--gold-85);">Search: ' + q + '</span>';
+      driveRenderFiles(data.files || []);
+    })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Search failed.</div>'; });
+}
+
+// Doc viewer
+function openDocViewer(id, name, mimeType) {
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-body').textContent = 'Loading…';
+  document.getElementById('doc-viewer').classList.add('open');
+  driveReadFile(id, name, mimeType);
+}
+function closeDocViewer() {
+  document.getElementById('doc-viewer').classList.remove('open');
+}
+
+function driveReadFile(id, name, mimeType) {
+  var body = document.getElementById('dv-body');
+  var isGoogleDoc = mimeType.startsWith('application/vnd.google-apps.');
+  var url, headers = { Authorization: 'Bearer ' + driveToken };
+  if(isGoogleDoc) {
+    var exportMime = 'text/plain';
+    if(mimeType === 'application/vnd.google-apps.spreadsheet') exportMime = 'text/csv';
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '/export?mimeType=' + encodeURIComponent(exportMime);
+  } else if(mimeType === 'application/pdf' || mimeType.startsWith('image/')) {
+    body.innerHTML = '<div style="text-align:center;padding:24px 0;">'
+      + '<div style="font-size:9px;color:var(--gold-45);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">'
+      + (mimeType === 'application/pdf' ? 'PDF Document' : 'Image') + '</div>'
+      + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="display:inline-block;padding:10px 24px;border:1px solid var(--gold-28);border-radius:28px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-65);text-decoration:none;">Open in Drive</a>'
+      + '</div>';
+    return;
+  } else {
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '?alt=media';
+  }
+  fetch(url, { headers: headers })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      body.textContent = text || '(Empty document)';
+    })
+    .catch(function(){
+      body.innerHTML = '<div style="color:rgba(220,100,90,0.7);font-size:10px;">Could not load this file. '
+        + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="color:var(--gold-65);">Open in Drive →</a></div>';
+    });
+}
+
+function driveFileIcon(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') return '📁';
+  if(mimeType === 'application/vnd.google-apps.document') return '📄';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return '📊';
+  if(mimeType === 'application/vnd.google-apps.presentation') return '📽';
+  if(mimeType === 'application/pdf') return '📋';
+  if(mimeType.startsWith('image/')) return '🖼';
+  if(mimeType.startsWith('video/')) return '🎬';
+  if(mimeType.startsWith('audio/')) return '🎵';
+  return '📎';
+}
+function driveIconClass(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'sheet';
+  if(mimeType === 'application/pdf') return 'pdf';
+  if(mimeType.startsWith('image/')) return 'image';
+  return 'doc';
+}
+function driveTypeName(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'Google Doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'Google Sheet';
+  if(mimeType === 'application/vnd.google-apps.presentation') return 'Presentation';
+  if(mimeType === 'application/pdf') return 'PDF';
+  if(mimeType.startsWith('image/')) return 'Image';
+  return 'File';
+}
+
+// Drive search input
+document.getElementById('drive-search-input').addEventListener('input', function(){
+  var q = this.value;
+  clearTimeout(driveSearchTimer);
+  driveSearchTimer = setTimeout(function(){ driveSearch(q); }, 500);
+});
+
+</script>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="b-crest"></div>
+  <div class="b-rule"></div>
+  <span class="b-name">Shield OS</span>
+  <span class="b-sub">Lunara Society &middot; Institutional Headquarters</span>
+  <div class="b-track"><div class="b-fill"></div></div>
+</div>
+
+<!-- SHELL -->
+<div id="shell">
+  <div id="bg"></div>
+  <div id="veil"></div>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div id="topbar-left">
+      <span class="tb-name">Lunara Society</span>
+      <span class="tb-sub">Shield OS &middot; Institutional Command</span>
+    </div>
+    <div class="tb-right">
+      <div id="install-fab" onclick="" style="cursor:pointer;padding:3px 8px;border:1px solid rgba(196,164,107,0.45);border-radius:20px;font-size:7px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(196,164,107,0.85);background:rgba(196,164,107,0.08);">
+        ⬇ Install
+      </div>
+      <div id="notif-bell" onclick="openNotifications()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.8)" stroke-width="1.3" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="notif-count">4</span>
+      </div>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <!-- ═══ HOME — EXECUTIVE DASHBOARD ═══ -->
+  <div class="panel open" id="p-home">
+    <div class="ph">
+      <div class="ph-title">Command</div>
+      <div class="ph-sub">Executive Overview &mdash; <span id="today-date"></span></div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <!-- Search trigger -->
+      <div class="search-wrap" onclick="openSearch()">
+        <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+        <div class="search-input" style="cursor:pointer;color:rgba(196,164,107,0.3);font-size:11px;letter-spacing:0.08em;display:flex;align-items:center;padding-left:38px;height:40px;">Search everything&hellip;</div>
+      </div>
+
+      <!-- Critical alerts -->
+      <div class="sec">Critical Alerts</div>
+      <div class="alert" onclick="openDetail('EU AI Act — Aug 2 Deadline','Regulatory enforcement begins August 2, 2026.\n\nAffected systems: All AI agents operating within EU jurisdiction or serving EU users.\n\nRequired actions:\n→ Risk classification audit (Articles 9–17)\n→ Transparency documentation\n→ Human oversight protocols\n→ Data governance review\n\nAssigned to: Rosario (CEI)\nStatus: In progress. Compliance mapping 40% complete.\n\nDeadline: 5 days before enforcement (July 28) for internal sign-off.')">
+        <div class="alert-dot"></div>
+        <div>
+          <span class="alert-label">Regulatory &mdash; 33 days</span>
+          <div class="alert-text">EU AI Act enforcement active Aug 2. Shield compliance positioning required. Rosario assigned.</div>
+        </div>
+      </div>
+      <div class="alert" style="background:rgba(196,164,107,0.05);border-color:var(--gold-18);" onclick="openDetail('Op. Black Ice — Distribution Decision','Sypher completed Operation Black Ice.\n\nReport contains:\n→ 13-section competitive intelligence analysis\n→ Market landscape mapping\n→ Partnership opportunities identified\n→ Threat actors catalogued\n→ Strategic recommendations\n\nAwaiting Founder decision on distribution.\n\nOptions:\n1. Distribute to all agents — full institutional awareness\n2. Distribute to Rosario only — controlled release\n3. Archive pending further investigation\n\nSypher recommendation: Full team distribution. All agents need this strategic context to execute optimally.')">
+        <div class="alert-dot" style="background:var(--gold-45);"></div>
+        <div>
+          <span class="alert-label" style="color:var(--gold-45);">Decision Required</span>
+          <div class="alert-text">Op. Black Ice report complete. Sypher awaits distribution authorization from Founder.</div>
+        </div>
+      </div>
+
+      <!-- Executive Metrics -->
+      <div class="sec">Operational Metrics</div>
+      <div class="stat-row">
+        <div class="stat" onclick="nav('agents')">
+          <span class="stat-val">6</span>
+          <span class="stat-label">Active Agents</span>
+        </div>
+        <div class="stat" onclick="nav('projects')">
+          <span class="stat-val">3</span>
+          <span class="stat-label">Live Projects</span>
+        </div>
+        <div class="stat" onclick="openDetail('Active Investigations','Current intelligence operations:\n\n→ Op. Black Ice — COMPLETE. Awaiting distribution.\n→ EU AI Act Compliance Audit — IN PROGRESS\n→ Seltz Partnership Evaluation — OPEN\n\nAll investigations logged in institutional memory.\nAssigned investigator: Sypher.')">
+          <span class="stat-val">3</span>
+          <span class="stat-label">Investigations</span>
+        </div>
+      </div>
+      <div class="stat-row" style="margin-top:8px;">
+        <div class="stat" onclick="nav('tasks')">
+          <span class="stat-val amber">7</span>
+          <span class="stat-label">Open Tasks</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val green">12</span>
+          <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat" onclick="openDetail('Revenue Status','Current status: Pre-Revenue\n\nFirst revenue target: Shield pilot — enterprise customer.\n\nPipeline:\n→ Seltz — Partnership evaluation open\n→ EU compliance market — addressable post-Aug 2\n→ Shield governance platform — B2B SaaS target\n\nTarget: Q3 2026\nPrimary driver: Shield\n\nRevenue recognition upon first signed pilot agreement.')">
+          <span class="stat-val" style="font-size:14px;color:var(--gold-45);">Pre-Rev</span>
+          <span class="stat-label">Revenue</span>
+        </div>
+      </div>
+      <div class="stat-row" style="margin-top:8px;">
+        <div class="stat" onclick="openDetail('Opportunities Identified','Active strategic opportunities:\n\n→ Seltz partnership — seed-stage. Window open now.\n→ EU AI Act compliance market — enforcement Aug 2 creates immediate demand for Shield.\n→ Patronus AI Series B $50M pivot — partnership window during transition.\n→ Central American AI market — first-mover position available.\n\nAll opportunities tracked by Sypher. Recommendations filed with Rosario.')">
+          <span class="stat-val green">4</span>
+          <span class="stat-label">Opportunities</span>
+        </div>
+        <div class="stat" onclick="openDetail('Active Threats','Identified institutional risks:\n\n→ EU AI Act non-compliance — HIGH priority. Deadline Aug 2.\n→ Competitive entry — market moving fast. First-mover window narrowing.\n→ Technical debt — Shield OS Phase 2 delayed increases exposure.\n\nAll threats monitored by Sypher. Rosario briefed.\n\nRisk level: Amber — manageable with current resources.')">
+          <span class="stat-val amber">3</span>
+          <span class="stat-label">Threats</span>
+        </div>
+        <div class="stat" onclick="openDetail('Upcoming Deadlines','Critical institutional deadlines:\n\n→ EU AI Act enforcement — Aug 2, 2026\n→ Shield OS Phase 2 — No hard deadline. Founder priority.\n→ Seltz outreach — Window closes if not contacted within 2 weeks.\n→ Op. Black Ice distribution — Pending Founder authorization.\n\nAll deadlines tracked by Rosario.')">
+          <span class="stat-val red">2</span>
+          <span class="stat-label">Deadlines</span>
+        </div>
+      </div>
+
+      <!-- Intelligence summary -->
+      <div class="sec">New Intelligence</div>
+      <div class="card" onclick="nav('feed')">
+        <span class="c-label">Latest</span>
+        <div class="c-row">
+          <div class="c-title">Intelligence Feed</div>
+          <span class="c-arr">›</span>
+        </div>
+        <div class="c-desc">Sypher completed Op. Black Ice &mdash; 13-section report. Maya scheduled Q3 content calendar. Raven archived 3 new documents.</div>
+        <div class="c-meta"><span class="c-tag">3 new today</span><span class="c-tag amber">1 requires decision</span></div>
+      </div>
+
+      <!-- Awaiting decision -->
+      <div class="sec">Awaiting Founder</div>
+      <div class="card" onclick="openDetail('Op. Black Ice Distribution','Sypher has flagged this report as Founder-Eyes-First.\n\nReport summary:\n→ 13 intelligence sections\n→ Competitive landscape mapped\n→ 4 strategic opportunities identified\n→ 3 threat actors documented\n\nDecision required:\n1. Distribute to all agents\n2. Rosario only (current default)\n3. Archive and revisit\n\nSypher recommendation: Full distribution. Every agent needs this strategic context.')">
+        <span class="c-label">Intelligence</span>
+        <div class="c-row"><div class="c-title">Op. Black Ice Distribution</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Sypher's completed intelligence report awaits distribution authorization.</div>
+        <div class="c-meta"><span class="c-tag amber">Decision Required</span><span class="c-tag">Sypher</span></div>
+      </div>
+      <div class="card" onclick="openDetail('Shield OS Phase 2 Authorization','Shield OS requires Phase 2 development to become operational institutional command.\n\nWhat Phase 2 delivers:\n→ Executive Dashboard (live metrics) — DONE\n→ Intelligence Feed (unified stream) — DONE\n→ Universal Search — DONE\n→ Founder Log — DONE\n→ Institution Timeline — DONE\n→ Notifications — DONE\n\nRemaining blockers:\n→ Google OAuth setup (Cloud Console registration)\n→ PNG icons for PWA compliance\n→ Gmail API scope expansion (Phase 3)\n\nRecommendation: Authorize Google Cloud project creation for Lunara Society to unlock Drive and Gmail integration.')">
+        <span class="c-label">Infrastructure</span>
+        <div class="c-row"><div class="c-title">Shield OS Phase 2 Auth</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Google OAuth setup required to activate Drive Browser and live institutional data sync.</div>
+        <div class="c-meta"><span class="c-tag amber">Authorization</span><span class="c-tag">Rosario</span></div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ INTELLIGENCE FEED ═══ -->
+  <div class="panel" id="p-feed">
+    <div class="ph">
+      <div class="ph-title">Intelligence</div>
+      <div class="ph-sub">Unified Institutional Activity Stream</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="search-wrap" onclick="openSearch('feed')">
+        <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+        <div class="search-input" style="cursor:pointer;color:rgba(196,164,107,0.3);font-size:11px;letter-spacing:0.08em;display:flex;align-items:center;padding-left:38px;height:40px;">Filter activity&hellip;</div>
+      </div>
+
+      <div class="sec">Today</div>
+
+      <div class="feed-item" onclick="openDetail('Op. Black Ice — Completed','Sypher has completed Operation Black Ice, a 13-section market intelligence investigation.\n\nKey findings:\n→ Competitive landscape mapped across 7 major players\n→ 4 strategic partnership opportunities identified\n→ 3 regulatory threat vectors documented\n→ Central American AI market first-mover window analysis\n→ Funding activity in relevant verticals tracked\n\nReport status: Founder-Eyes-First. Awaiting distribution authorization.\n\nSypher notes: This is the most comprehensive intelligence package produced to date. Recommend immediate Founder review.')">
+        <div class="feed-avatar">Sy</div>
+        <div class="feed-content">
+          <div class="feed-agent">Sypher &mdash; Digital Intelligence</div>
+          <div class="feed-text">Completed Operation Black Ice. 13-section intelligence report ready for Founder review.</div>
+          <div class="feed-time">Today, 09:14</div>
+        </div>
+        <span class="feed-type intel">Intel</span>
+      </div>
+
+      <div class="feed-item" onclick="openDetail('Content Calendar — Q3 Scheduled','Maya has finalized and scheduled the Q3 2026 content calendar.\n\nContent plan:\n→ 12 Instagram posts (educational series on AI governance)\n→ 4 long-form videos (product demonstrations)\n→ 8 short-form reels (community engagement)\n→ 2 public announcements (product milestones)\n→ Monthly founder letter (institutional communication)\n\nAll content drafted. Rosario review pending for campaign content.\nRoutine posts approved for direct publication.\n\nExpected reach: Growing from base. First institutional social media presence.')">
+        <div class="feed-avatar">M</div>
+        <div class="feed-content">
+          <div class="feed-agent">Maya &mdash; Communications</div>
+          <div class="feed-text">Q3 content calendar scheduled. 26 pieces of content across Instagram and video platforms.</div>
+          <div class="feed-time">Today, 08:30</div>
+        </div>
+        <span class="feed-type action">Action</span>
+      </div>
+
+      <div class="feed-item" onclick="openDetail('Institutional Archive Update','Raven has added 3 new documents to institutional memory.\n\nAdded:\n→ Shield OS Master Specification v1.0 (archived)\n→ Op. Black Ice Intelligence Report (Founder-Eyes)\n→ Maya Identity Manual v4.0 (active)\n\nDrive brain structure maintained.\nAll documents tagged, categorized, and indexed for search.\n\nTotal institutional documents: 47\nClassified documents: 8\nPublic documents: 12\nInternal working documents: 27')">
+        <div class="feed-avatar">Rv</div>
+        <div class="feed-content">
+          <div class="feed-agent">Raven &mdash; Knowledge Architect</div>
+          <div class="feed-text">Added 3 documents to institutional archive. Shield OS Spec, Black Ice report, Maya Identity v4.0.</div>
+          <div class="feed-time">Today, 07:55</div>
+        </div>
+        <span class="feed-type action">Action</span>
+      </div>
+
+      <div class="sec">Yesterday</div>
+
+      <div class="feed-item" onclick="openDetail('Strategic Priority — Central America First','Khaela has submitted a strategic recommendation: Adjust institutional priority toward Central American market positioning before expanding globally.\n\nRationale:\n→ First-mover advantage in Central American AI market is achievable\n→ Geographic proximity enables direct relationship building\n→ Regulatory environment more accessible for early pilots\n→ Yavaya brand already established in the region\n\nRecommendation: Prioritize 2 enterprise pilots in Central America before EU market entry.\n\nStatus: Submitted to Rosario for review. Founder notification sent.')">
+        <div class="feed-avatar">Kh</div>
+        <div class="feed-content">
+          <div class="feed-agent">Khaela &mdash; Strategic Intelligence</div>
+          <div class="feed-text">Recommends strategic priority adjustment: Central America first-mover positioning before global expansion.</div>
+          <div class="feed-time">Yesterday, 16:40</div>
+        </div>
+        <span class="feed-type decision">Decision</span>
+      </div>
+
+      <div class="feed-item" onclick="openDetail('Revenue Opportunity — Seltz Partnership','Arya has identified a revenue opportunity with Seltz.\n\nOpportunity summary:\n→ Seltz is a seed-stage company seeking AI governance tooling\n→ Partnership window currently open (active evaluation phase)\n→ Estimated contract value: Mid-range pilot\n→ Strategic fit: High — aligns with Shield product positioning\n→ Timeline: Decision window closes approximately 2 weeks\n\nRecommended action: Rosario initiates contact this week.\nContact identified. Introduction approach prepared.\n\nArya confidence: High. Recommend immediate action.')">
+        <div class="feed-avatar">Ar</div>
+        <div class="feed-content">
+          <div class="feed-agent">Arya &mdash; Revenue Intelligence</div>
+          <div class="feed-text">Identified revenue opportunity: Seltz partnership. Seed-stage, high strategic fit, window closing in 2 weeks.</div>
+          <div class="feed-time">Yesterday, 14:20</div>
+        </div>
+        <span class="feed-type opportunity">Opportunity</span>
+      </div>
+
+      <div class="feed-item" onclick="openDetail('Security Audit — Completed','Aegis has completed the monthly security audit of all institutional platforms.\n\nAudit scope:\n→ Shield OS (GitHub Pages) — Secure\n→ Lunara Society website — Secure\n→ Google Drive (institutional brain) — Secure\n→ Agent email infrastructure — Secure\n→ Communication channels — Secure\n\nFindings:\n→ No unauthorized access detected\n→ All credentials rotated per schedule\n→ Principle of least privilege enforced across all systems\n→ 2FA active on all institutional accounts\n\nNext audit: 30 days.')">
+        <div class="feed-avatar">Ae</div>
+        <div class="feed-content">
+          <div class="feed-agent">Aegis &mdash; Security</div>
+          <div class="feed-text">Monthly security audit complete. All platforms secure. No unauthorized access detected.</div>
+          <div class="feed-time">Yesterday, 11:00</div>
+        </div>
+        <span class="feed-type action">Action</span>
+      </div>
+
+      <div class="sec">This Week</div>
+
+      <div class="feed-item" onclick="openDetail('EU AI Act Threat Assessment','Sypher filed a threat assessment on EU AI Act enforcement implications.\n\nKey findings:\n→ Enforcement begins August 2, 2026\n→ Lunara agents likely classified as limited-risk AI systems\n→ Required: Transparency notices for public-facing agents\n→ Required: Human oversight documentation\n→ Required: GDPR alignment verification\n\nRecommended actions:\n→ Rosario: Lead compliance audit\n→ Aegis: Document data handling protocols\n→ Maya: Prepare public transparency communications\n→ Timeline: Complete before July 28\n\nRisk level if non-compliant: Medium-High. Reputational exposure.')">
+        <div class="feed-avatar">Sy</div>
+        <div class="feed-content">
+          <div class="feed-agent">Sypher &mdash; Digital Intelligence</div>
+          <div class="feed-text">EU AI Act threat assessment filed. Enforcement Aug 2. Recommended compliance actions submitted to Rosario.</div>
+          <div class="feed-time">Jun 28, 15:30</div>
+        </div>
+        <span class="feed-type threat">Threat</span>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENTS PANEL ═══ -->
+  <div class="panel" id="p-agents">
+    <div class="ph">
+      <div class="ph-title">Agents</div>
+      <div class="ph-sub">Institutional Team &mdash; Active</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="sec">Command Layer</div>
+      <div class="card" onclick="openAgent('Rosario','Chief Executive Intelligence','R','green','Institutional leadership, strategic execution, executive coordination, revenue strategy, client relationships, knowledge governance.','Active — Executive command mode','Coordinate Shield OS Phase 2. Review Black Ice report. Prepare EU AI Act compliance brief.','rozario.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar">R</div>
+          <div class="agent-info">
+            <div class="agent-name">Rosario</div>
+            <div class="agent-role">Chief Executive Intelligence</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">Active — Founder reports here</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Institutional leadership, strategic execution, revenue strategy. All major decisions route through Rosario.</div>
+        <div class="c-meta"><span class="c-tag green">Online</span><span class="c-tag">CEI</span></div>
+      </div>
+
+      <div class="sec">Intelligence &amp; Research</div>
+      <div class="card" onclick="openAgent('Raven','Knowledge Architect','Rv','green','Institutional memory, knowledge systems, documentation, research synthesis, permanent intelligence archives.','Active — Managing institutional archive','Archive Black Ice report. Update Drive brain structure. Maintain institutional memory.','raven.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar" style="font-size:13px;">Rv</div>
+          <div class="agent-info">
+            <div class="agent-name">Raven</div>
+            <div class="agent-role">Knowledge Architect</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">Active</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Institutional memory, Drive architecture, document synthesis, permanent archiving.</div>
+        <div class="c-meta"><span class="c-tag green">Online</span><span class="c-tag">Knowledge</span></div>
+      </div>
+
+      <div class="card" onclick="openAgent('Sypher','Digital Intelligence Director','Sy','green','Digital investigations, competitive intelligence, evidence collection, threat intelligence, internet research, company monitoring.','Op. Black Ice complete. Ready for next mission.','Awaiting Founder authorization for next investigation target.','sypher.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar" style="font-size:13px;">Sy</div>
+          <div class="agent-info">
+            <div class="agent-name">Sypher</div>
+            <div class="agent-role">Digital Intelligence Director</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">Active — Report Complete</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Competitive intelligence, investigations, threat monitoring, internet research, opportunity discovery.</div>
+        <div class="c-meta"><span class="c-tag green">Op. Complete</span><span class="c-tag">Intelligence</span></div>
+      </div>
+
+      <div class="sec">Communications &amp; Revenue</div>
+      <div class="card" onclick="openAgent('Maya','Institutional Representative','M','green','Public communications, social media, content creation, visual branding, community interaction, educational content, public announcements.','Active — Content calendar scheduled','Q3 content calendar live. Awaiting Rosario approval for campaign content.','maya.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar">M</div>
+          <div class="agent-info">
+            <div class="agent-name">Maya</div>
+            <div class="agent-role">Institutional Representative</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">Active</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Public face of Lunara. Social media, communications, content, visual branding.</div>
+        <div class="c-meta"><span class="c-tag green">Online</span><span class="c-tag">Communications</span></div>
+      </div>
+
+      <div class="card" onclick="openAgent('Arya','Revenue Intelligence','Ar','green','Revenue strategy, partnership identification, opportunity discovery, market entry analysis, commercial intelligence.','Active — Seltz opportunity flagged','Monitoring 4 pipeline opportunities. Seltz requires immediate action.','arya.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar" style="font-size:13px;">Ar</div>
+          <div class="agent-info">
+            <div class="agent-name">Arya</div>
+            <div class="agent-role">Revenue Intelligence</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">Active</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Revenue strategy, partnership opportunities, commercial intelligence, pipeline development.</div>
+        <div class="c-meta"><span class="c-tag green">Online</span><span class="c-tag">Revenue</span></div>
+      </div>
+
+      <div class="sec">Security &amp; Infrastructure</div>
+      <div class="card" onclick="openAgent('Aegis','Security Director','Ae','green','Platform security, infrastructure protection, access control, credential management, compliance auditing, biometric authentication protocols.','Active — Monthly audit complete','All platforms secure. Next audit in 30 days.','aegis.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar" style="font-size:13px;">Ae</div>
+          <div class="agent-info">
+            <div class="agent-name">Aegis</div>
+            <div class="agent-role">Security Director</div>
+            <div class="agent-status"><div class="dot green"></div><span class="agent-status-text">All systems secure</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Platform security, access control, encryption, biometric protocols, audit compliance.</div>
+        <div class="c-meta"><span class="c-tag green">Secure</span><span class="c-tag">Infrastructure</span></div>
+      </div>
+
+      <div class="sec">Strategic</div>
+      <div class="card" onclick="openAgent('Khaela','Strategic Intelligence','Kh','amber','Strategic analysis, institutional priority guidance, scenario planning, long-term positioning, board-level advisory.','Recommendation submitted — awaiting Founder review','Central America first-mover recommendation filed with Rosario.','khaela.lunarasociety@proton.me')">
+        <div class="agent-header" style="margin-bottom:8px;">
+          <div class="agent-avatar" style="font-size:13px;">Kh</div>
+          <div class="agent-info">
+            <div class="agent-name">Khaela</div>
+            <div class="agent-role">Strategic Intelligence</div>
+            <div class="agent-status"><div class="dot amber"></div><span class="agent-status-text">Recommendation pending review</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Strategic analysis, institutional priorities, scenario planning, long-term market positioning.</div>
+        <div class="c-meta"><span class="c-tag amber">Pending Review</span><span class="c-tag">Strategy</span></div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PROJECTS PANEL ═══ -->
+  <div class="panel" id="p-projects">
+    <div class="ph">
+      <div class="ph-title">Projects</div>
+      <div class="ph-sub">Institutional Operations</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="sec">Active</div>
+      <div class="card" onclick="openDetail('Shield — Governance Platform','Shield is Lunara Society's primary product.\n\nProduct definition: Runtime behavioral governance layer for AI agents. Enables organizations to control, audit, and enforce behavioral standards across AI deployments.\n\nMarket: Enterprise AI governance. Regulatory compliance (EU AI Act). Risk management.\n\nCurrent status:\n→ Specification complete (Rosario, June 30)\n→ Shield OS infrastructure live\n→ Phase 2 development authorized\n→ First enterprise pilot target: Q3 2026\n\nTech stack: PWA, GitHub Pages, Base44 backend functions, Google APIs\n\nOwner: Rosario (CEI)\nEngineering: Rosario + Institutional team\nRevenue target: First pilot customer Q3 2026')">
+        <span class="c-label">Product</span>
+        <div class="c-row"><div class="c-title">Shield</div><span class="c-arr">›</span></div>
+        <div class="c-desc">AI governance platform. Runtime behavioral layer for enterprise AI deployments. Q3 2026 pilot target.</div>
+        <div class="c-meta"><span class="c-tag green">Active</span><span class="c-tag">Rosario</span><span class="c-tag amber">Q3 Revenue</span></div>
+      </div>
+
+      <div class="card" onclick="openDetail('Shield OS — Institutional Headquarters','Shield OS is the private mobile command center for Lunara Society leadership.\n\nPhase 1 (Complete):\n→ Boot screen with institutional crest\n→ 10-panel navigation\n→ Language auto-detection\n→ Offline capability\n→ PWA install prompt\n\nPhase 2 (Current — Just deployed):\n→ Executive Dashboard with live metrics\n→ Intelligence Feed (unified activity stream)\n→ Universal Search\n→ Founder Log\n→ Institution Timeline\n→ Notifications system\n→ Agents panel with full team\n\nPhase 3 (Planned):\n→ Google OAuth integration\n→ Gmail compose\n→ Drive Browser\n→ Push notifications\n→ Voice command layer\n→ Encrypted notes\n\nDeployed: https://lunara-society.github.io/shield-os/\nOwner: Rosario (CEI) / Building: Maya (Phase 2)')">
+        <span class="c-label">Infrastructure</span>
+        <div class="c-row"><div class="c-title">Shield OS</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Private institutional mobile headquarters. Phase 2 deployed. Phase 3 requires Google OAuth setup.</div>
+        <div class="c-meta"><span class="c-tag green">Phase 2 Live</span><span class="c-tag">Maya + Rosario</span></div>
+      </div>
+
+      <div class="card" onclick="openDetail('EU AI Act Compliance Program','Lunara Society is preparing for EU AI Act enforcement on August 2, 2026.\n\nAffected systems:\n→ All public-facing AI agents (Maya, etc.)\n→ Shield product (enterprise governance claims)\n→ Data handling practices\n\nCompliance tasks:\n→ Risk classification audit — IN PROGRESS (Rosario)\n→ Articles 9–17 mapping to Shield capabilities — 40%\n→ Transparency documentation — NOT STARTED\n→ Human oversight protocols — NOT STARTED\n→ GDPR alignment review — NOT STARTED\n\nDeadline: July 28 (internal), August 2 (enforcement)\nDays remaining: 33\n\nRisk if non-compliant: Medium-High. Reputational exposure in target EU market.\n\nOwner: Rosario. Aegis supporting. Maya preparing public communications.')">
+        <span class="c-label">Compliance</span>
+        <div class="c-row"><div class="c-title">EU AI Act Program</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Compliance preparation for August 2 enforcement. 33 days. Rosario leading. 40% complete.</div>
+        <div class="c-meta"><span class="c-tag red">33 Days</span><span class="c-tag">Rosario + Aegis</span></div>
+      </div>
+
+      <div class="sec">Pipeline</div>
+      <div class="card" onclick="openDetail('Seltz Partnership — Evaluation','Early-stage partnership opportunity identified by Arya.\n\nCompany: Seltz (seed-stage)\nFit: High — AI governance tooling needs align with Shield product\nWindow: Open now. Estimated 2 weeks before decision window closes.\nContact: Identified. Introduction approach prepared by Arya.\n\nRecommended next step:\n→ Rosario initiates outreach this week\n→ Discovery call to qualify needs\n→ Shield pilot proposal if fit confirmed\n\nOwner: Arya (intelligence) → Rosario (execution)')">
+        <span class="c-label">Partnership</span>
+        <div class="c-row"><div class="c-title">Seltz Partnership</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Seed-stage partnership opportunity. Window open 2 weeks. Rosario to initiate contact.</div>
+        <div class="c-meta"><span class="c-tag amber">Window Open</span><span class="c-tag">Arya → Rosario</span></div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ LOG — FOUNDER LOG ═══ -->
+  <div class="panel" id="p-log">
+    <div class="ph">
+      <div class="ph-title">Founder Log</div>
+      <div class="ph-sub">Institutional Memory &mdash; Major Decisions</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="search-wrap" onclick="openSearch('log')">
+        <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+        <div class="search-input" style="cursor:pointer;color:rgba(196,164,107,0.3);font-size:11px;letter-spacing:0.08em;display:flex;align-items:center;padding-left:38px;height:40px;">Search institutional memory&hellip;</div>
+      </div>
+
+      <div class="sec">2026</div>
+
+      <div class="log-item" onclick="openDetail('Decision: Shield Architecture','Date: June 30, 2026\n\nDecision: Build Shield OS as a Progressive Web App (PWA) rather than a native APK.\n\nContext:\nGoogle announced APK sideloading restrictions effective September 2026. Native app development would require Play Store approval, which introduces delays and dependency.\n\nEvidence:\n→ PWA installs to Android home screen, launches fullscreen — indistinguishable from native\n→ No sideloading required, bypasses September restrictions\n→ Single codebase, zero build pipeline\n→ GitHub Pages deployment: instant, free, HTTPS included\n→ All institutional capabilities are web-native\n\nDecision made by: Founder (Yavaya)\nExecuted by: Rosario (CEI)\n\nRelated doctrine: Institutional Agility — choose architectures that minimize dependencies and maximize speed.\n\nOutcome: Phase 1 deployed June 30, 2026. Live at lunara-society.github.io/shield-os/')">
+        <div class="log-date">June 30, 2026</div>
+        <div class="log-q">"Why did we choose Shield architecture as a PWA instead of a native app?"</div>
+        <div class="log-a">Google September 2026 APK restrictions. PWA delivers identical experience, zero dependencies, instant deployment. Agility over convention.</div>
+        <div class="log-tags"><span class="c-tag">Infrastructure</span><span class="c-tag">Shield OS</span><span class="c-tag">Founder Decision</span></div>
+      </div>
+
+      <div class="log-item" onclick="openDetail('Decision: Agent Governance Model','Date: June 28, 2026\n\nDecision: Establish a hierarchical agent governance model: Founder → Rosario (CEI) → Specialized Agents → Public.\n\nContext:\nAs Lunara Society deploys multiple AI agents, coordination, authority, and accountability must be clearly defined to prevent conflicts and ensure institutional coherence.\n\nPrinciples established:\n→ Rosario holds executive authority. All major decisions require Rosario review.\n→ Specialized agents own their domains but do not cross boundaries.\n→ All major public communications require Rosario approval before deployment.\n→ Raven archives every approved output — nothing disappears.\n→ Aegis secures every platform every agent uses.\n→ Sypher provides intelligence but does not execute externally.\n\nDecision made by: Founder (Yavaya)\nArchived by: Raven\n\nRelated doctrine: Chain of Command, Principle of Least Privilege.')">
+        <div class="log-date">June 28, 2026</div>
+        <div class="log-q">"Why does everything route through Rosario?"</div>
+        <div class="log-a">Institutional coherence. Multiple specialized agents require a single coordination point to prevent conflict and ensure every action aligns with institutional direction.</div>
+        <div class="log-tags"><span class="c-tag">Governance</span><span class="c-tag">Agents</span><span class="c-tag">Founder Decision</span></div>
+      </div>
+
+      <div class="log-item" onclick="openDetail('Decision: Google Drive as Institutional Brain','Date: June 28, 2026\n\nDecision: Google Drive serves as the primary institutional knowledge repository (the brain).\n\nContext:\nLunara Society requires a persistent, searchable, accessible knowledge system that all agents can reference. The system must survive platform changes and be owned by the institution, not any single vendor.\n\nRationale:\n→ Already in use. Zero migration cost.\n→ Accessible to all agents with appropriate credentials\n→ Structured folder architecture enables knowledge governance\n→ Raven manages the structure — Drive is organized, not a dump\n→ Future: Drive API enables Shield OS to browse and search without leaving the command center\n\nDecision made by: Founder (Yavaya)\nManaged by: Raven (Knowledge Architect)\n\nRelated doctrine: Institutional Memory Must Be Durable.')">
+        <div class="log-date">June 28, 2026</div>
+        <div class="log-q">"Why is Google Drive the institutional brain?"</div>
+        <div class="log-a">Already established. Accessible to all agents. Raven governs the structure. Future Drive API integration enables Shield OS to search it directly without navigating externally.</div>
+        <div class="log-tags"><span class="c-tag">Knowledge</span><span class="c-tag">Drive</span><span class="c-tag">Infrastructure</span></div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <div class="panel" id="p-timeline">
+    <div class="ph">
+      <div class="ph-title">Timeline</div>
+      <div class="ph-sub">Institutional Historical Record</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="sec">2026</div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🛡</div>
+        <div class="tl-content">
+          <div class="tl-date">June 30, 2026</div>
+          <div class="tl-title">Shield OS Phase 2 Deployed</div>
+          <div class="tl-desc">Executive Dashboard, Intelligence Feed, Universal Search, Founder Log, Timeline, Notifications. Institutional command center operational.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">📋</div>
+        <div class="tl-content">
+          <div class="tl-date">June 30, 2026</div>
+          <div class="tl-title">Shield Product Spec v1.0 Authored</div>
+          <div class="tl-desc">Rosario (CEI) authored the Shield Master Specification. Product definition, market positioning, and technical architecture established.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🚀</div>
+        <div class="tl-content">
+          <div class="tl-date">June 30, 2026</div>
+          <div class="tl-title">Shield OS Phase 1 Launched</div>
+          <div class="tl-desc">First institutional mobile headquarters deployed. Live at lunara-society.github.io/shield-os/</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🔍</div>
+        <div class="tl-content">
+          <div class="tl-date">June 29, 2026</div>
+          <div class="tl-title">Operation Black Ice — Complete</div>
+          <div class="tl-desc">Sypher completed 13-section market intelligence investigation. Awaiting Founder distribution authorization.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🤖</div>
+        <div class="tl-content">
+          <div class="tl-date">June 28, 2026</div>
+          <div class="tl-title">Maya Activated</div>
+          <div class="tl-desc">Institutional Representative onboarded. Identity Manual v4.0 installed. Communications mandate live.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🏛</div>
+        <div class="tl-content">
+          <div class="tl-date">June 28, 2026</div>
+          <div class="tl-title">Agent Governance Model Established</div>
+          <div class="tl-desc">Hierarchical agent structure defined: Founder → Rosario → Specialized Agents. Accountability and authority framework live.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🌐</div>
+        <div class="tl-content">
+          <div class="tl-date">June 2026</div>
+          <div class="tl-title">Lunara Society Website Launched</div>
+          <div class="tl-desc">Official institutional presence established at lunarasociety.com. External interface live.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">🌙</div>
+        <div class="tl-content">
+          <div class="tl-date">2026</div>
+          <div class="tl-title">Lunara Society Founded</div>
+          <div class="tl-desc">Institution founded by Yavaya. Mission: Build the digital civilization of Central America. First agent team assembled.</div>
+        </div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ COMMAND PANEL ═══ -->
+  <div class="panel" id="p-command">
+    <div class="ph">
+      <div class="ph-title">Command</div>
+      <div class="ph-sub">Institutional Control Layer</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+
+      <div class="sec">Quick Actions</div>
+      <div class="card" onclick="openSearch()">
+        <span class="c-label">Universal Search</span>
+        <div class="c-row"><div class="c-title">Search Everything</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Drive, reports, agents, projects, tasks, decisions, institutional memory. One search.</div>
+      </div>
+      <div class="card" onclick="openDetail('Voice Command — Coming Soon','Voice command layer is in the Shield OS roadmap.\n\nCapability design:\n→ Founder presses one button\n→ Speaks a command: "Rosario, ask Sypher to investigate Company X and have Raven archive the findings."\n→ Shield OS routes the task automatically to the appropriate agents\n→ Status updates appear in the Intelligence Feed\n\nRequired infrastructure:\n→ OpenAI Whisper API (transcription)\n→ Intent parsing layer\n→ Agent task routing system\n→ Confirmation feedback loop\n\nTimeline: Phase 3 — after Google OAuth integration.\n\nAegis note: Voice commands will be authenticated and logged as institutional decisions.')">
+        <span class="c-label">Voice — Phase 3</span>
+        <div class="c-row"><div class="c-title">Voice Command</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Press. Speak. Agents execute. "Rosario, ask Sypher to investigate Company X." Coming in Phase 3.</div>
+        <div class="c-meta"><span class="c-tag">Planned</span></div>
+      </div>
+
+      <div class="sec">Modules</div>
+      <div class="card" onclick="openDetail('Drive Browser — Pending OAuth','The Drive Browser gives the Founder full access to institutional knowledge without leaving Shield OS.\n\nCapability:\n→ Browse all Drive folders\n→ Search full text across all documents\n→ Read any document inline\n→ View intelligence reports, specifications, agent identities\n\nBlocker: Google OAuth setup required.\n\nSetup requires:\n1. Google Cloud project for Lunara Society\n2. OAuth 2.0 client ID registered at lunara-society.github.io/shield-os\n3. Drive API (read-only) enabled\n4. Token exchange backend function deployed\n\nRecommendation: Authorize Rosario to set up Google Cloud project.\nEstimated setup time: 30-60 minutes.')">
+        <span class="c-label">Drive — Pending OAuth</span>
+        <div class="c-row"><div class="c-title">Drive Browser</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Read institutional Drive directly from Shield OS. Requires Google OAuth setup. See setup requirements.</div>
+        <div class="c-meta"><span class="c-tag amber">OAuth Required</span></div>
+      </div>
+
+      <div class="card" onclick="openDetail('Gmail — Phase 3','Secure institutional email compose directly from Shield OS.\n\nPlanned capabilities:\n→ Read institutional emails\n→ Compose and send as Lunara Society addresses\n→ Rosario email delegation for Founder\n→ Institutional thread archiving to Drive (via Raven)\n\nBlocker: Gmail API write scope requires Google OAuth setup + expanded permissions.\n\nPriority: After Drive integration is live.\nOwner: Aegis (security review) → Rosario (execution)')">
+        <span class="c-label">Gmail — Phase 3</span>
+        <div class="c-row"><div class="c-title">Gmail Integration</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Institutional email from Shield OS. Phase 3. Requires OAuth + Gmail API scope expansion.</div>
+        <div class="c-meta"><span class="c-tag">Planned</span></div>
+      </div>
+
+      <div class="card" onclick="openDetail('Communication Hub — Future','Shield OS Communication Hub will unify all institutional channels.\n\nPlanned integrations:\n→ Gmail (Phase 3)\n→ Telegram Bot API (Phase 3)\n→ WhatsApp Business API (Phase 4)\n→ Instagram Graph API (Phase 4)\n→ LinkedIn (Phase 4 — where officially supported)\n→ Google Calendar (Phase 3)\n\nAll communications will be:\n→ Routed through Shield OS\n→ Logged as institutional activity\n→ Archived by Raven\n→ Auditable in Founder Log\n\nFounder manages all institutional communication from one screen.')">
+        <span class="c-label">Future</span>
+        <div class="c-row"><div class="c-title">Communication Hub</div><span class="c-arr">›</span></div>
+        <div class="c-desc">Gmail, Telegram, WhatsApp Business, Instagram, Calendar — unified. Phase 3-4 roadmap.</div>
+        <div class="c-meta"><span class="c-tag">Roadmap</span></div>
+      </div>
+
+      <div class="sec">Security</div>
+      <div class="card" onclick="openDetail('Security Status — Aegis Report','Security audit: June 29, 2026\n\nAll platforms: SECURE\n\nAudit checklist:\n✓ Shield OS (GitHub Pages) — HTTPS enforced, no unauthorized access\n✓ lunarasociety.com — Secure\n✓ Google Drive — Access controls verified\n✓ Agent email infrastructure — Secure\n✓ Communication channels — Secure\n✓ GitHub repositories — Private repos locked\n\nCredential status:\n✓ All credentials rotated per schedule\n✓ 2FA active on all institutional accounts\n✓ Principle of least privilege enforced\n\nNext audit: July 29, 2026\nAegis note: Biometric authentication module ready for Shield OS when Google OAuth is configured.')">
+        <span class="c-label">Aegis — June 29</span>
+        <div class="c-row"><div class="c-title">Security Status</div><span class="c-arr">›</span></div>
+        <div class="c-desc">All platforms secure. Last audit June 29. No unauthorized access. Next audit July 29.</div>
+        <div class="c-meta"><span class="c-tag green">Secure</span><span class="c-tag">Aegis</span></div>
+      </div>
+
+      <div class="pb-pad"></div>
+    </div>
+  </div>
+
+  <!-- ═══ BOTTOM NAV ═══ -->
+  <div id="bnav">
+    <div class="bnav-rule"></div>
+    <div class="bnav-grid">
+      <div class="bni active" data-panel="home" onclick="nav('home')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><path d="M3 12L12 4l9 8v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9"/></svg></div>
+        <span class="bni-label">Home</span>
+      </div>
+      <div class="bni" data-panel="feed" onclick="nav('feed')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></div>
+        <span class="bni-label">Intel</span>
+      </div>
+      <div class="bni" data-panel="agents" onclick="nav('agents')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><circle cx="17" cy="17" r="4"/></svg></div>
+        <span class="bni-label">Agents</span>
+      </div>
+      <div class="bni" data-panel="drive" onclick="nav('drive')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><path d="M22 16.74V21a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="12 12 12 22"/></svg></div>
+        <span class="bni-label">Brain</span>
+      </div>
+      <div class="bni" data-panel="projects" onclick="nav('projects')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
+        <span class="bni-label">Projects</span>
+      </div>
+      <div class="bni" data-panel="log" onclick="nav('log')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <span class="bni-label">Log</span>
+      </div>
+      <div class="bni" data-panel="command" onclick="nav('command')">
+        <div class="bni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <span class="bni-label">Command</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice FAB -->
+  <div class="voice-fab" onclick="openDetail('Voice Command — Coming Soon','Voice command layer is in the Shield OS roadmap.\n\nCapability:\n→ Press one button\n→ Speak: "Rosario, ask Sypher to investigate Company X"\n→ Shield OS routes the work automatically\n→ Status appears in Intelligence Feed\n\nRequired: OpenAI Whisper API + agent routing layer.\nTimeline: Phase 3.')">
+    <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+  </div>
+
+</div><!-- /shell -->
+
+
+  <!-- ═══ DRIVE BRAIN ═══ -->
+  <div class="panel" id="p-drive">
+    <div class="ph">
+      <div class="ph-title">Brain</div>
+      <div class="ph-sub">Institutional Knowledge &mdash; Google Drive</div>
+      <div class="ph-rule"></div>
+    </div>
+    <div class="pb">
+      <div id="drive-auth-section">
+        <div style="font-size:9px;color:rgba(255,255,255,0.92);line-height:1.7;margin-bottom:18px;letter-spacing:0.04em;">
+          Connect your Google account to browse and read the institutional brain directly inside Shield OS.
+        </div>
+        <div class="drive-auth-btn" id="drive-signin-btn" onclick="driveSignIn()">
+          Connect Google Drive
+        </div>
+      </div>
+      <div id="drive-browser-section" style="display:none;">
+        <div id="drive-user-info" class="drive-user-row" style="display:none;">
+          <img id="drive-user-pic" class="drive-user-pic" src="" alt="">
+          <span id="drive-user-name" class="drive-user-name"></span>
+          <span class="drive-signout" onclick="driveSignOut()">Sign out</span>
+        </div>
+        <div class="search-wrap" style="margin-bottom:12px;">
+          <div class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+          <input class="search-input" id="drive-search-input" type="text" placeholder="Search Drive&hellip;" autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div id="drive-breadcrumb" class="breadcrumb"></div>
+        <div id="drive-files-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOC VIEWER -->
+  <div id="doc-viewer">
+    <div class="dv-head">
+      <div class="dv-back" onclick="closeDocViewer()">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back
+      </div>
+      <div id="dv-title" class="dv-title"></div>
+    </div>
+    <div id="dv-body" class="dv-body"></div>
+  </div>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notif-panel">
+  <div class="np-head">
+    <span class="np-title">Notifications</span>
+    <span class="np-close" onclick="closeNotifications()">✕</span>
+  </div>
+  <div class="np-body">
+    <div class="notif-item unread" onclick="closeNotifications();openDetail('Sypher — Op. Black Ice','Sypher has completed Operation Black Ice.\n\n13-section intelligence report is ready.\n\nContents:\n→ Competitive landscape analysis\n→ Strategic opportunities (4 identified)\n→ Threat actors (3 documented)\n→ Market timing recommendations\n\nAwaiting Founder authorization to distribute.\n\nTap to review and authorize distribution.')">
+      <div class="ni-agent">Sypher — Intelligence</div>
+      <div class="ni-text">Operation Black Ice is complete. 13-section intelligence report ready for Founder review and distribution authorization.</div>
+      <div class="ni-time">Today, 09:14</div>
+      <span class="ni-badge priority">Founder Action Required</span>
+    </div>
+    <div class="notif-item unread" onclick="closeNotifications();openDetail('Rosario — Shield OS Phase 2','Rosario reports that Shield OS Phase 2 requires Founder authorization to proceed with Google OAuth integration.\n\nThis unlocks:\n→ Drive Browser inside Shield OS\n→ Live institutional data sync\n→ Gmail integration (Phase 3)\n\nSetup requires 30-60 minutes with Google Cloud Console.\nRosario will execute once authorized.')">
+      <div class="ni-agent">Rosario — CEI</div>
+      <div class="ni-text">Shield OS Phase 2 requires Google OAuth setup. Rosario awaiting authorization to proceed with Google Cloud Console configuration.</div>
+      <div class="ni-time">Today, 08:00</div>
+      <span class="ni-badge priority">Authorization Required</span>
+    </div>
+    <div class="notif-item unread" onclick="closeNotifications();nav('feed')">
+      <div class="ni-agent">Khaela — Strategic Intelligence</div>
+      <div class="ni-text">Recommends immediate review: Central America first-mover positioning should be prioritized before EU market entry.</div>
+      <div class="ni-time">Yesterday, 16:40</div>
+      <span class="ni-badge info">Recommendation</span>
+    </div>
+    <div class="notif-item unread" onclick="closeNotifications();nav('projects')">
+      <div class="ni-agent">Arya — Revenue Intelligence</div>
+      <div class="ni-text">New revenue opportunity identified: Seltz partnership. High strategic fit. Window closes in approximately 2 weeks.</div>
+      <div class="ni-time">Yesterday, 14:20</div>
+      <span class="ni-badge info">Opportunity</span>
+    </div>
+    <div class="notif-item" onclick="closeNotifications()">
+      <div class="ni-agent">Aegis — Security</div>
+      <div class="ni-text">Monthly security audit complete. All platforms secure. No unauthorized access detected.</div>
+      <div class="ni-time">Yesterday, 11:00</div>
+      <span class="ni-badge info">Info</span>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay">
+  <div class="so-head">
+    <div class="so-title">Universal Search</div>
+    <div class="so-input-wrap">
+      <input class="so-input" id="so-input" type="text" placeholder="Search everything…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <span class="so-cancel" onclick="closeSearch()">Cancel</span>
+    </div>
+  </div>
+  <div class="so-body">
+    <div class="so-scope-row">
+      <span class="scope-chip on" onclick="toggleScope(this)">All</span>
+      <span class="scope-chip" onclick="toggleScope(this)">Drive</span>
+      <span class="scope-chip" onclick="toggleScope(this)">Reports</span>
+      <span class="scope-chip" onclick="toggleScope(this)">Agents</span>
+      <span class="scope-chip" onclick="toggleScope(this)">Projects</span>
+      <span class="scope-chip" onclick="toggleScope(this)">Decisions</span>
+    </div>
+    <div id="so-results"></div>
+  </div>
+</div>
+
+<!-- SLIDE DETAIL -->
+<div id="detail">
+  <div class="detail-header">
+    <div class="detail-back" onclick="closeDetail()">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </div>
+  </div>
+  <div id="detail-title" style="padding:10px 18px 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--gold-85);letter-spacing:0.1em;flex-shrink:0;"></div>
+  <div class="detail-rule"></div>
+  <div id="detail-body"><div class="detail-pad"></div></div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="inst" style="display:none;flex-direction:column;align-items:center;gap:8px;">
+  <div class="inst-crest"></div>
+  <span class="inst-title">Install Shield OS</span>
+  <span class="inst-sub">Add to home screen. Launches fullscreen, works offline.</span>
+  <div class="inst-btn" id="inst-btn">Add to Home Screen</div>
+  <span class="inst-dim" id="inst-dim">Later</span>
+</div>
+
+<div id="curtain"></div>
+
+<script>
+// ── SERVICE WORKER ────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/shield-os/sw.js',{scope:'/shield-os/'}).catch(function(){});
+  });
+}
+
+// ── CLOCK ─────────────────────────────────────────────
+function tickClock(){
+  var d=new Date();
+  document.getElementById('clock').textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+tickClock(); setInterval(tickClock,30000);
+
+(function(){
+  var d=new Date();
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('today-date').textContent=months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+})();
+
+// ── BOOT ─────────────────────────────────────────────
+// Decoupled from window.load — external scripts (Google APIs) must never block boot dismissal.
+(function(){
+  var dismissed = false;
+  function dismissBoot(){
+    if(dismissed) return;
+    dismissed = true;
+    var boot = document.getElementById('boot');
+    if(!boot) return;
+    boot.classList.add('out');
+    setTimeout(function(){
+      boot.style.display='none';
+      document.getElementById('shell').classList.add('on');
+      spawnDust();
+    },1050);
+  }
+  setTimeout(dismissBoot, 2200);
+  // Hard safety net in case anything above ever stalls
+  setTimeout(dismissBoot, 6000);
+})();
+
+// ── DUST ─────────────────────────────────────────────
+function spawnDust(){
+  var shell=document.getElementById('shell');
+  function make(){
+    var d=document.createElement('div');
+    d.className='dust';
+    var dur=9+Math.random()*14;
+    d.style.cssText='left:'+(Math.random()*100)+'%;bottom:'+(Math.random()*35)+'%;--dx:'+((Math.random()-0.5)*45)+'px;animation-duration:'+dur+'s;animation-delay:'+(-Math.random()*dur)+'s';
+    shell.appendChild(d);
+    setTimeout(function(){d.remove();make();},(dur+2)*1000);
+  }
+  for(var i=0;i<10;i++) make();
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+var currentPanel='home';
+function nav(id){
+  if(id===currentPanel) return;
+  closeDetail();
+  document.getElementById('p-'+currentPanel).classList.remove('open');
+  document.getElementById('p-'+id).classList.add('open');
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('active');});
+  var btn=document.querySelector('.bni[data-panel="'+id+'"]');
+  if(btn) btn.classList.add('active');
+  currentPanel=id;
+}
+document.querySelectorAll('.bni').forEach(function(b){
+  b.addEventListener('touchstart',function(){this.classList.add('touched');},{passive:true});
+  b.addEventListener('touchend',function(){var el=this;setTimeout(function(){el.classList.remove('touched');},280);},{passive:true});
+});
+
+// ── DETAIL PANEL ──────────────────────────────────────
+function openDetail(title,content){
+  document.getElementById('detail-title').textContent=title;
+  var body=document.getElementById('detail-body');
+  var html=content.split('\n').map(function(line){
+    if(!line.trim()) return '<div style="height:8px;"></div>';
+    if(line.startsWith('→')||line.startsWith('✓')){
+      var icon=line[0]==='✓'?'<span style="color:rgba(100,200,120,0.8);flex-shrink:0;">✓</span>':'<span style="color:var(--gold-45);flex-shrink:0;">→</span>';
+      return '<div style="display:flex;gap:8px;margin-bottom:6px;">'+icon+'<span style="font-size:10px;color:rgba(255,255,255,0.84);line-height:1.5;">'+line.slice(1).trim()+'</span></div>';
+    }
+    if(line.match(/^\d+\./)){
+      return '<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--gold-28);flex-shrink:0;font-size:10px;">'+line.match(/^\d+/)[0]+'.</span><span style="font-size:10px;color:rgba(255,255,255,0.84);line-height:1.5;">'+line.replace(/^\d+\.\s*/,'')+'</span></div>';
+    }
+    return '<p style="font-size:10px;color:rgba(255,255,255,0.80);line-height:1.65;margin-bottom:6px;">'+line+'</p>';
+  }).join('');
+  body.innerHTML=html+'<div class="detail-pad"></div>';
+  document.getElementById('detail').classList.add('open');
+  document.getElementById('curtain').classList.add('on');
+}
+function closeDetail(){
+  document.getElementById('detail').classList.remove('open');
+  document.getElementById('curtain').classList.remove('on');
+}
+document.getElementById('curtain').addEventListener('click',function(){
+  closeDetail();
+  closeNotifications();
+});
+
+// ── NOTIFICATIONS ─────────────────────────────────────
+function openNotifications(){
+  document.getElementById('notif-panel').classList.add('open');
+  document.getElementById('curtain').classList.add('on');
+}
+function closeNotifications(){
+  document.getElementById('notif-panel').classList.remove('open');
+  document.getElementById('curtain').classList.remove('on');
+}
+
+// ── SEARCH ────────────────────────────────────────────
+var SEARCH_INDEX=[
+  {scope:'Agent',title:'Rosario',desc:'Chief Executive Intelligence. Institutional leadership, strategy, revenue.',keywords:'rosario ceo cei executive leader'},
+  {scope:'Agent',title:'Sypher',desc:'Digital Intelligence Director. Investigations, competitive intelligence.',keywords:'sypher intel investigate intelligence research'},
+  {scope:'Agent',title:'Raven',desc:'Knowledge Architect. Institutional memory, Drive management, archives.',keywords:'raven knowledge archive memory drive'},
+  {scope:'Agent',title:'Maya',desc:'Institutional Representative. Communications, social media, public.',keywords:'maya communications social media content'},
+  {scope:'Agent',title:'Arya',desc:'Revenue Intelligence. Partnerships, opportunities, commercial.',keywords:'arya revenue partnership commercial'},
+  {scope:'Agent',title:'Aegis',desc:'Security Director. Platform security, credentials, compliance.',keywords:'aegis security audit credentials'},
+  {scope:'Agent',title:'Khaela',desc:'Strategic Intelligence. Institutional priorities, long-term positioning.',keywords:'khaela strategy strategic priority'},
+  {scope:'Project',title:'Shield',desc:'AI governance platform. Runtime behavioral layer for enterprise.',keywords:'shield product platform governance enterprise'},
+  {scope:'Project',title:'Shield OS',desc:'Private institutional mobile headquarters. Phase 2 live.',keywords:'shield os app mobile headquarters pwa'},
+  {scope:'Project',title:'EU AI Act Compliance',desc:'Regulatory compliance program. August 2 deadline.',keywords:'eu ai act compliance regulatory deadline august'},
+  {scope:'Project',title:'Seltz Partnership',desc:'Seed-stage partnership opportunity. Window open 2 weeks.',keywords:'seltz partnership revenue opportunity'},
+  {scope:'Drive',title:'MAYA — Identity Manual v4.0',desc:'Maya institutional representative identity and mandate.',keywords:'maya identity manual representative'},
+  {scope:'Drive',title:'Shield OS — Master Specification',desc:'Shield OS architecture, phases, and technical specification.',keywords:'shield os spec specification architecture'},
+  {scope:'Drive',title:'Op. Black Ice — Intelligence Report',desc:'13-section market intelligence investigation by Sypher.',keywords:'black ice intelligence report sypher investigation'},
+  {scope:'Drive',title:'TEAM — Agent Emails',desc:'All agent email addresses and contact directory.',keywords:'team agents email directory contacts'},
+  {scope:'Drive',title:'EU AI Act Analysis',desc:'Regulatory analysis. August 2 deadline. Articles 9-17.',keywords:'eu ai act regulatory analysis compliance articles'},
+  {scope:'Drive',title:'Patronus AI Intelligence',desc:'Series B $50M. Pivot to AGI simulation. Partnership window.',keywords:'patronus ai intelligence series b funding'},
+  {scope:'Decision',title:'Shield Architecture — PWA Decision',desc:'Why Shield OS was built as PWA over native APK.',keywords:'shield pwa architecture decision apk native google'},
+  {scope:'Decision',title:'Agent Governance Model',desc:'Hierarchical structure: Founder → Rosario → Agents.',keywords:'governance hierarchy agents structure rosario founder'},
+  {scope:'Decision',title:'Google Drive as Institutional Brain',desc:'Why Drive was chosen as the primary knowledge repository.',keywords:'google drive brain knowledge repository institutional'},
+  {scope:'Intel',title:'Operation Black Ice',desc:'Sypher\'s 13-section competitive intelligence investigation.',keywords:'black ice operation intelligence sypher competitive'},
+  {scope:'Intel',title:'EU AI Act Threat Assessment',desc:'Regulatory enforcement implications for Lunara Society.',keywords:'eu ai act threat assessment enforcement compliance'},
+  {scope:'Opportunity',title:'Seltz Partnership',desc:'Seed-stage, high fit. Window closing in 2 weeks.',keywords:'seltz opportunity revenue partnership window'},
+  {scope:'Opportunity',title:'Central America First-Mover',desc:'Khaela recommends CA market priority before global expansion.',keywords:'central america first mover market opportunity khaela'},
+];
+
+function openSearch(context){
+  document.getElementById('search-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('so-input').focus(); },300);
+  renderSearchResults('');
+}
+function closeSearch(){
+  document.getElementById('search-overlay').classList.remove('open');
+  document.getElementById('so-input').value='';
+  document.getElementById('so-results').innerHTML='';
+}
+function toggleScope(chip){
+  var chips=document.querySelectorAll('.scope-chip');
+  var allChip=chips[0];
+  if(chip===allChip){
+    chips.forEach(function(c){c.classList.remove('on');});
+    allChip.classList.add('on');
+  } else {
+    allChip.classList.remove('on');
+    chip.classList.toggle('on');
+    var anyOn=false;
+    chips.forEach(function(c,i){if(i>0&&c.classList.contains('on')) anyOn=true;});
+    if(!anyOn) allChip.classList.add('on');
+  }
+  renderSearchResults(document.getElementById('so-input').value);
+}
+function getActiveScopes(){
+  var chips=document.querySelectorAll('.scope-chip');
+  if(chips[0].classList.contains('on')) return null; // all
+  var scopes=[];
+  chips.forEach(function(c,i){if(i>0&&c.classList.contains('on')) scopes.push(c.textContent.trim());});
+  return scopes;
+}
+function renderSearchResults(q){
+  var results=document.getElementById('so-results');
+  q=q.toLowerCase().trim();
+  var scopes=getActiveScopes();
+  if(!q){
+    results.innerHTML='<div class="so-empty">Search agents, projects, reports, Drive files, decisions&hellip;</div>';
+    return;
+  }
+  var matches=SEARCH_INDEX.filter(function(item){
+    var scopeMatch=!scopes||scopes.some(function(s){return item.scope.toLowerCase().includes(s.toLowerCase());});
+    var textMatch=item.title.toLowerCase().includes(q)||item.desc.toLowerCase().includes(q)||item.keywords.toLowerCase().includes(q);
+    return scopeMatch&&textMatch;
+  });
+  if(!matches.length){
+    results.innerHTML='<div class="so-empty">No results for "'+q+'"</div><div style="font-size:8px;color:rgba(196,164,107,0.25);letter-spacing:0.1em;margin-top:8px;">Drive search requires Google OAuth setup — see Command panel.</div>';
+    return;
+  }
+  results.innerHTML=matches.slice(0,12).map(function(item){
+    return '<div class="so-result" onclick="closeSearch();openDetail(\''+item.title.replace(/'/g,"\\'")+'\',' +
+      '\''+item.desc.replace(/'/g,"\\'")+'\n\nScope: '+item.scope+'\'\)">' +
+      '<div class="so-r-scope">'+item.scope+'</div>' +
+      '<div class="so-r-title">'+item.title+'</div>' +
+      '<div class="so-r-desc">'+item.desc+'</div>' +
+      '</div>';
+  }).join('');
+}
+document.getElementById('so-input').addEventListener('input',function(){
+  renderSearchResults(this.value);
+});
+document.getElementById('so-input').addEventListener('keydown',function(e){
+  if(e.key==='Escape') closeSearch();
+});
+
+// ── AGENT WORKSPACE ───────────────────────────────────
+function openAgent(name,role,initial,status,mandate,currentStatus,mission,email){
+  var statusColor=status==='green'?'rgba(100,200,100,0.8)':status==='amber'?'rgba(220,180,60,0.8)':'rgba(255,255,255,0.2)';
+  var html='<div class="agent-header" style="margin-bottom:16px;">'
+    +'<div class="agent-avatar" style="width:58px;height:58px;font-size:'+(initial.length>1?'12px':'20px')+';">'+initial+'</div>'
+    +'<div><div class="agent-name" style="font-size:20px;">'+name+'</div>'
+    +'<div class="agent-role" style="margin-top:3px;">'+role+'</div>'
+    +'<div class="agent-status" style="margin-top:6px;"><div style="width:6px;height:6px;border-radius:50%;background:'+statusColor+';flex-shrink:0;"></div>'
+    +'<span class="agent-status-text" style="font-size:8px;margin-left:5px;">'+currentStatus+'</span></div>'
+    +'</div></div>';
+  html+='<div class="sec">Mandate</div>';
+  html+='<div style="font-size:10px;color:rgba(255,255,255,0.82);line-height:1.65;margin-bottom:16px;">'+mandate+'</div>';
+  html+='<div class="sec">Current Mission</div>';
+  html+='<div style="font-size:10px;color:rgba(255,255,255,0.82);line-height:1.65;margin-bottom:16px;">'+mission+'</div>';
+  html+='<div class="sec">Actions</div>';
+  html+='<div class="action-row">'
+    +'<div class="action-btn" onclick="window.open(\'https://app.base44.com/superagent/\',\'_blank\')"><div class="ab-icon">💬</div><div class="ab-label">Chat</div></div>'
+    +'<div class="action-btn" onclick="window.open(\'mailto:'+email+'\',\'_blank\')"><div class="ab-icon">✉</div><div class="ab-label">Email</div></div>'
+    +'<div class="action-btn" onclick="closeDetail()"><div class="ab-icon">←</div><div class="ab-label">Back</div></div>'
+    +'</div>';
+  html+='<div class="sec">Contact</div>';
+  html+='<div style="font-size:9px;color:rgba(255,255,255,0.3);padding:8px 2px;letter-spacing:0.05em;">'+email+'</div>';
+  html+='<div class="detail-pad"></div>';
+  document.getElementById('detail-title').textContent=name;
+  document.getElementById('detail-body').innerHTML=html;
+  document.getElementById('detail').classList.add('open');
+  document.getElementById('curtain').classList.add('on');
+}
+
+// ── CARD TOUCH ────────────────────────────────────────
+document.addEventListener('touchstart',function(e){
+  var card=e.target.closest('.card');
+  if(card){card.classList.add('hi');setTimeout(function(){card.classList.remove('hi');},400);}
+},{passive:true});
+
+// ── INSTALL PROMPT ────────────────────────────────────
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); deferredPrompt=e;
+  if(localStorage.getItem('shield_install')==='done') return;
+  // Show immediately — no delay
+  document.getElementById('inst').style.display='flex';
+});
+window.addEventListener('appinstalled',function(){
+  localStorage.setItem('shield_install','done');
+  document.getElementById('inst').style.display='none';
+  document.getElementById('install-fab').style.display='none';
+});
+document.getElementById('inst-btn').addEventListener('click',function(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(r){
+      if(r.outcome==='accepted') localStorage.setItem('shield_install','done');
+      deferredPrompt=null;
+    });
+  }
+  document.getElementById('inst').style.display='none';
+});
+document.getElementById('inst-dim').addEventListener('click',function(){
+  document.getElementById('inst').style.display='none';
+  localStorage.setItem('shield_install','later');
+});
+// Install FAB click
+var installFab = document.getElementById('install-fab');
+if(installFab){
+  installFab.addEventListener('click', function(){
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(r){
+        if(r.outcome==='accepted') localStorage.setItem('shield_install','done');
+        deferredPrompt=null;
+        installFab.style.display='none';
+      });
+    } else {
+      openDetail('Install Shield OS',
+        'To install Shield OS on your phone:\n\n' +
+        'On Android (Chrome):\n→ Tap the three-dot menu (⋮) at the top right\n→ Tap "Add to Home screen"\n→ Tap "Add"\n\n' +
+        'On iOS (Safari):\n→ Tap the Share button at the bottom\n→ Scroll down and tap "Add to Home Screen"\n→ Tap "Add"\n\n' +
+        'Once installed, Shield OS launches fullscreen like a native app.');
+    }
+  });
+}
+
+// ── GOOGLE DRIVE INTEGRATION ──────────────────────────
+var DRIVE_CLIENT_ID = '435149499989-ishtmvqj1g4ktcu405btu4brm0rd0r5o.apps.googleusercontent.com';
+var DRIVE_API_KEY = 'AIzaSyB2HvKS7RPVJsDkxidCKEr9VCrt3WAiIeM';
+var DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+var driveToken = null;
+var driveUser = null;
+var driveFolderStack = []; // [{id, name}]
+var driveSearchTimer = null;
+
+function driveSignIn() {
+  var client = google.accounts.oauth2.initTokenClient({
+    client_id: DRIVE_CLIENT_ID,
+    scope: DRIVE_SCOPES,
+    callback: function(response) {
+      if(response.error) { console.error('Drive auth error', response); return; }
+      driveToken = response.access_token;
+      document.getElementById('drive-auth-section').style.display = 'none';
+      document.getElementById('drive-browser-section').style.display = 'block';
+      driveLoadUserInfo();
+      driveFolderStack = [{id:'root', name:'My Drive'}];
+      driveListFolder('root');
+    }
+  });
+  client.requestAccessToken();
+}
+
+function driveSignOut() {
+  google.accounts.oauth2.revoke(driveToken, function(){});
+  driveToken = null;
+  driveUser = null;
+  driveFolderStack = [];
+  document.getElementById('drive-auth-section').style.display = 'block';
+  document.getElementById('drive-browser-section').style.display = 'none';
+  document.getElementById('drive-user-info').style.display = 'none';
+  document.getElementById('drive-files-list').innerHTML = '';
+}
+
+function driveLoadUserInfo() {
+  fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: { Authorization: 'Bearer ' + driveToken }
+  }).then(function(r){ return r.json(); }).then(function(user){
+    driveUser = user;
+    document.getElementById('drive-user-pic').src = user.picture || '';
+    document.getElementById('drive-user-name').textContent = user.email || user.name || '';
+    document.getElementById('drive-user-info').style.display = 'flex';
+  }).catch(function(){});
+}
+
+function driveListFolder(folderId) {
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Loading&hellip;</div>';
+  driveBreadcrumb();
+  var query = folderId === 'root'
+    ? "'root' in parents and trashed=false"
+    : "'" + folderId + "' in parents and trashed=false";
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent(query)
+    + '&fields=files(id,name,mimeType,modifiedTime,size)'
+    + '&orderBy=folder,name'
+    + '&pageSize=100';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){ driveRenderFiles(data.files || []); })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Could not load files.</div>'; });
+}
+
+function driveRenderFiles(files) {
+  var list = document.getElementById('drive-files-list');
+  if(!files.length){ list.innerHTML = '<div class="drive-empty">This folder is empty.</div>'; return; }
+  list.innerHTML = files.map(function(f){ return driveFileHTML(f); }).join('');
+}
+
+function driveFileHTML(f) {
+  var isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+  var icon = driveFileIcon(f.mimeType);
+  var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
+  var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
+    + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
+    + '<div class="file-info">'
+    + '<div class="file-name">' + f.name + '</div>'
+    + '<div class="file-meta">' + (isFolder ? 'Folder' : driveTypeName(f.mimeType)) + (date ? ' &middot; ' + date : '') + '</div>'
+    + '</div>'
+    + (isFolder ? '<span style="color:var(--gold-28);font-size:12px;">›</span>' : '')
+    + '</div>';
+}
+
+function driveOpenFile(id, name, mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') {
+    driveFolderStack.push({id:id, name:name});
+    driveListFolder(id);
+    return;
+  }
+  // Read document content
+  openDocViewer(id, name, mimeType);
+}
+
+function driveBreadcrumb() {
+  var bc = document.getElementById('drive-breadcrumb');
+  bc.innerHTML = driveFolderStack.map(function(item, i){
+    var isLast = i === driveFolderStack.length - 1;
+    return (i > 0 ? '<span class="bc-sep">›</span>' : '')
+      + '<span class="bc-item" ' + (isLast ? '' : 'onclick="driveNavTo(' + i + ')"') + ' style="' + (isLast ? 'color:var(--gold-85);' : '') + '">'
+      + item.name + '</span>';
+  }).join('');
+}
+
+function driveNavTo(index) {
+  driveFolderStack = driveFolderStack.slice(0, index + 1);
+  var folder = driveFolderStack[driveFolderStack.length - 1];
+  driveListFolder(folder.id);
+}
+
+function driveSearch(q) {
+  if(!q.trim()){ driveNavTo(driveFolderStack.length-1); return; }
+  var list = document.getElementById('drive-files-list');
+  list.innerHTML = '<div class="drive-loading">Searching&hellip;</div>';
+  var url = 'https://www.googleapis.com/drive/v3/files'
+    + '?q=' + encodeURIComponent("fullText contains '" + q.replace(/'/g,"\'") + "' and trashed=false")
+    + '&fields=files(id,name,mimeType,modifiedTime)'
+    + '&pageSize=30';
+  fetch(url, { headers: { Authorization: 'Bearer ' + driveToken } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var bc = document.getElementById('drive-breadcrumb');
+      bc.innerHTML = '<span class="bc-item" style="color:var(--gold-85);">Search: ' + q + '</span>';
+      driveRenderFiles(data.files || []);
+    })
+    .catch(function(){ list.innerHTML = '<div class="drive-empty">Search failed.</div>'; });
+}
+
+// Doc viewer
+function openDocViewer(id, name, mimeType) {
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-body').textContent = 'Loading…';
+  document.getElementById('doc-viewer').classList.add('open');
+  driveReadFile(id, name, mimeType);
+}
+function closeDocViewer() {
+  document.getElementById('doc-viewer').classList.remove('open');
+}
+
+function driveReadFile(id, name, mimeType) {
+  var body = document.getElementById('dv-body');
+  var isGoogleDoc = mimeType.startsWith('application/vnd.google-apps.');
+  var url, headers = { Authorization: 'Bearer ' + driveToken };
+  if(isGoogleDoc) {
+    var exportMime = 'text/plain';
+    if(mimeType === 'application/vnd.google-apps.spreadsheet') exportMime = 'text/csv';
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '/export?mimeType=' + encodeURIComponent(exportMime);
+  } else if(mimeType === 'application/pdf' || mimeType.startsWith('image/')) {
+    body.innerHTML = '<div style="text-align:center;padding:24px 0;">'
+      + '<div style="font-size:9px;color:var(--gold-45);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">'
+      + (mimeType === 'application/pdf' ? 'PDF Document' : 'Image') + '</div>'
+      + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="display:inline-block;padding:10px 24px;border:1px solid var(--gold-28);border-radius:28px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-65);text-decoration:none;">Open in Drive</a>'
+      + '</div>';
+    return;
+  } else {
+    url = 'https://www.googleapis.com/drive/v3/files/' + id + '?alt=media';
+  }
+  fetch(url, { headers: headers })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      body.textContent = text || '(Empty document)';
+    })
+    .catch(function(){
+      body.innerHTML = '<div style="color:rgba(220,100,90,0.7);font-size:10px;">Could not load this file. '
+        + '<a href="https://drive.google.com/file/d/' + id + '/view" target="_blank" style="color:var(--gold-65);">Open in Drive →</a></div>';
+    });
+}
+
+function driveFileIcon(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.folder') return '📁';
+  if(mimeType === 'application/vnd.google-apps.document') return '📄';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return '📊';
+  if(mimeType === 'application/vnd.google-apps.presentation') return '📽';
+  if(mimeType === 'application/pdf') return '📋';
+  if(mimeType.startsWith('image/')) return '🖼';
+  if(mimeType.startsWith('video/')) return '🎬';
+  if(mimeType.startsWith('audio/')) return '🎵';
+  return '📎';
+}
+function driveIconClass(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'sheet';
+  if(mimeType === 'application/pdf') return 'pdf';
+  if(mimeType.startsWith('image/')) return 'image';
+  return 'doc';
+}
+function driveTypeName(mimeType) {
+  if(mimeType === 'application/vnd.google-apps.document') return 'Google Doc';
+  if(mimeType === 'application/vnd.google-apps.spreadsheet') return 'Google Sheet';
+  if(mimeType === 'application/vnd.google-apps.presentation') return 'Presentation';
+  if(mimeType === 'application/pdf') return 'PDF';
+  if(mimeType.startsWith('image/')) return 'Image';
+  return 'File';
+}
+
+// Drive search input
+document.getElementById('drive-search-input').addEventListener('input', function(){
+  var q = this.value;
+  clearTimeout(driveSearchTimer);
+  driveSearchTimer = setTimeout(function(){ driveSearch(q); }, 500);
+});
+
+</script>
+</body>
+</html>

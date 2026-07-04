@@ -602,7 +602,7 @@ function driveFileHTML(f) {
   var icon = driveFileIcon(f.mimeType);
   var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
   var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
-  return '<div class="file-item" onclick="driveOpenFile('' + f.id + '','' + f.name.replace(/'/g,"\'") + '','' + f.mimeType.replace(/'/g,"\'") + '')">'
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
     + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
     + '<div class="file-info">'
     + '<div class="file-name">' + f.name + '</div>'
@@ -809,7 +809,7 @@ function driveFileHTML(f) {
   var icon = driveFileIcon(f.mimeType);
   var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
   var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
-  return '<div class="file-item" onclick="driveOpenFile('' + f.id + '','' + f.name.replace(/'/g,"\'") + '','' + f.mimeType.replace(/'/g,"\'") + '')">'
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
     + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
     + '<div class="file-info">'
     + '<div class="file-name">' + f.name + '</div>'
@@ -1963,21 +1963,9 @@ if(installFab){
       });
     } else {
       openDetail('Install Shield OS',
-        'To install Shield OS on your phone:
-
-' +
-        'On Android (Chrome):
-→ Tap the three-dot menu (⋮) at the top right
-→ Tap "Add to Home screen"
-→ Tap "Add"
-
-' +
-        'On iOS (Safari):
-→ Tap the Share button at the bottom
-→ Scroll down and tap "Add to Home Screen"
-→ Tap "Add"
-
-' +
+        'To install Shield OS on your phone:\n\n' +
+        'On Android (Chrome):\n→ Tap the three-dot menu (⋮) at the top right\n→ Tap "Add to Home screen"\n→ Tap "Add"\n\n' +
+        'On iOS (Safari):\n→ Tap the Share button at the bottom\n→ Scroll down and tap "Add to Home Screen"\n→ Tap "Add"\n\n' +
         'Once installed, Shield OS launches fullscreen like a native app.');
     }
   });
@@ -2060,7 +2048,7 @@ function driveFileHTML(f) {
   var icon = driveFileIcon(f.mimeType);
   var iconClass = isFolder ? 'folder' : driveIconClass(f.mimeType);
   var date = f.modifiedTime ? f.modifiedTime.slice(0,10) : '';
-  return '<div class="file-item" onclick="driveOpenFile('' + f.id + '','' + f.name.replace(/'/g,"\'") + '','' + f.mimeType.replace(/'/g,"\'") + '')">'
+  return '<div class="file-item" onclick="driveOpenFile(\'' + f.id + '\',\'' + f.name.replace(/'/g,"\\'") + '\',\'' + f.mimeType.replace(/'/g,"\\'") + '\')">'
     + '<div class="file-icon ' + iconClass + '">' + icon + '</div>'
     + '<div class="file-info">'
     + '<div class="file-name">' + f.name + '</div>'

@@ -1,25 +1,38 @@
 {
-  "name": "Shield OS — Lunara Society",
+  "name": "Shield OS \u2014 Lunara Society",
   "short_name": "Shield OS",
   "description": "Lunara Society Private Institutional Headquarters",
-  "start_url": "/shield-os/",
+  "start_url": "/shield-os/index.html",
+  "id": "/shield-os/index.html",
   "scope": "/shield-os/",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#000000",
   "theme_color": "#000000",
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/shield-os/shield-logo.jpg",
-      "sizes": "any",
-      "type": "image/jpeg",
+      "src": "/shield-os/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/shield-os/shield-logo.jpg",
-      "sizes": "any",
-      "type": "image/jpeg",
+      "src": "/shield-os/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/shield-os/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/shield-os/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ]

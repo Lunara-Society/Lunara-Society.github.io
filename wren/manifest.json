@@ -1,0 +1,16 @@
+{
+  "name": "Wren — Lunara Society Command Center",
+  "short_name": "Wren",
+  "description": "Live command center connected to Wren, the Lunara Society Superagent.",
+  "start_url": "/wren/",
+  "scope": "/wren/",
+  "display": "fullscreen",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/wren/wren-icon.png", "sizes": "any", "type": "image/png", "purpose": "any" },
+    { "src": "/wren/wren-icon.png", "sizes": "any", "type": "image/png", "purpose": "maskable" }
+  ]
+}

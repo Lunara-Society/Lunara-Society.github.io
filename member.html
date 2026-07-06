@@ -205,6 +205,7 @@ input,textarea{
 }
 
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;"></div>
@@ -226,6 +227,15 @@ input,textarea{
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
       <div class="auth-tab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <div id="google-signin-wrap" style="margin: 18px 0 6px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div id="google-signin-btn"></div>
+      <div style="display:flex; align-items:center; width:100%; gap:10px; opacity:0.5;">
+        <div style="flex:1; height:1px; background:#C4A46B;"></div>
+        <span style="font-size:11px; letter-spacing:1px; color:#C4A46B;">OR</span>
+        <div style="flex:1; height:1px; background:#C4A46B;"></div>
+      </div>
     </div>
 
     <!-- LOGIN FORM -->
@@ -521,6 +531,46 @@ input,textarea{
 <script>
 // LIVE AUTH — backed by Lunara member database
 const LUNARA_API = 'https://superagent-764aee85.base44.app/functions';
+
+function initGoogleSignIn(){
+  if(!window.google || !google.accounts || !google.accounts.id) { setTimeout(initGoogleSignIn, 300); return; }
+  google.accounts.id.initialize({
+    client_id: '744926178467-645eltr29q4o3lo8msnlnuqsa782feca.apps.googleusercontent.com',
+    callback: handleGoogleCredential
+  });
+  const btn = document.getElementById('google-signin-btn');
+  if(btn){
+    google.accounts.id.renderButton(btn, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', width: 280 });
+  }
+}
+
+async function handleGoogleCredential(response){
+  const err1 = document.getElementById('login-error');
+  const err2 = document.getElementById('register-error');
+  if(err1) err1.textContent = '';
+  if(err2) err2.textContent = '';
+  try{
+    const res = await fetch(LUNARA_API+'/lunaraGoogleAuth', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id_token: response.credential })
+    });
+    const data = await res.json();
+    if(data.success){
+      saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
+      showDashboard(data.lunara_id, data.full_name);
+    } else {
+      const msg = 'Google sign-in failed. Please try again.';
+      if(err1) err1.textContent = msg;
+      if(err2) err2.textContent = msg;
+    }
+  } catch(e){
+    const msg = 'Connection error. Please try again.';
+    if(err1) err1.textContent = msg;
+    if(err2) err2.textContent = msg;
+  }
+}
+
+initGoogleSignIn();
 
 function switchTab(tab){
   document.querySelectorAll('.auth-tab').forEach((t,i)=>{

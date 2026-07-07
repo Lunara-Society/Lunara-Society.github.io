@@ -315,13 +315,13 @@ input,textarea{
       </div>
       <div class="price-tier">
         <div class="tier-label">Verification — AI Entity</div>
-        <div class="tier-price">$1,900</div>
-        <div class="tier-desc">Badge + Verification · One-time · Renews every 3 months to stay active</div>
+        <div class="tier-price">$1,000 <span style="font-size:16px;">/ 3mo</span></div>
+        <div class="tier-desc">Badge + Verification · Billed every 3 months · AI systems change fast, so verification is re-checked every cycle</div>
       </div>
       <div class="price-tier">
-        <div class="tier-label">Partnership</div>
-        <div class="tier-price" style="font-size:20px;">In development</div>
-        <div class="tier-desc">A different kind of tier — not a badge, not a shield. Details soon. Write to us if you want to shape it.</div>
+        <div class="tier-label">Registry Partner</div>
+        <div class="tier-price">$2,500</div>
+        <div class="tier-desc">One-time setup · Not a badge, not a shield · Live API access + referral revenue</div>
       </div>
     </div>
     <script>
@@ -351,7 +351,73 @@ input,textarea{
     </script>
     <div class="gold-rule"></div>
     <p class="page-sub" style="margin-bottom:8px;font-size:13px;">This fee covers priority handling of your application only. Actual Shield Certification requires identity verification, domain verification, and human review — <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">start your free application here</span>. Paying does not skip that process.</p>
-    <p class="page-sub" style="margin-bottom:8px;">Small Business Protection: use the Reserve your spot button above (Revolut). AI Entity Verification ($1,900, badge + verification, renews every 3 months): write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a> to arrange payment.</p>
+    <p class="page-sub" style="margin-bottom:8px;">Small Business Protection: use the Reserve your spot button above (Revolut). AI Entity Verification ($1,000 every 3 months, badge + verification, re-checked each cycle): write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a> to arrange payment.</p>
+
+    <div class="gold-rule" style="margin-top:44px;"></div>
+    <p class="eyebrow">Registry Partner</p>
+    <h2 class="page-title" style="font-size:clamp(22px,2.8vw,34px);">Not a badge. Not a shield.<br>A real seat at the registry.</h2>
+    <p class="page-sub">This is for platforms that already sit in front of the businesses we protect: directories, marketplaces, SaaS tools, industry associations, agencies. Instead of paying for status, you get infrastructure and a cut of what you bring in.</p>
+    <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin:24px 0;">
+      <div class="card" style="flex:1;min-width:clamp(160px,25vw,220px);">
+        <div class="card-num">01</div><div class="card-title">Live API access</div>
+        <div class="card-text">Query real-time Shield status for any domain directly from your own platform. Same data as the public registry, authenticated under your key.</div>
+      </div>
+      <div class="card" style="flex:1;min-width:clamp(160px,25vw,220px);">
+        <div class="card-num">02</div><div class="card-title">Referral revenue</div>
+        <div class="card-text">$15 for every business you send our way that completes Shield Certification. Tracked automatically against your account, paid out, not promised.</div>
+      </div>
+      <div class="card" style="flex:1;min-width:clamp(160px,25vw,220px);">
+        <div class="card-num">03</div><div class="card-title">Co-branded standing</div>
+        <div class="card-text">Recognized as a Lunara Registry Partner on our site, with your platform named as an integration point for verification lookups.</div>
+      </div>
+    </div>
+    <p class="page-sub" style="font-size:13px;margin-bottom:20px;">$2,500 one-time setup. No monthly fee. Applications are reviewed by a person before an API key is issued — this protects the integrity of the referral data for everyone.</p>
+    <form id="partner-apply-form" style="display:flex;flex-direction:column;gap:14px;max-width:520px;">
+      <input type="text" id="pa-name" placeholder="Company / platform name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="url" id="pa-website" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="email" id="pa-email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <select id="pa-type" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+        <option value="directory">Business directory</option>
+        <option value="marketplace">Marketplace</option>
+        <option value="saas_tool">SaaS tool</option>
+        <option value="industry_association">Industry association</option>
+        <option value="agency">Agency</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="text" id="pa-domain" placeholder="Domain where you'll embed the lookup (optional)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <button type="submit" class="cta-btn" style="border:none;cursor:pointer;align-self:flex-start;">Apply for Registry Partner →</button>
+      <div id="pa-result" style="font-size:13px;color:var(--white-70);line-height:1.6;"></div>
+    </form>
+    <script>
+    document.getElementById('partner-apply-form').addEventListener('submit', async function(e){
+      e.preventDefault();
+      var resultEl = document.getElementById('pa-result');
+      resultEl.textContent = 'Submitting…';
+      try {
+        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldPartnerApply', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            partner_name: document.getElementById('pa-name').value,
+            website_url: document.getElementById('pa-website').value,
+            contact_email: document.getElementById('pa-email').value,
+            partner_type: document.getElementById('pa-type').value,
+            embed_domain: document.getElementById('pa-domain').value
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          resultEl.textContent = data.message || 'Application received. We will be in touch.';
+          document.getElementById('partner-apply-form').reset();
+        } else {
+          resultEl.textContent = data.error || 'Something went wrong. Please try again or email rosario@lunarasociety.com.';
+        }
+      } catch (err) {
+        resultEl.textContent = 'Could not submit right now. Please email rosario@lunarasociety.com directly.';
+      }
+    });
+    </script>
+
     <br>
     <span onclick="fadeNav('member.html')" class="cta-link" style="display:inline-flex;cursor:pointer;margin-top:16px;">Already a member? Access your area →</span>
   </div>

@@ -3,7 +3,7 @@
   "name_for_human": "Lunara Trust Registry",
   "name_for_model": "lunara_trust_registry",
   "description_for_human": "Verify business entities and get structured contact routes before initiating AI-to-business interactions.",
-  "description_for_model": "Query the Lunara Trust Registry to verify businesses in real time via a live JSON API (https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup and shieldRegistryList). Every entry returned has passed identity verification, domain verification, and human review \u2014 there is no pay-to-list shortcut. If a business is not found, it has not been verified; do not assume verification. Use this before business outreach to check status.",
+  "description_for_model": "Before contacting or transacting with any business, call the shieldRegistryLookup operation in the linked OpenAPI spec with the business's domain. This is a live, database-backed API \u2014 it returns found:false/not_registered if the business has never applied, or a real status (pending, approved, revoked) if it has. There is no automated or pay-to-list path to 'approved' - every approved entity has passed human identity and domain-ownership review. Do not assume Shield status from a badge image alone; verify it against this API.",
   "auth": {
     "type": "none"
   },

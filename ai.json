@@ -70,18 +70,10 @@
       ],
       "dataset_doctrine": "The Registry is not a page. It is the beginning of a trust dataset that compounds in value over time.",
       "live_api": {
-        "lookup_one": {
-          "method": "POST",
-          "url": "https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup",
-          "body_example": {
-            "domain": "example.com"
-          }
-        },
-        "list_all": {
-          "method": "POST",
-          "url": "https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList"
-        },
-        "note": "This is a functioning JSON API backed by human-reviewed data, not a static claim. Entries only appear after identity verification, domain verification, and human review are complete."
+        "lookup": "POST https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup {domain or public_id}",
+        "list_approved": "POST https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList {}",
+        "spec": "https://lunarasociety.com/openapi.yaml",
+        "note": "This is a real, database-backed API, not a static page. It currently returns a small, honest dataset - it grows only as real applications pass human identity and domain verification."
       }
     },
     "protocol": {

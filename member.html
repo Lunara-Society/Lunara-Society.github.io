@@ -325,36 +325,41 @@ input,textarea{
     <div class="dash-section active" id="section-overview">
       <p class="dash-section-title">Member Dashboard</p>
       <h2 class="dash-section-heading">Your Protected Infrastructure</h2>
+      <div id="cert-cta-banner" style="display:none;background:rgba(196,164,107,0.08);border:1px solid rgba(196,164,107,0.3);border-radius:8px;padding:20px 24px;margin-bottom:24px">
+        <p style="font-size:12px;color:var(--gold);letter-spacing:1px;margin-bottom:6px">NOT YET CERTIFIED</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:14px">Your account is active, but your business hasn't completed Shield Certification yet. Start your application to get verified and appear in the public registry.</p>
+        <a href="shield.html" style="display:inline-block;padding:10px 22px;border:1px solid var(--gold);border-radius:20px;color:var(--gold);font-size:12px;letter-spacing:1px;text-decoration:none">START APPLICATION →</a>
+      </div>
       <div class="card-grid">
-        <div class="card card-green">
+        <div class="card" id="card-shield-status-wrap">
           <p class="card-label">Shield Status</p>
-          <p class="card-value">Active</p>
-          <p class="card-sub">Protection enabled · Founding Participant</p>
+          <p class="card-value" id="card-shield-status">Checking...</p>
+          <p class="card-sub" id="card-shield-status-sub">Loading your verification status</p>
         </div>
         <div class="card">
           <p class="card-label">Lunara ID</p>
           <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-BUS-2026-00001284</p>
           <p class="card-sub">Permanent identifier · Lifetime record</p>
         </div>
-        <div class="card card-green">
-          <p class="card-label">AI Visibility Score</p>
-          <p class="card-value">94 / 100</p>
-          <p class="card-sub">Grade A · Fully machine-readable</p>
+        <div class="card" id="card-ai-score-wrap">
+          <p class="card-label">Machine-Readable Status</p>
+          <p class="card-value" id="card-ai-score">—</p>
+          <p class="card-sub" id="card-ai-score-sub">Available after certification</p>
         </div>
-        <div class="card">
+        <div class="card" id="card-registry-wrap">
           <p class="card-label">Registry Status</p>
-          <p class="card-value" style="font-size:16px">Verified · Public</p>
-          <p class="card-sub">Queryable by AI systems</p>
+          <p class="card-value" id="card-registry-status" style="font-size:16px">Not listed</p>
+          <p class="card-sub" id="card-registry-sub">Complete certification to appear here</p>
         </div>
-        <div class="card">
+        <div class="card" id="card-comms-wrap">
           <p class="card-label">Communication Policy</p>
-          <p class="card-value" style="font-size:16px">Declared</p>
-          <p class="card-sub">Active · Machine-readable</p>
+          <p class="card-value" id="card-comms-status" style="font-size:16px">Not declared</p>
+          <p class="card-sub" id="card-comms-sub">Set during certification</p>
         </div>
         <div class="card">
-          <p class="card-label">Participation Since</p>
-          <p class="card-value" id="card-date" style="font-size:16px">June 2026</p>
-          <p class="card-sub">Founding cohort · Priority status</p>
+          <p class="card-label">Account</p>
+          <p class="card-value" id="card-date" style="font-size:16px">Member</p>
+          <p class="card-sub">Active account</p>
         </div>
       </div>
     </div>
@@ -386,9 +391,9 @@ input,textarea{
       <p class="dash-section-title">Protection</p>
       <h2 class="dash-section-heading">Shield Status</h2>
       <div class="card-grid">
-        <div class="card card-green"><p class="card-label">Shield ID</p><p class="card-value" style="font-size:14px;font-family:monospace;color:var(--gold)">SHD-2026-84A7C2D1</p><p class="card-sub">Permanent · Non-transferable</p></div>
-        <div class="card card-green"><p class="card-label">Protection Level</p><p class="card-value" style="font-size:16px">Founding Participant</p><p class="card-sub">Highest founding tier</p></div>
-        <div class="card card-green"><p class="card-label">Status</p><p class="card-value">Active ✓</p><p class="card-sub">All systems operational</p></div>
+        <div class="card" id="card-shieldid-wrap"><p class="card-label">Shield ID</p><p class="card-value" id="card-shield-id" style="font-size:14px;font-family:monospace;color:var(--gold)">Not yet issued</p><p class="card-sub" id="card-shield-id-sub">Issued after certification approval</p></div>
+        <div class="card" id="card-protlevel-wrap"><p class="card-label">Protection Level</p><p class="card-value" id="card-prot-level" style="font-size:16px">Not certified</p><p class="card-sub" id="card-prot-level-sub">Start your application to begin</p></div>
+        <div class="card" id="card-shieldactive-wrap"><p class="card-label">Status</p><p class="card-value" id="card-shield-active">Pending</p><p class="card-sub" id="card-shield-active-sub">Awaiting certification</p></div>
       </div>
     </div>
 
@@ -546,12 +551,21 @@ function initGoogleSignIn(){
   }
 }
 
+function decodeJwtEmail(jwt){
+  try{
+    const payload = JSON.parse(atob(jwt.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    return payload.email || null;
+  } catch(e){ return null; }
+}
+
 async function handleGoogleCredential(response){
   const err1 = document.getElementById('login-error');
   const err2 = document.getElementById('register-error');
   if(err1) err1.textContent = '';
   if(err2) err2.textContent = '';
   try{
+    const emailFromToken = decodeJwtEmail(response.credential);
+    if(emailFromToken) localStorage.setItem('lunara_email', emailFromToken.toLowerCase());
     const res = await fetch(LUNARA_API+'/lunaraGoogleAuth', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ id_token: response.credential })
@@ -612,6 +626,8 @@ async function doLogin(){
     });
     const data = await res.json();
     if(data.success){
+      if(identifier.includes('@')) localStorage.setItem('lunara_email', identifier.toLowerCase());
+      else if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
     } else {
@@ -642,6 +658,7 @@ async function doRegister(){
     });
     const data = await res.json();
     if(data.success){
+      localStorage.setItem('lunara_email', email.toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
     } else {
@@ -663,9 +680,78 @@ function showDashboard(id, name){
   document.getElementById('nav-status').textContent='MEMBER: '+id;
   const rec = document.getElementById('registry-record');
   if(rec) rec.textContent = rec.textContent.replace('LUN-BUS-2026-00001284', id);
+  loadRealShieldStatus();
+}
+
+// Fetch the member's ACTUAL Shield Certification status and render it.
+// Never shows a verified/active state unless the backend confirms it.
+async function loadRealShieldStatus(){
+  const email = localStorage.getItem('lunara_email') || '';
+  const setSafeDefault = () => {
+    document.getElementById('card-shield-status').textContent = 'Not Certified';
+    document.getElementById('card-shield-status-sub').textContent = 'Start your application to get verified';
+    document.getElementById('card-shield-status-wrap').classList.remove('card-green');
+    document.getElementById('card-ai-score').textContent = 'Not available';
+    document.getElementById('card-ai-score-sub').textContent = 'Complete certification first';
+    document.getElementById('card-registry-status').textContent = 'Not listed';
+    document.getElementById('card-registry-sub').textContent = 'Complete certification to appear here';
+    document.getElementById('card-comms-status').textContent = 'Not declared';
+    document.getElementById('card-comms-sub').textContent = 'Set during certification';
+    document.getElementById('card-shield-id').textContent = 'Not yet issued';
+    document.getElementById('card-shield-id-sub').textContent = 'Issued after certification approval';
+    document.getElementById('card-prot-level').textContent = 'Not certified';
+    document.getElementById('card-prot-level-sub').textContent = 'Start your application to begin';
+    document.getElementById('card-shield-active').textContent = 'Pending';
+    document.getElementById('card-shield-active-sub').textContent = 'Awaiting certification';
+    document.getElementById('cert-cta-banner').style.display = 'block';
+  };
+
+  if(!email){ setSafeDefault(); return; }
+
+  try{
+    const res = await fetch(LUNARA_API+'/shieldMemberStatus', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if(!data.success){ setSafeDefault(); return; }
+
+    if(data.certified){
+      document.getElementById('card-shield-status').textContent = 'Active';
+      document.getElementById('card-shield-status-sub').textContent = 'Protection enabled · Verified';
+      document.getElementById('card-shield-status-wrap').classList.add('card-green');
+      document.getElementById('card-ai-score').textContent = 'Machine-Readable ✓';
+      document.getElementById('card-ai-score-sub').textContent = 'Structured data published';
+      document.getElementById('card-registry-status').textContent = 'Verified · Public';
+      document.getElementById('card-registry-sub').textContent = 'Queryable by AI systems';
+      document.getElementById('card-comms-status').textContent = 'Declared';
+      document.getElementById('card-comms-sub').textContent = 'Active · Machine-readable';
+      document.getElementById('card-shield-id').textContent = data.public_id || '—';
+      document.getElementById('card-shield-id-sub').textContent = 'Permanent · Non-transferable';
+      document.getElementById('card-prot-level').textContent = 'Certified';
+      document.getElementById('card-prot-level-sub').textContent = data.business_name || '';
+      document.getElementById('card-shield-active').textContent = 'Active ✓';
+      document.getElementById('card-shield-active-sub').textContent = 'All systems operational';
+      document.getElementById('cert-cta-banner').style.display = 'none';
+    } else if(data.status === 'pending'){
+      document.getElementById('card-shield-status').textContent = 'Under Review';
+      document.getElementById('card-shield-status-sub').textContent = 'Application submitted · pending verification';
+      document.getElementById('card-prot-level').textContent = 'Application pending';
+      document.getElementById('card-prot-level-sub').textContent = data.business_name || '';
+      document.getElementById('card-shield-active').textContent = 'In Review';
+      document.getElementById('card-shield-active-sub').textContent = 'Our team is verifying your details';
+      document.getElementById('cert-cta-banner').style.display = 'none';
+    } else {
+      setSafeDefault();
+    }
+  } catch(e){
+    setSafeDefault();
+  }
 }
 
 function doLogout(){
+  localStorage.removeItem('lunara_email');
   clearSession();
   document.getElementById('view-auth').style.display='flex';
   document.getElementById('view-dashboard').style.display='none';
@@ -789,7 +875,7 @@ function goHome(){
 (function(){
   var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0,2);
   var labels = {
-    es:'Volver al Inicio', fr:'Retour à l'Accueil', pt:'Voltar ao Início',
+    es:'Volver al Inicio', fr:"Retour à l'Accueil", pt:'Voltar ao Início',
     de:'Zurück zur Startseite', it:'Torna alla Home', ar:'العودة للرئيسية',
     zh:'返回首页', ja:'ホームへ戻る', ko:'홈으로 돌아가기', ru:'На главную'
   };

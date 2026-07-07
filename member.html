@@ -536,7 +536,9 @@ function initGoogleSignIn(){
   if(!window.google || !google.accounts || !google.accounts.id) { setTimeout(initGoogleSignIn, 300); return; }
   google.accounts.id.initialize({
     client_id: '744926178467-645eltr29q4o3lo8msnlnuqsa782feca.apps.googleusercontent.com',
-    callback: handleGoogleCredential
+    callback: handleGoogleCredential,
+    ux_mode: 'popup',
+    use_fedcm_for_button: true
   });
   const btn = document.getElementById('google-signin-btn');
   if(btn){

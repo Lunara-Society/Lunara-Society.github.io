@@ -149,6 +149,26 @@ html,body{
 }
 .mark-br{bottom:clamp(12px,2.5vh,28px);right:clamp(10px,1.5vw,20px);text-align:right;}
 
+/* TOP-RIGHT MEMBER ACCESS SHORTCUT */
+.tr-access{
+  position:absolute;top:clamp(14px,3vh,32px);right:clamp(16px,2.2vw,34px);
+  z-index:15;
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(9px,0.85vw,12px);
+  letter-spacing:0.32em;text-transform:uppercase;
+  color:rgba(196,164,107,0.55);font-style:italic;font-weight:400;
+  text-decoration:none;
+  opacity:0;transition:opacity 1.2s ease,color 0.3s ease,text-shadow 0.3s ease;
+}
+.tr-access::after{
+  content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;
+  background:rgba(196,164,107,0.6);transform:scaleX(0);transform-origin:right;
+  transition:transform 0.35s ease;
+}
+.tr-access:hover{color:rgba(226,196,122,0.95);text-shadow:0 0 12px rgba(196,164,107,0.4);}
+.tr-access:hover::after{transform:scaleX(1);transform-origin:left;}
+.tr-access.revealed{opacity:1;}
+
 /* SIDE PANEL */
 #side-panel{
   position:absolute;left:0;top:0;bottom:0;
@@ -181,7 +201,7 @@ html,body{
 }
 
 #panel-nav{
-  flex:1;display:flex;flex-direction:column;gap:0;
+  flex:1;display:flex;flex-direction:column;gap:clamp(3px,0.7vh,9px);
   padding:0 0 0 clamp(14px,2vw,26px);overflow:hidden;
 }
 .pnav-link{
@@ -296,12 +316,22 @@ html,body{
   color:rgba(196,164,107,0.13);font-style:italic;
 }
 #mob-mark{
-  position:absolute;top:clamp(10px,2.5vh,20px);right:clamp(12px,4vw,22px);
+  position:absolute;top:clamp(28px,6.5vh,44px);right:clamp(12px,4vw,22px);
   z-index:10;
   font-size:clamp(5px,1.6vw,7px);
   letter-spacing:0.22em;text-transform:uppercase;
   color:rgba(196,164,107,0.14);font-family:"Inter",sans-serif;
 }
+.mob-tr-access{
+  position:absolute;top:clamp(10px,2.5vh,20px);right:clamp(12px,4vw,22px);
+  z-index:12;
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(9px,2.4vw,11px);
+  letter-spacing:0.24em;text-transform:uppercase;
+  color:rgba(196,164,107,0.6);font-style:italic;
+  text-decoration:none;
+}
+.mob-tr-access:active{color:rgba(226,196,122,0.95);}
 
 /* MOBILE NAV */
 #mob-nav{
@@ -317,7 +347,7 @@ html,body{
 #mob-nav-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:0;
+  gap:clamp(6px,2vw,14px);
   padding:0 clamp(2px,1vw,8px);
 }
 .mnav-item{
@@ -432,6 +462,7 @@ html,body{
   <div id="dust"></div>
   <div id="inscription"><span>Per Scientiam &nbsp;&middot;&nbsp; Per Ordinem &nbsp;&middot;&nbsp; Per Legatum</span></div>
   <div class="mark mark-br" id="mark-br">MMXXVI</div>
+  <a href="member.html" class="tr-access" id="tr-access">Enter</a>
 
   <!-- SIDE PANEL -->
   <div id="side-panel">
@@ -506,6 +537,7 @@ html,body{
   </div>
   <div id="mob-inscription"><span>Per Scientiam &middot; Per Ordinem &middot; Per Legatum</span></div>
   <div id="mob-mark">MMXXVI &middot; Est. 2026</div>
+  <a href="member.html" class="mob-tr-access" id="mob-tr-access">Enter</a>
   <nav id="mob-nav">
     <div id="mob-nav-grid">
       <a class="mnav-item" href="shield.html">
@@ -616,13 +648,39 @@ function initDesktop(){
   setTimeout(() => {
     insc.style.opacity = "1";
     if(markBr){ markBr.style.transition="opacity 1.5s ease"; markBr.style.opacity="1"; }
+    const trAccess = document.getElementById("tr-access");
+    if(trAccess){ trAccess.classList.add("revealed"); }
   }, 4300);
 
-  // 4.8s pulse
+  // 4.8s pulse intro: the central light brightens, one icon illuminates, then it all settles
   setTimeout(() => {
-    pulse.style.transition = "opacity 1s ease";
-    pulse.style.opacity = "0.55";
-    animatePulse(pulse);
+    pulse.style.transition = "opacity 1.1s ease, transform 1.1s ease";
+    pulse.style.opacity = "0.88";
+    pulse.style.transform = "translate(-50%,-60%) scale(1.18)";
+
+    setTimeout(() => {
+      const firstIcon = document.querySelector(".pnav-link .pnav-icon");
+      if(firstIcon){
+        firstIcon.style.transition = "border-color 0.9s ease, box-shadow 0.9s ease, background 0.9s ease";
+        firstIcon.style.borderColor = "rgba(226,196,122,0.95)";
+        firstIcon.style.boxShadow = "0 0 18px rgba(226,196,122,0.55), inset 0 1px 1px rgba(0,0,0,0.6)";
+        firstIcon.style.background = "rgba(196,164,107,0.22)";
+
+        setTimeout(() => {
+          firstIcon.style.transition = "border-color 1.3s ease, box-shadow 1.3s ease, background 1.3s ease";
+          firstIcon.style.borderColor = "";
+          firstIcon.style.boxShadow = "";
+          firstIcon.style.background = "";
+        }, 1100);
+      }
+    }, 700);
+
+    setTimeout(() => {
+      pulse.style.transition = "opacity 1.3s ease, transform 1.3s ease";
+      pulse.style.opacity = "0.55";
+      pulse.style.transform = "translate(-50%,-60%) scale(1)";
+      animatePulse(pulse);
+    }, 1900);
   }, 4800);
 
   spawnDust();

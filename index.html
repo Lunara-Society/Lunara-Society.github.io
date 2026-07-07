@@ -954,6 +954,7 @@ window.addEventListener("resize", ()=>{
 @media (min-width:1025px){
   #lunara-avatar-trigger{left:236px;}
 }
+#lunara-avatar-trigger.lat-hide{opacity:0 !important;pointer-events:none !important;transition:opacity .3s ease;}
 #lunara-avatar-close{
   position:fixed;top:28px;right:30px;z-index:975;
   font-family:Arial,Helvetica,sans-serif;font-size:22px;color:rgba(226,196,122,0.75);
@@ -990,8 +991,7 @@ window.addEventListener("resize", ()=>{
 
   function openAvatar(){
     overlay.classList.add('active');
-    trigger.style.opacity = '0';
-    trigger.style.pointerEvents = 'none';
+    trigger.classList.add('lat-hide');
     closeBtn.style.opacity = '1';
     closeBtn.style.pointerEvents = 'auto';
     requestAnimationFrame(function(){
@@ -1011,8 +1011,7 @@ window.addEventListener("resize", ()=>{
     video.pause();
     setTimeout(function(){
       overlay.classList.remove('active');
-      trigger.style.pointerEvents = 'auto';
-      trigger.style.opacity = '1';
+      trigger.classList.remove('lat-hide');
     }, 600);
   }
 

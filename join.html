@@ -303,30 +303,55 @@ input,textarea{
 <div class="page-wrap">
   <div class="page-inner">
     <p class="eyebrow">Sanctum</p>
-    <h1 class="page-title">Founding participants define<br>the standard everyone else follows.</h1>
-    <p class="page-sub">The founding cohort program is a paid, optional track for priority handling and early recognition. It does not replace or skip verification — every business, founding cohort or not, goes through the same identity and domain review described on the <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">Initiation page</span>, and status is only ever marked verified after that review is complete.</p>
+    <h1 class="page-title">Two tracks. One standard.<br>Protection for businesses, Verification for AI.</h1>
+    <p class="page-sub">Lunara Society serves two different participants, and they are not the same thing. <strong style="color:var(--gold);">Protection</strong> is for small businesses who want a declared, machine-readable policy that shields them from unsolicited AI contact. <strong style="color:var(--gold);">Verification</strong> is for AI companies and agents who need to prove — to the businesses they contact — that they are accountable and legitimate. Paying a fee below covers priority handling only. It does not replace or skip review — every applicant, on either track, goes through the same identity and domain check described on the <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">Initiation page</span>, and status is only ever marked verified after that review is complete.</p>
     <div class="gold-rule"></div>
     <div class="price-grid">
       <div class="price-tier">
-        <div class="tier-label">Small Business</div>
-        <div class="tier-price">$125</div>
-        <div class="tier-desc">Founding Participant · One-time · Priority review, does not grant automatic verification</div>
+        <div class="tier-label">Protection — Small Business</div>
+        <div class="tier-price" id="sb-price">$80</div>
+        <div class="tier-desc" id="sb-desc">Founding rate · One-time · <span id="sb-spots">Loading availability…</span></div>
+        <a href="https://checkout.revolut.com/pay/d097f3d0-cbe3-4103-9921-2299b5467557" target="_blank" rel="noopener" class="cta-btn" id="sb-cta-btn" style="display:inline-flex;margin-top:14px;font-size:13px;">Reserve your spot →</a>
       </div>
       <div class="price-tier">
-        <div class="tier-label">AI Entity</div>
-        <div class="tier-price">$1,000 <span style="font-size:16px;">/mo</span></div>
-        <div class="tier-desc">Machine Identity · Monthly · Priority review, does not grant automatic verification</div>
+        <div class="tier-label">Verification — AI Entity</div>
+        <div class="tier-price">$1,900</div>
+        <div class="tier-desc">Badge + Verification · One-time · Renews every 3 months to stay active</div>
       </div>
       <div class="price-tier">
-        <div class="tier-label">Agency Partner</div>
-        <div class="tier-price">$2,500</div>
-        <div class="tier-desc">White-label · Implementation · Priority review, does not grant automatic verification</div>
+        <div class="tier-label">Partnership</div>
+        <div class="tier-price" style="font-size:20px;">In development</div>
+        <div class="tier-desc">A different kind of tier — not a badge, not a shield. Details soon. Write to us if you want to shape it.</div>
       </div>
     </div>
+    <script>
+    (async function(){
+      try {
+        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldFoundingCount', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+        var data = await res.json();
+        if (data.success) {
+          var priceEl = document.getElementById('sb-price');
+          var spotsEl = document.getElementById('sb-spots');
+          var descEl = document.getElementById('sb-desc');
+          var btnEl = document.getElementById('sb-cta-btn');
+          if (data.sold_out) {
+            priceEl.textContent = '$125';
+            spotsEl.textContent = 'Founding rate sold out — standard priority rate';
+            btnEl.textContent = 'Apply for priority review →';
+            btnEl.href = 'shield.html';
+          } else {
+            spotsEl.textContent = data.remaining + ' of ' + data.cap + ' founding spots left at $80';
+          }
+        }
+      } catch (err) {
+        var spotsEl = document.getElementById('sb-spots');
+        if (spotsEl) spotsEl.textContent = 'Limited founding availability';
+      }
+    })();
+    </script>
     <div class="gold-rule"></div>
     <p class="page-sub" style="margin-bottom:8px;font-size:13px;">This fee covers priority handling of your application only. Actual Shield Certification requires identity verification, domain verification, and human review — <span onclick="fadeNav('shield.html')" style="text-decoration:underline;cursor:pointer;color:var(--gold);">start your free application here</span>. Paying does not skip that process.</p>
-    <p class="page-sub" style="margin-bottom:8px;">Apply via PayPal or write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a>. Also available via Revolut.</p>
-    <a href="https://paypal.com/paypalme/junoagattis/25" class="cta-btn" style="display:inline-flex;">Proceed via PayPal →</a>
+    <p class="page-sub" style="margin-bottom:8px;">Small Business Protection: use the Reserve your spot button above (Revolut). AI Entity Verification ($1,900, badge + verification, renews every 3 months): write to <a href="mailto:rosario@lunarasociety.com" style="color:var(--gold);">rosario@lunarasociety.com</a> to arrange payment.</p>
     <br>
     <span onclick="fadeNav('member.html')" class="cta-link" style="display:inline-flex;cursor:pointer;margin-top:16px;">Already a member? Access your area →</span>
   </div>

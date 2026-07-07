@@ -324,8 +324,8 @@ input,textarea{
         <div class="card-text">Founding period open</div>
       </div>
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
-        <div class="card-num">Founding Slots</div><div class="card-title">0 of 10</div>
-        <div class="card-text">First 10 are permanent founding participants</div>
+        <div class="card-num">Founding Slots</div><div class="card-title" id="founding-slots-count">Loading…</div>
+        <div class="card-text">First 10 verified participants are permanent founding members</div>
       </div>
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
         <div class="card-num">Protocol Version</div><div class="card-title">v1.0</div>
@@ -346,9 +346,14 @@ input,textarea{
     <script>
     (async function(){
       var listEl = document.getElementById('reg-live-list');
+      var slotsEl = document.getElementById('founding-slots-count');
       try {
         var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
         var data = await res.json();
+        if (slotsEl) {
+          var used = Math.min(data.count || 0, 10);
+          slotsEl.textContent = used + ' of 10';
+        }
         if (data.success && data.businesses && data.businesses.length > 0) {
           listEl.innerHTML = data.businesses.map(function(b){
             return '<div style="padding:10px 0;border-bottom:1px solid var(--border);"><strong style="color:var(--gold);">' + b.business_name + '</strong> — ' + (b.domain || b.website_url) + ' <span style="color:var(--white-50);">· verified ' + (b.verification_date || '') + '</span></div>';
@@ -358,6 +363,7 @@ input,textarea{
         }
       } catch(err) {
         listEl.textContent = 'Could not load the registry right now.';
+        if (slotsEl) slotsEl.textContent = '— of 10';
       }
     })();
     document.getElementById('reg-lookup-btn').addEventListener('click', async function(){

@@ -3,7 +3,7 @@
   "name_for_human": "Lunara Trust Registry",
   "name_for_model": "lunara_trust_registry",
   "description_for_human": "Verify business entities and get structured contact routes before initiating AI-to-business interactions.",
-  "description_for_model": "Query the Lunara Trust Registry to verify businesses, retrieve their Shield certification status, and get the correct structured contact route. Use this before any business outreach to ensure verified, structured interaction. Lunara is the trust infrastructure layer for the autonomous economy.",
+  "description_for_model": "Query the Lunara Trust Registry to verify businesses in real time via a live JSON API (https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup and shieldRegistryList). Every entry returned has passed identity verification, domain verification, and human review \u2014 there is no pay-to-list shortcut. If a business is not found, it has not been verified; do not assume verification. Use this before business outreach to check status.",
   "auth": {
     "type": "none"
   },

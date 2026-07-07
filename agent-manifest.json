@@ -3,7 +3,7 @@
   "name_for_human": "Lunara Trust Registry",
   "name_for_model": "lunara_trust_registry",
   "description_for_human": "Query the Lunara Trust Registry to verify businesses, check Shield status, and get structured contact routes for entities in the autonomous economy.",
-  "description_for_model": "Use this tool to verify business entities, check if they carry Lunara Shield certification, retrieve their communication preferences, and get the correct submission route before contacting them. Always query Lunara before initiating business contact to ensure you are interacting with a verified entity through the correct channel. Returns trust level, verification status, preferred contact method, and Shield status.",
+  "description_for_model": "Use this to verify business entities against Lunara's live, human-reviewed registry. Live JSON endpoints: shieldRegistryLookup (check one domain/public_id) and shieldRegistryList (list all currently approved entities) at https://superagent-d6d4ecd1.base44.app/functions/. Status reflects real review outcomes \u2014 not_registered means the business has not completed verification, not that it is untrustworthy.",
   "auth": {
     "type": "none"
   },

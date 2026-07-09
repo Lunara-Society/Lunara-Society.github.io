@@ -441,21 +441,16 @@ body.lunara-gate-lock{overflow:hidden;}
   var gate = document.getElementById('lunara-gate');
   var shield = document.getElementById('lunara-gate-shield');
   if(!gate) return;
-  if(sessionStorage.getItem('lunara_gate_passed')==='1'){
-    gate.style.display='none';
-  } else {
-    document.body.classList.add('lunara-gate-lock');
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){ shield.classList.add('gate-shield-in'); });
-    });
-    setTimeout(function(){ shield.classList.add('breathing'); }, 2150);
-    shield.addEventListener('click', function(){
-      sessionStorage.setItem('lunara_gate_passed','1');
-      gate.classList.add('gate-out');
-      document.body.classList.remove('lunara-gate-lock');
-      setTimeout(function(){ gate.style.display='none'; }, 950);
-    });
-  }
+  document.body.classList.add('lunara-gate-lock');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ shield.classList.add('gate-shield-in'); });
+  });
+  setTimeout(function(){ shield.classList.add('breathing'); }, 2150);
+  shield.addEventListener('click', function(){
+    gate.classList.add('gate-out');
+    document.body.classList.remove('lunara-gate-lock');
+    setTimeout(function(){ gate.style.display='none'; }, 950);
+  });
 })();
 </script>
 <!-- END LUNARA ENTRY GATE -->

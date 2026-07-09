@@ -420,6 +420,48 @@ html,body{
 </head>
 <body>
 
+<!-- LUNARA ENTRY GATE — shield-click intro -->
+<style>
+#lunara-gate{position:fixed;inset:0;z-index:999999;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.9s ease;}
+#lunara-gate.gate-in{opacity:1;}
+#lunara-gate.gate-out{opacity:0;pointer-events:none;transition:opacity .9s ease;}
+#lunara-gate-shield{width:min(56vw,300px);max-height:80vh;object-fit:contain;cursor:pointer;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 0 14px rgba(198,164,89,0.12));animation:lunaraBreathe 4.2s ease-in-out infinite;animation-play-state:paused;}
+#lunara-gate-shield.breathing{animation-play-state:running;}
+@keyframes lunaraBreathe{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 14px rgba(198,164,89,0.12));}
+  50%{transform:scale(1.045);filter:drop-shadow(0 0 36px rgba(198,164,89,0.34));}
+}
+body.lunara-gate-lock{overflow:hidden;}
+</style>
+<div id="lunara-gate">
+  <img id="lunara-gate-shield" src="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/files/mp/public/6a46cea2687503d2d6d4ecd1/65a31f0f9_shield_gate.jpg" alt="">
+</div>
+<script>
+(function(){
+  var gate = document.getElementById('lunara-gate');
+  var shield = document.getElementById('lunara-gate-shield');
+  if(!gate) return;
+  if(sessionStorage.getItem('lunara_gate_passed')==='1'){
+    gate.style.display='none';
+  } else {
+    document.body.classList.add('lunara-gate-lock');
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ gate.classList.add('gate-in'); });
+    });
+    setTimeout(function(){ shield.classList.add('breathing'); }, 1950);
+    shield.addEventListener('click', function(){
+      sessionStorage.setItem('lunara_gate_passed','1');
+      gate.classList.remove('gate-in');
+      gate.classList.add('gate-out');
+      document.body.classList.remove('lunara-gate-lock');
+      setTimeout(function(){ gate.style.display='none'; }, 950);
+    });
+  }
+})();
+</script>
+<!-- END LUNARA ENTRY GATE -->
+
+
 <!-- ARRIVAL OVERLAY (desktop) -->
 <div id="arrival"><div id="arrival-seam"></div></div>
 

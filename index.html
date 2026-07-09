@@ -422,14 +422,14 @@ html,body{
 
 <!-- LUNARA ENTRY GATE — shield-click intro -->
 <style>
-#lunara-gate{position:fixed;inset:0;z-index:999999;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.9s ease;}
-#lunara-gate.gate-in{opacity:1;}
+#lunara-gate{position:fixed;inset:0;z-index:999999;background:#000;display:flex;align-items:center;justify-content:center;}
 #lunara-gate.gate-out{opacity:0;pointer-events:none;transition:opacity .9s ease;}
-#lunara-gate-shield{width:min(56vw,300px);max-height:80vh;object-fit:contain;cursor:pointer;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 0 14px rgba(198,164,89,0.12));animation:lunaraBreathe 4.2s ease-in-out infinite;animation-play-state:paused;}
+#lunara-gate-shield{width:min(56vw,300px);max-height:80vh;object-fit:contain;cursor:pointer;user-select:none;-webkit-user-drag:none;opacity:0;transition:opacity 2.1s ease;animation:lunaraBreathe 4.2s ease-in-out infinite;animation-play-state:paused;}
+#lunara-gate-shield.gate-shield-in{opacity:1;}
 #lunara-gate-shield.breathing{animation-play-state:running;}
 @keyframes lunaraBreathe{
-  0%,100%{transform:scale(1);filter:drop-shadow(0 0 14px rgba(198,164,89,0.12));}
-  50%{transform:scale(1.045);filter:drop-shadow(0 0 36px rgba(198,164,89,0.34));}
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.045);}
 }
 body.lunara-gate-lock{overflow:hidden;}
 </style>
@@ -446,12 +446,11 @@ body.lunara-gate-lock{overflow:hidden;}
   } else {
     document.body.classList.add('lunara-gate-lock');
     requestAnimationFrame(function(){
-      requestAnimationFrame(function(){ gate.classList.add('gate-in'); });
+      requestAnimationFrame(function(){ shield.classList.add('gate-shield-in'); });
     });
-    setTimeout(function(){ shield.classList.add('breathing'); }, 1950);
+    setTimeout(function(){ shield.classList.add('breathing'); }, 2150);
     shield.addEventListener('click', function(){
       sessionStorage.setItem('lunara_gate_passed','1');
-      gate.classList.remove('gate-in');
       gate.classList.add('gate-out');
       document.body.classList.remove('lunara-gate-lock');
       setTimeout(function(){ gate.style.display='none'; }, 950);
@@ -460,6 +459,7 @@ body.lunara-gate-lock{overflow:hidden;}
 })();
 </script>
 <!-- END LUNARA ENTRY GATE -->
+
 
 
 <!-- ARRIVAL OVERLAY (desktop) -->

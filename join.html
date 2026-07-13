@@ -286,6 +286,37 @@ input,textarea{
 .reveal.is-visible{opacity:1;transform:translateY(0);}
 .typewriter-cursor{display:inline-block;width:1px;background:var(--gold);margin-left:2px;animation:tw-blink 0.9s step-end infinite;}
 @keyframes tw-blink{50%{opacity:0;}}
+
+/* INTERACTIVE TIER CARDS */
+.tier-card{
+  cursor:pointer;
+  transition:border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+.tier-card:hover{
+  border-color:rgba(226,196,122,0.6) !important;
+  box-shadow:0 0 24px rgba(196,164,107,0.15);
+  transform:translateY(-2px);
+}
+.tier-card.selected{
+  border-color:rgba(226,196,122,0.85) !important;
+  box-shadow:0 0 32px rgba(196,164,107,0.25);
+}
+.tier-card.selected .tier-select-indicator{
+  opacity:1;
+}
+.tier-select-indicator{
+  opacity:0;
+  display:block;
+  text-align:center;
+  margin-top:8px;
+  font-family:"Inter",sans-serif;
+  font-size:10px;
+  letter-spacing:2px;
+  color:rgba(226,196,122,0.8);
+  text-transform:uppercase;
+  transition:opacity 0.3s;
+}
+
 </style>
 </head>
 <body>
@@ -575,5 +606,25 @@ function goHome(){
 })();
 </script>
 <!-- END MOBILE BACK BUTTON -->
+
+<script>
+// Tier card interactivity
+document.querySelectorAll(".tier-card, .pricing-card, .plan-card, [data-tier]").forEach(function(card){
+  // Add indicator span if missing
+  if(!card.querySelector(".tier-select-indicator")){
+    var span = document.createElement("span");
+    span.className = "tier-select-indicator";
+    span.textContent = "Selected ✓";
+    card.appendChild(span);
+  }
+  card.addEventListener("click", function(){
+    document.querySelectorAll(".tier-card, .pricing-card, .plan-card, [data-tier]").forEach(function(c){
+      c.classList.remove("selected");
+    });
+    this.classList.add("selected");
+  });
+});
+</script>
+
 </body>
 </html>

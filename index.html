@@ -432,6 +432,119 @@ html,body{
   50%{transform:scale(1.045);}
 }
 body.lunara-gate-lock{overflow:hidden;}
+
+/* HOMEPAGE HOOK */
+#hall-hook{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-52%);
+  z-index:8;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 1.4s ease;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+#hall-hook.revealed{ opacity:1; pointer-events:auto; }
+#hall-hook-line1{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(18px,2.4vw,30px);
+  font-weight:300;
+  color:rgba(226,196,122,0.92);
+  letter-spacing:0.06em;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity 1.1s ease, transform 1.1s ease;
+}
+#hall-hook-line2{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(14px,1.8vw,23px);
+  font-weight:300;
+  color:rgba(196,164,107,0.7);
+  letter-spacing:0.05em;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity 1.1s ease 0.6s, transform 1.1s ease 0.6s;
+}
+#hall-hook-cta{
+  margin-top:8px;
+  display:inline-block;
+  padding:10px 28px;
+  border:1px solid rgba(196,164,107,0.5);
+  color:rgba(196,164,107,0.9);
+  font-family:"Inter",sans-serif;
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-decoration:none;
+  opacity:0;
+  transition:opacity 1.1s ease 1.2s, border-color 0.3s, color 0.3s;
+}
+#hall-hook-cta:hover{
+  border-color:rgba(226,196,122,0.9);
+  color:rgba(226,196,122,1);
+}
+#hall-hook.revealed #hall-hook-line1{ opacity:1; transform:translateY(0); }
+#hall-hook.revealed #hall-hook-line2{ opacity:1; transform:translateY(0); }
+#hall-hook.revealed #hall-hook-cta{ opacity:1; }
+
+/* AVATAR HINT */
+#avatar-hint{
+  position:fixed;
+  left:28px;
+  bottom:72px;
+  z-index:1000;
+  font-family:"Inter",sans-serif;
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(196,164,107,0.55);
+  opacity:0;
+  transition:opacity 1.5s ease;
+  pointer-events:none;
+  cursor:default;
+}
+#avatar-hint.revealed{ opacity:1; }
+
+/* LIVE COUNTER in hall */
+#hall-counter{
+  position:absolute;
+  right:3.5vw;
+  bottom:clamp(60px,8vh,90px);
+  z-index:8;
+  text-align:right;
+  opacity:0;
+  transition:opacity 1.4s ease;
+}
+#hall-counter.revealed{ opacity:1; }
+#hall-counter-num{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(28px,4vw,52px);
+  font-weight:300;
+  color:var(--gold-bright);
+  line-height:1;
+  display:block;
+}
+#hall-counter-label{
+  font-family:"Inter",sans-serif;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:rgba(196,164,107,0.6);
+  display:block;
+  margin-top:4px;
+}
+#hall-counter-sub{
+  font-family:"Inter",sans-serif;
+  font-size:9px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:rgba(196,164,107,0.35);
+  display:block;
+  margin-top:2px;
+}
+
 </style>
 <div id="lunara-gate">
   <img id="lunara-gate-shield" src="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/files/mp/public/6a46cea2687503d2d6d4ecd1/65a31f0f9_shield_gate.jpg" alt="">
@@ -497,7 +610,23 @@ body.lunara-gate-lock{overflow:hidden;}
   <div id="floor-life"></div>
   <div id="portal-pulse"></div>
   <div id="dust"></div>
-  <div id="inscription"><span>Per Scientiam &nbsp;&middot;&nbsp; Per Ordinem &nbsp;&middot;&nbsp; Per Legatum</span></div>
+<div id="hall-counter">
+  <span id="hall-counter-num">10</span>
+  <span id="hall-counter-label">Founding Spots</span>
+  <span id="hall-counter-sub">Remaining</span>
+</div>
+
+  
+<!-- HOMEPAGE HOOK STATEMENT -->
+<div id="hall-hook">
+  <div id="hall-hook-line1">AI doesn't ask permission.</div>
+  <div id="hall-hook-line2">Now, your business can answer back.</div>
+  <a id="hall-hook-cta" href="shield.html">Get Certified — It's Free to Apply</a>
+</div>
+<!-- AVATAR HINT -->
+<div id="avatar-hint">&#9654; Meet Rosario</div>
+
+<div id="inscription"><span>Per Scientiam &nbsp;&middot;&nbsp; Per Ordinem &nbsp;&middot;&nbsp; Per Legatum</span></div>
   <div class="mark mark-br" id="mark-br">MMXXVI</div>
   <a href="member.html" class="tr-access" id="tr-access">Enter</a>
 
@@ -511,35 +640,35 @@ body.lunara-gate-lock{overflow:hidden;}
     <nav id="panel-nav">
       <a class="pnav-link" href="shield.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg></div>
-        <span class="pnav-label">Initiation</span>
+        <span class="pnav-label">Get Certified</span>
       </a>
       <a class="pnav-link" href="architecture.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><polygon points="12,2 20,8 17,18 7,18 4,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="8" x2="20" y2="8"/></svg></div>
-        <span class="pnav-label">Knowledge</span>
+        <span class="pnav-label">How It Works</span>
       </a>
       <a class="pnav-link" href="doctrine.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v3H4z"/><path d="M4 7v13h16V7"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
-        <span class="pnav-label">Archives</span>
+        <span class="pnav-label">Our Doctrine</span>
       </a>
       <a class="pnav-link" href="registry.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><ellipse cx="12" cy="9" rx="5" ry="7"/><path d="M7 16c-2 1-3 2.5-3 4h16c0-1.5-1-3-3-4"/></svg></div>
-        <span class="pnav-label">Legacy</span>
+        <span class="pnav-label">Registry</span>
       </a>
       <a class="pnav-link" href="institution.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div>
-        <span class="pnav-label">Society</span>
+        <span class="pnav-label">About Us</span>
       </a>
       <a class="pnav-link" href="join.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M3 12h18M12 3l9 9-9 9"/></svg></div>
-        <span class="pnav-label">Sanctum</span>
+        <span class="pnav-label">Pricing</span>
       </a>
       <a class="pnav-link" href="member.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/><path d="M13 15h5"/></svg></div>
-        <span class="pnav-label">Membership</span>
+        <span class="pnav-label">Member Area</span>
       </a>
       <a class="pnav-link" href="signal.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></div>
-        <span class="pnav-label">Events</span>
+        <span class="pnav-label">AI Signals</span>
       </a>
       <a class="pnav-link" href="gateway.html">
         <div class="pnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M4 4h16v16H4z"/><path d="M8 4v16"/><path d="M12 8h4"/><path d="M12 12h4"/><path d="M12 16h2"/></svg></div>
@@ -579,35 +708,35 @@ body.lunara-gate-lock{overflow:hidden;}
     <div id="mob-nav-grid">
       <a class="mnav-item" href="shield.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg></div>
-        <span class="mnav-label">Initiation</span>
+        <span class="mnav-label">Get Certified</span>
       </a>
       <a class="mnav-item" href="architecture.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></svg></div>
-        <span class="mnav-label">Knowledge</span>
+        <span class="mnav-label">How It Works</span>
       </a>
       <a class="mnav-item" href="doctrine.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M6 3h12v18H6z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/><path d="M6 3c0-1 1.5-1 3-1s3 0 3 1"/></svg></div>
-        <span class="mnav-label">Archives</span>
+        <span class="mnav-label">Our Doctrine</span>
       </a>
       <a class="mnav-item" href="registry.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><circle cx="8" cy="10" r="4"/><path d="M12 10h8"/><path d="M18 10v4"/><path d="M15 10v3"/></svg></div>
-        <span class="mnav-label">Legacy</span>
+        <span class="mnav-label">Registry</span>
       </a>
       <a class="mnav-item" href="institution.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><line x1="12" y1="3" x2="12" y2="5"/><line x1="3" y1="5" x2="21" y2="5"/><line x1="5" y1="5" x2="5" y2="19"/><line x1="10" y1="5" x2="10" y2="19"/><line x1="14" y1="5" x2="14" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/><line x1="3" y1="19" x2="21" y2="19"/></svg></div>
-        <span class="mnav-label">Society</span>
+        <span class="mnav-label">About Us</span>
       </a>
       <a class="mnav-item" href="join.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M5 21V10a7 7 0 0 1 14 0v11"/><line x1="5" y1="21" x2="19" y2="21"/><line x1="12" y1="10" x2="12" y2="21"/></svg></div>
-        <span class="mnav-label">Sanctum</span>
+        <span class="mnav-label">Pricing</span>
       </a>
       <a class="mnav-item" href="member.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/></svg></div>
-        <span class="mnav-label">Membership</span>
+        <span class="mnav-label">Member Area</span>
       </a>
       <a class="mnav-item" href="signal.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></div>
-        <span class="mnav-label">Events</span>
+        <span class="mnav-label">AI Signals</span>
       </a>
       <a class="mnav-item" href="gateway.html">
         <div class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,164,107,0.9)" stroke-width="1.2"><path d="M2 6h9v14H2z"/><path d="M13 6h9v14h-9z"/><path d="M11 6v14"/><path d="M5 10h4"/><path d="M5 14h3"/><path d="M15 10h4"/><path d="M15 14h3"/></svg></div>
@@ -720,7 +849,28 @@ function initDesktop(){
     }, 1900);
   }, 4800);
 
-  spawnDust();
+
+
+  // Reveal homepage hook
+  setTimeout(() => {
+    const hook = document.getElementById("hall-hook");
+    const ctr  = document.getElementById("hall-counter");
+    const hint = document.getElementById("avatar-hint");
+    if(hook) hook.classList.add("revealed");
+    if(ctr)  ctr.classList.add("revealed");
+    if(hint) hint.classList.add("revealed");
+  }, 5200);
+
+  // Fetch live founding spots count
+  (async function(){
+    try{
+      const res = await fetch("https://app.base44.com/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoundingCount",
+        {method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+      const d = await res.json();
+      const el = document.getElementById("hall-counter-num");
+      if(el && typeof d.remaining !== "undefined"){ el.textContent = d.remaining; }
+    }catch(e){}
+  })();
 
   // Wire panel nav to door
   document.querySelectorAll(".pnav-link").forEach(link => {

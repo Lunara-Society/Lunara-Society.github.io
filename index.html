@@ -609,6 +609,19 @@ body.lunara-gate-lock{overflow:hidden;}
     gate.classList.add('gate-out');
     document.body.classList.remove('lunara-gate-lock');
     setTimeout(function(){ gate.style.display='none'; }, 950);
+    // DIRECT REVEAL — mobile-safe, no dependency on door animation chain
+    setTimeout(function(){
+      var hook = document.getElementById('hall-hook');
+      var ctr  = document.getElementById('hall-counter');
+      var hint = document.getElementById('avatar-hint');
+      var rosario = document.getElementById('hall-rosario');
+      var reflection = document.getElementById('hall-rosario-reflection');
+      if(hook) hook.classList.add('revealed');
+      if(ctr)  ctr.classList.add('revealed');
+      if(hint) hint.classList.add('revealed');
+      if(rosario) rosario.classList.add('revealed');
+      if(reflection) reflection.classList.add('revealed');
+    }, 1200);
   });
 })();
 </script>

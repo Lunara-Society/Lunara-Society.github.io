@@ -433,6 +433,52 @@ html,body{
 }
 body.lunara-gate-lock{overflow:hidden;}
 
+/* ROSARIO STANDING ON PLATFORM */
+#hall-rosario{
+  position:absolute;
+  left:50%;
+  bottom:18%;          /* feet land on the platform surface */
+  transform:translateX(-50%);
+  z-index:7;
+  height:clamp(260px, 38vh, 480px);
+  width:auto;
+  opacity:0;
+  filter:
+    drop-shadow(0 0 18px rgba(196,164,107,0.35))
+    drop-shadow(0 0 40px rgba(196,164,107,0.15));
+  transition:opacity 1.8s ease;
+  pointer-events:none;
+}
+#hall-rosario.revealed{
+  opacity:1;
+}
+/* subtle idle breathe */
+@keyframes rosarioBreathe{
+  0%,100%{ transform:translateX(-50%) translateY(0); }
+  50%{     transform:translateX(-50%) translateY(-5px); }
+}
+#hall-rosario.revealed{
+  opacity:1;
+  animation: rosarioBreathe 5s ease-in-out infinite;
+}
+/* Reflection on platform floor */
+#hall-rosario-reflection{
+  position:absolute;
+  left:50%;
+  bottom:15%;
+  transform:translateX(-50%) scaleY(-0.18) scaleX(0.85);
+  transform-origin:bottom center;
+  z-index:6;
+  height:clamp(260px, 38vh, 480px);
+  width:auto;
+  opacity:0;
+  filter:blur(3px) brightness(0.25) sepia(0.4);
+  transition:opacity 1.8s ease 0.3s;
+  pointer-events:none;
+}
+#hall-rosario-reflection.revealed{ opacity:0.5; }
+
+
 /* HOMEPAGE HOOK */
 #hall-hook{
   position:absolute;
@@ -610,6 +656,15 @@ body.lunara-gate-lock{overflow:hidden;}
   <div id="floor-life"></div>
   <div id="portal-pulse"></div>
   <div id="dust"></div>
+
+<!-- ROSARIO ON PLATFORM -->
+<img id="hall-rosario" 
+  src="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/files/mp/public/6a46cea2687503d2d6d4ecd1/400458ce8_rosario_nobg.png" 
+  alt="Rosario">
+<img id="hall-rosario-reflection"
+  src="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/files/mp/public/6a46cea2687503d2d6d4ecd1/400458ce8_rosario_nobg.png"
+  alt="">
+
 <div id="hall-counter">
   <span id="hall-counter-num">10</span>
   <span id="hall-counter-label">Founding Spots</span>
@@ -859,6 +914,10 @@ function initDesktop(){
     if(hook) hook.classList.add("revealed");
     if(ctr)  ctr.classList.add("revealed");
     if(hint) hint.classList.add("revealed");
+    const rosario = document.getElementById("hall-rosario");
+    const reflection = document.getElementById("hall-rosario-reflection");
+    if(rosario) rosario.classList.add("revealed");
+    if(reflection) reflection.classList.add("revealed");
   }, 5200);
 
   // Fetch live founding spots count

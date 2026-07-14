@@ -398,6 +398,61 @@ html,body{
   transition:opacity 0.48s ease;
 }
 #mob-door.closing{opacity:1;pointer-events:all;}
+
+/* MOBILE ROSARIO */
+#mob-rosario-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  flex:1;
+  padding:0 20px;
+  z-index:5;
+  position:relative;
+}
+#mob-rosario{
+  height:clamp(220px, 38vh, 380px);
+  width:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 0 24px rgba(196,164,107,0.45)) drop-shadow(0 0 60px rgba(196,164,107,0.2));
+  animation:mobRosarioBreathe 5s ease-in-out infinite;
+}
+@keyframes mobRosarioBreathe{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+#mob-hook-line1{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(16px,4.5vw,22px);
+  font-weight:300;
+  color:rgba(226,196,122,0.92);
+  letter-spacing:0.06em;
+  text-align:center;
+  margin-top:14px;
+}
+#mob-hook-line2{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(13px,3.5vw,18px);
+  font-weight:300;
+  color:rgba(196,164,107,0.7);
+  letter-spacing:0.05em;
+  text-align:center;
+  margin-top:6px;
+}
+#mob-hook-cta{
+  margin-top:16px;
+  display:inline-block;
+  padding:9px 24px;
+  border:1px solid rgba(196,164,107,0.5);
+  color:rgba(196,164,107,0.9);
+  font-family:"Inter",sans-serif;
+  font-size:10px;
+  font-weight:400;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-decoration:none;
+}
+
 </style>
 
 <!-- SCHEMA.ORG -->
@@ -770,6 +825,14 @@ body.lunara-gate-lock{overflow:hidden;}
     <span class="mwm-sub">Trust Coordination Institution</span>
   </div>
   <div id="mob-inscription"><span>Per Scientiam &middot; Per Ordinem &middot; Per Legatum</span></div>
+
+  <!-- ROSARIO ON MOBILE -->
+  <div id="mob-rosario-wrap">
+    <img id="mob-rosario" src="rosario_avatar.png" alt="Rosario">
+    <div id="mob-hook-line1">AI doesn't ask permission.</div>
+    <div id="mob-hook-line2">Now, your business can answer back.</div>
+    <a id="mob-hook-cta" href="shield.html">Get Certified — It's Free to Apply</a>
+  </div>
   <div id="mob-mark">MMXXVI &middot; Est. 2026</div>
   <a href="member.html" class="mob-tr-access" id="mob-tr-access">Enter</a>
   <nav id="mob-nav">

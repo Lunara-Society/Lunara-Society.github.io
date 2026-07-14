@@ -404,19 +404,20 @@ html,body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:flex-end;
   flex:1;
-  padding:10px 20px 0 20px;
+  padding:0 20px 16px 20px;
   z-index:5;
   position:relative;
   overflow:hidden;
 }
 #mob-rosario{
-  height:clamp(220px, 38vh, 380px);
+  height:clamp(240px, 44vh, 420px);
   width:auto;
+  max-width:90%;
   object-fit:contain;
-  filter:drop-shadow(0 0 24px rgba(196,164,107,0.45)) drop-shadow(0 0 60px rgba(196,164,107,0.2));
-  animation:mobRosarioBreathe 5s ease-in-out infinite;
+  filter:drop-shadow(0 0 28px rgba(196,164,107,0.5)) drop-shadow(0 0 70px rgba(196,164,107,0.25));
+  display:block;
 }
 @keyframes mobRosarioBreathe{
   0%,100%{transform:translateY(0);}
@@ -429,7 +430,7 @@ html,body{
   color:rgba(226,196,122,0.92);
   letter-spacing:0.06em;
   text-align:center;
-  margin-top:14px;
+  margin-top:20px;
 }
 #mob-hook-line2{
   font-family:"Cormorant Garamond",serif;
@@ -826,12 +827,10 @@ body.lunara-gate-lock{overflow:hidden;}
 
   <!-- ROSARIO ON MOBILE -->
   <div id="mob-rosario-wrap">
-    <video id="mob-rosario" autoplay loop muted playsinline webkit-playsinline
-  poster="rosario_avatar.png"
-  style="height:clamp(240px,42vh,400px);width:auto;object-fit:contain;
-         filter:drop-shadow(0 0 24px rgba(196,164,107,0.45)) drop-shadow(0 0 60px rgba(196,164,107,0.2));
-         animation:mobRosarioBreathe 5s ease-in-out infinite;">
-  <source src="lunara_avatar_hook.webm" type="video/webm">
+    <video id="mob-rosario" autoplay loop muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5"
+  poster="rosario_avatar.png">
+  <source src="rosario_talking.webm" type="video/webm">
+  <source src="rosario_talking.mp4" type="video/mp4">
   <img src="rosario_avatar.png" alt="Rosario">
 </video>
     <div id="mob-hook-line1">AI doesn't ask permission.</div>

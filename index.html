@@ -404,11 +404,12 @@ html,body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   flex:1;
-  padding:0 20px;
+  padding:10px 20px 0 20px;
   z-index:5;
   position:relative;
+  overflow:hidden;
 }
 #mob-rosario{
   height:clamp(220px, 38vh, 380px);
@@ -440,9 +441,10 @@ html,body{
   margin-top:6px;
 }
 #mob-hook-cta{
-  margin-top:16px;
+  margin-top:14px;
+  margin-bottom:18px;
   display:inline-block;
-  padding:9px 24px;
+  padding:10px 28px;
   border:1px solid rgba(196,164,107,0.5);
   color:rgba(196,164,107,0.9);
   font-family:"Inter",sans-serif;
@@ -451,6 +453,7 @@ html,body{
   letter-spacing:2px;
   text-transform:uppercase;
   text-decoration:none;
+  background:rgba(196,164,107,0.06);
 }
 
 </style>
@@ -820,21 +823,22 @@ body.lunara-gate-lock{overflow:hidden;}
 <div id="mob-wrap">
   <div id="mob-bg"></div>
   <div id="mob-overlay"></div>
-  <div id="mob-wordmark">
-    <span class="mwm-title">Lunara Society</span>
-    <span class="mwm-sub">Trust Coordination Institution</span>
-  </div>
-  <div id="mob-inscription"><span>Per Scientiam &middot; Per Ordinem &middot; Per Legatum</span></div>
 
   <!-- ROSARIO ON MOBILE -->
   <div id="mob-rosario-wrap">
-    <img id="mob-rosario" src="rosario_avatar.png" alt="Rosario">
+    <video id="mob-rosario" autoplay loop muted playsinline webkit-playsinline
+  poster="rosario_avatar.png"
+  style="height:clamp(240px,42vh,400px);width:auto;object-fit:contain;
+         filter:drop-shadow(0 0 24px rgba(196,164,107,0.45)) drop-shadow(0 0 60px rgba(196,164,107,0.2));
+         animation:mobRosarioBreathe 5s ease-in-out infinite;">
+  <source src="lunara_avatar_hook.webm" type="video/webm">
+  <img src="rosario_avatar.png" alt="Rosario">
+</video>
     <div id="mob-hook-line1">AI doesn't ask permission.</div>
     <div id="mob-hook-line2">Now, your business can answer back.</div>
     <a id="mob-hook-cta" href="shield.html">Get Certified — It's Free to Apply</a>
   </div>
   <div id="mob-mark">MMXXVI &middot; Est. 2026</div>
-  <a href="member.html" class="mob-tr-access" id="mob-tr-access">Enter</a>
   <nav id="mob-nav">
     <div id="mob-nav-grid">
       <a class="mnav-item" href="shield.html">

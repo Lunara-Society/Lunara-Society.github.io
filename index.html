@@ -437,15 +437,15 @@ body.lunara-gate-lock{overflow:hidden;}
 #hall-rosario{
   position:absolute;
   left:50%;
-  bottom:18%;          /* feet land on the platform surface */
+  bottom:8%;           /* feet sit right on the platform rim */
   transform:translateX(-50%);
   z-index:7;
-  height:clamp(260px, 38vh, 480px);
+  height:clamp(300px, 46vh, 560px);
   width:auto;
   opacity:0;
   filter:
-    drop-shadow(0 0 18px rgba(196,164,107,0.35))
-    drop-shadow(0 0 40px rgba(196,164,107,0.15));
+    drop-shadow(0 0 22px rgba(196,164,107,0.4))
+    drop-shadow(0 0 50px rgba(196,164,107,0.18));
   transition:opacity 1.8s ease;
   pointer-events:none;
 }
@@ -465,7 +465,7 @@ body.lunara-gate-lock{overflow:hidden;}
 #hall-rosario-reflection{
   position:absolute;
   left:50%;
-  bottom:15%;
+  bottom:5%;
   transform:translateX(-50%) scaleY(-0.18) scaleX(0.85);
   transform-origin:bottom center;
   z-index:6;

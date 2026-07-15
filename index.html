@@ -404,23 +404,45 @@ html,body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-end;
+  justify-content:space-between;
   flex:1;
-  padding:0 20px 12px 20px;
+  padding:16px 20px 0 20px;
   z-index:5;
   position:relative;
   overflow:hidden;
-  gap:6px;
+  gap:8px;
+}
+/* platform + rosario container */
+#mob-platform-wrap{
+  position:relative;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  flex:1;
+  min-height:0;
+}
+/* glowing platform disc */
+#mob-platform{
+  width:72%;
+  height:18px;
+  background:radial-gradient(ellipse at center, rgba(196,164,107,0.55) 0%, rgba(196,164,107,0.12) 60%, transparent 100%);
+  border-radius:50%;
+  box-shadow:0 0 28px 8px rgba(196,164,107,0.35), 0 0 60px 20px rgba(196,164,107,0.12);
+  flex-shrink:0;
+  margin-top:-10px;
 }
 #mob-rosario{
-  height:clamp(180px, 36vh, 340px);
+  height:clamp(200px, 42vh, 380px);
   width:auto;
-  max-width:88%;
+  max-width:90%;
   object-fit:contain;
   filter:drop-shadow(0 0 28px rgba(196,164,107,0.5)) drop-shadow(0 0 70px rgba(196,164,107,0.25));
   display:block;
   flex-shrink:0;
   background:transparent;
+  margin-bottom:-4px;
 }
 @keyframes mobRosarioBreathe{
   0%,100%{transform:translateY(0);}

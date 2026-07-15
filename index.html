@@ -482,6 +482,37 @@ html,body{
   flex-shrink:0;
 }
 
+
+/* Mobile: text block at top */
+#mob-text-top{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding-top:12px;
+  width:100%;
+}
+/* platform + rosario bottom container */
+#mob-platform-wrap{
+  position:relative;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  flex:1;
+  min-height:0;
+}
+/* glowing platform disc */
+#mob-platform{
+  width:72%;
+  height:18px;
+  background:radial-gradient(ellipse at center, rgba(196,164,107,0.55) 0%, rgba(196,164,107,0.12) 60%, transparent 100%);
+  border-radius:50%;
+  box-shadow:0 0 28px 8px rgba(196,164,107,0.35), 0 0 60px 20px rgba(196,164,107,0.12);
+  flex-shrink:0;
+  margin-top:-10px;
+}
 </style>
 
 <!-- SCHEMA.ORG -->
@@ -860,14 +891,18 @@ body.lunara-gate-lock{overflow:hidden;}
 
   <!-- ROSARIO ON MOBILE -->
   <div id="mob-rosario-wrap">
-    <video id="mob-rosario" playsinline webkit-playsinline
-  style="mix-blend-mode:normal;">
-  <source src="rosario_transparent.webm" type="video/webm">
-  <source src="rosario_talking.mp4" type="video/mp4">
-</video>
-    <div id="mob-hook-line1">AI doesn't ask permission.</div>
-    <div id="mob-hook-line2">Now, your business can answer back.</div>
-    <a id="mob-hook-cta" href="shield.html">Get Certified — It's Free to Apply</a>
+    <div id="mob-text-top">
+      <div id="mob-hook-line1">AI doesn't ask permission.</div>
+      <div id="mob-hook-line2">Now, your business can answer back.</div>
+      <a id="mob-hook-cta" href="shield.html">Get Certified — It's Free to Apply</a>
+    </div>
+    <div id="mob-platform-wrap">
+      <video id="mob-rosario" playsinline webkit-playsinline style="mix-blend-mode:normal;">
+        <source src="rosario_transparent.webm" type="video/webm">
+        <source src="rosario_talking.mp4" type="video/mp4">
+      </video>
+      <div id="mob-platform"></div>
+    </div>
   </div>
   <div id="mob-mark">MMXXVI &middot; Est. 2026</div>
   <nav id="mob-nav">

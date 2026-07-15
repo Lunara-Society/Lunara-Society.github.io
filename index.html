@@ -420,6 +420,7 @@ html,body{
   filter:drop-shadow(0 0 28px rgba(196,164,107,0.5)) drop-shadow(0 0 70px rgba(196,164,107,0.25));
   display:block;
   flex-shrink:0;
+  background:transparent;
 }
 @keyframes mobRosarioBreathe{
   0%,100%{transform:translateY(0);}
@@ -838,10 +839,9 @@ body.lunara-gate-lock{overflow:hidden;}
   <!-- ROSARIO ON MOBILE -->
   <div id="mob-rosario-wrap">
     <video id="mob-rosario" playsinline webkit-playsinline
-  poster="rosario_avatar.png">
-  <source src="rosario_talking.webm" type="video/webm">
+  style="mix-blend-mode:normal;">
+  <source src="rosario_transparent.webm" type="video/webm">
   <source src="rosario_talking.mp4" type="video/mp4">
-  <img src="rosario_avatar.png" alt="Rosario">
 </video>
     <div id="mob-hook-line1">AI doesn't ask permission.</div>
     <div id="mob-hook-line2">Now, your business can answer back.</div>

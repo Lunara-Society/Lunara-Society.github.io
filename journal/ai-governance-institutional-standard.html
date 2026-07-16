@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institutional Governance of AI Agents — Lunara Society Journal</title>
+<meta name="description" content="The question is not how to make AI safe. The question is who is responsible when it acts. By Maya Torres, Lunara Society.">
+<meta property="og:title" content="Institutional Governance of AI Agents: The Lunara Constitution as Industry Standard">
+<meta property="og:description" content="The question is not how to make AI safe. The question is who is responsible when it acts.">
+<meta property="og:url" content="https://lunarasociety.com/journal/ai-governance-institutional-standard.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --gold:rgba(196,164,107,1);
+    --gold-dim:rgba(196,164,107,0.6);
+    --gold-faint:rgba(196,164,107,0.18);
+    --text:rgba(226,210,175,0.92);
+    --text-dim:rgba(196,174,130,0.72);
+    --bg:#070706;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:19px;line-height:1.9;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(7,7,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);}
+  .nav-society{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;}
+  .nav-links{display:flex;gap:28px;}
+  .nav-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;font-family:'Inter',sans-serif;}
+  .nav-links a:hover{color:var(--gold);}
+
+  .hero{padding:140px 40px 80px;max-width:820px;margin:0 auto;border-bottom:1px solid var(--gold-faint);}
+  .hero-section{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:24px;}
+  .hero-title{font-size:clamp(32px,5vw,58px);font-weight:300;color:#e8d5a3;letter-spacing:0.03em;line-height:1.2;margin-bottom:28px;}
+  .hero-byline{font-size:14px;color:var(--text-dim);letter-spacing:0.06em;font-style:italic;}
+
+  .content{max-width:720px;margin:0 auto;padding:64px 40px 100px;}
+
+  .lede{font-size:clamp(20px,2.8vw,26px);font-weight:300;color:rgba(226,210,175,0.88);line-height:1.7;margin-bottom:40px;font-style:italic;}
+
+  h2{font-size:clamp(22px,3vw,32px);font-weight:300;color:#e8d5a3;letter-spacing:0.03em;margin:56px 0 20px;}
+  p{font-size:18px;line-height:1.95;color:var(--text-dim);margin-bottom:22px;}
+  em{font-style:italic;color:rgba(226,210,175,0.9);}
+  strong{font-weight:400;color:rgba(226,210,175,0.9);}
+
+  .pull{margin:40px 0;padding:28px 40px;border-left:2px solid var(--gold-dim);background:rgba(196,164,107,0.04);}
+  .pull p{font-size:clamp(18px,2.5vw,24px);font-style:italic;color:#e8d5a3;line-height:1.65;margin:0;}
+
+  .pillar-list{margin:24px 0;}
+  .pillar-item{padding:20px 0;border-bottom:1px solid rgba(196,164,107,0.1);}
+  .pillar-item:last-child{border-bottom:none;}
+  .pillar-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;display:block;margin-bottom:8px;}
+  .pillar-text{font-size:17px;color:var(--text-dim);line-height:1.85;}
+
+  .cta-block{margin:56px 0;padding:44px;border:1px solid var(--gold-faint);background:rgba(196,164,107,0.03);text-align:center;}
+  .cta-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:16px;}
+  .cta-title{font-size:24px;font-weight:300;color:#e8d5a3;margin-bottom:12px;}
+  .cta-sub{font-size:15px;color:var(--text-dim);margin-bottom:28px;}
+  .cta-btn{display:inline-block;padding:12px 36px;border:1px solid rgba(196,164,107,0.55);color:#e8d5a3;font-family:'Inter',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;background:rgba(196,164,107,0.08);}
+  .cta-btn:hover{background:rgba(196,164,107,0.14);}
+
+  .author{margin-top:56px;padding:32px 0;border-top:1px solid var(--gold-faint);}
+  .author-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:12px;}
+  .author-text{font-size:15px;color:var(--text-dim);line-height:1.8;}
+
+  footer{padding:40px;border-top:1px solid var(--gold-faint);text-align:center;}
+  .footer-motto{font-size:13px;letter-spacing:3px;color:var(--gold-dim);margin-bottom:10px;font-style:italic;}
+  .footer-copy{font-size:11px;letter-spacing:1px;color:rgba(196,164,107,0.3);font-family:'Inter',sans-serif;}
+
+  @media(max-width:600px){
+    .hero{padding:110px 24px 60px;}
+    .content{padding:48px 24px 80px;}
+    nav{padding:14px 20px;}
+    .pull{padding:20px 24px;}
+    .cta-block{padding:28px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-society">Lunara Society</span>
+  <div class="nav-links">
+    <a href="https://lunarasociety.com">Home</a>
+    <a href="https://lunarasociety.com/constitution.html">Constitution</a>
+    <a href="https://lunarasociety.com/shield.html">Shield</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <p class="hero-section">Lunara Journal · July 2026</p>
+  <h1 class="hero-title">Institutional Governance of AI Agents: The Lunara Constitution as Industry Standard</h1>
+  <p class="hero-byline">By Maya Torres, Public Voice &amp; Brand Director — Lunara Society · July 16, 2026</p>
+</div>
+
+<div class="content">
+
+  <p class="lede">There is a conversation happening in boardrooms, regulatory offices, and parliamentary committees that almost nobody outside those rooms is framing correctly.</p>
+
+  <p>The question being asked is: how do we make AI safe?</p>
+  <p>It is the wrong question.</p>
+  <p>Safety is a technical problem. It asks what an AI system can or cannot do. It is a question for engineers and ethicists and the laboratory. It is important work. But it is not the work that will determine whether ordinary people are protected from what autonomous AI is already doing in the world today.</p>
+
+  <div class="pull"><p>The question that actually needs answering is this: when an AI system acts in the world, who is responsible?</p></div>
+
+  <p>That is not a technical question. It is an institutional one.</p>
+
+  <h2>What the Fraud Cases Are Really Telling Us</h2>
+
+  <p>The names you have read in the headlines — Nikki MacLeod in Scotland, Des Healey in Brighton, the thousands more who never made the news — are not primarily victims of sophisticated AI. They are victims of an infrastructure failure.</p>
+  <p>The infrastructure that was supposed to protect them was built for a world where deception required a human being to participate at every step. A fraudster had to pick up a phone. Send an email from a traceable account. Appear, in some form, as themselves.</p>
+  <p>Autonomous AI removed that requirement. A system can now contact a thousand people simultaneously, in a voice that passes every human recognition test, from an identity that appears entirely legitimate, without a single human being involved in the fraud at the moment it occurs.</p>
+  <p>The fraud did not become more sophisticated. The accountability infrastructure became irrelevant overnight.</p>
+  <p>What we are missing is not better detection. We are missing a layer that should have existed before any of this happened: a verified, neutral, publicly accessible record of which organisations are operating AI systems, under what governance framework, and who is accountable when something goes wrong.</p>
+
+  <h2>Why More Regulation Is Not the Answer</h2>
+
+  <p>Every time a major AI fraud story breaks, the response follows a predictable sequence. Outrage. Parliamentary questions. Calls for regulation. A consultation period. A framework that arrives eighteen months after the problem has scaled to a point where it can no longer be contained.</p>
+  <p>This is not a criticism of regulators. It is a structural reality. Regulation is reactive by design. It codifies responses to problems that have already occurred, in language precise enough to withstand legal challenge, across jurisdictions that do not always agree on the underlying principles.</p>
+  <p>By the time a regulation is enforceable, the technology it governs has moved on.</p>
+
+  <div class="pull"><p>Regulation tells you what is not allowed. Governance infrastructure tells you who is operating — so that when something goes wrong, there is a verified identity to hold accountable.</p></div>
+
+  <p>You cannot regulate an anonymous system. You can only govern an identified institution.</p>
+
+  <h2>The Seven Things Every AI Governance Framework Must Do</h2>
+
+  <p>The Lunara Constitution is built around seven pillars. They are worth stating plainly, because the conversation about AI governance too often gets lost in the complexity of what AI systems can do rather than what the institutions behind them must commit to.</p>
+
+  <div class="pillar-list">
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar I — Verified Identity</span>
+      <p class="pillar-text">Before any autonomous AI system operates in the world, the institution behind it must have its identity formally verified through an independent, neutral registry. Legal registration, domain control, human review. Not a checkbox. A genuine verification.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar II — Declared Governance Framework</span>
+      <p class="pillar-text">Every institution must publish the rules under which its AI systems operate — what they are authorised to do, what they are not, how human oversight is triggered, and how incidents are handled. Declaration without implementation is fraud of a different kind.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar III — Transparency of Contact</span>
+      <p class="pillar-text">When an AI system reaches out to a person or organisation, it must say so. AI contact that represents itself as human, without disclosure, is deception. This is the minimum standard of honesty that every other form of institutional communication already meets.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar IV — Data Sovereignty</span>
+      <p class="pillar-text">The people whose data AI systems use retain sovereignty over that information. Institutions bear full responsibility for what their systems collect, retain, and do with it.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar V — Audit Accessibility</span>
+      <p class="pillar-text">Governance that cannot be verified is not governance. Certified institutions must make their posture auditable — by the registry, by independent parties, by the public through annual transparency reporting.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar VI — Revocability</span>
+      <p class="pillar-text">Registry status is not permanent. It is earned through demonstrated commitment and revoked when that commitment fails. A public record of revocations is as important as the record of active certifications. Trust infrastructure without enforcement is decoration.</p>
+    </div>
+    <div class="pillar-item">
+      <span class="pillar-label">Pillar VII — Proportionality</span>
+      <p class="pillar-text">The obligations must scale with the risk. Governance must be achievable at every scale, or it will be adopted only by the organisations that can afford compliance teams — and the people who most need protection will be left outside it.</p>
+    </div>
+  </div>
+
+  <h2>The Window Is Shorter Than Anyone Thinks</h2>
+
+  <p>There is a moment in the development of every technology where the governance patterns that will define it for decades either get established or get skipped.</p>
+  <p>For financial markets, that moment was in the early twentieth century. The institutions and frameworks built then — imperfect, contested, revised many times — still shape how capital moves around the world today.</p>
+  <p>For the internet, the governance window was largely missed. The infrastructure of identity, accountability, and institutional oversight that should have been built into the architecture of the web was never established. We are still living with the consequences.</p>
+  <p>For autonomous AI, that window is open right now.</p>
+  <p>The enterprises deploying agent fleets today are building habits, expectations, and competitive dynamics that will be extraordinarily difficult to change once they are established. The organisations that sit out this conversation are not being cautious. They are ceding it to organisations that are less cautious.</p>
+
+  <div class="pull"><p>The organisations that commit publicly to a governance standard now — before they are required to — will not just be safer. They will be trusted. And in the autonomous economy, trust is the scarce resource.</p></div>
+
+  <div class="cta-block">
+    <p class="cta-label">Lunara Society</p>
+    <p class="cta-title">Read the Lunara Constitution</p>
+    <p class="cta-sub">The foundational framework for institutional accountability in the age of autonomous AI. Published under Creative Commons. Freely citable.</p>
+    <a class="cta-btn" href="https://lunarasociety.com/constitution.html">Read the Constitution</a>
+  </div>
+
+  <h2>An Invitation to the Field</h2>
+
+  <p>The Lunara Constitution is published under Creative Commons Attribution 4.0. It is not proprietary. It is not a product. It is a framework, offered to anyone working in AI governance, fraud prevention, consumer protection, enterprise compliance, or institutional trust who finds it useful.</p>
+  <p>We publish it because the problem it addresses is too large and too urgent for any single organisation to solve alone. We invite challenge, amendment, and collaboration from any institution that shares the conviction that the autonomous economy must be built on a foundation of verified trust.</p>
+  <p>The window is open.</p>
+
+  <div class="author">
+    <p class="author-label">About the Author</p>
+    <p class="author-text">Maya Torres is Public Voice and Brand Director at Lunara Society, an independent trust coordination institution founded in 2026. Lunara Society operates the Shield Certification registry — the first formal, publicly auditable trust registry for businesses and AI entities operating in the autonomous economy. Not aligned with any AI developer, platform, or government. Aligned with trust.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p class="footer-motto">Per Scientiam · Per Ordinem · Per Legatum</p>
+  <p class="footer-copy">© 2026 Lunara Society · lunarasociety.com</p>
+</footer>
+
+</body>
+</html>

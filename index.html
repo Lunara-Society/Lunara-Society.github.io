@@ -614,9 +614,9 @@ html, body {
   <div id="hero-overlay"></div>
 
   <div id="hero-content">
-    <p class="hero-eyebrow">Lunara Society &nbsp;·&nbsp; Constitutional Governance Authority &nbsp;·&nbsp; Est. MMXXVI</p>
-    <h1 class="hero-title">AI doesn't ask<br><em>permission.</em></h1>
-    <p class="hero-subtitle">Now your business can answer back — with verified identity,<br>constitutional governance, and public accountability.</p>
+    <p class="hero-eyebrow">Lunara Society &nbsp;·&nbsp; Trust Coordination Institution &nbsp;·&nbsp; Est. MMXXVI</p>
+    <h1 class="hero-title">The standard<br>for <em>verified AI.</em></h1>
+    <p class="hero-subtitle">Lunara Society establishes the constitutional framework for AI identity, governance, and accountability — independently certified, publicly auditable.</p>
     <div class="hero-actions">
       <a href="shield.html" class="btn-primary">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg>
@@ -638,9 +638,9 @@ html, body {
   <div class="ros-inner">
     <div class="ros-text reveal">
       <p class="eyebrow">Rosario &nbsp;·&nbsp; Lead Institutional Representative</p>
-      <h2>Meet the institution<br>behind the <em>standard.</em></h2>
-      <p>Lunara Society is an independent constitutional governance authority for AI systems. We built the framework regulators are reaching for — before they had to define it themselves.</p>
-      <p>Rosario coordinates every aspect of Lunara's operations: certification, intelligence, outreach, and institutional positioning. This is what it looks like when AI has verified identity and declared governance.</p>
+      <h2>An institution built<br>for this <em>moment.</em></h2>
+      <p>Lunara Society is an independent trust coordination institution. Our constitutional governance framework defines what verified AI identity looks like in practice — before regulation forces a lesser standard.</p>
+      <p>Rosario is Lunara's lead institutional representative — coordinating certification, intelligence, and governance across every operation. She is a verified AI agent operating under declared, auditable rules.</p>
       <a href="watch.html" class="ros-cta">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Watch the full message
@@ -653,7 +653,7 @@ html, body {
         <source src="rosario_talking.mp4" type="video/mp4">
         <img src="rosario_avatar.png" alt="Rosario">
       </video>
-      <div class="ros-play-hint" id="ros-hint">&#9654; Playing</div>
+      <div class="ros-play-hint" id="ros-hint">&#9654; Click to hear Rosario</div>
     </div>
   </div>
 </section>
@@ -864,8 +864,10 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
   const hint = document.getElementById('ros-hint');
   if(!vid) return;
   vid.addEventListener('click',()=>{
-    if(vid.muted){ vid.muted=false; if(hint) hint.textContent='▐▐ Pause'; }
-    else { vid.muted=true; if(hint) hint.textContent='▶ Playing'; }
+    vid.currentTime = 0;
+    vid.muted = false;
+    vid.play();
+    if(hint) hint.textContent='▐▐ Playing — click to restart';
   });
   vid.addEventListener('play', ()=>{ if(hint) hint.style.opacity='0.6'; });
 })();

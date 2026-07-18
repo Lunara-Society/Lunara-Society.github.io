@@ -566,6 +566,132 @@ html, body {
   transition:color 0.2s;
 }
 #mob-drawer-close:hover { color:var(--gold); }
+
+/* ─── LIVE TRUST TICKER ─── */
+#trust-ticker-wrap {
+  background: rgba(196,164,107,0.04);
+  border-top: 1px solid rgba(196,164,107,0.12);
+  border-bottom: 1px solid rgba(196,164,107,0.12);
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
+  position: relative;
+}
+#trust-ticker-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  padding: 0 24px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(196,164,107,0.2);
+}
+#trust-ticker-track {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+#trust-ticker-inner {
+  display: flex;
+  gap: 48px;
+  white-space: nowrap;
+  animation: ticker-scroll 30s linear infinite;
+  will-change: transform;
+}
+#trust-ticker-wrap:hover #trust-ticker-inner {
+  animation-play-state: paused;
+}
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.tick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  flex-shrink: 0;
+}
+.tick-verified { color: #4CAF50; font-size: 10px; }
+.tick-name { color: rgba(255,255,255,0.85); font-weight: 500; }
+.tick-domain { color: rgba(196,164,107,0.6); font-size: 11px; }
+.tick-loading { color: rgba(255,255,255,0.3); font-size: 12px; font-family: 'Inter', sans-serif; padding: 0 20px; }
+
+/* ─── ROSARIO CHAT ─── */
+#ros-chat-wrap {
+  margin-top: 32px;
+  border-top: 1px solid rgba(196,164,107,0.12);
+  padding-top: 24px;
+}
+.ros-chat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+#ros-chat-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+#ros-chat-input {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(196,164,107,0.25);
+  color: rgba(255,255,255,0.9);
+  padding: 12px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#ros-chat-input:focus {
+  border-color: rgba(196,164,107,0.6);
+}
+#ros-chat-input::placeholder { color: rgba(255,255,255,0.25); }
+#ros-chat-send {
+  background: var(--gold);
+  color: #060606;
+  border: none;
+  padding: 12px 18px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+#ros-chat-send:hover { background: var(--gold-bright); transform: scale(1.04); }
+#ros-chat-send:active { transform: scale(0.97); }
+#ros-chat-response {
+  margin-top: 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+  min-height: 0;
+  transition: min-height 0.3s;
+  border-left: 2px solid rgba(196,164,107,0.3);
+  padding-left: 14px;
+  display: none;
+}
+#ros-chat-response.visible { display: block; }
+.ros-chat-thinking {
+  color: rgba(196,164,107,0.5);
+  font-style: italic;
+  font-size: 13px;
+}
+
+
+@keyframes blink { 50% { opacity: 0; } }
+
 </style>
 </head>
 <body>
@@ -879,6 +1005,123 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
   }, {threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 })();
+
+// ── LIVE TRUST TICKER ──
+(function(){
+  const inner = document.getElementById('trust-ticker-inner');
+  if (!inner) return;
+
+  async function loadTicker() {
+    try {
+      const res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({limit: 50})
+      });
+      const data = await res.json();
+      const members = Array.isArray(data) ? data : (data.members || data.results || []);
+
+      if (!members || members.length === 0) {
+        // Show aspirational placeholder items
+        const placeholders = [
+          {name:'Founding Period Open', domain:'lunarasociety.com', date:'2026'},
+          {name:'Applications Being Reviewed', domain:'shield.lunarasociety.com', date:'2026'},
+          {name:'10 Founding Spots Available', domain:'Apply Now', date:'2026'},
+        ];
+        renderTicker(inner, placeholders, true);
+        return;
+      }
+
+      const items = members.map(m => ({
+        name: m.business_name || m.name || 'Verified Member',
+        domain: m.domain || m.website_url || '',
+        date: (m.verification_date || m.created_date || '').slice(0,10)
+      }));
+      renderTicker(inner, items, false);
+    } catch(e) {
+      inner.innerHTML = '<span class="tick-loading">Registry connecting…</span>';
+    }
+  }
+
+  function renderTicker(el, items, isPlaceholder) {
+    // Duplicate items for seamless loop
+    const all = [...items, ...items];
+    el.innerHTML = all.map(item => `
+      <span class="tick-item">
+        ${!isPlaceholder ? '<span class="tick-verified">✓</span>' : '<span class="tick-verified" style="color:var(--gold)">◆</span>'}
+        <span class="tick-name">${escHtml(item.name)}</span>
+        ${item.domain ? '<span class="tick-domain">' + escHtml(item.domain) + '</span>' : ''}
+        ${item.date ? '<span style="color:rgba(255,255,255,0.2);font-size:10px;">' + escHtml(item.date) + '</span>' : ''}
+      </span>
+    `).join('');
+
+    // Adjust animation speed based on item count
+    const duration = Math.max(20, items.length * 8);
+    el.style.animationDuration = duration + 's';
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  loadTicker();
+})();
+
+// ── ROSARIO WEB CHAT ──
+(function(){
+  const input = document.getElementById('ros-chat-input');
+  const btn = document.getElementById('ros-chat-send');
+  const resp = document.getElementById('ros-chat-response');
+  if (!input || !btn || !resp) return;
+
+  const ENDPOINT = 'https://superagent-d6d4ecd1.base44.app/functions/rosarioWebChat';
+
+  async function sendQuestion() {
+    const q = input.value.trim();
+    if (!q) return;
+    
+    btn.disabled = true;
+    input.disabled = true;
+    resp.className = 'visible';
+    resp.innerHTML = '<span class="ros-chat-thinking">Rosario is thinking…</span>';
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ question: q })
+      });
+      const data = await res.json();
+      resp.innerHTML = '';
+      // Typewriter effect on response
+      const text = data.reply || 'I could not reach a response right now.';
+      let i = 0;
+      const cursor = document.createElement('span');
+      cursor.style.cssText = 'display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;margin-left:2px;animation:blink 0.8s step-end infinite;';
+      resp.appendChild(cursor);
+      const interval = setInterval(() => {
+        if (i < text.length) {
+          cursor.before(document.createTextNode(text[i]));
+          i++;
+        } else {
+          clearInterval(interval);
+          cursor.remove();
+        }
+      }, 18);
+    } catch(e) {
+      resp.innerHTML = 'Something went wrong. Email us at lunarasociety@gmail.com.';
+    } finally {
+      btn.disabled = false;
+      input.disabled = false;
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', sendQuestion);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendQuestion(); });
+})();
+
 </script>
 </body>
 </html>

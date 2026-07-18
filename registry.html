@@ -384,10 +384,10 @@ input,textarea{
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Look up a business</h2>
     <p class="page-sub">Check the real, current status of any applicant or member this queries the live registry directly, not a cached claim.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;max-width:520px;">
-      <input type="text" id="reg-lookup-input" placeholder="Domain or Lunara reference ID" style="flex:1;min-width:200px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <button id="reg-lookup-btn" class="cta-btn" style="border:none;cursor:pointer;">Check status →</button>
+      <input type="text" id="reg-lookup-input" placeholder="Enter domain or SHIELD-ID to verify a business…" autocomplete="off" style="flex:1;min-width:200px;background:rgba(255,255,255,0.03);border:1px solid rgba(196,164,107,0.25);color:rgba(255,255,255,0.9);padding:14px 16px;font-family:'Inter',sans-serif;font-size:14px;border-radius:6px;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(196,164,107,0.6)'" onblur="this.style.borderColor='rgba(196,164,107,0.25)'">
+      <button id="reg-lookup-btn" class="cta-btn" style="border:none;cursor:pointer;border-radius:6px;padding:14px 24px;font-size:14px;">Verify →</button>
     </div>
-    <div id="reg-lookup-result" style="font-size:13px;color:var(--white-70);line-height:1.6;margin-bottom:12px;"></div>
+    <div id="reg-lookup-result" style="margin:16px 0 8px;"></div>
     <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Certified businesses</h2>
     <div id="reg-live-list" style="font-size:13px;color:var(--white-70);line-height:1.8;margin:16px 0;">Loading…</div>
@@ -414,24 +414,47 @@ input,textarea{
         if (slotsEl) slotsEl.textContent = '— of 10';
       }
     })();
-    document.getElementById('reg-lookup-btn').addEventListener('click', async function(){
+    function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    async function doLookup() {
       var q = document.getElementById('reg-lookup-input').value.trim();
       var resultEl = document.getElementById('reg-lookup-result');
-      if (!q) { resultEl.textContent = 'Enter a domain or reference ID first.'; return; }
-      resultEl.textContent = 'Checking...';
+      if (!q) {
+        resultEl.innerHTML = '<span style="font-size:13px;color:rgba(255,255,255,0.4);">Enter a domain or SHIELD ID to check.</span>';
+        return;
+      }
+      resultEl.innerHTML = '<span style="font-size:13px;color:rgba(196,164,107,0.5);font-style:italic;">Checking registry…</span>';
       try {
         var body = q.startsWith('SHIELD-') ? {public_id: q} : {domain: q};
         var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
         var data = await res.json();
         if (data.found) {
-          resultEl.innerHTML = '<strong style="color:var(--gold);">' + data.business_name + '</strong> — status: <strong>' + data.status + '</strong>' + (data.status === 'revoked' ? ' (' + (data.revocation_reason || 'no reason on file') + ')' : '');
+          var statusColor = data.status === 'approved' ? '#4CAF50' : data.status === 'revoked' ? '#e57373' : '#FFB74D';
+          var statusIcon = data.status === 'approved' ? '✓ Verified' : data.status === 'revoked' ? '✗ Revoked' : '⏳ Pending';
+          resultEl.innerHTML = '<div style="background:rgba(196,164,107,0.05);border:1px solid rgba(196,164,107,0.2);border-radius:8px;padding:20px 24px;">'
+            + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'
+            + '<span style="font-size:22px;font-family:Cormorant Garamond,serif;color:rgba(255,255,255,0.95);">' + escH(data.business_name) + '</span>'
+            + '<span style="font-size:12px;font-weight:600;color:' + statusColor + ';background:' + statusColor + '18;padding:3px 10px;border-radius:20px;letter-spacing:0.06em;">' + statusIcon + '</span>'
+            + '</div>'
+            + (data.domain ? '<div style="font-size:12px;color:rgba(196,164,107,0.6);margin-bottom:6px;">Domain: ' + escH(data.domain) + '</div>' : '')
+            + (data.public_id ? '<div style="font-size:12px;color:rgba(255,255,255,0.35);font-family:monospace;">' + escH(data.public_id) + '</div>' : '')
+            + (data.status === 'revoked' && data.revocation_reason ? '<div style="font-size:12px;color:#e57373;margin-top:8px;">Reason: ' + escH(data.revocation_reason) + '</div>' : '')
+            + (data.verification_date ? '<div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:10px;">Verified: ' + escH(data.verification_date.slice(0,10)) + '</div>' : '')
+            + '</div>';
         } else {
-          resultEl.textContent = 'No record found for that domain or ID — this business has not applied or is not yet in the registry.';
+          resultEl.innerHTML = '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:20px 24px;">'
+            + '<div style="font-size:14px;color:rgba(255,255,255,0.55);">No registry record found for <strong style="color:rgba(255,255,255,0.8);">' + escH(q) + '</strong>.</div>'
+            + '<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;">This business has not yet been verified by Lunara Society. '
+            + '<a href="shield.html" style="color:rgba(196,164,107,0.7);text-decoration:none;">Apply for certification ›</a></div>'
+            + '</div>';
         }
       } catch(err) {
-        resultEl.textContent = 'Could not check right now, please try again.';
+        resultEl.innerHTML = '<span style="font-size:13px;color:rgba(255,100,100,0.6);">Could not reach the registry right now. Please try again.</span>';
       }
-    });
+    }
+
+    document.getElementById('reg-lookup-btn').addEventListener('click', doLookup);
+    document.getElementById('reg-lookup-input').addEventListener('keydown', function(e){ if(e.key==='Enter') doLookup(); });
     </script>
     <div class="registry-block">
       <div class="registry-label">Live registry entry format · LUN-PROTO-1.0</div>{

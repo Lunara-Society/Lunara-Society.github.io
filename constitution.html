@@ -470,5 +470,16 @@
   <p class="footer-copy">© 2026 Lunara Society · Published under Creative Commons Attribution 4.0 International License · This document may be freely reproduced, cited, and adapted with attribution.</p>
 </footer>
 
+<script>
+(function(){
+  try {
+    fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/visitorTrack", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})
+    });
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>

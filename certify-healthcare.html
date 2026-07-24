@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Healthcare AI Governance Certification — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#060606;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
+:root{--gold:rgba(196,164,107,1);--gold-dim:rgba(196,164,107,0.55);--gold-faint:rgba(196,164,107,0.15);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+
+.hero{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(196,164,107,0.06) 0%,transparent 70%);pointer-events:none}
+.track-badge{display:inline-block;padding:8px 20px;border:1px solid rgba(196,164,107,0.4);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-family:'Inter',sans-serif;margin-bottom:28px}
+.hero-title{font-size:clamp(32px,5vw,60px);font-weight:300;color:#e8d5a3;line-height:1.2;letter-spacing:0.02em;margin-bottom:24px}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:clamp(16px,2vw,19px);font-weight:300;color:var(--text-dim);max-width:600px;line-height:1.8;margin-bottom:40px}
+
+section{padding:80px 40px;max-width:880px;margin:0 auto}
+.section-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:16px}
+.section-title{font-size:clamp(26px,4vw,42px);font-weight:300;color:#e8d5a3;line-height:1.3;margin-bottom:24px}
+.section-body{font-size:16px;line-height:1.9;color:var(--text);max-width:720px}
+.section-body+.section-body{margin-top:16px}
+.divider{width:60px;height:1px;background:rgba(196,164,107,0.35);margin:32px 0}
+
+.mapping-table{width:100%;border-collapse:collapse;margin-top:40px;font-family:'Inter',sans-serif}
+.mapping-table th{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);text-align:left;padding:16px 20px;border-bottom:1px solid rgba(196,164,107,0.35);font-weight:400}
+.mapping-table td{font-size:14px;color:var(--text-dim);padding:20px;border-bottom:1px solid rgba(196,164,107,0.1);line-height:1.7;vertical-align:top}
+.mapping-table .pillar-name{color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;width:200px}
+.mapping-table .reg-ref{color:var(--gold-dim);font-size:12px;font-style:italic;margin-top:4px}
+
+.reg-box{background:#0a0a0a;border:1px solid rgba(196,164,107,0.2);padding:24px 28px;margin:16px 0}
+.reg-box h4{font-size:14px;color:var(--gold);font-family:'Inter',sans-serif;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+.reg-box p{font-size:14px;color:var(--text-dim);font-family:'Inter',sans-serif;line-height:1.7}
+
+.audience-list{list-style:none;padding:0;margin-top:24px}
+.audience-list li{font-size:15px;color:var(--text-dim);padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif;display:flex;align-items:flex-start;gap:12px}
+.audience-list li::before{content:'\25C6';color:rgba(196,164,107,0.4);font-size:8px;margin-top:5px;flex-shrink:0}
+
+.cta-primary{display:inline-block;padding:18px 52px;border:1px solid rgba(196,164,107,0.65);color:#e8d5a3;font-size:11px;letter-spacing:4px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;background:rgba(196,164,107,0.08);transition:all .35s}
+.cta-primary:hover{background:rgba(196,164,107,0.18);border-color:rgba(196,164,107,0.9)}
+
+footer{background:#040404;border-top:1px solid rgba(196,164,107,0.1);padding:40px;text-align:center}
+footer p{font-size:10px;letter-spacing:3px;color:rgba(196,164,107,0.25);font-family:'Inter',sans-serif;text-transform:uppercase}
+footer a{color:rgba(196,164,107,0.45);text-decoration:none}
+
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+@media(max-width:768px){
+  nav{padding:14px 20px}.nav-links{gap:16px}
+  .hero{padding:100px 24px 50px}
+  section{padding:60px 24px}
+  .mapping-table .pillar-name{width:auto;display:block;margin-bottom:4px}
+  .mapping-table{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">Lunara Society</a>
+  <div class="nav-links">
+    <a href="/certify.html">Certification</a>
+    <a href="/constitution.html">Constitution</a>
+    <a href="/registry.html">Registry</a>
+    <a href="/certify.html#apply">Apply</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="track-badge">Track I · Healthcare AI Governance</div>
+  <h1 class="hero-title">Healthcare Constitutional<br><em>AI Certification</em></h1>
+  <p class="hero-sub">The first independent constitutional governance certification for AI systems operating in clinical, diagnostic, and health operations roles. Built on the seven pillars of the Lunara Constitution.</p>
+  <a href="/certify.html#apply" class="cta-primary">Apply for Certification</a>
+</div>
+
+<!-- CONTEXT -->
+<section class="fade-in">
+  <p class="section-label">Regulatory Context</p>
+  <h2 class="section-title">Healthcare AI is the most regulated AI category in the world.</h2>
+  <div class="divider"></div>
+  <p class="section-body">The EU AI Act classifies healthcare AI as high risk, triggering mandatory conformity assessments, post market monitoring, and transparency obligations. The FDA has issued guidance on AI enabled medical devices, requiring predetermined change control plans and transparency about model function. The Joint Commission is expanding AI governance review for accredited hospitals. HIPAA privacy rules constrain how AI systems handle protected health information. State level legislation is adding additional layers of clinical AI transparency requirements.</p>
+  <p class="section-body">Health systems and digital health vendors are now operating in an environment where independent governance certification is becoming a procurement, accreditation, and regulatory submission requirement. The Healthcare Constitutional AI track provides that certification on a constitutional foundation.</p>
+</section>
+
+<!-- PILLAR MAPPING -->
+<section class="fade-in">
+  <p class="section-label">Track Specification</p>
+  <h2 class="section-title">How the seven pillars map to healthcare compliance.</h2>
+  <div class="divider"></div>
+  <p class="section-body">Each constitutional pillar is assessed against healthcare specific requirements. The certification audit verifies compliance with both the universal constitutional standard and the track specific regulatory mapping below.</p>
+
+  <table class="mapping-table">
+    <tr>
+      <th>Constitutional Pillar</th>
+      <th>Healthcare Track Requirement</th>
+    </tr>
+    <tr>
+      <td class="pillar-name">I. Verified Identity
+        <div class="reg-ref">HIPAA covered entity verification, NPI validation</div>
+      </td>
+      <td>The organisation operating AI in healthcare roles must be a verified legal entity with confirmed clinical operating authority. Hospital systems must show accreditation status. Vendors must show FDA registration where applicable. Identity is established through legal registration, licensing validation, and institutional credentialing.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">II. Declared Governance Framework
+        <div class="reg-ref">FDA Predetermined Change Control Plan, IRB protocols</div>
+      </td>
+      <td>The AI system must have a documented governance framework defining clinical use boundaries, decision authority levels, human oversight requirements, and model update protocols. For FDA regulated devices, the governance framework must align with the predetermined change control plan. For clinical decision support tools, IRB or equivalent oversight documentation is required.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">III. Transparency of Contact
+        <div class="reg-ref">Patient notification standards, clinical disclosure rules</div>
+      </td>
+      <td>Any AI system interacting with patients, clinicians, or health operations staff must disclose its AI nature and institutional origin. Patient facing AI must provide clear disclosure that the patient is interacting with or receiving output from an AI system. Clinical AI recommendations must be traceable to their institutional source. Covert AI interaction is constitutionally prohibited under this track.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">IV. Data Sovereignty
+        <div class="reg-ref">HIPAA Privacy Rule, 42 CFR Part 2, state privacy laws</div>
+      </td>
+      <td>Protected health information processed by AI systems must be governed by explicit data handling policies. Minimum necessary data access, purpose limitation, retention schedules, and cross border transfer restrictions must be documented. Business associate agreements must be in place for all third party AI processing of PHI. Data deidentification standards must be declared and verified.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">V. Audit Accessibility
+        <div class="reg-ref">CMS Conditions of Participation, Joint Commission standards</div>
+      </td>
+      <td>Governance records, model decision logs, and audit trails must be accessible to legitimate counterparties including regulators, accreditation bodies, and authorised institutional reviewers. Audit logs must demonstrate clinical safety monitoring, adverse event tracking, and model performance over time. Records must be retained per applicable regulatory requirements.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">VI. Revocability
+        <div class="reg-ref">FDA recall authority, clinical suspension protocols</div>
+      </td>
+      <td>The certification can be revoked for cause including safety incidents, governance violations, model drift beyond acceptable parameters, or failure to maintain compliance. For clinical AI, revocation protocols must include patient safety transition plans. Revocation is public, logged, and verifiable through the Lunara Registry. Reinstatement requires full reassessment.</td>
+    </tr>
+    <tr>
+      <td class="pillar-name">VII. Proportionality
+        <div class="reg-ref">Risk based classification under EU AI Act, FDA risk categorization</div>
+      </td>
+      <td>Governance requirements scale with clinical risk. A diagnostic AI system operating in treatment advisory roles carries higher governance requirements than an administrative AI system processing scheduling data. The certification audit assesses risk classification and verifies that governance depth matches the clinical risk profile of the specific AI deployment.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- REGULATORY ALIGNMENT -->
+<section class="fade-in">
+  <p class="section-label">Regulatory Alignment</p>
+  <h2 class="section-title">Built to align with the frameworks that govern your AI.</h2>
+  <div class="divider"></div>
+
+  <div class="reg-box">
+    <h4>EU AI Act · High Risk Classification</h4>
+    <p>Certification maps to Annex III requirements for AI systems in healthcare, including risk management systems, data governance, technical documentation, transparency, human oversight, accuracy, and robustness.</p>
+  </div>
+
+  <div class="reg-box">
+    <h4>FDA AI Medical Device Guidance</h4>
+    <p>Certification aligns with predetermined change control plan requirements, GMLP principles, transparency obligations, and post market surveillance expectations for AI enabled medical devices.</p>
+  </div>
+
+  <div class="reg-box">
+    <h4>HIPAA Privacy and Security Rules</h4>
+    <p>Data Sovereignty pillar assessment verifies HIPAA compliance for AI systems processing PHI, including minimum necessary standards, access controls, and business associate agreement coverage.</p>
+  </div>
+
+  <div class="reg-box">
+    <h4>Joint Commission AI Governance</h4>
+    <p>Certification documentation supports Joint Commission accreditation review by demonstrating institutional AI governance structures, accountability frameworks, and safety monitoring protocols.</p>
+  </div>
+
+  <div class="reg-box">
+    <h4>State Level Clinical AI Transparency</h4>
+    <p>Certification supports compliance with emerging state legislation requiring disclosure of AI use in clinical decision making, including Colorado AI Act, Illinois HB requirements, and similar frameworks.</p>
+  </div>
+</section>
+
+<!-- WHO THIS IS FOR -->
+<section class="fade-in">
+  <p class="section-label">Who This Track Serves</p>
+  <h2 class="section-title">Designed for institutions deploying AI in healthcare.</h2>
+  <div class="divider"></div>
+  <ul class="audience-list">
+    <li>Hospital systems and integrated delivery networks</li>
+    <li>Digital health platforms and telemedicine providers</li>
+    <li>Clinical AI vendors and diagnostic software companies</li>
+    <li>Medical device manufacturers deploying AI components</li>
+    <li>Health insurance AI operations and claims processing systems</li>
+    <li>Pharmaceutical companies using AI in drug discovery or clinical trials</li>
+    <li>Health data platforms and analytics vendors</li>
+  </ul>
+</section>
+
+<!-- CTA -->
+<section class="fade-in" style="text-align:center;padding-bottom:60px">
+  <div class="divider" style="margin:0 auto 40px"></div>
+  <h2 class="section-title" style="margin-bottom:20px">Ready to certify your healthcare AI?</h2>
+  <p class="section-body" style="margin:0 auto 32px;text-align:center">Applications are reviewed within 48 hours. Founding pilot seats available for the July 29 launch.</p>
+  <a href="/certify.html#apply" class="cta-primary">Apply for Certification</a>
+</section>
+
+<footer>
+  <p>LUNARA SOCIETY · MMXXVI · <a href="/certify.html">Certification</a> · <a href="/constitution.html">Constitution</a> · <a href="/registry.html">Registry</a></p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}})},{threshold:.12});
+  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+});
+</script>
+</body>
+</html>

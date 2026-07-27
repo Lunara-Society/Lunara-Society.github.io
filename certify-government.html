@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Government AI Governance Certification. Lunara Society constitutional governance for federal, state, and municipal AI procurement.">
+<title>Government Certification — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="shield-logo.jpg">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+.hero{padding:140px 48px 60px;max-width:900px;margin:0 auto;border-bottom:1px solid var(--gold-15)}
+.hero-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);margin-bottom:20px}
+.hero-title{font-size:clamp(28px,4.5vw,52px);font-weight:300;color:#e8d5a3;line-height:1.18;margin-bottom:24px;font-family:'Cormorant Garamond',serif}
+.hero-sub{font-size:17px;line-height:1.9;color:var(--text-dim);max-width:700px;border-left:1px solid var(--gold-30);padding-left:24px;font-style:italic}
+.back-link{display:inline-block;margin-top:24px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Inter',sans-serif}
+.back-link:hover{color:var(--gold)}
+.body{max-width:760px;margin:0 auto;padding:64px 48px}
+.section{margin-bottom:64px}
+.section-num{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.3);margin-bottom:12px}
+.section-title{font-size:clamp(22px,3.5vw,34px);font-weight:400;color:#e8d5a3;line-height:1.25;margin-bottom:24px;font-family:'Cormorant Garamond',serif}
+.section-body p{font-size:16px;line-height:1.95;color:var(--text);margin-bottom:20px}
+.section-body p strong{color:#e8d5a3;font-weight:500}
+.pillar{border:1px solid var(--gold-15);padding:24px;margin-bottom:16px;transition:border-color .3s}
+.pillar:hover{border-color:var(--gold-30)}
+.pillar-name{font-size:18px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-weight:400;margin-bottom:12px}
+.pillar-name span{font-size:11px;color:var(--gold-50);font-family:'Inter',sans-serif;letter-spacing:2px;margin-left:12px}
+.pillar-mapping{font-size:14px;line-height:1.85;color:var(--text-dim)}
+.pillar-mapping strong{color:var(--text)}
+.reg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:32px 0}
+.reg-card{border:1px solid var(--gold-15);padding:24px;text-align:center}
+.reg-card h3{font-size:14px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:8px}
+.reg-card p{font-size:11px;color:var(--text-dim);line-height:1.6;margin:0}
+.callout{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:32px;margin:32px 0;border-radius:2px}
+.callout p{font-size:18px;line-height:1.8;color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-style:italic;margin:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin:32px 0}
+.stat{border:1px solid var(--gold-15);padding:28px;text-align:center}
+.stat-num{font-size:36px;color:var(--gold);font-family:'Cormorant Garamond',serif;margin-bottom:8px}
+.stat-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.cta{padding:64px 48px;text-align:center;border-top:1px solid var(--gold-15);max-width:900px;margin:0 auto}
+.cta h2{font-size:clamp(24px,3.5vw,38px);font-weight:300;color:#e8d5a3;margin-bottom:20px;font-family:'Cormorant Garamond',serif}
+.cta p{font-size:16px;line-height:1.8;color:var(--text-dim);margin-bottom:32px;max-width:600px;margin-left:auto;margin-right:auto}
+.cta a{display:inline-block;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:14px 36px;border:1px solid var(--gold-50);text-decoration:none;transition:all .3s;border-radius:100px}
+.cta a:hover{background:rgba(196,164,107,0.12);border-color:var(--gold)}
+.footer{padding:40px 48px;text-align:center;border-top:1px solid var(--gold-15)}
+.footer p{font-size:11px;letter-spacing:2px;color:var(--text-dim)}
+@media(max-width:768px){
+ nav{padding:12px 20px}
+ .nav-links{display:none}
+ .hero{padding:100px 24px 48px}
+ .body{padding:48px 24px}
+ .stat-grid,.reg-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="/" class="nav-brand">Lunara <span>Society</span></a>
+<div class="nav-links">
+<a href="/constitution.html">Constitution</a>
+<a href="/certify.html">Certification</a>
+<a href="/intelligence.html">Intelligence</a>
+<a href="/registry.html">Registry</a>
+<a href="/doctrine.html">Doctrine</a>
+</div>
+</nav>
+
+<div class="hero">
+<div class="hero-label">Government Track — Certification Specification</div>
+<h1 class="hero-title">Constitutional AI Governance for Government</h1>
+<p class="hero-sub">Federal procurement is the largest AI customer in the world. This specification maps the seven constitutional pillars to NIST AI Risk Management Framework, CISA guidance, FedRAMP alignment, federal acquisition regulation, and state government AI readiness requirements.</p>
+<a href="/certify.html" class="back-link">← Back to Certification</a>
+</div>
+
+<div class="body">
+
+<div class="section">
+<div class="section-num">01 — The Mandate</div>
+<div class="section-title">Why Government Needs Constitutional Governance</div>
+<div class="section-body">
+<p>The federal government is the largest AI customer in the world. Federal agencies are deploying AI systems for benefits processing, fraud detection, immigration adjudication, healthcare delivery, and national security analysis. Every one of these systems makes decisions that affect real people.</p>
+<p>The problem: <strong>68% of enterprises plan to switch AI vendors within 12 months.</strong> When an agency switches, what happens to the governance framework? If it was vendor specific, it disappears. If it was constitutional, it persists.</p>
+<div class="stat-grid">
+<div class="stat"><div class="stat-num">68%</div><div class="stat-label">Agencies planning AI vendor transition</div></div>
+<div class="stat"><div class="stat-num">63.5%</div><div class="stat-label">AI agent incident rate</div></div>
+<div class="stat"><div class="stat-num">69%</div><div class="stat-label">AI systems sharing credentials</div></div>
+</div>
+<p>The NIST AI Risk Management Framework provides guidance. CISA provides security direction. FedRAMP provides cloud authorization. But none of these establishes a constitutional standard for AI governance that persists across vendor transitions and agency reorganizations.</p>
+<p>That is what Lunara provides.</p>
+</div>
+</div>
+
+<div class="section">
+<div class="section-num">02 — Regulatory Mapping</div>
+<div class="section-title">Seven Pillars Mapped to Government Requirements</div>
+<div class="section-body">
+
+<div class="pillar">
+<div class="pillar-name">I. Verified Identity <span>NIST AI RMF GOVERN 1.1</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Every AI system deployed by or procured for a government agency must have a verified identity registered in a public trust registry. <strong>Mapped to:</strong> NIST AI RMF Govern function (accountability structures), CISA binding operational directives on asset inventory, FedRAMP system categorization (FIPS 199).</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">II. Declared Governance Framework <span>NIST AI RMF GOVERN 2.1</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Agencies must declare the governance framework under which each AI system operates. <strong>Mapped to:</strong> NIST AI RMF Map function, OMB Circular A-123 (internal control), Executive Order 14110 (Safe, Secure, and Trustworthy AI), Federal Data Strategy.</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">III. Transparency of Contact <span>FOIA, Transparency Act</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> A human contact must be publicly accountable for every AI system. <strong>Mapped to:</strong> Freedom of Information Act disclosure requirements, Federal Advisory Committee Act transparency, Open Government Data Act, Evidence Act (Foundations for Evidence Based Policymaking).</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">IV. Data Sovereignty <span>FISMA, FedRAMP</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Data processed by government AI systems must remain under sovereign control with declared boundaries. <strong>Mapped to:</strong> FISMA (Federal Information Security Modernization Act), FedRAMP authorization boundaries, CJI Security Policy (for criminal justice systems), HIPAA (for federal health systems).</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">V. Audit Accessibility <span>GAO, OIG</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Audit trails must be accessible to GAO, Inspectors General, and authorized oversight bodies. <strong>Mapped to:</strong> GAO audit authority (GAO Yellow Book), Inspector General Act, OMB Circular A-133 (single audit), agency specific audit requirements.</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">VI. Revocability <span>FAR, Acquisition</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Certifications must be revocable when trust is broken or when AI systems are retired. <strong>Mapped to:</strong> Federal Acquisition Regulation (FAR) termination clauses, Contract Disputes Act, Defense Acquisition Regulation Supplement (DFARS) for DoD systems.</div>
+</div>
+
+<div class="pillar">
+<div class="pillar-name">VII. Proportionality <span>EO 14110, Civil Rights</span></div>
+<div class="pillar-mapping"><strong>Requirement:</strong> Governance requirements must be proportionate to the risk and impact of the AI system. <strong>Mapped to:</strong> Executive Order 14110 risk based approach, Title VI of the Civil Rights Act (algorithmic discrimination), Section 508 (accessibility), EEOC guidance on AI in employment decisions.</div>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<div class="section-num">03 — Key Regulatory Frameworks</div>
+<div class="section-title">Full Coverage Across Federal, State, and Defense</div>
+<div class="reg-grid">
+<div class="reg-card"><h3>NIST AI RMF</h3><p>America's foundational AI risk management standard. Full Govern, Map, Measure, Manage alignment.</p></div>
+<div class="reg-card"><h3>FedRAMP</h3><p>Cloud authorization boundary mapping. Agency sponsorship and continuous monitoring alignment.</p></div>
+<div class="reg-card"><h3>FISMA</h3><p>Federal information security. System categorization and control baseline mapping.</p></div>
+<div class="reg-card"><h3>EO 14110</h3><p>Safe, Secure, and Trustworthy AI. Risk based requirements and agency inventory.</p></div>
+<div class="reg-card"><h3>CISA Guidance</h3><p>Cybersecurity direction and binding operational directives for AI systems.</p></div>
+<div class="reg-card"><h3>FAR / DFARS</h3><p>Federal and Defense acquisition regulation. Termination and audit clauses.</p></div>
+<div class="reg-card"><h3>GAO Authority</h3><p>Government Accountability Office audit access and Yellow Book compliance.</p></div>
+<div class="reg-card"><h3>Civil Rights</h3><p>Title VI, Section 508, EEOC guidance on algorithmic decision making.</p></div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-num">04 — The Procurement Advantage</div>
+<div class="section-title">Vendor Transition Governance Checkpoint</div>
+<div class="section-body">
+<p>When 68% of agencies are planning to switch AI vendors, the governance question becomes critical: <strong>does the governance framework survive the transition?</strong></p>
+<p>A vendor specific governance framework disappears when the contract ends. A constitutional governance framework persists because it is tied to the institution, not the vendor.</p>
+<p>Agencies that require Lunara certification in their procurement language ensure that every AI vendor they work with operates under the same seven pillars. When they switch vendors, the standard does not change. The implementation changes. The governance persists.</p>
+<div class="callout">
+<p>The constitutional governance checkpoint is the procurement innovation that makes vendor transitions safe. It is Lunara's contribution to federal AI readiness.</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-num">05 — Certification Process</div>
+<div class="section-title">How Government Certification Works</div>
+<div class="section-body">
+<p><strong>1. Application:</strong> The agency or vendor submits a certification application with system documentation.</p>
+<p><strong>2. Identity Verification:</strong> Legal entity verification and domain verification through DNS TXT records.</p>
+<p><strong>3. Pillar Assessment:</strong> Each of the seven pillars is assessed against the relevant regulatory frameworks.</p>
+<p><strong>4. Public Registry Entry:</strong> Certification is published in the public Shield Registry with full audit trail.</p>
+<p><strong>5. Continuous Monitoring:</strong> Annual re-verification and revocation triggers for material changes.</p>
+<p><strong>6. Revocation:</strong> Certifications are publicly revocable when trust is broken.</p>
+</div>
+</div>
+
+</div>
+
+<div class="cta">
+<h2>Founding Pilot for Government AI Programs</h2>
+<p>Five founding pilot seats for federal, state, or municipal AI programs. Priority processing, founding certification status, and preferred pricing locked for 36 months.</p>
+<a href="/certify.html">View All Certification Tracks</a>
+</div>
+
+<div class="footer">
+<p>Lunara Society — Constitutional Governance Authority for AI Systems — lunarasociety.com</p>
+</div>
+
+</body>
+</html>

@@ -124,6 +124,7 @@ footer a{color:rgba(196,164,107,0.45);text-decoration:none}
   .step{grid-template-columns:50px 1fr;gap:20px}
 }
 </style>
+<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
 </head>
 <body>
 
@@ -357,20 +358,14 @@ footer a{color:rgba(196,164,107,0.45);text-decoration:none}
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Trust badge for your website</li>
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;font-family:'Inter',sans-serif">Annual renewal $125 (optional)</li>
       </ul>
-      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0">
-        <input type="hidden" name="cmd" value="_xclick">
-        <input type="hidden" name="business" value="Junoagattis@gmail.com">
-        <input type="hidden" name="item_name" value="Shield Certification Small Business">
-        <input type="hidden" name="amount" value="80.00">
-        <input type="hidden" name="currency_code" value="USD">
-        <input type="hidden" name="no_note" value="1">
-        <input type="hidden" name="no_shipping" value="1">
-        <input type="hidden" name="rm" value="2">
-        <input type="hidden" name="return" value="https://lunarasociety.com/shield.html?status=complete">
-        <input type="hidden" name="cancel_return" value="https://lunarasociety.com/certify.html">
-        <input type="hidden" name="custom" value="shield_cert_small_business">
-        <button type="submit" style="width:100%;padding:14px;border:1px solid rgba(196,164,107,0.6);background:rgba(196,164,107,0.1);color:#e8d5a3;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s" onmouseover="this.style.background='rgba(196,164,107,0.22)'" onmouseout="this.style.background='rgba(196,164,107,0.1)'">Get Shield Certified</button>
-      </form>
+      <div id="paypal-container-L954695SE2ZDG" style="min-height:45px"></div>
+      <script>
+        if (window.paypal) {
+          paypal.HostedButtons({
+            hostedButtonId: "L954695SE2ZDG"
+          }).render("#paypal-container-L954695SE2ZDG");
+        }
+      </script>
     </div>
     <div style="flex:1;min-width:280px">
       <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.88);margin-bottom:20px">When a customer searches your business name, what do they find? A Facebook page? A Yelp listing? A competitor ad?</p>

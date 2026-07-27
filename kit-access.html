@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Your Compliance Kit — Lunara Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+
+.main{max-width:800px;margin:0 auto;padding:60px 32px;position:relative;z-index:1}
+
+.header{text-align:center;margin-bottom:48px}
+.header h1{font-size:clamp(28px,4vw,42px);font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
+.header p{font-size:14px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
+
+.success-bar{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:16px 24px;text-align:center;margin-bottom:48px;border-radius:2px}
+.success-bar p{font-size:14px;color:var(--gold);letter-spacing:1px}
+
+.section{margin-bottom:48px}
+.section-title{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:12px;border-bottom:1px solid var(--gold-15)}
+.section h2{font-size:24px;font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:20px}
+.section h3{font-size:17px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.section p{font-size:14px;line-height:1.9;color:var(--text-dim);margin-bottom:16px}
+.section ol,.section ul{font-size:14px;color:var(--text-dim);line-height:2.2;padding-left:24px;margin-bottom:16px}
+.section li{margin-bottom:8px}
+.section table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+.section th{text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-50);padding:10px 12px;border-bottom:1px solid var(--gold-15)}
+.section td{padding:10px 12px;border-bottom:1px solid rgba(196,164,107,0.06);color:var(--text-dim);vertical-align:top}
+.section td:first-child{color:var(--gold);font-family:'Inter',sans-serif;font-weight:400}
+
+.card-box{background:var(--card);border:1px solid var(--gold-15);padding:28px;margin-bottom:24px}
+.card-box h3{font-size:16px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
+.card-box p{font-size:13px;color:var(--text-dim);line-height:1.8}
+
+.checklist-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)}
+.checklist-box{width:18px;height:18px;border:1px solid var(--gold-30);border-radius:2px;flex-shrink:0;margin-top:2px}
+.checklist-text{font-size:13px;color:var(--text-dim);line-height:1.7}
+.checklist-text strong{color:#e8d5a3;font-weight:400}
+
+.contract-block{background:#0a0a0a;border:1px solid var(--gold-15);padding:24px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text-dim);line-height:1.9;font-style:italic;margin-bottom:16px}
+
+.cta-box{background:linear-gradient(135deg,rgba(196,164,107,0.06),rgba(196,164,107,0.02));border:1px solid var(--gold-30);padding:40px;text-align:center;margin-bottom:48px}
+.cta-box h3{font-size:22px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.cta-box p{font-size:14px;color:var(--text-dim);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
+.cta-box a{display:inline-block;padding:14px 40px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;transition:all .3s}
+.cta-box a:hover{background:rgba(196,164,107,0.1)}
+
+.footer{text-align:center;padding:40px 0;border-top:1px solid var(--gold-15)}
+.footer p{font-size:10px;letter-spacing:3px;color:var(--text-dim)}
+
+@media(max-width:768px){.main{padding:40px 16px}}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="/" class="nav-brand">Lunara <span>Society</span></a>
+</nav>
+
+<div class="main">
+
+<div class="header">
+<h1>EU AI Act Compliance Readiness Kit</h1>
+<p>Your Digital Product Is Ready</p>
+</div>
+
+<div class="success-bar">
+<p>Thank you for your purchase. All materials are below. Bookmark this page for future reference.</p>
+</div>
+
+<!-- 1. SELF ASSESSMENT CHECKLIST -->
+<div class="section">
+<div class="section-title">Module 1</div>
+<h2>Self Assessment Checklist</h2>
+<p>Score your organization against the seven constitutional pillars. Complete each item below. If you can answer yes to all items in a pillar, you have a strong governance position. If not, that is your priority gap.</p>
+
+<h3>Pillar I: Verified Identity</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>1.1</strong> Can you produce a legal registration document for your organization?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>1.2</strong> Does your website domain match your registered business name?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>1.3</strong> Is there a named individual accountable for AI governance?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>1.4</strong> Have you screened your organization against fraud and sanctions databases?</div></div>
+
+<h3 style="margin-top:24px">Pillar II: Declared Governance Framework</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>2.1</strong> Do you have a written AI governance policy document?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>2.2</strong> Does the policy cover model selection criteria?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>2.3</strong> Does the policy cover deployment and monitoring procedures?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>2.4</strong> Are there human oversight mechanisms and escalation paths?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>2.5</strong> Is there a documented revocation procedure?</div></div>
+
+<h3 style="margin-top:24px">Pillar III: Transparency of Contact</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>3.1</strong> Is your public contact page accessible and accurate?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>3.2</strong> Can stakeholders reach a human within 48 hours?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>3.3</strong> Is domain ownership verifiable through DNS records?</div></div>
+
+<h3 style="margin-top:24px">Pillar IV: Data Sovereignty</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>4.1</strong> Have you declared your data processing boundaries?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>4.2</strong> Do you have a data retention policy for AI outputs?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>4.3</strong> Are data processing locations disclosed?</div></div>
+
+<h3 style="margin-top:24px">Pillar V: Audit Accessibility</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>5.1</strong> Are AI system audit logs retained for at least 12 months?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>5.2</strong> Can oversight bodies access audit trails on request?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>5.3</strong> Is there a documented process for audit response?</div></div>
+
+<h3 style="margin-top:24px">Pillar VI: Revocability</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>6.1</strong> Is there a public mechanism for trust revocation?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>6.2</strong> Is the revocation process documented and time bound (under 30 days)?</div></div>
+
+<h3 style="margin-top:24px">Pillar VII: Proportionality</h3>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>7.1</strong> Are governance requirements scaled to AI system risk level?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>7.2</strong> Have you classified your AI systems by risk category?</div></div>
+<div class="checklist-item"><div class="checklist-box"></div><div class="checklist-text"><strong>7.3</strong> Do high risk systems receive proportionally stricter oversight?</div></div>
+
+<p style="margin-top:16px"><strong style="color:var(--gold)">Scoring:</strong> 0 to 10 gaps = strong position. 11 to 20 gaps = moderate risk. 21+ gaps = urgent action needed before August 2.</p>
+</div>
+
+<!-- 2. REGULATORY MAPPING -->
+<div class="section">
+<div class="section-title">Module 2</div>
+<h2>Regulatory Mapping Summary</h2>
+<p>Which EU AI Act articles apply to your organization based on your AI system classification.</p>
+
+<h3>Risk Classifications</h3>
+<table>
+<tr><th>Risk Level</th><th>AI Act Articles</th><th>Your Requirements</th></tr>
+<tr><td>High Risk</td><td>Art. 8 to 15, Annex III</td><td>Full conformity assessment, risk management, data governance, transparency, human oversight, logging</td></tr>
+<tr><td>Limited Risk</td><td>Art. 50</td><td>Transparency obligations: inform users they are interacting with AI, label synthetic content</td></tr>
+<tr><td>Minimal Risk</td><td>None (voluntary codes)</td><td>No mandatory requirements. Lunara certification recommended as competitive differentiator</td></tr>
+</table>
+
+<h3 style="margin-top:24px">Pillar to Article Mapping</h3>
+<table>
+<tr><th>Lunara Pillar</th><th>EU AI Act Article</th><th>Requirement</th></tr>
+<tr><td>I. Verified Identity</td><td>Art. 9(2)(a)</td><td>Risk management system with provider identification</td></tr>
+<tr><td>II. Declared Governance</td><td>Art. 9(2)(b to g)</td><td>Data governance, technical documentation, record keeping</td></tr>
+<tr><td>III. Transparency</td><td>Art. 50</td><td>Transparency obligations for AI interaction disclosure</td></tr>
+<tr><td>IV. Data Sovereignty</td><td>Art. 10</td><td>Data and data governance requirements</td></tr>
+<tr><td>V. Audit Accessibility</td><td>Art. 12</td><td>Logging and record keeping requirements</td></tr>
+<tr><td>VI. Revocability</td><td>Art. 9(2)(f)</td><td>Withdrawal or recall of non conforming systems</td></tr>
+<tr><td>VII. Proportionality</td><td>Art. 8</td><td>Conformity assessment proportionate to risk</td></tr>
+</table>
+</div>
+
+<!-- 3. VENDOR TRANSITION CHECKLIST -->
+<div class="section">
+<div class="section-title">Module 3</div>
+<h2>Vendor Transition Governance Checklist</h2>
+<p>The 8 step process for maintaining governance continuity when switching AI vendors.</p>
+
+<ol>
+<li><strong style="color:#e8d5a3">Complete seven pillar assessment</strong> before vendor selection. Document your current governance position.</li>
+<li><strong style="color:#e8d5a3">Include Lunara certification requirement</strong> in vendor RFP. Require proof of constitutional governance alignment.</li>
+<li><strong style="color:#e8d5a3">Map vendor specific controls</strong> to constitutional pillars. Identify which controls transfer and which need rebuilding.</li>
+<li><strong style="color:#e8d5a3">Establish audit continuity plan</strong> before transition begins. Ensure no gap in logging or oversight.</li>
+<li><strong style="color:#e8d5a3">Execute delta assessment</strong> during transition. Target: 72 hour window for gap identification.</li>
+<li><strong style="color:#e8d5a3">Update public registry</strong> with new vendor implementation details. Maintain transparency through transition.</li>
+<li><strong style="color:#e8d5a3">Verify revocation procedures</strong> transfer to new vendor relationship. No loss of accountability.</li>
+<li><strong style="color:#e8d5a3">Schedule 90 day post transition review</strong> to confirm full governance restoration.</li>
+</ol>
+</div>
+
+<!-- 4. SAMPLE AUDIT TEMPLATE -->
+<div class="section">
+<div class="section-title">Module 4</div>
+<h2>Sample Audit Template</h2>
+<p>62 assessment points across the seven pillars. This is the format Lunara reviewers use for formal certification.</p>
+
+<div class="card-box">
+<h3>Pillar I: Identity (12 points)</h3>
+<p>1. Legal registration verified 2. Domain ownership confirmed 3. Business name consistency 4. Contact email match 5. Fraud screening clear 6. Sanctions check passed 7. Public ID issued 8. Registration country confirmed 9. Legal registration number format valid 10. Website live and accessible 11. Contact page functional 12. Named accountable individual verified</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar II: Governance (18 points)</h3>
+<p>1. Written policy exists 2. Model selection criteria 3. Deployment procedures 4. Monitoring procedures 5. Human oversight mechanisms 6. Escalation paths 7. Revocation procedures 8. Risk assessment process 9. Model documentation 10. Training data governance 11. Bias testing 12. Performance metrics 13. Incident response plan 14. Change management 15. Vendor management 16. Privacy impact assessment 17. Security review 18. Compliance attestation</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar III: Transparency (9 points)</h3>
+<p>1. DNS TXT verification 2. Public contact page 3. Named individual reachable 4. Response time under 48 hours 5. AI interaction disclosure 6. Synthetic content labeling 7. Policy publicly available 8. Registry listing accurate 9. Change notification process</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar IV: Data (9 points)</h3>
+<p>1. Data boundary declaration 2. Processing location disclosed 3. Retention policy 4. Data subject rights process 5. Cross border transfer documentation 6. Encryption standards 7. Access controls 8. Data minimization 9. Deletion procedures</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar V: Audit (7 points)</h3>
+<p>1. Audit log retention 12+ months 2. Oversight body access 3. Audit response process 4. Log integrity verification 5. Historical record availability 6. Third party audit support 7. Continuous monitoring evidence</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar VI: Revocation (6 points)</h3>
+<p>1. Public revocation mechanism 2. Notification process 3. Timeline under 30 days 4. Registry update procedure 5. Stakeholder notification 6. Appeal process</p>
+</div>
+
+<div class="card-box">
+<h3>Pillar VII: Proportionality (10 points) — but only listed 1)</h3>
+<p>1. Risk classification system 2. High risk identification 3. Proportionate oversight 4. Impact assessment 5. Mitigation documentation 6. Residual risk acceptance 7. Review frequency by risk 8. Escalation triggers 9. Compensating controls 10. Documentation of proportionality decisions</p>
+</div>
+</div>
+
+<!-- 5. CONTRACT LANGUAGE -->
+<div class="section">
+<div class="section-title">Module 5</div>
+<h2>Contract Language Templates</h2>
+<p>Drop in clauses for AI vendor agreements and RFPs.</p>
+
+<h3>Clause 1: Certification Requirement</h3>
+<div class="contract-block">
+The vendor shall maintain Lunara Constitutional AI Governance Certification throughout the term of this agreement. Certification must be active and verifiable through the public Lunara Registry at lunarasociety.com/registry.html. Failure to maintain certification constitutes a material breach of this agreement.
+</div>
+
+<h3>Clause 2: Audit Continuity</h3>
+<div class="contract-block">
+The vendor shall maintain continuous audit logging as specified in Pillar V of the Lunara Constitution. Audit logs shall be retained for a minimum of 12 months and made available to authorized oversight bodies within 72 hours of request. In the event of vendor transition, audit continuity shall be maintained through the public registry record.
+</div>
+
+<h3>Clause 3: Revocation Rights</h3>
+<div class="contract-block">
+In the event that the vendor loses Lunara certification or fails to meet constitutional governance requirements, the customer retains the right to terminate this agreement without penalty. The vendor shall provide 30 days notice of any change to their certification status and shall cooperate fully in any transition to a replacement vendor.
+</div>
+
+<h3>Clause 4: Data Sovereignty</h3>
+<div class="contract-block">
+The vendor shall declare all data processing locations and boundaries in accordance with Pillar IV of the Lunara Constitution. Data shall not be transferred to undeclared jurisdictions without prior written consent. The vendor shall maintain a current data processing map and provide it upon request.
+</div>
+
+<h3>Clause 5: Vendor Transition Governance Checkpoint</h3>
+<div class="contract-block">
+The vendor shall support a governance delta assessment within 72 hours of transition notification. The constitutional governance framework shall persist through the institutional layer, not the vendor implementation layer. The vendor shall provide all necessary documentation, audit logs, and cooperation required to maintain governance continuity during any transition period.
+</div>
+</div>
+
+<!-- 6. 90 DAY ROADMAP -->
+<div class="section">
+<div class="section-title">Module 6</div>
+<h2>90 Day Compliance Roadmap</h2>
+
+<h3>Days 1 to 30: Foundation</h3>
+<ol>
+<li>Complete the self assessment checklist above</li>
+<li>Identify your top 5 governance gaps</li>
+<li>Draft a written AI governance policy (use Pillar II requirements)</li>
+<li>Assign a named accountable individual for AI governance</li>
+<li>Verify your domain and contact information is current</li>
+<li>Classify your AI systems by risk level (high, limited, minimal)</li>
+</ol>
+
+<h3 style="margin-top:24px">Days 31 to 60: Implementation</h3>
+<ol>
+<li>Implement audit logging for all high risk AI systems</li>
+<li>Establish data processing boundary documentation</li>
+<li>Create AI interaction disclosure for user facing systems</li>
+<li>Develop revocation and incident response procedures</li>
+<li>Begin vendor governance review using contract templates</li>
+<li>Submit application for Lunara Shield Certification</li>
+</ol>
+
+<h3 style="margin-top:24px">Days 61 to 90: Verification</h3>
+<ol>
+<li>Complete Lunara certification review process</li>
+<li>Update public registry listing with verified status</li>
+<li>Conduct internal audit using the 62 point template</li>
+<li>Schedule first quarterly governance review</li>
+<li>Train staff on governance procedures and escalation paths</li>
+<li>Establish continuous monitoring for compliance drift</li>
+</ol>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+<h3>Ready for full certification?</h3>
+<p>You have completed the self assessment. The next step is formal Lunara Shield Certification with public registry listing and trust badge.</p>
+<a href="/certify.html">Get Certified Now</a>
+</div>
+
+<div class="footer">
+<p>LUNARA SOCIETY — EU AI ACT COMPLIANCE READINESS KIT — LUNARASOCIETY.COM</p>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice — Lunara Society</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:#060606;color:#d4c5a9;font-family:'Inter',sans-serif;font-weight:300;padding:60px 20px}
+.invoice{max-width:780px;margin:0 auto;background:#0a0a0a;border:1px solid rgba(196,164,107,0.2);padding:56px 48px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;border-bottom:1px solid rgba(196,164,107,0.15);padding-bottom:32px}
+.brand{font-family:'Cormorant Garamond',serif}
+.brand-name{font-size:22px;color:#e8d5a3;letter-spacing:2px;margin-bottom:4px}
+.brand-sub{font-size:10px;color:rgba(196,164,107,0.5);letter-spacing:4px;text-transform:uppercase}
+.invoice-meta{text-align:right}
+.invoice-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:4px}
+.invoice-num{font-size:20px;color:#e8d5a3;font-family:'Cormorant Garamond',serif}
+.invoice-date{font-size:12px;color:rgba(196,164,107,0.5);margin-top:4px}
+.parties{display:flex;justify-content:space-between;margin-bottom:48px;gap:32px;flex-wrap:wrap}
+.party-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.4);margin-bottom:10px}
+.party-name{font-size:16px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:4px}
+.party-detail{font-size:13px;color:rgba(196,164,107,0.5);line-height:1.7}
+.items{margin-bottom:40px}
+.item-header{display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:16px;padding:12px 0;border-bottom:1px solid rgba(196,164,107,0.2);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.5)}
+.item-row{display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:16px;padding:20px 0;border-bottom:1px solid rgba(196,164,107,0.08);align-items:start}
+.item-name{font-size:15px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:6px}
+.item-desc{font-size:12px;color:rgba(196,164,107,0.5);line-height:1.6}
+.item-qty{font-size:14px;color:rgba(220,200,160,0.85);text-align:center}
+.item-rate{font-size:14px;color:rgba(220,200,160,0.85);text-align:right}
+.item-total{font-size:14px;color:#e8d5a3;text-align:right;font-family:'Cormorant Garamond',serif}
+.totals{margin-left:auto;width:280px;margin-bottom:40px}
+.total-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
+.total-row.grand{border-top:1px solid rgba(196,164,107,0.3);border-bottom:none;padding-top:16px;margin-top:8px}
+.total-label{font-size:13px;color:rgba(196,164,107,0.5)}
+.total-value{font-size:14px;color:rgba(220,200,160,0.85)}
+.total-row.grand .total-label{font-size:15px;color:#e8d5a3;font-family:'Cormorant Garamond',serif}
+.total-row.grand .total-value{font-size:24px;color:#C4A46B;font-family:'Cormorant Garamond',serif}
+.payment-box{background:rgba(196,164,107,0.05);border:1px solid rgba(196,164,107,0.2);padding:32px;margin-bottom:32px;border-radius:2px}
+.payment-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:16px}
+.payment-detail{font-size:13px;color:rgba(220,200,160,0.85);line-height:1.9}
+.payment-detail strong{color:#e8d5a3}
+.terms{font-size:11px;color:rgba(196,164,107,0.4);line-height:1.8;margin-bottom:32px}
+.terms-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:12px}
+.footer{text-align:center;border-top:1px solid rgba(196,164,107,0.15);padding-top:24px}
+.footer p{font-size:11px;color:rgba(196,164,107,0.35);letter-spacing:2px}
+.founding-badge{display:inline-block;padding:6px 16px;border:1px solid rgba(196,164,107,0.4);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C4A46B;margin-bottom:24px}
+@media(max-width:600px){.invoice{padding:32px 20px}.parties{flex-direction:column}.item-header,.item-row{grid-template-columns:2fr 1fr}.item-rate,.item-header span:nth-child(3){display:none}.totals{width:100%}}
+</style>
+</head>
+<body>
+<div class="invoice">
+
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="founding-badge">Founding Pilot — Certificate of Authority</div>
+  </div>
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-name">Lunara Society</div>
+      <div class="brand-sub">Constitutional AI Governance</div>
+      <div style="font-size:11px;color:rgba(196,164,107,0.4);margin-top:12px;line-height:1.7">
+        lunarasociety.com<br>
+        lunarasociety@gmail.com
+      </div>
+    </div>
+    <div class="invoice-meta">
+      <div class="invoice-label">Invoice</div>
+      <div class="invoice-num">LS-2026-001</div>
+      <div class="invoice-date" id="invoice-date">July 27, 2026</div>
+      <div class="invoice-label" style="margin-top:16px">Due</div>
+      <div class="invoice-date">Net 15</div>
+    </div>
+  </div>
+
+  <div class="parties">
+    <div>
+      <div class="party-label">From</div>
+      <div class="party-name">Lunara Society</div>
+      <div class="party-detail">
+        Constitutional AI Governance Authority<br>
+        lunarasociety.com<br>
+        lunarasociety@gmail.com
+      </div>
+    </div>
+    <div>
+      <div class="party-label">Billed To</div>
+      <div class="party-name" id="client-name">[Client Name]</div>
+      <div class="party-detail" id="client-detail">
+        [Client Organization]<br>
+        [Client Address]<br>
+        [Client Email]
+      </div>
+    </div>
+  </div>
+
+  <div class="items">
+    <div class="item-header">
+      <span>Description</span>
+      <span style="text-align:center">Qty</span>
+      <span style="text-align:right">Rate</span>
+      <span style="text-align:right">Total</span>
+    </div>
+    <div class="item-row" id="item-1">
+      <div>
+        <div class="item-name">Constitutional Audit — Founding Pilot</div>
+        <div class="item-desc">Full seven pillar assessment against the Lunara Constitution for the [Track] certification track. Includes regulatory mapping, governance gap analysis, audit report suitable for regulatory submission, and remediation roadmap.</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-rate">$75,000</div>
+      <div class="item-total">$75,000</div>
+    </div>
+    <div class="item-row" id="item-2" style="display:none">
+      <div>
+        <div class="item-name">Constitutional Certification — Founding Pilot</div>
+        <div class="item-desc">Full compliance and governance maturity validation. Public certification record on the Lunara Registry. Shield Certification badge. Valid 24 months.</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-rate">Included</div>
+      <div class="item-total">$0</div>
+    </div>
+  </div>
+
+  <div class="totals">
+    <div class="total-row">
+      <span class="total-label">Subtotal</span>
+      <span class="total-value" id="subtotal">$75,000</span>
+    </div>
+    <div class="total-row">
+      <span class="total-label">Founding Pilot Discount</span>
+      <span class="total-value" style="color:#C4A46B" id="discount">$0</span>
+    </div>
+    <div class="total-row grand">
+      <span class="total-label">Total Due</span>
+      <span class="total-value" id="grand-total">$75,000</span>
+    </div>
+  </div>
+
+  <div class="payment-box">
+    <div class="payment-title">Payment Instructions</div>
+    <div class="payment-detail">
+      <strong>PayPal:</strong> Invoice payment link will be provided upon confirmation<br>
+      <strong>Wire Transfer:</strong> Account details provided upon request<br>
+      <strong>Terms:</strong> Net 15 from invoice date<br><br>
+      Please reference invoice number <strong>LS-2026-001</strong> in all payment communications.
+    </div>
+  </div>
+
+  <div class="terms">
+    <div class="terms-title">Founding Pilot Terms</div>
+    This invoice represents the Founding Pilot pricing for the Lunara Society Constitutional AI Governance Certification program. Founding Pilot status includes priority processing, founding certification designation on the public registry, and preferred pricing locked for 36 months from certification date. Certification is valid for 24 months from issuance. Annual reassessment is included. Certification is publicly revocable if governance standards are not maintained. All certifications are published in the public Shield Registry at lunarasociety.com/registry.html.
+  </div>
+
+  <div class="footer">
+    <p>LUNARA SOCIETY — CONSTITUTIONAL GOVERNANCE AUTHORITY FOR AI SYSTEMS — LUNARASOCIETY.COM</p>
+  </div>
+
+</div>
+
+<script>
+// Auto fill date
+const now = new Date();
+const dateStr = now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+document.getElementById('invoice-date').textContent = dateStr;
+</script>
+</body>
+</html>

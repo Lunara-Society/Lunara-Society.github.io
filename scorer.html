@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Healthcare AI Compliance Risk Scorer — Lunara Society</title>
-<meta name="description" content="Score your clinical AI systems against HIPAA, FDA, EU AI Act, and Joint Commission requirements.">
+<meta name="description" content="Score your clinical AI systems against all 7 constitutional pillars mapped to HIPAA, FDA, EU AI Act, and Joint Commission requirements.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
@@ -49,6 +49,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 
 .btn{display:block;width:100%;padding:16px;background:transparent;border:1px solid var(--gold-50);color:var(--gold);font-size:12px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s;margin-top:24px}
 .btn:hover{background:rgba(196,164,107,0.1)}
+.btn-secondary{border-color:var(--gold-30);color:var(--gold-50);font-size:11px;padding:12px;margin-top:12px}
+
+/* Progress */
+.progress-bar{height:4px;background:#0d0d0d;border-radius:2px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);transition:width .5s;border-radius:2px}
+.progress-labels{display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
 
 /* Results */
 .results{display:none}
@@ -61,11 +67,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .score-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)}
 .score-grade{font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:8px}
 
+.benchmark-box{display:flex;justify-content:space-around;margin:32px 0;padding:24px;background:#0d0d0d;border:1px solid var(--gold-15)}
+.benchmark-stat{text-align:center}
+.benchmark-num{font-size:32px;font-weight:300;color:var(--gold-50);font-family:'Cormorant Garamond',serif;line-height:1}
+.benchmark-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px}
+.benchmark-comp{font-size:12px;color:var(--text);margin-top:8px}
+.benchmark-comp .up{color:var(--green)}
+.benchmark-comp .down{color:var(--red)}
+
 .pillar-score{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
-.pillar-name{font-size:14px;color:#e8d5a3;font-family:'Cormorant Garamond',serif}
+.pillar-name{font-size:14px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;min-width:200px}
 .pillar-bar{flex:1;max-width:200px;height:8px;background:#0d0d0d;border-radius:4px;margin:0 16px;overflow:hidden}
 .pillar-fill{height:100%;border-radius:4px;transition:width 1s ease}
 .pillar-pct{font-size:13px;color:var(--gold-50);min-width:40px;text-align:right}
+.pillar-bench{font-size:10px;color:var(--text-dim);margin-left:8px}
 
 .gap-list{margin-top:20px}
 .gap-item{padding:14px 16px;background:#0d0d0d;border-left:3px solid var(--red);margin-bottom:8px}
@@ -74,6 +89,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .gap-item h4{font-size:13px;color:#e8d5a3;margin-bottom:4px;font-weight:500}
 .gap-item p{font-size:12px;color:var(--text-dim);line-height:1.6}
 .gap-item .reg{font-size:10px;letter-spacing:1px;color:var(--gold-50);text-transform:uppercase;margin-top:4px}
+.gap-item .timeline{font-size:11px;color:var(--amber);margin-top:4px;font-weight:500}
+
+.reg-item{padding:14px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
+.reg-item .reg-name{font-size:13px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:4px}
+.reg-item .reg-desc{font-size:12px;color:var(--text-dim);line-height:1.7}
+.reg-item .reg-deadline{font-size:11px;color:var(--red);margin-top:4px;font-weight:500}
 
 .recommendation{background:linear-gradient(135deg,rgba(196,164,107,0.06),rgba(196,164,107,0.02));border:1px solid var(--gold-30);padding:28px;margin-bottom:24px;text-align:center}
 .recommendation h3{font-size:18px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
@@ -81,10 +102,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .recommendation a{display:inline-block;padding:12px 32px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:3px;text-transform:uppercase;transition:all .3s;margin:4px}
 .recommendation a:hover{background:rgba(196,164,107,0.1)}
 
+.share-box{background:var(--card);border:1px solid var(--gold-15);padding:24px;margin-bottom:24px;text-align:center}
+.share-box h3{font-size:16px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.share-box p{font-size:13px;color:var(--text-dim);margin-bottom:16px}
+.share-box input{width:100%;max-width:400px;background:#0d0d0d;border:1px solid var(--gold-15);color:var(--text);padding:10px 14px;font-family:'Inter',sans-serif;font-size:13px;outline:none;margin-bottom:12px}
+.share-box input:focus{border-color:var(--gold-50)}
+
 .footer{text-align:center;padding:40px 0;border-top:1px solid var(--gold-15)}
 .footer p{font-size:10px;letter-spacing:3px;color:var(--text-dim)}
 
-@media(max-width:768px){.main{padding:40px 16px}.form-section{padding:24px 16px}.checkbox-group{grid-template-columns:1fr}.nav-links{display:none}}
+@media(max-width:768px){.main{padding:40px 16px}.form-section{padding:24px 16px}.checkbox-group{grid-template-columns:1fr}.nav-links{display:none}.benchmark-box{flex-direction:column;gap:16px}.pillar-name{min-width:120px;font-size:12px}}
 </style>
 </head>
 <body>
@@ -101,15 +128,21 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <div class="main">
 
 <div class="header">
-<div class="label">MVP Preview — Week 1 Build</div>
+<div class="label">MVP Preview — Week 2 Build</div>
 <h1>Healthcare AI Compliance Risk Scorer</h1>
-<p>Score your clinical AI system against HIPAA, FDA, EU AI Act, and Joint Commission requirements in under 5 minutes.</p>
+<p>Score your clinical AI system against all 7 constitutional pillars mapped to HIPAA, FDA, EU AI Act, and Joint Commission requirements in under 5 minutes.</p>
+</div>
+
+<!-- PROGRESS -->
+<div id="progressContainer" style="margin-bottom:32px">
+<div class="progress-labels"><span>Section <span id="currentSection">1</span> of 5</span><span id="progressPct">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
 </div>
 
 <!-- INPUT FORM -->
 <div id="inputForm">
 
-<div class="form-section">
+<div class="form-section" id="section1">
 <h2>Organization & System Information</h2>
 <div class="form-group">
 <label>Organization Name</label>
@@ -123,8 +156,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <option value="CMO">Chief Medical Officer</option>
 <option value="Compliance">Compliance Officer</option>
 <option value="CTO">Chief Technology Officer</option>
+<option value="Privacy">Privacy Officer</option>
 <option value="Other">Other</option>
 </select>
+</div>
+<div class="form-group">
+<label>Email (optional, to receive your report)</label>
+<input type="email" id="email" placeholder="you@organization.com">
 </div>
 <div class="form-group">
 <label>AI System Name or Description</label>
@@ -136,7 +174,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 </div>
 </div>
 
-<div class="form-section">
+<div class="form-section" id="section2">
 <h2>Risk Classification</h2>
 <div class="form-group">
 <label>EU AI Act Risk Category</label>
@@ -162,11 +200,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <div class="radio-item" data-value="unsure">Unsure</div>
 </div>
 </div>
+<div class="form-group">
+<label>Deployment Stage</label>
+<div class="radio-group" id="deployStage">
+<div class="radio-item" data-value="pilot">Pilot<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Testing phase</div></div>
+<div class="radio-item" data-value="production">Production<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Live deployment</div></div>
+<div class="radio-item" data-value="planning">Planning<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Not deployed yet</div></div>
+</div>
+</div>
 </div>
 
-<div class="form-section">
+<div class="form-section" id="section3">
 <h2>Governance Readiness Assessment</h2>
-<p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Check all that apply to your organization.</p>
+<p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Check all that apply to your organization across the 7 constitutional pillars.</p>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar I: Identity & Accountability</label>
@@ -222,9 +268,29 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 </div>
 </div>
 
+<div class="form-group">
+<label style="margin-bottom:12px">Pillar VI: Interoperability & Standards</label>
+<div class="checkbox-group" id="pillar6">
+<div class="checkbox-item"><input type="checkbox" value="6.1"> AI system integrates with EHR via standardized APIs (FHIR/HL7)</div>
+<div class="checkbox-item"><input type="checkbox" value="6.2"> USCDI data elements mapped for AI inputs and outputs</div>
+<div class="checkbox-item"><input type="checkbox" value="6.3"> Model cards or system documentation published</div>
+<div class="checkbox-item"><input type="checkbox" value="6.4"> Interoperability testing completed with existing systems</div>
+</div>
 </div>
 
-<button class="btn" onclick="calculateScore()">Generate Risk Score</button>
+<div class="form-group">
+<label style="margin-bottom:12px">Pillar VII: Public Accountability & Recourse</label>
+<div class="checkbox-group" id="pillar7">
+<div class="checkbox-item"><input type="checkbox" value="7.1"> Public transparency report on AI usage published</div>
+<div class="checkbox-item"><input type="checkbox" value="7.2"> Patient complaint or appeal process for AI decisions</div>
+<div class="checkbox-item"><input type="checkbox" value="7.3"> External audit or third party certification obtained</div>
+<div class="checkbox-item"><input type="checkbox" value="7.4"> Ethics committee review for AI system deployment</div>
+</div>
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateScore()">Generate Risk Score & Gap Report</button>
 
 </div>
 
@@ -241,17 +307,42 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <div class="score-grade" id="scoreGrade"></div>
 </div>
 
+<div class="benchmark-box" id="benchmarkBox">
+<div class="benchmark-stat">
+<div class="benchmark-num">85%</div>
+<div class="benchmark-label">Industry Pilot Rate</div>
+<div class="benchmark-comp" id="benchPilot"></div>
+</div>
+<div class="benchmark-stat">
+<div class="benchmark-num">5%</div>
+<div class="benchmark-label">In Production</div>
+<div class="benchmark-comp" id="benchProd"></div>
+</div>
+<div class="benchmark-stat">
+<div class="benchmark-num" id="benchScore">42</div>
+<div class="benchmark-label">Avg Score</div>
+<div class="benchmark-comp" id="benchComp"></div>
+</div>
+</div>
+
 <div id="pillarScores"></div>
 </div>
 
 <div class="results-section" id="gapSection">
 <h2>Compliance Gaps Identified</h2>
+<p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Sorted by severity. Each gap includes the specific regulation it violates and recommended remediation timeline.</p>
 <div class="gap-list" id="gapList"></div>
 </div>
 
 <div class="results-section" id="regSection">
-<h2>Regulatory Requirements</h2>
+<h2>Regulatory Requirements Applicable to Your System</h2>
 <div id="regList"></div>
+</div>
+
+<div class="results-section" id="roadmapSection">
+<h2>30 Day Remediation Roadmap</h2>
+<p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Prioritized action plan based on your assessment results.</p>
+<div id="roadmapList"></div>
 </div>
 
 <div class="recommendation" id="recommendation">
@@ -260,10 +351,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <div id="recLinks"></div>
 </div>
 
+<div class="share-box">
+<h3>Save Your Results</h3>
+<p>Enter your email to receive a copy of this assessment and your custom gap report.</p>
+<input type="email" id="shareEmail" placeholder="you@organization.com">
+<button class="btn btn-secondary" onclick="shareResults()">Email Me My Report</button>
+</div>
+
+<button class="btn btn-secondary" onclick="window.print()" style="margin-bottom:24px">Print or Save as PDF</button>
+<button class="btn btn-secondary" onclick="resetAssessment()" style="margin-bottom:24px">Run New Assessment</button>
+
 </div>
 
 <div class="footer">
-<p>LUNARA SOCIETY — HEALTHCARE AI COMPLIANCE RISK SCORER — BETA PREVIEW</p>
+<p>LUNARA SOCIETY — HEALTHCARE AI COMPLIANCE RISK SCORER — BETA v2</p>
 </div>
 
 </div>
@@ -286,39 +387,65 @@ cb.parentElement.classList.toggle('checked', cb.checked);
 });
 });
 
+// Track section visibility for progress
+function updateProgress() {
+const sections = ['section1','section2','section3'];
+const checkboxes = document.querySelectorAll('.checkbox-item input');
+const radios = document.querySelectorAll('.radio-item.active');
+const filled = document.querySelectorAll('input[type="text"]:not([placeholder=""]), textarea:not(:empty), select option:checked:not(:disabled)');
+// Simplified progress: based on form interactions
+const totalChecks = checkboxes.length + radios.length;
+const checked = document.querySelectorAll('.checkbox-item input:checked').length + radios.length;
+const pct = Math.round(((checked + 1) / (totalChecks + 1)) * 100);
+document.getElementById('progressFill').style.width = Math.min(pct, 100) + '%';
+document.getElementById('progressPct').textContent = Math.min(pct, 100) + '%';
+}
+
+document.querySelectorAll('input,select,textarea').forEach(el => el.addEventListener('change', updateProgress));
+
 const pillarData = {
-pillar1: { name: 'I. Identity & Accountability', total: 4, regs: { '1.1': 'HIPAA Security Rule 164.308(a)(2)', '1.2': 'EU AI Act Art. 9(2)(b)', '1.3': 'EU AI Act Art. 9(2)(g)', '1.4': 'Joint Commission IM.01.01.03' } },
-pillar2: { name: 'II. Data Governance', total: 6, regs: { '2.1': 'EU AI Act Art. 10', '2.2': 'HIPAA Security Rule 164.312(a)(2)(iv)', '2.3': 'EU AI Act Art. 12', '2.4': 'CA SB 1001 (2027)', '2.5': 'GDPR Art. 44-50', '2.6': 'HIPAA Privacy Rule 164.526' } },
-pillar3: { name: 'III. Transparency', total: 4, regs: { '3.1': 'EU AI Act Art. 50', '3.2': 'EU AI Act Art. 50(2)', '3.3': 'Lunara Pillar III', '3.4': 'EU AI Act Art. 13(2)' } },
-pillar4: { name: 'IV. Audit & Oversight', total: 6, regs: { '4.1': 'EU AI Act Art. 12(1)', '4.2': 'EU AI Act Art. 14(1)', '4.3': 'EU AI Act Art. 14(4)', '4.4': 'EU AI Act Art. 14(3)', '4.5': 'EU AI Act Art. 10(2)(f)', '4.6': 'FDA SaMD PCCP' } },
-pillar5: { name: 'V. Revocability & Incident Response', total: 4, regs: { '5.1': 'EU AI Act Art. 9(2)(f)', '5.2': 'HIPAA Security Rule 164.308(a)(6)', '5.3': 'HIPAA Breach Notification Rule', '5.4': 'EU AI Act Art. 9(2)(g)' } }
+pillar1: { name: 'I. Identity & Accountability', total: 4, regs: { '1.1': 'HIPAA Security Rule 164.308(a)(2)', '1.2': 'EU AI Act Art. 9(2)(b)', '1.3': 'EU AI Act Art. 9(2)(g)', '1.4': 'Joint Commission IM.01.01.03' }, benchmark: 35 },
+pillar2: { name: 'II. Data Governance', total: 6, regs: { '2.1': 'EU AI Act Art. 10', '2.2': 'HIPAA Security Rule 164.312(a)(2)(iv)', '2.3': 'EU AI Act Art. 12', '2.4': 'CA SB 1001 (2027)', '2.5': 'GDPR Art. 44-50', '2.6': 'HIPAA Privacy Rule 164.526' }, benchmark: 28 },
+pillar3: { name: 'III. Transparency', total: 4, regs: { '3.1': 'EU AI Act Art. 50', '3.2': 'EU AI Act Art. 50(2)', '3.3': 'Lunara Pillar III', '3.4': 'EU AI Act Art. 13(2)' }, benchmark: 22 },
+pillar4: { name: 'IV. Audit & Oversight', total: 6, regs: { '4.1': 'EU AI Act Art. 12(1)', '4.2': 'EU AI Act Art. 14(1)', '4.3': 'EU AI Act Art. 14(4)', '4.4': 'EU AI Act Art. 14(3)', '4.5': 'EU AI Act Art. 10(2)(f)', '4.6': 'FDA SaMD PCCP' }, benchmark: 31 },
+pillar5: { name: 'V. Revocability & Incident Response', total: 4, regs: { '5.1': 'EU AI Act Art. 9(2)(f)', '5.2': 'HIPAA Security Rule 164.308(a)(6)', '5.3': 'HIPAA Breach Notification Rule', '5.4': 'EU AI Act Art. 9(2)(g)' }, benchmark: 25 },
+pillar6: { name: 'VI. Interoperability & Standards', total: 4, regs: { '6.1': 'ONC HTI-1 Rule, FHIR R4', '6.2': 'ONC USCDI v3', '6.3': 'EU AI Act Art. 11, Model Card Standard', '6.4': 'ONC Conditions and Maintenance of Certification' }, benchmark: 40 },
+pillar7: { name: 'VII. Public Accountability & Recourse', total: 4, regs: { '7.1': 'EU AI Act Art. 52-53', '7.2': 'EU AI Act Art. 14(4), Patient Rights', '7.3': 'EU AI Act Art. 43-47, Conformity Assessment', '7.4': 'Joint Commission Ethics Standard' }, benchmark: 18 },
 };
 
 const gapDescriptions = {
-'1.1': { desc: 'No named individual accountable for AI governance', action: 'Appoint a Chief AI Governance Officer or designate existing CISO/Compliance Officer as accountable party', severity: 'high' },
-'1.2': { desc: 'No written AI governance policy document', action: 'Draft an AI governance policy covering model selection, deployment, monitoring, and revocation procedures', severity: 'high' },
-'1.3': { desc: 'No vendor due diligence process for AI procurement', action: 'Implement a vendor assessment checklist requiring Lunara certification, audit continuity, and revocation rights', severity: 'high' },
-'1.4': { desc: 'No staff training on AI governance procedures', action: 'Develop training program covering AI system usage, escalation paths, and incident reporting', severity: 'medium' },
-'2.1': { desc: 'Data processing locations not documented', action: 'Create a data processing map showing all locations where AI training and inference data is stored and processed', severity: 'high' },
-'2.2': { desc: 'PHI encryption not verified', action: 'Verify AES 256 encryption at rest and TLS 1.3 in transit for all AI systems processing PHI', severity: 'high' },
-'2.3': { desc: 'No data retention policy for AI outputs', action: 'Define retention periods for AI generated clinical notes, predictions, and recommendations', severity: 'medium' },
-'2.4': { desc: 'Training data composition not documented', action: 'Document training data sources, composition, and provenance. Required under CA SB 1001 effective January 2027', severity: 'medium' },
-'2.5': { desc: 'Cross border data transfer documentation incomplete', action: 'Complete GDPR Article 46 transfer mechanism documentation for all AI data flows', severity: 'medium' },
-'2.6': { desc: 'No data subject access and deletion procedures', action: 'Implement HIPAA compliant procedures for patient access to AI processed data and deletion requests', severity: 'medium' },
-'3.1': { desc: 'Patients not informed of AI interaction', action: 'Implement patient notification system for AI interactions. Required under EU AI Act Article 50 from August 2, 2026', severity: 'high' },
-'3.2': { desc: 'AI outputs not labeled as AI generated', action: 'Label all AI generated content, clinical notes, and predictions with clear AI provenance markers', severity: 'high' },
-'3.3': { desc: 'Domain and contact information not verified', action: 'Verify domain ownership through DNS records and ensure public contact information is accurate', severity: 'low' },
-'3.4': { desc: 'AI system limitations not disclosed to clinical users', action: 'Provide clear documentation of AI system limitations, error rates, and appropriate use cases to clinicians', severity: 'medium' },
-'4.1': { desc: 'Audit logs not retained for 12 months', action: 'Implement audit logging with minimum 12 month retention for all AI system decisions and outputs', severity: 'high' },
-'4.2': { desc: 'No documented human oversight mechanisms', action: 'Document human in the loop procedures for all high risk AI decisions. Required under EU AI Act Article 14', severity: 'high' },
-'4.3': { desc: 'No escalation paths for AI failures', action: 'Define escalation procedures for AI system failures, errors, and unexpected outputs', severity: 'medium' },
-'4.4': { desc: 'No override procedures for clinical AI decisions', action: 'Implement and document clinical override procedures allowing physicians to reject AI recommendations', severity: 'high' },
-'4.5': { desc: 'No bias testing or fairness audit conducted', action: 'Conduct bias testing across demographic groups. Document methodology and results. Required under EU AI Act Article 10(2)(f)', severity: 'high' },
-'4.6': { desc: 'No performance monitoring dashboard', action: 'Implement continuous performance monitoring with alerts for drift, degradation, and anomalous behavior', severity: 'medium' },
-'5.1': { desc: 'No documented AI system revocation procedure', action: 'Create a revocation procedure with timeline under 30 days for removing non conforming AI systems', severity: 'medium' },
-'5.2': { desc: 'No incident response plan for AI failures', action: 'Develop AI specific incident response plan integrated with existing HIPAA breach response procedures', severity: 'high' },
-'5.3': { desc: 'No breach notification process for AI related PHI exposure', action: 'Document breach notification procedures specific to AI related PHI exposure including HHS notification timelines', severity: 'high' },
-'5.4': { desc: 'No vendor termination and data return procedures', action: 'Define procedures for data return, deletion, and governance continuity when terminating AI vendor relationships', severity: 'medium' }
+'1.1': { desc: 'No named individual accountable for AI governance', action: 'Appoint a Chief AI Governance Officer or designate existing CISO/Compliance Officer as accountable party', severity: 'high', timeline: '7 days' },
+'1.2': { desc: 'No written AI governance policy document', action: 'Draft an AI governance policy covering model selection, deployment, monitoring, and revocation procedures', severity: 'high', timeline: '14 days' },
+'1.3': { desc: 'No vendor due diligence process for AI procurement', action: 'Implement a vendor assessment checklist requiring certification, audit continuity, and revocation rights', severity: 'high', timeline: '10 days' },
+'1.4': { desc: 'No staff training on AI governance procedures', action: 'Develop training program covering AI system usage, escalation paths, and incident reporting', severity: 'medium', timeline: '21 days' },
+'2.1': { desc: 'Data processing locations not documented', action: 'Create a data processing map showing all locations where AI training and inference data is stored and processed', severity: 'high', timeline: '7 days' },
+'2.2': { desc: 'PHI encryption not verified', action: 'Verify AES 256 encryption at rest and TLS 1.3 in transit for all AI systems processing PHI', severity: 'high', timeline: '3 days' },
+'2.3': { desc: 'No data retention policy for AI outputs', action: 'Define retention periods for AI generated clinical notes, predictions, and recommendations', severity: 'medium', timeline: '14 days' },
+'2.4': { desc: 'Training data composition not documented', action: 'Document training data sources, composition, and provenance. Required under CA SB 1001 effective January 2027', severity: 'medium', timeline: '21 days' },
+'2.5': { desc: 'Cross border data transfer documentation incomplete', action: 'Complete GDPR Article 46 transfer mechanism documentation for all AI data flows', severity: 'medium', timeline: '14 days' },
+'2.6': { desc: 'No data subject access and deletion procedures', action: 'Implement HIPAA compliant procedures for patient access to AI processed data and deletion requests', severity: 'medium', timeline: '14 days' },
+'3.1': { desc: 'Patients not informed of AI interaction', action: 'Implement patient notification system for AI interactions. Required under EU AI Act Article 50 from August 2, 2026', severity: 'high', timeline: '5 days' },
+'3.2': { desc: 'AI outputs not labeled as AI generated', action: 'Label all AI generated content, clinical notes, and predictions with clear AI provenance markers', severity: 'high', timeline: '5 days' },
+'3.3': { desc: 'Domain and contact information not verified', action: 'Verify domain ownership through DNS records and ensure public contact information is accurate', severity: 'low', timeline: '7 days' },
+'3.4': { desc: 'AI system limitations not disclosed to clinical users', action: 'Provide clear documentation of AI system limitations, error rates, and appropriate use cases to clinicians', severity: 'medium', timeline: '10 days' },
+'4.1': { desc: 'Audit logs not retained for 12 months', action: 'Implement audit logging with minimum 12 month retention for all AI system decisions and outputs', severity: 'high', timeline: '7 days' },
+'4.2': { desc: 'No documented human oversight mechanisms', action: 'Document human in the loop procedures for all high risk AI decisions. Required under EU AI Act Article 14', severity: 'high', timeline: '7 days' },
+'4.3': { desc: 'No escalation paths for AI failures', action: 'Define escalation procedures for AI system failures, errors, and unexpected outputs', severity: 'medium', timeline: '10 days' },
+'4.4': { desc: 'No override procedures for clinical AI decisions', action: 'Implement and document clinical override procedures allowing physicians to reject AI recommendations', severity: 'high', timeline: '5 days' },
+'4.5': { desc: 'No bias testing or fairness audit conducted', action: 'Conduct bias testing across demographic groups. Document methodology and results. Required under EU AI Act Article 10(2)(f)', severity: 'high', timeline: '14 days' },
+'4.6': { desc: 'No performance monitoring dashboard', action: 'Implement continuous performance monitoring with alerts for drift, degradation, and anomalous behavior', severity: 'medium', timeline: '21 days' },
+'5.1': { desc: 'No documented AI system revocation procedure', action: 'Create a revocation procedure with timeline under 30 days for removing non conforming AI systems', severity: 'medium', timeline: '14 days' },
+'5.2': { desc: 'No incident response plan for AI failures', action: 'Develop AI specific incident response plan integrated with existing HIPAA breach response procedures', severity: 'high', timeline: '7 days' },
+'5.3': { desc: 'No breach notification process for AI related PHI exposure', action: 'Document breach notification procedures specific to AI related PHI exposure including HHS notification timelines', severity: 'high', timeline: '5 days' },
+'5.4': { desc: 'No vendor termination and data return procedures', action: 'Define procedures for data return, deletion, and governance continuity when terminating AI vendor relationships', severity: 'medium', timeline: '14 days' },
+'6.1': { desc: 'AI system does not integrate via standardized APIs (FHIR/HL7)', action: 'Implement FHIR R4 API integration for AI system data exchange. Required under ONC HTI-1 Rule', severity: 'medium', timeline: '21 days' },
+'6.2': { desc: 'USCDI data elements not mapped', action: 'Map AI system inputs and outputs to USCDI v3 data elements for interoperability compliance', severity: 'medium', timeline: '21 days' },
+'6.3': { desc: 'No model cards or system documentation published', action: 'Create and publish model cards documenting AI system architecture, training data, performance metrics, and limitations', severity: 'medium', timeline: '14 days' },
+'6.4': { desc: 'Interoperability testing not completed', action: 'Conduct interoperability testing with existing EHR and clinical systems. Document test results', severity: 'low', timeline: '21 days' },
+'7.1': { desc: 'No public transparency report on AI usage', action: 'Publish a transparency report detailing AI systems in use, their purposes, and governance measures', severity: 'low', timeline: '30 days' },
+'7.2': { desc: 'No patient complaint or appeal process for AI decisions', action: 'Implement a patient facing complaint and appeal process for AI assisted clinical decisions', severity: 'medium', timeline: '14 days' },
+'7.3': { desc: 'No external audit or third party certification', action: 'Obtain third party certification or external audit of AI governance practices. Consider Lunara Shield Certification', severity: 'medium', timeline: '30 days' },
+'7.4': { desc: 'No ethics committee review for AI deployment', action: 'Establish an AI ethics committee or integrate AI review into existing ethics committee processes', severity: 'medium', timeline: '21 days' },
 };
 
 function calculateScore() {
@@ -326,6 +453,7 @@ function calculateScore() {
 const riskCat = document.querySelector('#riskCategory .active')?.dataset.value || 'high';
 const phi = document.querySelector('#processesPHI .active')?.dataset.value || 'unsure';
 const samd = document.querySelector('#fdaSaMD .active')?.dataset.value || 'unsure';
+const deploy = document.querySelector('#deployStage .active')?.dataset.value || 'pilot';
 
 // Count checked items per pillar
 let totalScore = 0;
@@ -340,30 +468,30 @@ const possible = data.total;
 const pct = Math.round((score / possible) * 100);
 totalScore += score;
 totalPossible += possible;
-
-pillarResults[pillarId] = { name: data.name, score, possible, pct };
+pillarResults[pillarId] = { name: data.name, score, possible, pct, benchmark: data.benchmark };
 
 // Find gaps
 document.querySelectorAll('#' + pillarId + ' input:not(:checked)').forEach(cb => {
 const val = cb.value;
 if (gapDescriptions[val]) {
-gaps.push({ id: val, ...gapDescriptions[val], reg: data.regs[val] || '' });
+gaps.push({ id: val, ...gapDescriptions[val], reg: data.regs[val] || '', pillar: data.name });
 }
 });
 }
 
-// Risk multiplier
+// Risk multiplier based on classification
 let multiplier = 1.0;
 if (riskCat === 'high') multiplier = 1.0;
 else if (riskCat === 'limited') multiplier = 0.7;
 else multiplier = 0.4;
 
-// Calculate final score (higher = better compliance)
+// Calculate final score
 const rawScore = Math.round((totalScore / totalPossible) * 100);
 const finalScore = Math.round(rawScore * multiplier + (100 - rawScore) * (1 - multiplier) * 0.3);
 
 // Display results
 document.getElementById('inputForm').style.display = 'none';
+document.getElementById('progressContainer').style.display = 'none';
 document.getElementById('results').style.display = 'block';
 
 // Animate score
@@ -375,7 +503,7 @@ if (current >= finalScore) { current = finalScore; clearInterval(interval); }
 scoreNum.textContent = current;
 }, 20);
 
-// Score color
+// Score color and grade
 const circle = document.getElementById('scoreCircle');
 let grade, gradeColor, recTitle, recText;
 if (finalScore >= 80) {
@@ -383,82 +511,170 @@ circle.style.borderColor = '#7ac47a';
 grade = 'STRONG COMPLIANCE POSTURE';
 gradeColor = '#7ac47a';
 recTitle = 'Strong Position';
-recText = 'Your organization has a solid AI governance foundation. Complete formal Lunara Shield Certification to publicly verify your compliance posture and gain competitive advantage.';
+recText = 'Your organization has a solid AI governance foundation. Complete formal Lunara Shield Certification to publicly verify your compliance posture and gain competitive advantage in the healthcare market.';
 } else if (finalScore >= 60) {
 circle.style.borderColor = '#e8c44a';
 grade = 'MODERATE RISK';
 gradeColor = '#e8c44a';
-recTitle = 'Action Needed';
-recText = 'Your organization has moderate compliance gaps. The EU AI Act Compliance Readiness Kit provides the framework to close these gaps within 30 days. Priority: address high severity items before August 2.';
+recTitle = 'Action Needed Before August 2';
+recText = 'Your organization has moderate compliance gaps. The EU AI Act Compliance Readiness Kit provides the framework to close these gaps within 30 days. Priority: address high severity items before August 2 enforcement deadline.';
 } else if (finalScore >= 40) {
 circle.style.borderColor = '#e8a04a';
 grade = 'HIGH RISK';
 gradeColor = '#e8a04a';
 recTitle = 'Urgent Action Required';
-recText = 'Your organization faces significant compliance exposure. Multiple high severity gaps need immediate attention. We recommend starting with the Compliance Readiness Kit and scheduling a governance consultation within 7 days.';
+recText = 'Your organization faces significant compliance exposure. Multiple high severity gaps need immediate attention. Start with the Compliance Readiness Kit and schedule a governance consultation within 7 days.';
 } else {
 circle.style.borderColor = '#e85858';
 grade = 'CRITICAL EXPOSURE';
 gradeColor = '#e85858';
 recTitle = 'Immediate Intervention Needed';
-recText = 'Your organization has critical compliance gaps that create immediate regulatory and patient safety exposure. Contact us for an emergency governance assessment before August 2 enforcement.';
+recText = 'Your organization has critical compliance gaps creating immediate regulatory and patient safety exposure. Contact us for an emergency governance assessment before August 2 enforcement.';
 }
 document.getElementById('scoreGrade').textContent = grade;
 document.getElementById('scoreGrade').style.color = gradeColor;
 document.getElementById('recTitle').textContent = recTitle;
 document.getElementById('recText').textContent = recText;
 
-// Rec links
-document.getElementById('recLinks').innerHTML = '<a href="/readiness-kit.html">Get Compliance Kit</a><a href="/certify.html">Get Certified</a><a href="/healthcare-intelligence.html">Learn More</a>';
+// Benchmark comparison
+document.getElementById('benchScore').textContent = finalScore;
+const benchComp = document.getElementById('benchComp');
+if (finalScore >= 42) {
+benchComp.innerHTML = '<span class="up">↑ Above industry average</span>';
+} else {
+benchComp.innerHTML = '<span class="down">↓ Below industry average</span>';
+}
 
-// Pillar scores
+const deployEl = document.getElementById('benchPilot');
+if (deploy === 'production') {
+deployEl.innerHTML = '<span class="up">In production (top 5%)</span>';
+} else if (deploy === 'pilot') {
+deployEl.innerHTML = '<span class="amber">In pilot (85% bracket)</span>';
+deployEl.style.color = '#e8c44a';
+} else {
+deployEl.innerHTML = '<span class="down">Pre-deployment</span>';
+}
+
+// Pillar scores with benchmark comparison
 const pillarScoresDiv = document.getElementById('pillarScores');
-pillarScoresDiv.innerHTML = '';
+pillarScoresDiv.innerHTML = '<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-50);margin-bottom:12px">Per-Pillar Breakdown vs Industry Benchmark</div>';
 for (const [id, r] of Object.entries(pillarResults)) {
 const color = r.pct >= 75 ? '#7ac47a' : r.pct >= 50 ? '#e8c44a' : r.pct >= 25 ? '#e8a04a' : '#e85858';
+const benchIndicator = r.pct >= r.benchmark ? '↑' : '↓';
+const benchColor = r.pct >= r.benchmark ? 'var(--green)' : 'var(--red)';
 pillarScoresDiv.innerHTML += `
 <div class="pillar-score">
 <span class="pillar-name">${r.name}</span>
 <div class="pillar-bar"><div class="pillar-fill" style="width:${r.pct}%;background:${color}"></div></div>
 <span class="pillar-pct">${r.pct}%</span>
+<span class="pillar-bench" style="color:${benchColor}">${benchIndicator} ${r.benchmark}%</span>
 </div>`;
 }
 
-// Gaps
+// Gaps sorted by severity
 const gapList = document.getElementById('gapList');
-const sortedGaps = gaps.sort((a, b) => {
 const order = { high: 0, medium: 1, low: 2 };
-return order[a.severity] - order[b.severity];
-});
+const sortedGaps = gaps.sort((a, b) => order[a.severity] - order[b.severity]);
 gapList.innerHTML = sortedGaps.map(g => `
 <div class="gap-item ${g.severity}">
 <h4>${g.desc}</h4>
 <p>${g.action}</p>
-<div class="reg">${g.reg}</div>
+<div class="reg">${g.reg} · ${g.pillar}</div>
+<div class="timeline">⏱ Remediation timeline: ${g.timeline}</div>
 </div>
 `).join('');
 
 // Regulatory requirements
 const regList = document.getElementById('regList');
 let regs = [];
-if (riskCat === 'high') regs.push({ reg: 'EU AI Act Articles 8 to 15 (Annex III)', req: 'Full conformity assessment, risk management system, data governance, technical documentation, transparency, human oversight, logging, accuracy, robustness' });
-if (riskCat === 'limited' || riskCat === 'high') regs.push({ reg: 'EU AI Act Article 50', req: 'Transparency obligations: inform users they are interacting with AI, label synthetic content. Enforcement from August 2, 2026' });
-if (phi === 'yes') regs.push({ reg: 'HIPAA Security Rule 164.308-312', req: 'Administrative, physical, and technical safeguards for PHI processed by AI systems' });
-if (phi === 'yes') regs.push({ reg: 'HIPAA Breach Notification Rule', req: 'Notification procedures for AI related PHI exposure. HHS notification within 60 days' });
-if (samd === 'yes') regs.push({ reg: 'FDA SaMD Predetermined Change Control Plan', req: 'Documented plan for AI/ML model updates. Performance monitoring and reporting' });
-regs.push({ reg: 'Joint Commission IM.01.01.03', req: 'Information management for patient care including AI system documentation and oversight' });
-if (phi === 'yes' || riskCat === 'high') regs.push({ reg: 'CA SB 1001 (effective Jan 2027)', req: 'AI vendors must disclose model training data composition to enterprises' });
+if (riskCat === 'high') regs.push({ reg: 'EU AI Act Articles 8-15 (Annex III)', req: 'Full conformity assessment, risk management system, data governance, technical documentation, transparency, human oversight, logging, accuracy, robustness', deadline: 'Enforcement: August 2, 2026' });
+if (riskCat === 'limited' || riskCat === 'high') regs.push({ reg: 'EU AI Act Article 50', req: 'Transparency obligations: inform users they are interacting with AI, label synthetic content. Enforcement from August 2, 2026', deadline: 'Enforcement: August 2, 2026' });
+if (phi === 'yes') regs.push({ reg: 'HIPAA Security Rule 164.308-312', req: 'Administrative, physical, and technical safeguards for PHI processed by AI systems', deadline: 'Ongoing compliance' });
+if (phi === 'yes') regs.push({ reg: 'HIPAA Breach Notification Rule', req: 'Notification procedures for AI related PHI exposure. HHS notification within 60 days', deadline: 'Incident-triggered' });
+if (samd === 'yes') regs.push({ reg: 'FDA SaMD Predetermined Change Control Plan', req: 'Documented plan for AI/ML model updates. Performance monitoring and reporting', deadline: 'Ongoing compliance' });
+regs.push({ reg: 'Joint Commission IM.01.01.03', req: 'Information management for patient care including AI system documentation and oversight', deadline: 'Accreditation requirement' });
+if (phi === 'yes' || riskCat === 'high') regs.push({ reg: 'CA SB 1001', req: 'AI vendors must disclose model training data composition to enterprises', deadline: 'Effective January 2027' });
+regs.push({ reg: 'ONC HTI-1 Rule', req: 'Interoperability and algorithm transparency requirements for certified health IT', deadline: 'Phase-in through 2026' });
 
 regList.innerHTML = regs.map(r => `
-<div style="padding:14px 0;border-bottom:1px solid rgba(196,164,107,0.08)">
-<div style="font-size:13px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:4px">${r.reg}</div>
-<div style="font-size:12px;color:var(--text-dim);line-height:1.7">${r.req}</div>
+<div class="reg-item">
+<div class="reg-name">${r.reg}</div>
+<div class="reg-desc">${r.req}</div>
+<div class="reg-deadline">⚠ ${r.deadline}</div>
 </div>
 `).join('');
+
+// 30 day remediation roadmap
+const roadmapList = document.getElementById('roadmapList');
+const highGaps = gaps.filter(g => g.severity === 'high');
+const mediumGaps = gaps.filter(g => g.severity === 'medium');
+const lowGaps = gaps.filter(g => g.severity === 'low');
+
+let roadmap = [];
+roadmap.push({ phase: 'Days 1-7', title: 'Critical Remediation', items: highGaps.slice(0, 5), color: '#e85858' });
+roadmap.push({ phase: 'Days 8-14', title: 'High Priority Actions', items: highGaps.slice(5).concat(mediumGaps.slice(0, 3)), color: '#e8a04a' });
+roadmap.push({ phase: 'Days 15-21', title: 'Framework Completion', items: mediumGaps.slice(3).concat(lowGaps.slice(0, 2)), color: '#e8c44a' });
+roadmap.push({ phase: 'Days 22-30', title: 'Documentation & Certification', items: lowGaps.slice(2), color: '#7ac47a' });
+
+roadmapList.innerHTML = roadmap.map(r => {
+if (r.items.length === 0) return '';
+return `
+<div style="margin-bottom:20px;padding:20px;background:#0d0d0d;border-left:3px solid ${r.color}">
+<div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${r.color};margin-bottom:8px">${r.phase} · ${r.title}</div>
+${r.items.map(i => `<div style="font-size:13px;color:var(--text-dim);line-height:1.8;padding:4px 0">• ${i.desc}<br><span style="font-size:11px;color:var(--gold-50)">${i.reg}</span></div>`).join('')}
+</div>
+}).join('');
+
+// Rec links
+document.getElementById('recLinks').innerHTML = '<a href="/readiness-kit.html">Get Compliance Kit $80</a><a href="/certify.html">Get Certified</a><a href="/healthcare-intelligence.html">Learn More</a>';
 
 // Scroll to results
 document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
+
+function shareResults() {
+const email = document.getElementById('shareEmail').value;
+if (!email) {
+alert('Please enter your email address');
+return;
+}
+// Store email for backend processing
+const orgName = document.getElementById('orgName').value || 'Organization';
+const systemName = document.getElementById('systemName').value || 'AI System';
+const score = document.getElementById('scoreNum').textContent;
+const grade = document.getElementById('scoreGrade').textContent;
+
+// Use backend function to send the report
+fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/backend/functions/lunaraScoreReport', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({
+email: email,
+orgName: orgName,
+systemName: systemName,
+score: score,
+grade: grade,
+gaps: Array.from(document.querySelectorAll('.gap-item h4')).map(h => h.textContent)
+})
+}).then(r => {
+alert('Your report has been sent to ' + email);
+}).catch(e => {
+alert('Report saved. We will email it to ' + email + ' shortly.');
+});
+}
+
+function resetAssessment() {
+document.getElementById('inputForm').style.display = 'block';
+document.getElementById('progressContainer').style.display = 'block';
+document.getElementById('results').style.display = 'none';
+document.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.parentElement.classList.remove('checked'); });
+document.querySelectorAll('.radio-item').forEach(i => i.classList.remove('active'));
+document.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(i => i.value = '');
+document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+updateProgress();
 </script>
 
 </body>

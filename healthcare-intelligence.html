@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthcare AI Governance Intelligence — Lunara Society</title>
+<meta name="description" content="Healthcare specific AI governance intelligence. HIPAA plus EU AI Act compliance risk scoring for clinical AI systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+
+.main{max-width:900px;margin:0 auto;padding:80px 32px;position:relative;z-index:1}
+
+.label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);margin-bottom:20px;text-align:center}
+h1{font-size:clamp(32px,5vw,52px);font-weight:300;color:#e8d5a3;line-height:1.2;font-family:'Cormorant Garamond',serif;margin-bottom:24px;text-align:center}
+.sub{font-size:17px;line-height:1.8;color:var(--text-dim);max-width:600px;margin:0 auto 64px;text-align:center}
+
+.gap-box{background:var(--card);border:1px solid var(--gold-30);padding:48px;margin-bottom:48px;text-align:center}
+.gap-box h2{font-size:22px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:16px;font-weight:400}
+.gap-box p{font-size:14px;color:var(--text-dim);line-height:1.8;max-width:500px;margin:0 auto}
+
+.stat-row{display:flex;justify-content:center;gap:48px;margin:48px 0;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-size:48px;font-weight:300;color:var(--gold);font-family:'Cormorant Garamond',serif;line-height:1}
+.stat-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-top:8px}
+
+.section{margin-bottom:64px}
+.section-title{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:12px;border-bottom:1px solid var(--gold-15)}
+.section h2{font-size:28px;font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:24px}
+
+.card{background:var(--card);border:1px solid var(--gold-15);padding:28px;margin-bottom:16px;transition:border-color .3s}
+.card:hover{border-color:var(--gold-30)}
+.card h3{font-size:17px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:10px;font-weight:400}
+.card p{font-size:14px;color:var(--text-dim);line-height:1.8}
+.card .tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-50);border:1px solid var(--gold-15);padding:3px 10px;border-radius:100px;display:inline-block;margin-top:12px}
+
+.persona{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:32px}
+.persona-card{background:var(--card);border:1px solid var(--gold-15);padding:24px}
+.persona-card h4{font-size:15px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:8px;font-weight:400}
+.persona-card p{font-size:13px;color:var(--text-dim);line-height:1.7}
+.persona-card ul{font-size:12px;color:var(--text-dim);line-height:2;padding-left:16px;margin-top:8px}
+
+.timeline{margin-bottom:48px}
+.timeline-item{display:flex;gap:24px;margin-bottom:24px;align-items:flex-start}
+.timeline-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:6px}
+.timeline-content h4{font-size:15px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:6px;font-weight:400}
+.timeline-content p{font-size:13px;color:var(--text-dim);line-height:1.7}
+
+.cta-box{background:linear-gradient(135deg,rgba(196,164,107,0.06),rgba(196,164,107,0.02));border:1px solid var(--gold-30);padding:40px;text-align:center;margin-bottom:48px}
+.cta-box h3{font-size:22px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.cta-box p{font-size:14px;color:var(--text-dim);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
+.cta-box a{display:inline-block;padding:14px 40px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;transition:all .3s;margin:0 8px}
+.cta-box a:hover{background:rgba(196,164,107,0.1)}
+
+.footer{text-align:center;padding:40px 0;border-top:1px solid var(--gold-15)}
+.footer p{font-size:10px;letter-spacing:3px;color:var(--text-dim)}
+
+@media(max-width:768px){.main{padding:60px 16px}.gap-box{padding:32px 20px}.nav-links{display:none}.stat-row{gap:24px}}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="/" class="nav-brand">Lunara <span>Society</span></a>
+<div class="nav-links">
+<a href="/certify.html">Certification</a>
+<a href="/intelligence.html">Intelligence</a>
+<a href="/readiness-kit.html">Compliance Kit</a>
+<a href="/member.html">Member Area</a>
+</div>
+</nav>
+
+<div class="main">
+
+<div class="label">Governance Intelligence</div>
+<h1>Healthcare AI Governance Intelligence</h1>
+<p class="sub">The first compliance risk scoring and regulatory intelligence platform built specifically for healthcare organizations deploying AI systems.</p>
+
+<div class="gap-box">
+<h2>The 84% Governance Gap</h2>
+<p>84% of healthcare organizations are piloting AI. Less than 5% have production governance. No healthcare specific AI governance platform exists. HIPAA alone is not enough. EU AI Act Article 50 enforcement begins August 2. Clinical AI systems face dual layer compliance with no unified tooling.</p>
+</div>
+
+<div class="stat-row">
+<div class="stat"><div class="stat-num">85%</div><div class="stat-label">Piloting AI</div></div>
+<div class="stat"><div class="stat-num">5%</div><div class="stat-label">In Production</div></div>
+<div class="stat"><div class="stat-num">0</div><div class="stat-label">Healthcare Specific Platforms</div></div>
+<div class="stat"><div class="stat-num">6</div><div class="stat-label">Days to EU Enforcement</div></div>
+</div>
+
+<div class="section">
+<div class="section-title">What We Are Building</div>
+<h2>Intelligence, Not Just Tools</h2>
+
+<div class="card">
+<h3>Compliance Risk Scoring Engine</h3>
+<p>Score your clinical AI systems against a unified framework mapping HIPAA Security Rule, FDA Predetermined Change Control Plans, EU AI Act high risk requirements, and Joint Commission information management standards. Get a risk score in minutes, not weeks.</p>
+<div class="tag">Core Product</div>
+</div>
+
+<div class="card">
+<h3>Regulatory Decision Framework</h3>
+<p>When a new AI system is proposed for clinical deployment, the framework tells you exactly which regulatory requirements apply, what documentation you need, and what oversight mechanisms are mandatory. No more guessing.</p>
+<div class="tag">Core Product</div>
+</div>
+
+<div class="card">
+<h3>Shadow AI Discovery Checklist</h3>
+<p>A healthcare specific checklist for identifying unauthorized AI tools being used across your organization. Adapted for clinical environments where shadow AI creates HIPAA exposure, FDA compliance gaps, and patient safety risks.</p>
+<div class="tag">Differentiator</div>
+</div>
+
+<div class="card">
+<h3>Weekly Healthcare AI Intelligence Briefings</h3>
+<p>Curated intelligence on healthcare AI regulatory changes, enforcement actions, competitor deployments, and emerging risks. Delivered weekly to your compliance team. Same intelligence framework Khaela uses for Lunara internal strategy.</p>
+<div class="tag">Ongoing Value</div>
+</div>
+
+<div class="card">
+<h3>Vendor Transition Governance Checkpoint</h3>
+<p>When switching clinical AI vendors, governance continuity is critical. The checkpoint ensures audit trails, oversight mechanisms, and compliance documentation transfer seamlessly. 72 hour delta assessment target.</p>
+<div class="tag">Enterprise Critical</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Target Users</div>
+<h2>Who This Is For</h2>
+
+<div class="persona">
+<div class="persona-card">
+<h4>Chief Information Security Officer</h4>
+<p>Responsible for HIPAA Security Rule compliance and shadow AI exposure across the organization.</p>
+<ul>
+<li>Needs: Visibility into AI tool usage</li>
+<li>Pain: Cannot track shadow AI in clinical workflows</li>
+<li>Goal: Defensible compliance posture</li>
+</ul>
+</div>
+
+<div class="persona-card">
+<h4>Chief Medical Officer</h4>
+<p>Oversees clinical AI deployment and patient safety. Accountable for AI system performance and outcomes.</p>
+<ul>
+<li>Needs: Clinical AI governance framework</li>
+<li>Pain: No standard for evaluating AI vendors</li>
+<li>Goal: Safe, compliant AI deployment</li>
+</ul>
+</div>
+
+<div class="persona-card">
+<h4>Compliance Officer</h4>
+<p>Manages regulatory compliance across HIPAA, FDA, EU AI Act, and Joint Commission requirements.</p>
+<ul>
+<li>Needs: Unified compliance reporting</li>
+<li>Pain: Fragmented regulatory landscape</li>
+<li>Goal: Single source of truth for AI compliance</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Build Timeline</div>
+<h2>6 Week MVP</h2>
+
+<div class="timeline">
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 1: Framework Finalization</h4>
+<p>Complete the healthcare compliance risk scoring rubric. Map all regulatory requirements to scoring criteria. Finalize the 62 point assessment adapted for clinical environments.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 2: Scoring Engine</h4>
+<p>Build the web based scoring tool. Input your AI system details, get a risk score and compliance gap report instantly. No installation required.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 3: Intelligence Dashboard</h4>
+<p>Member dashboard with regulatory mapping, weekly briefings, and compliance status tracking. Integration with existing Lunara member area.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 4: Shadow AI Checklist</h4>
+<p>Healthcare specific shadow AI discovery checklist. Clinical environment scanner template. HIPAA exposure assessment for unauthorized AI tools.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 5: Beta Launch</h4>
+<p>Invite 5 healthcare organizations to pilot the platform. Collect feedback. Refine scoring criteria based on real clinical AI systems.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"></div>
+<div class="timeline-content">
+<h4>Week 6: Public Launch</h4>
+<p>Healthcare AI Governance Intelligence Platform live. Pricing: $15/month for intelligence access, $80 for compliance kit, $2,500 for enterprise certification.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Competitive Position</div>
+<h2>Why We Win</h2>
+
+<div class="card">
+<h3>F5 and Tailscale Are Horizontal Tools</h3>
+<p>They discover shadow AI across any industry. They do not score compliance risk. They do not map HIPAA to EU AI Act. They do not provide regulatory decision frameworks. They are tools, not intelligence.</p>
+</div>
+
+<div class="card">
+<h3>No Competitor Owns Healthcare AI Governance</h3>
+<p>HIPAA compliance tools exist. FDA regulatory consultants exist. EU AI Act legal advisory exists. Nobody unifies all three into a single intelligence platform with compliance risk scoring. That space is empty.</p>
+</div>
+
+<div class="card">
+<h3>The Constitution Is Our Moat</h3>
+<p>The seven pillar framework is already mapped to HIPAA, FDA, Joint Commission, and EU AI Act. No competitor has a constitutional standard. They have tools. We have the institutional authority that those tools should be measured against.</p>
+</div>
+</div>
+
+<div class="cta-box">
+<h3>Two Ways to Engage</h3>
+<p>Start with the compliance kit for immediate readiness assessment, or join as a member for ongoing governance intelligence.</p>
+<a href="/readiness-kit.html">Get the Kit $80</a>
+<a href="/member.html">Join as Member $15/mo</a>
+</div>
+
+<div class="footer">
+<p>LUNARA SOCIETY — HEALTHCARE AI GOVERNANCE INTELLIGENCE — LUNARASOCIETY.COM</p>
+</div>
+
+</div>
+
+</body>
+</html>

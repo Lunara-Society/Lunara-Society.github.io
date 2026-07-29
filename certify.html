@@ -11,10 +11,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:#060606;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
-:root{--gold:rgba(196,164,107,1);--gold-dim:rgba(196,164,107,0.55);--gold-faint:rgba(196,164,107,0.15);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+body{background:#000000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
+:root{--gold:rgba(196,164,107,1);--gold-dim:rgba(196,164,107,0.72);--gold-faint:rgba(196,164,107,0.15);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
 .nav-links{display:flex;gap:28px}
 .nav-links a{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
@@ -23,21 +23,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.92);
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px 80px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(196,164,107,0.06) 0%,transparent 70%);pointer-events:none}
 .urgency-badge{display:inline-block;padding:8px 20px;border:1px solid rgba(196,164,107,0.4);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-family:'Inter',sans-serif;margin-bottom:32px;animation:pulse 3s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.7;border-color:rgba(196,164,107,0.55)}50%{opacity:1;border-color:rgba(196,164,107,0.7)}}
+@keyframes pulse{0%,100%{opacity:.7;border-color:rgba(196,164,107,0.72)}50%{opacity:1;border-color:rgba(196,164,107,0.7)}}
 .hero-eyebrow{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:18px;font-family:'Inter',sans-serif}
-.hero-title{font-size:clamp(36px,6vw,72px);font-weight:300;color:#e8d5a3;line-height:1.18;letter-spacing:0.02em;margin-bottom:28px}
+.hero-title{font-size:clamp(36px,6vw,72px);font-weight:300;color:#f0e0b0;line-height:1.18;letter-spacing:0.02em;margin-bottom:28px}
 .hero-title em{font-style:italic;color:var(--gold)}
 .hero-sub{font-size:clamp(16px,2vw,20px);font-weight:300;color:var(--text-dim);max-width:640px;line-height:1.8;margin-bottom:48px}
 .hero-deadline{display:inline-block;padding:12px 24px;background:rgba(196,164,107,0.05);border:1px solid rgba(196,164,107,0.25);font-size:13px;color:var(--gold-dim);letter-spacing:1px;margin-bottom:48px;font-family:'Inter',sans-serif}
 .hero-deadline strong{color:var(--gold)}
-.cta-primary{display:inline-block;padding:18px 52px;border:1px solid rgba(196,164,107,0.65);color:#e8d5a3;font-size:11px;letter-spacing:4px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;background:rgba(196,164,107,0.08);transition:all .35s;cursor:pointer}
+.cta-primary{display:inline-block;padding:18px 52px;border:1px solid rgba(196,164,107,0.65);color:#f0e0b0;font-size:11px;letter-spacing:4px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;background:rgba(196,164,107,0.08);transition:all .35s;cursor:pointer}
 .cta-primary:hover{background:rgba(196,164,107,0.18);border-color:rgba(196,164,107,0.9)}
 .cta-secondary{display:inline-block;margin-left:20px;padding:18px 40px;color:var(--gold-dim);font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;border:1px solid rgba(196,164,107,0.2);transition:all .35s}
 .cta-secondary:hover{border-color:rgba(196,164,107,0.5);color:var(--gold)}
 
 section{padding:100px 40px;max-width:1080px;margin:0 auto}
 .section-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:16px}
-.section-title{font-size:clamp(28px,4vw,48px);font-weight:300;color:#e8d5a3;line-height:1.3;margin-bottom:24px}
+.section-title{font-size:clamp(28px,4vw,48px);font-weight:300;color:#f0e0b0;line-height:1.3;margin-bottom:24px}
 .section-body{font-size:17px;line-height:1.9;color:var(--text);max-width:720px}
 .section-body+.section-body{margin-top:20px}
 .divider{width:60px;height:1px;background:rgba(196,164,107,0.35);margin:32px 0}
@@ -46,48 +46,48 @@ section{padding:100px 40px;max-width:1080px;margin:0 auto}
 .arch-layer{background:rgba(196,164,107,0.03);border:1px solid rgba(196,164,107,0.2);padding:28px 40px;margin:0 auto 12px;max-width:520px;position:relative;transition:all .4s}
 .arch-layer:hover{border-color:rgba(196,164,107,0.5);background:rgba(196,164,107,0.06)}
 .arch-layer-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:8px}
-.arch-layer-title{font-size:20px;font-weight:300;color:#e8d5a3;margin-bottom:6px}
+.arch-layer-title{font-size:20px;font-weight:300;color:#f0e0b0;margin-bottom:6px}
 .arch-layer-desc{font-size:13px;color:var(--text-dim);font-family:'Inter',sans-serif;line-height:1.6}
-.arch-layer.foundation{max-width:580px;border-color:rgba(196,164,107,0.45);background:rgba(196,164,107,0.05)}
-.arch-arrow{color:rgba(196,164,107,0.55);font-size:20px;margin:6px 0}
+.arch-layer.foundation{max-width:580px;border-color:rgba(196,164,107,0.65);background:rgba(196,164,107,0.05)}
+.arch-arrow{color:rgba(196,164,107,0.72);font-size:20px;margin:6px 0}
 .arch-tracks{display:flex;gap:12px;justify-content:center;margin-top:8px;flex-wrap:wrap}
-.arch-track{flex:1;min-width:140px;max-width:180px;background:#0a0a0a;border:1px solid rgba(196,164,107,0.25);padding:20px 16px;text-align:center;transition:border-color .3s}
-.arch-track:hover{border-color:rgba(196,164,107,0.55)}
+.arch-track{flex:1;min-width:140px;max-width:180px;background:#000000;border:1px solid rgba(196,164,107,0.25);padding:20px 16px;text-align:center;transition:border-color .3s}
+.arch-track:hover{border-color:rgba(196,164,107,0.72)}
 .arch-track-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);font-family:'Inter',sans-serif;margin-bottom:8px}
-.arch-track-name{font-size:15px;color:#e8d5a3;margin-bottom:4px}
+.arch-track-name{font-size:15px;color:#f0e0b0;margin-bottom:4px}
 .arch-track-status{font-size:10px;color:var(--gold);font-family:'Inter',sans-serif;letter-spacing:1px}
 .arch-track-status.coming{color:rgba(196,164,107,0.35)}
 
 .tiers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;margin-top:56px}
-.tier{background:#0a0a0a;border:1px solid rgba(196,164,107,0.18);padding:40px 36px;position:relative;transition:border-color .35s}
+.tier{background:#000000;border:1px solid rgba(196,164,107,0.18);padding:40px 36px;position:relative;transition:border-color .35s}
 .tier:hover{border-color:rgba(196,164,107,0.5)}
 .tier.featured{border-color:rgba(196,164,107,0.4);background:rgba(196,164,107,0.03)}
 .tier-badge{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-family:'Inter',sans-serif;margin-bottom:14px;display:block}
-.tier-name{font-size:26px;font-weight:300;color:#e8d5a3;margin-bottom:8px}
+.tier-name{font-size:26px;font-weight:300;color:#f0e0b0;margin-bottom:8px}
 .tier-price{font-size:36px;font-weight:300;color:var(--gold);margin-bottom:6px;letter-spacing:-0.01em}
 .tier-cycle{font-size:12px;color:var(--text-dim);margin-bottom:24px;font-family:'Inter',sans-serif;letter-spacing:1px}
 .tier-desc{font-size:15px;line-height:1.75;color:var(--text-dim);margin-bottom:28px;border-top:1px solid rgba(196,164,107,0.12);padding-top:20px}
 .tier-list{list-style:none;padding:0}
 .tier-list li{font-size:14px;color:var(--text-dim);padding:7px 0;border-bottom:1px solid rgba(196,164,107,0.07);font-family:'Inter',sans-serif;display:flex;align-items:flex-start;gap:10px}
 .tier-list li::before{content:'\25C6';color:rgba(196,164,107,0.4);font-size:8px;margin-top:3px;flex-shrink:0}
-.tier-cta{display:block;text-align:center;margin-top:30px;padding:13px 0;border:1px solid rgba(196,164,107,0.35);color:#e8d5a3;font-size:10px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;transition:all .3s}
+.tier-cta{display:block;text-align:center;margin-top:30px;padding:13px 0;border:1px solid rgba(196,164,107,0.35);color:#f0e0b0;font-size:10px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;transition:all .3s}
 .tier-cta:hover{background:rgba(196,164,107,0.1);border-color:rgba(196,164,107,0.7)}
 
 .pillars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;margin-top:52px}
 .pillar{padding:32px 0;border-top:1px solid rgba(196,164,107,0.2)}
 .pillar-num{font-size:11px;letter-spacing:3px;color:rgba(196,164,107,0.35);font-family:'Inter',sans-serif;margin-bottom:10px}
-.pillar-name{font-size:19px;font-weight:400;color:#e8d5a3;margin-bottom:10px}
+.pillar-name{font-size:19px;font-weight:400;color:#f0e0b0;margin-bottom:10px}
 .pillar-desc{font-size:14px;line-height:1.75;color:var(--text-dim);font-family:'Inter',sans-serif}
 
 .process-steps{margin-top:52px;display:flex;flex-direction:column;gap:0}
 .step{display:grid;grid-template-columns:80px 1fr;gap:32px;padding:32px 0;border-bottom:1px solid rgba(196,164,107,0.1)}
-.step-num{font-size:48px;font-weight:300;color:rgba(196,164,107,0.45);font-family:'Cormorant Garamond',serif;line-height:1}
-.step-content h3{font-size:20px;font-weight:400;color:#e8d5a3;margin-bottom:10px}
+.step-num{font-size:48px;font-weight:300;color:rgba(196,164,107,0.65);font-family:'Cormorant Garamond',serif;line-height:1}
+.step-content h3{font-size:20px;font-weight:400;color:#f0e0b0;margin-bottom:10px}
 .step-content p{font-size:15px;line-height:1.8;color:var(--text-dim);font-family:'Inter',sans-serif}
 
-.pilot-box{background:#0a0a0a;border:1px solid rgba(196,164,107,0.35);padding:56px 52px;text-align:center;margin-top:64px;position:relative}
-.pilot-box::before{content:'FOUNDING PILOT PROGRAM';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:#0a0a0a;padding:0 16px;font-size:9px;letter-spacing:4px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif}
-.pilot-box h2{font-size:32px;font-weight:300;color:#e8d5a3;margin-bottom:16px}
+.pilot-box{background:#000000;border:1px solid rgba(196,164,107,0.35);padding:56px 52px;text-align:center;margin-top:64px;position:relative}
+.pilot-box::before{content:'FOUNDING PILOT PROGRAM';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:#000000;padding:0 16px;font-size:9px;letter-spacing:4px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif}
+.pilot-box h2{font-size:32px;font-weight:300;color:#f0e0b0;margin-bottom:16px}
 .pilot-box p{font-size:16px;line-height:1.9;color:var(--text-dim);max-width:540px;margin:0 auto 32px}
 .pilot-detail{display:flex;justify-content:center;gap:48px;margin-bottom:40px;flex-wrap:wrap}
 .pilot-stat strong{display:block;font-size:28px;font-weight:300;color:var(--gold);margin-bottom:4px}
@@ -97,16 +97,16 @@ section{padding:100px 40px;max-width:1080px;margin:0 auto}
 .form-inner{max-width:640px;margin:0 auto}
 .form-group{margin-bottom:24px}
 .form-group label{display:block;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);font-family:'Inter',sans-serif;margin-bottom:8px}
-.form-group input,.form-group select,.form-group textarea{width:100%;background:rgba(196,164,107,0.04);border:1px solid rgba(196,164,107,0.2);padding:14px 16px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-size:16px;outline:none;transition:border-color .3s}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(196,164,107,0.55)}
-.form-group select option{background:#0a0a0a;color:#e8d5a3}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:rgba(196,164,107,0.04);border:1px solid rgba(196,164,107,0.2);padding:14px 16px;color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:16px;outline:none;transition:border-color .3s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(196,164,107,0.72)}
+.form-group select option{background:#000000;color:#f0e0b0}
 .form-group textarea{resize:vertical;min-height:100px}
-.form-submit{width:100%;padding:16px;border:1px solid rgba(196,164,107,0.6);background:rgba(196,164,107,0.1);color:#e8d5a3;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s}
+.form-submit{width:100%;padding:16px;border:1px solid rgba(196,164,107,0.6);background:rgba(196,164,107,0.1);color:#f0e0b0;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s}
 .form-submit:hover{background:rgba(196,164,107,0.22)}
 
 footer{background:#040404;border-top:1px solid rgba(196,164,107,0.1);padding:40px;text-align:center}
 footer p{font-size:10px;letter-spacing:3px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;text-transform:uppercase}
-footer a{color:rgba(196,164,107,0.45);text-decoration:none}
+footer a{color:rgba(196,164,107,0.65);text-decoration:none}
 
 .fade-in{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
 .fade-in.visible{opacity:1;transform:none}
@@ -166,6 +166,31 @@ p,li,span{
   from { box-shadow: 0 0 30px rgba(196,164,107,0.25), 0 0 60px rgba(196,164,107,0.1); }
   to   { box-shadow: 0 0 55px rgba(196,164,107,0.5), 0 0 110px rgba(196,164,107,0.22); }
 }
+
+/* ═══════════════════════════════════════
+   LUNARA — DRAMATIC SECTION ENHANCEMENT
+   ═══════════════════════════════════════ */
+h2::after,.section-title::after{content:'';display:block;width:40px;height:1px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin-top:8px}
+.form-section,.card,.track,.pillar-card,.cert-track{transition:border-color 0.3s ease,box-shadow 0.3s ease}
+.form-section:hover{border-color:rgba(196,164,107,0.3);box-shadow:0 0 50px rgba(196,164,107,0.05),0 2px 0 rgba(196,164,107,0.15) inset}
+.form-group>label{position:relative;padding-left:12px}
+.form-group>label::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:80%;background:rgba(196,164,107,0.65);border-radius:1px}
+input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!important;box-shadow:0 0 0 3px rgba(196,164,107,0.07),0 0 24px rgba(196,164,107,0.1)!important;outline:none!important}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:rgba(196,164,107,0.3);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(196,164,107,0.6)}
+::selection{background:rgba(196,164,107,0.25);color:#fff}
+
+
+/* Mobile logo sizing */
+@media(max-width:768px){
+  .nav-brand-logo,.nav-logo-img{width:30px!important;height:30px!important}
+  [style*="width:96px"][style*="border-radius:50%"]{width:76px!important;height:76px!important}
+  [style*="width:100px"][style*="border-radius:50%"]{width:72px!important;height:72px!important}
+  [style*="width:88px"][style*="border-radius:50%"]{width:68px!important;height:68px!important}
+  [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
+}
 </style>
 <script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
 </head>
@@ -184,7 +209,7 @@ p,li,span{
 
 <!-- HERO -->
 <div class="hero">
-  <div style="display:flex;justify-content:center;margin-bottom:24px;animation:fadeInUp 1s ease both">
+  <div style="display:flex;justify-content:center;margin-bottom:32px;position:relative;z-index:1;clear:both;animation:fadeInUp 1s ease both">
     <img src="/lunara_logo_512.png" alt="Lunara Society" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:1px solid rgba(196,164,107,0.3);box-shadow:0 0 40px rgba(196,164,107,0.3),0 0 80px rgba(196,164,107,0.12);animation:pulse-gold 4s ease-in-out infinite alternate">
   </div>
   <div class="urgency-badge">Pilot Enrollment Open · July 29 Launch</div>
@@ -393,8 +418,8 @@ p,li,span{
   <div class="divider"></div>
   <p class="section-body">One time fee. No subscription. Your business verified and listed in the public Lunara Shield Registry. Includes domain verification, identity check, and a public trust badge that tells your customers you are real.</p>
   <div style="display:flex;align-items:center;gap:40px;margin-top:40px;flex-wrap:wrap">
-    <div style="background:#0a0a0a;border:1px solid rgba(196,164,107,0.35);padding:40px 48px;text-align:center;max-width:360px">
-      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.55);font-family:'Inter',sans-serif;margin-bottom:16px">Shield Certification</div>
+    <div style="background:#000000;border:1px solid rgba(196,164,107,0.35);padding:40px 48px;text-align:center;max-width:360px">
+      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:16px">Shield Certification</div>
       <div style="font-size:48px;font-weight:300;color:rgba(196,164,107,1);font-family:'Cormorant Garamond',serif;margin-bottom:8px">$80</div>
       <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:28px">One time. Permanent registry entry.</div>
       <ul style="list-style:none;padding:0;margin-bottom:32px;text-align:left">
@@ -428,7 +453,7 @@ p,li,span{
       <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.88);margin-bottom:20px">When a customer searches your business name, what do they find? A Facebook page? A Yelp listing? A competitor ad?</p>
       <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.88);margin-bottom:20px">With Shield Certification, they find a verified trust record in a public registry. They see that a real institution confirmed your identity, verified your domain, and certified your good standing.</p>
       <p style="font-size:15px;line-height:1.9;color:rgba(196,164,107,0.5)">Payment is processed securely through PayPal. Certification review begins within 48 hours. Your registry entry goes live once identity and domain verification are complete.</p>
-      <p style="font-size:12px;color:rgba(196,164,107,0.55);font-family:'Inter',sans-serif;margin-top:24px;letter-spacing:1px">Questions? Write to lunarasociety@gmail.com</p>
+      <p style="font-size:12px;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-top:24px;letter-spacing:1px">Questions? Write to lunarasociety@gmail.com</p>
     </div>
   </div>
 </section>
@@ -473,7 +498,7 @@ p,li,span{
       <div class="form-group"><label>Governance Context (optional)</label><textarea name="notes" placeholder="Briefly describe your current AI deployment and governance needs..."></textarea></div>
       <button type="submit" class="form-submit">Submit Application</button>
     </form>
-    <p style="text-align:center;font-size:12px;color:rgba(196,164,107,0.55);font-family:'Inter',sans-serif;margin-top:20px;letter-spacing:1px">Applications reviewed within 48 hours. All information held in strict confidence.</p>
+    <p style="text-align:center;font-size:12px;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-top:20px;letter-spacing:1px">Applications reviewed within 48 hours. All information held in strict confidence.</p>
   </div>
 </div>
 

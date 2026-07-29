@@ -11,10 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#000000;--card:#080808;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+body{background:#000000;color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(196,164,107,0.08) 0%,transparent 65%);pointer-events:none;z-index:0}
 
 nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
@@ -28,10 +28,42 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .header h1{font-size:clamp(28px,4vw,44px);font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
 .header p{font-size:15px;color:var(--text-dim);max-width:500px;margin:0 auto}
 
-.form-section{background:var(--card);border:1px solid var(--gold-15);padding:36px;margin-bottom:24px;border-radius:2px}
-.form-section h2{font-size:18px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:20px;font-weight:400}
+.form-section{
+  background:#030303;
+  border:1px solid rgba(196,164,107,0.18);
+  border-top:2px solid rgba(196,164,107,0.35);
+  padding:40px 36px;
+  margin-bottom:28px;
+  border-radius:2px;
+  position:relative;
+}
+.form-section::before{
+  content:'';
+  position:absolute;
+  top:0; left:20px; right:20px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.5),transparent);
+}
+.form-section h2{
+  font-size:26px;
+  color:#f0e0b0;
+  font-family:'Cormorant Garamond',serif;
+  margin-bottom:24px;
+  font-weight:400;
+  letter-spacing:0.04em;
+  line-height:1.2;
+  text-shadow:0 0 40px rgba(196,164,107,0.15);
+}
 .form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-50);margin-bottom:8px}
+.form-group label{
+  display:block;
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:rgba(196,164,107,0.85);
+  margin-bottom:12px;
+  font-weight:400;
+}
 .form-group input,.form-group select,.form-group textarea{width:100%;background:#0d0d0d;border:1px solid var(--gold-15);color:var(--text);padding:12px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:300;outline:none;transition:border-color .3s}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold-50)}
 .form-group textarea{min-height:80px;resize:vertical}
@@ -44,9 +76,52 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .checkbox-item.checked{border-color:var(--gold-50);background:rgba(196,164,107,0.05)}
 
 .radio-group{display:flex;gap:12px;margin-top:8px}
-.radio-item{flex:1;padding:12px;background:#0d0d0d;border:1px solid var(--gold-15);cursor:pointer;text-align:center;font-size:12px;color:var(--text-dim);transition:all .3s}
-.radio-item:hover{border-color:var(--gold-30)}
-.radio-item.active{border-color:var(--gold-50);background:rgba(196,164,107,0.08);color:#e8d5a3}
+.radio-item{
+  flex:1;
+  padding:18px 12px;
+  background:#050505;
+  border:1px solid rgba(196,164,107,0.2);
+  cursor:pointer;
+  text-align:center;
+  font-size:13px;
+  font-weight:400;
+  color:rgba(230,212,175,0.75);
+  transition:all 0.25s ease;
+  border-radius:2px;
+  position:relative;
+  overflow:hidden;
+  letter-spacing:0.03em;
+}
+.radio-item::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(196,164,107,0.0),rgba(196,164,107,0.0));
+  transition:background 0.25s ease;
+}
+.radio-item:hover{
+  border-color:rgba(196,164,107,0.6);
+  color:#f0e0b0;
+  background:#0a0a0a;
+  transform:translateY(-2px);
+  box-shadow:0 4px 20px rgba(196,164,107,0.12),0 0 0 1px rgba(196,164,107,0.3);
+}
+.radio-item.active{
+  border-color:rgba(196,164,107,0.9);
+  background:rgba(196,164,107,0.1);
+  color:#f5e6b8;
+  box-shadow:0 0 0 1px rgba(196,164,107,0.6),0 0 30px rgba(196,164,107,0.15),inset 0 0 20px rgba(196,164,107,0.04);
+  transform:translateY(-2px);
+  font-weight:500;
+}
+.radio-item.active::after{
+  content:'✓';
+  position:absolute;
+  top:6px;
+  right:8px;
+  font-size:10px;
+  color:rgba(196,164,107,0.8);
+}
 .radio-item input{display:none}
 
 .btn{display:block;width:100%;padding:16px;background:transparent;border:1px solid var(--gold-50);color:var(--gold);font-size:12px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s;margin-top:24px}
@@ -54,8 +129,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .btn-secondary{border-color:var(--gold-30);color:var(--gold-50);font-size:11px;padding:12px;margin-top:12px}
 
 /* Progress */
-.progress-bar{height:4px;background:#0d0d0d;border-radius:2px;margin-bottom:24px;overflow:hidden}
-.progress-fill{height:100%;background:var(--gold);transition:width .5s;border-radius:2px}
+.progress-bar{height:3px;background:rgba(196,164,107,0.08);border-radius:2px;margin-bottom:28px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,rgba(196,164,107,0.7),rgba(196,164,107,1));transition:width .6s ease;border-radius:2px;box-shadow:0 0 8px rgba(196,164,107,0.4)}
 .progress-labels{display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
 
 /* Results */
@@ -150,6 +225,31 @@ p,li,span{
   font-weight:500;
 }
 
+
+/* ═══════════════════════════════════════
+   LUNARA — DRAMATIC SECTION ENHANCEMENT
+   ═══════════════════════════════════════ */
+h2::after,.section-title::after{content:'';display:block;width:40px;height:1px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin-top:8px}
+.form-section,.card,.track,.pillar-card,.cert-track{transition:border-color 0.3s ease,box-shadow 0.3s ease}
+.form-section:hover{border-color:rgba(196,164,107,0.3);box-shadow:0 0 50px rgba(196,164,107,0.05),0 2px 0 rgba(196,164,107,0.15) inset}
+.form-group>label{position:relative;padding-left:12px}
+.form-group>label::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:80%;background:rgba(196,164,107,0.65);border-radius:1px}
+input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!important;box-shadow:0 0 0 3px rgba(196,164,107,0.07),0 0 24px rgba(196,164,107,0.1)!important;outline:none!important}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:rgba(196,164,107,0.3);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(196,164,107,0.6)}
+::selection{background:rgba(196,164,107,0.25);color:#fff}
+
+
+/* Mobile logo sizing */
+@media(max-width:768px){
+  .nav-brand-logo,.nav-logo-img{width:30px!important;height:30px!important}
+  [style*="width:96px"][style*="border-radius:50%"]{width:76px!important;height:76px!important}
+  [style*="width:100px"][style*="border-radius:50%"]{width:72px!important;height:72px!important}
+  [style*="width:88px"][style*="border-radius:50%"]{width:68px!important;height:68px!important}
+  [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
+}
 </style>
 </head>
 <body>
@@ -166,7 +266,7 @@ p,li,span{
 <div class="main">
 
 <div class="header">
-<div style="display:flex;justify-content:center;margin-bottom:20px">
+<div style="display:flex;justify-content:center;margin-bottom:28px;position:relative;z-index:1;clear:both">
   <img src="/lunara_logo_512.png" alt="Lunara Society" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:1px solid rgba(196,164,107,0.3);box-shadow:0 0 30px rgba(196,164,107,0.3),0 0 60px rgba(196,164,107,0.1)">
 </div>
 <div class="label">MVP Preview — Week 2 Build</div>
@@ -184,6 +284,7 @@ p,li,span{
 <div id="inputForm">
 
 <div class="form-section" id="section1">
+<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.4);margin-bottom:6px">SECTION 01</div>
 <h2>Organization & System Information</h2>
 <div class="form-group">
 <label>Organization Name</label>
@@ -216,17 +317,32 @@ p,li,span{
 </div>
 
 <div class="form-section" id="section2">
+<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.4);margin-bottom:6px">SECTION 02</div>
 <h2>Risk Classification</h2>
+<p style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.65);margin-bottom:24px;margin-top:-10px">Your answers determine your compliance exposure</p>
 <div class="form-group">
 <label>EU AI Act Risk Category</label>
 <div class="radio-group" id="riskCategory">
-<div class="radio-item" data-value="high">High Risk<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Annex III systems</div></div>
-<div class="radio-item" data-value="limited">Limited Risk<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Transparency obligations</div></div>
-<div class="radio-item" data-value="minimal">Minimal Risk<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Voluntary codes</div></div>
+<div class="radio-item" data-value="high" style="border-color:rgba(232,88,88,0.25)">
+  <div style="font-size:16px;margin-bottom:6px">⚠</div>
+  <div style="font-weight:500;color:#f0d0d0">High Risk</div>
+  <div style="font-size:11px;color:rgba(232,88,88,0.7);margin-top:5px">Annex III systems</div>
+</div>
+<div class="radio-item" data-value="limited" style="border-color:rgba(232,196,74,0.2)">
+  <div style="font-size:16px;margin-bottom:6px">◈</div>
+  <div style="font-weight:500">Limited Risk</div>
+  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Transparency obligations</div>
+</div>
+<div class="radio-item" data-value="minimal" style="border-color:rgba(122,196,122,0.2)">
+  <div style="font-size:16px;margin-bottom:6px">◎</div>
+  <div style="font-weight:500;color:#c0e0c0">Minimal Risk</div>
+  <div style="font-size:11px;color:rgba(122,196,122,0.6);margin-top:5px">Voluntary codes</div>
+</div>
 </div>
 </div>
 <div class="form-group">
 <label>Does the AI system process Protected Health Information (PHI)?</label>
+<p style="font-size:11px;color:rgba(232,88,88,0.5);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">HIPAA breach penalties up to $1.9M per violation category</p>
 <div class="radio-group" id="processesPHI">
 <div class="radio-item" data-value="yes">Yes</div>
 <div class="radio-item" data-value="no">No</div>
@@ -235,6 +351,7 @@ p,li,span{
 </div>
 <div class="form-group">
 <label>Is the AI system FDA classified as a Software as a Medical Device (SaMD)?</label>
+<p style="font-size:11px;color:rgba(232,88,88,0.5);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">SaMD requires 510(k) clearance or De Novo classification</p>
 <div class="radio-group" id="fdaSaMD">
 <div class="radio-item" data-value="yes">Yes</div>
 <div class="radio-item" data-value="no">No</div>
@@ -244,14 +361,27 @@ p,li,span{
 <div class="form-group">
 <label>Deployment Stage</label>
 <div class="radio-group" id="deployStage">
-<div class="radio-item" data-value="pilot">Pilot<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Testing phase</div></div>
-<div class="radio-item" data-value="production">Production<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Live deployment</div></div>
-<div class="radio-item" data-value="planning">Planning<div style="font-size:10px;color:var(--text-dim);margin-top:4px">Not deployed yet</div></div>
+<div class="radio-item" data-value="pilot">
+  <div style="font-size:16px;margin-bottom:6px">◷</div>
+  <div style="font-weight:500">Pilot</div>
+  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Testing phase</div>
+</div>
+<div class="radio-item" data-value="production">
+  <div style="font-size:16px;margin-bottom:6px">▶</div>
+  <div style="font-weight:500">Production</div>
+  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Live deployment</div>
+</div>
+<div class="radio-item" data-value="planning">
+  <div style="font-size:16px;margin-bottom:6px">◌</div>
+  <div style="font-weight:500">Planning</div>
+  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Not yet deployed</div>
+</div>
 </div>
 </div>
 </div>
 
 <div class="form-section" id="section3">
+<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.4);margin-bottom:6px">SECTION 03</div>
 <h2>Governance Readiness Assessment</h2>
 <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Check all that apply to your organization across the 7 constitutional pillars.</p>
 

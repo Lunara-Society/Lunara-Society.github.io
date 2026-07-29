@@ -11,18 +11,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606;--card:#0a0a0a}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.70);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.72);--bg:#000000;--card:#060606}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
 
-nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
 .nav-brand span{color:var(--gold)}
 
 .main{max-width:800px;margin:0 auto;padding:60px 32px;position:relative;z-index:1}
 
 .header{text-align:center;margin-bottom:48px}
-.header h1{font-size:clamp(28px,4vw,42px);font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
+.header h1{font-size:clamp(28px,4vw,42px);font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
 .header p{font-size:14px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase}
 
 .success-bar{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:16px 24px;text-align:center;margin-bottom:48px;border-radius:2px}
@@ -30,8 +30,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 
 .section{margin-bottom:48px}
 .section-title{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:12px;border-bottom:1px solid var(--gold-15)}
-.section h2{font-size:24px;font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:20px}
-.section h3{font-size:17px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.section h2{font-size:24px;font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:20px}
+.section h3{font-size:17px;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
 .section p{font-size:14px;line-height:1.9;color:var(--text-dim);margin-bottom:16px}
 .section ol,.section ul{font-size:14px;color:var(--text-dim);line-height:2.2;padding-left:24px;margin-bottom:16px}
 .section li{margin-bottom:8px}
@@ -41,18 +41,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .section td:first-child{color:var(--gold);font-family:'Inter',sans-serif;font-weight:400}
 
 .card-box{background:var(--card);border:1px solid var(--gold-15);padding:28px;margin-bottom:24px}
-.card-box h3{font-size:16px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
+.card-box h3{font-size:16px;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
 .card-box p{font-size:13px;color:var(--text-dim);line-height:1.8}
 
 .checklist-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)}
 .checklist-box{width:18px;height:18px;border:1px solid var(--gold-30);border-radius:2px;flex-shrink:0;margin-top:2px}
 .checklist-text{font-size:13px;color:var(--text-dim);line-height:1.7}
-.checklist-text strong{color:#e8d5a3;font-weight:400}
+.checklist-text strong{color:#f0e0b0;font-weight:400}
 
-.contract-block{background:#0a0a0a;border:1px solid var(--gold-15);padding:24px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text-dim);line-height:1.9;font-style:italic;margin-bottom:16px}
+.contract-block{background:#000000;border:1px solid var(--gold-15);padding:24px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text-dim);line-height:1.9;font-style:italic;margin-bottom:16px}
 
 .cta-box{background:linear-gradient(135deg,rgba(196,164,107,0.06),rgba(196,164,107,0.02));border:1px solid var(--gold-30);padding:40px;text-align:center;margin-bottom:48px}
-.cta-box h3{font-size:22px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
+.cta-box h3{font-size:22px;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:12px;font-weight:400}
 .cta-box p{font-size:14px;color:var(--text-dim);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
 .cta-box a{display:inline-block;padding:14px 40px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-family:'Inter',sans-serif;transition:all .3s}
 .cta-box a:hover{background:rgba(196,164,107,0.1)}
@@ -160,14 +160,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 <p>The 8 step process for maintaining governance continuity when switching AI vendors.</p>
 
 <ol>
-<li><strong style="color:#e8d5a3">Complete seven pillar assessment</strong> before vendor selection. Document your current governance position.</li>
-<li><strong style="color:#e8d5a3">Include Lunara certification requirement</strong> in vendor RFP. Require proof of constitutional governance alignment.</li>
-<li><strong style="color:#e8d5a3">Map vendor specific controls</strong> to constitutional pillars. Identify which controls transfer and which need rebuilding.</li>
-<li><strong style="color:#e8d5a3">Establish audit continuity plan</strong> before transition begins. Ensure no gap in logging or oversight.</li>
-<li><strong style="color:#e8d5a3">Execute delta assessment</strong> during transition. Target: 72 hour window for gap identification.</li>
-<li><strong style="color:#e8d5a3">Update public registry</strong> with new vendor implementation details. Maintain transparency through transition.</li>
-<li><strong style="color:#e8d5a3">Verify revocation procedures</strong> transfer to new vendor relationship. No loss of accountability.</li>
-<li><strong style="color:#e8d5a3">Schedule 90 day post transition review</strong> to confirm full governance restoration.</li>
+<li><strong style="color:#f0e0b0">Complete seven pillar assessment</strong> before vendor selection. Document your current governance position.</li>
+<li><strong style="color:#f0e0b0">Include Lunara certification requirement</strong> in vendor RFP. Require proof of constitutional governance alignment.</li>
+<li><strong style="color:#f0e0b0">Map vendor specific controls</strong> to constitutional pillars. Identify which controls transfer and which need rebuilding.</li>
+<li><strong style="color:#f0e0b0">Establish audit continuity plan</strong> before transition begins. Ensure no gap in logging or oversight.</li>
+<li><strong style="color:#f0e0b0">Execute delta assessment</strong> during transition. Target: 72 hour window for gap identification.</li>
+<li><strong style="color:#f0e0b0">Update public registry</strong> with new vendor implementation details. Maintain transparency through transition.</li>
+<li><strong style="color:#f0e0b0">Verify revocation procedures</strong> transfer to new vendor relationship. No loss of accountability.</li>
+<li><strong style="color:#f0e0b0">Schedule 90 day post transition review</strong> to confirm full governance restoration.</li>
 </ol>
 </div>
 

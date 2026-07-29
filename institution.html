@@ -282,6 +282,13 @@ input,textarea{
 }
 
 </style>
+
+<style>
+.data-callout{background:rgba(196,164,107,0.03);border-left:2px solid rgba(196,164,107,0.5);padding:24px 28px;margin:32px 0;max-width:560px}
+.data-callout .callout-num{font-family:'Cormorant Garamond',serif;font-size:36px;color:rgba(196,164,107,0.9);font-weight:300;line-height:1}
+.data-callout .callout-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-top:8px}
+.pull-quote{font-family:'Cormorant Garamond',serif;font-size:24px;font-style:italic;color:rgba(230,212,175,0.85);line-height:1.5;padding:24px 0;border-top:1px solid rgba(196,164,107,0.15);border-bottom:1px solid rgba(196,164,107,0.15);margin:32px 0;max-width:560px}
+</style>
 </head>
 <body>
 <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
@@ -300,6 +307,7 @@ input,textarea{
     <p class="eyebrow">Society</p>
     <h1 class="page-title">Built to Outlast<br>Any Technology Cycle</h1>
     <p class="page-sub">Lunara Society is not a product. It is not a software company. It is an institution established in 2026 to coordinate trust between businesses and autonomous AI systems at the boundary where they meet.</p>
+<div class="pull-quote">"We do not build tools. We build the standard by which tools are judged."</div>
     <div class="gold-rule"></div>
     <p class="page-sub" style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.4vw,28px);font-style:italic;color:rgba(255,255,255,0.65);max-width:700px;">As intelligence becomes abundant, trust becomes scarce.</p>
     <div class="gold-rule"></div>
@@ -312,15 +320,54 @@ input,textarea{
     <div class="gold-rule"></div>
     <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Join the Founding Cohort →</span>
   </div>
-  <footer class="page-footer">
-    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
-    <div class="footer-links">
-      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
-      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
-      <a href="mailto:lunarasociety@gmail.com" class="footer-link">Contact</a>
+  <!-- ─── FOOTER ─── -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-logo">
+          <div class="footer-mark">L</div>
+          <span class="footer-name">Lunara Society</span>
+        </div>
+        <p class="footer-tagline">Constitutional governance for autonomous AI systems. Established 2026.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="scorer.html">Risk Scorer</a>
+          <a href="certify.html">Certification</a>
+          <a href="healthcare-intelligence.html">Healthcare AI</a>
+          <a href="readiness-kit.html">Compliance Kit</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institution</h4>
+          <a href="constitution.html">Constitution</a>
+          <a href="institution.html">The Society</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="doctrine.html">Doctrine</a>
+          <a href="whitepaper.html">Whitepaper</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engage</h4>
+          <a href="join.html">Membership</a>
+          <a href="registry.html">Registry</a>
+          <a href="newsletter.html">Dispatch</a>
+          <a href="contact.html">Contact</a>
+          <a href="watch.html">Watch</a>
+        </div>
+      </div>
     </div>
-  </footer>
+    <div class="footer-bottom">
+      <span class="footer-copy">Lunara Society · MMXXVI</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <span class="footer-email"><a href="mailto:dsrkarya.lunarasociety@gmail.com">dsrkarya.lunarasociety@gmail.com</a></span>
+    </div>
+  </div>
+</footer>
 </div>
 <script>
 function fadeNav(url){

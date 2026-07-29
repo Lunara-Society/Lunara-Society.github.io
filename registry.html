@@ -401,6 +401,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 </style>
 <script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+<style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
 </head>
 <body>
 <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
@@ -419,6 +420,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <div class="page-inner">
     <p class="eyebrow">Legacy</p>
     <h1 class="page-title">The Public Record</h1>
+<div class="page-accent"></div>
     <p class="page-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
     <div class="gold-rule"></div>
     <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin-bottom:clamp(20px,3vw,32px);">
@@ -553,16 +555,54 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       </div>
     </div>
 
-  <footer class="page-footer">
-    <span class="footer-text">Lunara Society &nbsp;·&nbsp; Est. 2026 &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; Per Scientiam · Per Ordinem · Per Legatum</span>
-    <div class="footer-links">
-      <span class="footer-link" onclick="fadeNav('registry.html')">Registry</span>
-      <span class="footer-link" onclick="fadeNav('member.html')">Member Area</span>
-      <span class="footer-link" onclick="fadeNav('shield.html')">Initiation</span>
-      <span class="footer-link" onclick="fadeNav('newsletter.html')">Dispatch</span>
-      <a href="mailto:lunarasociety@gmail.com" class="footer-link">Contact</a>
+  <!-- ─── FOOTER ─── -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-logo">
+          <div class="footer-mark">L</div>
+          <span class="footer-name">Lunara Society</span>
+        </div>
+        <p class="footer-tagline">Constitutional governance for autonomous AI systems. Established 2026.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="scorer.html">Risk Scorer</a>
+          <a href="certify.html">Certification</a>
+          <a href="healthcare-intelligence.html">Healthcare AI</a>
+          <a href="readiness-kit.html">Compliance Kit</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institution</h4>
+          <a href="constitution.html">Constitution</a>
+          <a href="institution.html">The Society</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="doctrine.html">Doctrine</a>
+          <a href="whitepaper.html">Whitepaper</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engage</h4>
+          <a href="join.html">Membership</a>
+          <a href="registry.html">Registry</a>
+          <a href="newsletter.html">Dispatch</a>
+          <a href="contact.html">Contact</a>
+          <a href="watch.html">Watch</a>
+        </div>
+      </div>
     </div>
-  </footer>
+    <div class="footer-bottom">
+      <span class="footer-copy">Lunara Society · MMXXVI</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <span class="footer-email"><a href="mailto:dsrkarya.lunarasociety@gmail.com">dsrkarya.lunarasociety@gmail.com</a></span>
+    </div>
+  </div>
+</footer>
 </div>
 <script>
 function fadeNav(url){

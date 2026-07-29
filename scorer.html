@@ -251,6 +251,20 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
 }
 </style>
+
+<style>
+#livePreview{position:fixed;bottom:24px;right:24px;background:#000;border:1px solid rgba(196,164,107,0.3);border-radius:8px;padding:16px 20px;z-index:9000;transition:opacity 0.3s ease;box-shadow:0 0 30px rgba(196,164,107,0.1)}
+#livePreview .lp-label{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(196,164,107,0.6);margin-bottom:6px}
+#livePreview .lp-score{font-family:'Cormorant Garamond',serif;font-size:28px;color:rgba(196,164,107,0.9);line-height:1;font-weight:300}
+#livePreview .lp-score span{font-size:14px;color:rgba(255,255,255,0.4);font-family:'Inter',sans-serif}
+#livePreview .lp-bar{height:3px;background:rgba(196,164,107,0.1);border-radius:2px;margin-top:10px;overflow:hidden}
+#livePreview .lp-bar-fill{height:100%;background:linear-gradient(90deg,rgba(196,164,107,0.4),rgba(230,210,160,0.8));width:0%;transition:width 0.4s ease;border-radius:2px}
+#livePreview .lp-grade{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-top:8px}
+.lp-hidden{opacity:0;pointer-events:none}
+.score-circle{position:relative;width:140px;height:140px;border-radius:50%;border:2px solid rgba(196,164,107,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;transition:border-color 0.5s ease}
+.score-circle.scored{border-color:rgba(196,164,107,0.5);box-shadow:0 0 40px rgba(196,164,107,0.1)}
+</style>
+<style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
 </head>
 <body>
 
@@ -865,5 +879,132 @@ window.scrollTo({top: 0, behavior: 'smooth'});
 updateProgress();
 </script>
 
+<!-- ─── FOOTER ─── -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-logo">
+          <div class="footer-mark">L</div>
+          <span class="footer-name">Lunara Society</span>
+        </div>
+        <p class="footer-tagline">Constitutional governance for autonomous AI systems. Established 2026.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="index.html">Home</a>
+          <a href="scorer.html">Risk Scorer</a>
+          <a href="certify.html">Certification</a>
+          <a href="healthcare-intelligence.html">Healthcare AI</a>
+          <a href="readiness-kit.html">Compliance Kit</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institution</h4>
+          <a href="constitution.html">Constitution</a>
+          <a href="institution.html">The Society</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="doctrine.html">Doctrine</a>
+          <a href="whitepaper.html">Whitepaper</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engage</h4>
+          <a href="join.html">Membership</a>
+          <a href="registry.html">Registry</a>
+          <a href="newsletter.html">Dispatch</a>
+          <a href="contact.html">Contact</a>
+          <a href="watch.html">Watch</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">Lunara Society · MMXXVI</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <span class="footer-email"><a href="mailto:dsrkarya.lunarasociety@gmail.com">dsrkarya.lunarasociety@gmail.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<div id="livePreview" class="lp-hidden">
+  <div class="lp-label">Live Score Preview</div>
+  <div class="lp-score"><span id="lpNum">0</span><span> / 100</span></div>
+  <div class="lp-bar"><div class="lp-bar-fill" id="lpBarFill"></div></div>
+  <div class="lp-grade" id="lpGrade" style="color:rgba(196,164,107,0.5)"></div>
+</div>
+
+<script>
+// ── LIVE SCORE PREVIEW ──
+(function(){
+  const lp = document.getElementById('livePreview');
+  const lpNum = document.getElementById('lpNum');
+  const lpBarFill = document.getElementById('lpBarFill');
+  const lpGrade = document.getElementById('lpGrade');
+  if(!lp) return;
+  
+  function calcLive() {
+    let totalScore = 0;
+    let totalPossible = 0;
+    
+    for (const [pillarId, data] of Object.entries(pillarData)) {
+      const checked = document.querySelectorAll('#' + pillarId + ' input:checked');
+      totalScore += checked.length;
+      totalPossible += data.total;
+    }
+    
+    const rawScore = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+    const riskCat = document.querySelector('#riskCategory .active')?.dataset.value || 'high';
+    let multiplier = 1.0;
+    if (riskCat === 'limited') multiplier = 0.7;
+    else if (riskCat === 'minimal') multiplier = 0.4;
+    
+    const finalScore = Math.round(rawScore * multiplier + (100 - rawScore) * (1 - multiplier) * 0.3);
+    
+    lpNum.textContent = finalScore;
+    lpBarFill.style.width = finalScore + '%';
+    
+    // Grade color
+    if (finalScore >= 80) lpGrade.textContent = 'LOW RISK';
+    else if (finalScore >= 60) lpGrade.textContent = 'MODERATE RISK';
+    else if (finalScore >= 40) lpGrade.textContent = 'HIGH RISK';
+    else lpGrade.textContent = 'CRITICAL';
+    
+    lpGrade.style.color = finalScore >= 80 ? 'rgba(100,200,100,0.7)' : 
+                          finalScore >= 60 ? 'rgba(220,180,80,0.7)' : 
+                          'rgba(220,80,80,0.7)';
+  }
+  
+  // Show/hide preview based on form interaction
+  function checkVisibility() {
+    const form = document.getElementById('inputForm');
+    const results = document.getElementById('results');
+    if (form && form.style.display !== 'none') {
+      lp.classList.remove('lp-hidden');
+      calcLive();
+    } else {
+      lp.classList.add('lp-hidden');
+    }
+  }
+  
+  // Listen for all checkbox changes
+  document.addEventListener('change', (e) => {
+    if (e.target.type === 'checkbox') {
+      checkVisibility();
+    }
+  });
+  
+  // Listen for radio button changes
+  document.querySelectorAll('.radio-item').forEach(item => {
+    item.addEventListener('click', () => {
+      setTimeout(checkVisibility, 50);
+    });
+  });
+  
+  // Initial check after load
+  setTimeout(checkVisibility, 500);
+})();
+</script>
 </body>
 </html>

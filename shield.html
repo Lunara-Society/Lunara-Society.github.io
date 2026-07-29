@@ -428,7 +428,7 @@ How verification actually works</h2>
       var resultEl = document.getElementById('sa-result');
       resultEl.textContent = 'Submitting...';
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldApply', {
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({
@@ -465,7 +465,7 @@ How verification actually works</h2>
       if (!publicId) { outputEl.textContent = 'Enter your reference ID first.'; return; }
       outputEl.textContent = 'Checking DNS...';
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldVerifyDomain', {
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldVerifyDomain', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ public_id: publicId })

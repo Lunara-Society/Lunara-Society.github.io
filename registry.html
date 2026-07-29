@@ -398,7 +398,7 @@ input,textarea{
       var listEl = document.getElementById('reg-live-list');
       var slotsEl = document.getElementById('founding-slots-count');
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
         var data = await res.json();
         if (slotsEl) {
           var used = Math.min(data.count || 0, 10);
@@ -428,7 +428,7 @@ input,textarea{
       resultEl.innerHTML = '<span style="font-size:13px;color:rgba(196,164,107,0.5);font-style:italic;">Checking registry…</span>';
       try {
         var body = q.startsWith('SHIELD-') ? {public_id: q} : {domain: q};
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
         var data = await res.json();
         if (data.found) {
           var statusColor = data.status === 'approved' ? '#4CAF50' : data.status === 'revoked' ? '#e57373' : '#FFB74D';

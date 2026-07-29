@@ -199,7 +199,7 @@ input,textarea{-webkit-user-select:text !important;user-select:text !important;}
       var resultEl = document.getElementById('nl-result');
       resultEl.textContent = 'Submitting...';
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/newsletterSubscribe', {
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/newsletterSubscribe', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ email: document.getElementById('nl-email').value, source_page: 'newsletter.html' })

@@ -1018,7 +1018,7 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 
   async function loadTicker() {
     try {
-      const res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldRegistryList', {
+      const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({limit: 50})
@@ -1079,7 +1079,7 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
   const resp = document.getElementById('ros-chat-response');
   if (!input || !btn || !resp) return;
 
-  const ENDPOINT = 'https://superagent-d6d4ecd1.base44.app/functions/rosarioWebChat';
+  const ENDPOINT = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/rosarioWebChat';
 
   async function sendQuestion() {
     const q = input.value.trim();

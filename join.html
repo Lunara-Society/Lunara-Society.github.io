@@ -358,7 +358,7 @@ input,textarea{
     <script>
     (async function(){
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldFoundingCount', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoundingCount', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
         var data = await res.json();
         if (data.success) {
           var priceEl = document.getElementById('sb-price');
@@ -425,7 +425,7 @@ input,textarea{
       var resultEl = document.getElementById('pa-result');
       resultEl.textContent = 'Submitting…';
       try {
-        var res = await fetch('https://superagent-d6d4ecd1.base44.app/functions/shieldPartnerApply', {
+        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldPartnerApply', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({

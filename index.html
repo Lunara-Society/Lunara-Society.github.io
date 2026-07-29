@@ -122,9 +122,7 @@ html, body {
   display:flex; align-items:center; justify-content:center;
   overflow:hidden;
 }
-#hero-canvas {
-  position:absolute; inset:0; z-index:0;
-}
+
 #hero-video-bg {
   position:absolute; inset:0; z-index:1;
   width:100%; height:100%; object-fit:cover;
@@ -144,7 +142,7 @@ html, body {
 .hero-eyebrow {
   font-family:'Inter', sans-serif;
   font-size:10px; letter-spacing:0.45em; text-transform:uppercase;
-  color:var(--gold-50); margin-bottom:28px;
+  color:rgba(196,164,107,0.8); margin-bottom:28px;
   opacity:0; animation:fadeUp 1s ease 0.3s forwards;
 }
 .hero-title {
@@ -233,7 +231,7 @@ html, body {
 .ros-text { }
 .ros-text .eyebrow {
   font-size:10px; letter-spacing:0.4em; text-transform:uppercase;
-  color:var(--gold-50); margin-bottom:20px;
+  color:rgba(196,164,107,0.8); margin-bottom:20px;
   font-family:'Inter', sans-serif;
 }
 .ros-text h2 {
@@ -273,7 +271,7 @@ html, body {
 .ros-play-hint {
   position:absolute; bottom:70px; left:50%; transform:translateX(-50%);
   font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
-  color:var(--gold-50); font-family:'Inter', sans-serif;
+  color:rgba(196,164,107,0.8); font-family:'Inter', sans-serif;
   white-space:nowrap;
   transition:opacity 0.3s;
 }
@@ -293,7 +291,7 @@ html, body {
 }
 .cards-header .eyebrow {
   font-size:10px; letter-spacing:0.45em; text-transform:uppercase;
-  color:var(--gold-50); margin-bottom:16px; font-family:'Inter', sans-serif;
+  color:rgba(196,164,107,0.8); margin-bottom:16px; font-family:'Inter', sans-serif;
 }
 .cards-header h2 {
   font-family:'Cormorant Garamond', serif;
@@ -316,8 +314,12 @@ html, body {
   background:linear-gradient(135deg, rgba(196,164,107,0.04) 0%, transparent 60%);
   opacity:0; transition:opacity 0.35s;
 }
-.card:hover { border-color:rgba(196,164,107,0.35); transform:translateY(-3px); }
+.card:hover { border-color:rgba(196,164,107,0.5); transform:translateY(-4px); box-shadow:0 0 40px rgba(196,164,107,0.08), 0 0 80px rgba(196,164,107,0.03); }
 .card:hover::before { opacity:1; }
+.card:hover .card-arrow { transform:translate(4px,-4px); opacity:1; }
+.card .card-arrow { transition:transform 0.3s ease, opacity 0.3s ease; opacity:0.5; }
+.card:hover h3 { color:rgba(230,210,160,0.98); }
+.card h3 { transition:color 0.3s ease; }
 .card-icon {
   width:44px; height:44px; margin-bottom:24px;
   border:1px solid rgba(196,164,107,0.2); border-radius:12px;
@@ -326,7 +328,7 @@ html, body {
 .card-icon svg { width:20px; height:20px; }
 .card-tag {
   font-size:9px; letter-spacing:0.35em; text-transform:uppercase;
-  color:var(--gold-50); font-family:'Inter', sans-serif;
+  color:rgba(196,164,107,0.8); font-family:'Inter', sans-serif;
   margin-bottom:10px; display:block;
 }
 .card h3 {
@@ -361,7 +363,7 @@ html, body {
 }
 .stat-label {
   font-size:10px; letter-spacing:0.35em; text-transform:uppercase;
-  color:var(--gold-50); font-family:'Inter', sans-serif;
+  color:rgba(196,164,107,0.8); font-family:'Inter', sans-serif;
 }
 .stat-sep {
   width:1px; height:60px;
@@ -379,7 +381,7 @@ html, body {
 .urgency-badge {
   display:inline-flex; align-items:center; gap:8px;
   padding:6px 18px; border-radius:100px;
-  border:1px solid rgba(196,164,107,0.4);
+  border:1px solid rgba(196,164,107,0.5);
   font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
   color:var(--gold); font-family:'Inter', sans-serif;
   margin-bottom:24px;
@@ -443,7 +445,7 @@ html, body {
 .pillar-row:hover .pillar-name { color:var(--gold-b); }
 .const-text .eyebrow {
   font-size:10px; letter-spacing:0.45em; text-transform:uppercase;
-  color:var(--gold-50); margin-bottom:20px; font-family:'Inter', sans-serif;
+  color:rgba(196,164,107,0.8); margin-bottom:20px; font-family:'Inter', sans-serif;
 }
 .const-text h2 {
   font-family:'Cormorant Garamond', serif;
@@ -462,7 +464,7 @@ html, body {
   font-size:11px; letter-spacing:0.15em; text-transform:uppercase;
   text-decoration:none; transition:all 0.3s;
 }
-.const-text a:hover { background:rgba(196,164,107,0.08); border-color:var(--gold-50); }
+.const-text a:hover { background:rgba(196,164,107,0.08); border-color:rgba(196,164,107,0.8); }
 
 /* ─── FOOTER ─── */
 #site-footer {
@@ -474,7 +476,7 @@ html, body {
 .footer-brand {
   font-family:'Cormorant Garamond', serif;
   font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
-  color:rgba(196,164,107,0.4);
+  color:rgba(196,164,107,0.5);
 }
 .footer-links {
   display:flex; gap:24px; flex-wrap:wrap;
@@ -592,7 +594,7 @@ html, body {
 #mob-drawer a:hover { color:#f0e0b0; }
 #mob-drawer-close {
   position:absolute; top:24px; right:24px;
-  font-size:24px; color:var(--gold-50);
+  font-size:24px; color:rgba(196,164,107,0.8);
   cursor:pointer; border:none; background:none;
   transition:color 0.2s;
 }
@@ -814,6 +816,10 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 ::selection{background:rgba(196,164,107,0.25);color:#fff}
 
 </style>
+
+<style>
+#scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,rgba(196,164,107,0.4),rgba(230,210,160,0.8));z-index:10000;transition:width 0.1s ease;}
+</style>
 </head>
 <body>
 
@@ -833,7 +839,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
   <div class="nav-cta">
     <a href="readiness-kit.html">Compliance Kit</a>
-      <a style="margin:0 18px;color:var(--gold-50)" href="certify.html">Apply Now</a>
+      <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="certify.html">Apply Now</a>
     <button id="mob-menu-btn" onclick="openDrawer()" aria-label="Menu">
       <div class="mob-menu-bar"></div>
       <div class="mob-menu-bar"></div>
@@ -849,7 +855,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <a href="architecture.html" onclick="closeDrawer()">How It Works</a>
   <a href="constitution.html" onclick="closeDrawer()">Constitution</a>
   <a href="readiness-kit.html">Compliance Kit</a>
-      <a style="margin:0 18px;color:var(--gold-50)" href="certify.html" onclick="closeDrawer()">Certify</a>
+      <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="certify.html" onclick="closeDrawer()">Certify</a>
   <a href="registry.html" onclick="closeDrawer()">Registry</a>
   <a href="signal.html" onclick="closeDrawer()">AI Signals</a>
   <a href="gateway.html" onclick="closeDrawer()">Journal</a>
@@ -860,7 +866,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <!-- ─── HERO ─── -->
 <section id="hero">
-  <canvas id="hero-canvas"></canvas>
+  
   <div id="hero-overlay"></div>
 
   <div id="hero-content">
@@ -875,8 +881,8 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Score Your AI Risk
       </a>
-      <a href="healthcare-intelligence.html">Healthcare AI Governance</a>
-      <a style="margin:0 18px;color:var(--gold-50)" href="shield.html" class="btn-ghost">Shield Certification ›</a>
+      <a href="healthcare-intelligence.html" style="color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase">Healthcare AI Governance</a>
+      <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="shield.html" class="btn-ghost">Shield Certification ›</a>
     </div>
   </div>
 
@@ -925,7 +931,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   </div>
   <div class="stat-sep"></div>
   <div class="stat reveal reveal-delay-2">
-    <span class="stat-val">4</span>
+    <span class="stat-val" id="countdown-days">—</span>
     <span class="stat-label">Days to Article 50</span>
   </div>
   <div class="stat-sep"></div>
@@ -988,7 +994,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <h2>The governance window closes in 4 days.</h2>
     <p>Article 50 of the EU AI Act enters enforcement on August 2. Enterprises deploying AI agents must demonstrate governance frameworks that meet institutional standards. The Lunara Risk Scorer assesses your compliance posture in under 5 minutes. Score your AI systems now.</p>
     <a href="scorer.html" style="border:1px solid rgba(196,164,107,0.5);padding:14px 36px;display:inline-block;color:#C4A46B;text-decoration:none;font-size:12px;letter-spacing:0.18em;text-transform:uppercase">Score Your AI Risk Now</a>
-      <a style="margin:0 18px;color:var(--gold-50)" href="healthcare-intelligence.html">Healthcare Pilot Program ›</a>
+      <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="healthcare-intelligence.html">Healthcare Pilot Program ›</a>
   </div>
 </div>
 
@@ -1030,77 +1036,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <!-- ─── SCRIPTS ─── -->
 <script>
-// ── PARTICLE CANVAS ──
-(function(){
-  const canvas = document.getElementById('hero-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles=[];
-  const GOLD = [196,164,107];
 
-  function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-
-  function Particle(){
-    this.reset = function(){
-      this.x = Math.random()*W;
-      this.y = Math.random()*H;
-      this.vx = (Math.random()-0.5)*0.4;
-      this.vy = (Math.random()-0.5)*0.4;
-      this.r = Math.random()*1.2+0.3;
-      this.a = Math.random()*0.35+0.05;
-      this.life = 0;
-      this.maxLife = Math.random()*300+200;
-    };
-    this.reset();
-  }
-
-  function init(){
-    particles = [];
-    for(let i=0;i<90;i++){
-      const p = new Particle();
-      p.life = Math.random()*p.maxLife;
-      particles.push(p);
-    }
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    // Streaks from centre
-    const cx=W/2, cy=H/2;
-    for(let i=0;i<12;i++){
-      const ang = (i/12)*Math.PI*2 + Date.now()*0.00008;
-      const len = Math.random()*120+60;
-      const x1=cx, y1=cy;
-      const x2=cx+Math.cos(ang)*len, y2=cy+Math.sin(ang)*len;
-      const g = ctx.createLinearGradient(x1,y1,x2,y2);
-      g.addColorStop(0,'rgba(196,164,107,0.06)');
-      g.addColorStop(1,'rgba(196,164,107,0)');
-      ctx.strokeStyle=g; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-    }
-
-    // Particles
-    particles.forEach(p=>{
-      p.life++;
-      if(p.life>p.maxLife) p.reset();
-      const t = p.life/p.maxLife;
-      const a = p.a * Math.sin(t*Math.PI);
-      p.x+=p.vx; p.y+=p.vy;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${GOLD[0]},${GOLD[1]},${GOLD[2]},${a})`;
-      ctx.fill();
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  resize(); init(); draw();
-  window.addEventListener('resize', ()=>{ resize(); init(); });
-})();
 
 // ── FOUNDING COUNT ──
 fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoundingCount')
@@ -1261,6 +1197,83 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
       body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})
     });
   } catch(e) {}
+})();
+</script>
+
+<script>
+// ── LIVE COUNTDOWN TO AUG 2 ──
+(function(){
+  const target = new Date('2026-08-02T00:00:01Z').getTime();
+  const el = document.getElementById('countdown-days');
+  if(!el) return;
+  function update(){
+    const now = Date.now();
+    const diff = target - now;
+    if(diff <= 0){ el.textContent = '0'; return; }
+    const days = Math.ceil(diff / (1000*60*60*24));
+    el.textContent = days;
+  }
+  update();
+  setInterval(update, 60000);
+})();
+</script>
+
+<script>
+// ── STAT COUNTER ANIMATION ──
+(function(){
+  const stats = document.querySelectorAll('.stat-val');
+  if(!stats.length) return;
+  let animated = false;
+  
+  function animateVal(el, target, duration) {
+    const start = 0;
+    const startTime = performance.now();
+    const isMoney = String(target).includes('$');
+    const isText = isNaN(parseInt(target));
+    if(isText) { el.textContent = target; return; }
+    
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const val = Math.floor(start + (target - start) * easeOut);
+      el.textContent = isMoney ? '$' + val + 'M' : val;
+      if(progress < 1) requestAnimationFrame(step);
+      else el.textContent = isMoney ? '$' + target + 'M' : target;
+    }
+    requestAnimationFrame(step);
+  }
+  
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && !animated) {
+        animated = true;
+        stats.forEach(el => {
+          const raw = el.textContent.trim();
+          const num = parseInt(raw.replace(/[^0-9]/g, ''));
+          if(!isNaN(num)) animateVal(el, num, 1200);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  const statsBar = document.getElementById('stats-bar');
+  if(statsBar) obs.observe(statsBar);
+})();
+</script>
+
+<script>
+(function(){
+  const bar = document.createElement('div');
+  bar.id = 'scroll-progress';
+  document.body.appendChild(bar);
+  function update(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
 })();
 </script>
 </body>

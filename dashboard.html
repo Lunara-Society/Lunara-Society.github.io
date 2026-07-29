@@ -17,7 +17,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
 
 nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
-.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-50);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);text-decoration:none;font-family:'Cormorant Garamond',serif}
 .nav-brand span{color:var(--gold)}
 .nav-links{display:flex;gap:24px;align-items:center}
 .nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .3s}
@@ -45,7 +45,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
 
 .pilot-progress{background:var(--card);border:1px solid var(--gold-15);padding:28px;margin-bottom:48px}
 .pilot-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.pilot-header h3{font-size:14px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-50);font-family:'Inter',sans-serif;font-weight:400}
+.pilot-header h3{font-size:14px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.8);font-family:'Inter',sans-serif;font-weight:400}
 .pilot-seats{display:flex;gap:10px}
 .pilot-seat{width:48px;height:48px;border:1px solid var(--gold-15);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-dim);font-family:'Cormorant Garamond',serif;transition:all .3s;border-radius:2px}
 .pilot-seat.filled{border-color:var(--gold);background:rgba(196,164,107,0.08);color:var(--gold)}
@@ -61,10 +61,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
 
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-family:'Inter',sans-serif}
-th{text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-50);font-weight:400;padding:12px 16px;border-bottom:1px solid var(--gold-15);white-space:nowrap}
+th{text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.8);font-weight:400;padding:12px 16px;border-bottom:1px solid var(--gold-15);white-space:nowrap}
 td{padding:16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(196,164,107,0.06);vertical-align:middle}
 td.business-name{color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px}
-td.public-id{font-size:11px;color:var(--gold-50);letter-spacing:1px;font-family:'Inter',sans-serif}
+td.public-id{font-size:11px;color:rgba(196,164,107,0.8);letter-spacing:1px;font-family:'Inter',sans-serif}
 .status-badge{display:inline-block;padding:4px 12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
 .status-pending{background:rgba(255,193,7,0.1);color:rgba(255,193,7,0.7);border:1px solid rgba(255,193,7,0.2)}
 .status-in_review{background:rgba(33,150,243,0.1);color:rgba(100,181,246,0.8);border:1px solid rgba(100,181,246,0.2)}
@@ -83,7 +83,7 @@ td.public-id{font-size:11px;color:var(--gold-50);letter-spacing:1px;font-family:
 .track-government{background:rgba(156,39,176,0.08);color:rgba(186,104,200,0.6);border:1px solid rgba(186,104,200,0.15)}
 
 .empty-state{text-align:center;padding:64px 20px;color:var(--text-dim)}
-.empty-state h3{font-size:20px;color:var(--gold-50);font-family:'Cormorant Garamond',serif;margin-bottom:8px;font-weight:400}
+.empty-state h3{font-size:20px;color:rgba(196,164,107,0.8);font-family:'Cormorant Garamond',serif;margin-bottom:8px;font-weight:400}
 .empty-state p{font-size:13px;max-width:400px;margin:0 auto;line-height:1.7}
 
 .timeline{margin-top:24px}
@@ -286,13 +286,13 @@ p,li,span{
 </tr>
 </thead>
 <tbody>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">I. Verified Identity</td><td style="font-size:13px;color:var(--text-dim)">Legal entity verification and business registration check</td><td style="font-size:12px;color:var(--gold-50)">Legal docs + public records</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">II. Declared Governance</td><td style="font-size:13px;color:var(--text-dim)">AI governance framework declaration and documentation</td><td style="font-size:12px;color:var(--gold-50)">Policy review</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">III. Transparency</td><td style="font-size:13px;color:var(--text-dim)">Public contact accountability and disclosure</td><td style="font-size:12px;color:var(--gold-50)">Domain + contact verification</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">IV. Data Sovereignty</td><td style="font-size:13px;color:var(--text-dim)">Data boundary declaration and processing transparency</td><td style="font-size:12px;color:var(--gold-50)">Data policy audit</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">V. Audit Accessibility</td><td style="font-size:13px;color:var(--text-dim)">Audit trail availability for oversight bodies</td><td style="font-size:12px;color:var(--gold-50)">Audit log review</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">VI. Revocability</td><td style="font-size:13px;color:var(--text-dim)">Public revocation mechanism when trust is broken</td><td style="font-size:12px;color:var(--gold-50)">Registry policy check</td></tr>
-<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">VII. Proportionality</td><td style="font-size:13px;color:var(--text-dim)">Risk proportionate governance requirements</td><td style="font-size:12px;color:var(--gold-50)">Risk assessment review</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">I. Verified Identity</td><td style="font-size:13px;color:var(--text-dim)">Legal entity verification and business registration check</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Legal docs + public records</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">II. Declared Governance</td><td style="font-size:13px;color:var(--text-dim)">AI governance framework declaration and documentation</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Policy review</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">III. Transparency</td><td style="font-size:13px;color:var(--text-dim)">Public contact accountability and disclosure</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Domain + contact verification</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">IV. Data Sovereignty</td><td style="font-size:13px;color:var(--text-dim)">Data boundary declaration and processing transparency</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Data policy audit</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">V. Audit Accessibility</td><td style="font-size:13px;color:var(--text-dim)">Audit trail availability for oversight bodies</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Audit log review</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">VI. Revocability</td><td style="font-size:13px;color:var(--text-dim)">Public revocation mechanism when trust is broken</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Registry policy check</td></tr>
+<tr><td style="color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-size:15px">VII. Proportionality</td><td style="font-size:13px;color:var(--text-dim)">Risk proportionate governance requirements</td><td style="font-size:12px;color:rgba(196,164,107,0.8)">Risk assessment review</td></tr>
 </tbody>
 </table>
 </div>

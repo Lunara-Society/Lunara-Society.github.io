@@ -19,7 +19,8 @@
 <meta name="description" content="Lunara Society Trust Coordination Institution. Est. 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="shield-logo.jpg">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -245,7 +246,7 @@ body{animation:pageIn 0.6s ease forwards;}
   flex-wrap:wrap;gap:12px;
   background:rgba(0,0,0,0.4);
 }
-.footer-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.3);}
+.footer-text{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.55);}
 .footer-links{display:flex;gap:clamp(12px,2.5vw,28px);flex-wrap:wrap;}
 .footer-link{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;transition:color 0.2s;}
 .footer-link:hover{color:var(--gold);}
@@ -361,6 +362,42 @@ input,textarea{
 .result-notfound{ color:rgba(196,164,107,0.6); }
 .result-error{ color:rgba(196,164,107,0.4); }
 
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
 </style>
 <script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
 </head>
@@ -368,7 +405,7 @@ input,textarea{
 <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
   <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
-  <span class="nav-logo">Lunara Society</span>
+  <a href="/" class="nav-logo"><img src="lunara_logo_512.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara Society</span></a>
   <div class="nav-right">
     <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
     <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>
@@ -378,6 +415,9 @@ input,textarea{
 </nav>
 <div class="page-wrap">
   <div class="page-inner">
+    <div style="display:flex;justify-content:center;margin-bottom:32px">
+      <img src="lunara_logo_512.png" alt="Lunara Society" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:1px solid rgba(196,164,107,0.3);box-shadow:0 0 40px rgba(196,164,107,0.3),0 0 80px rgba(196,164,107,0.12)">
+    </div>
     <p class="eyebrow">Initiation</p>
     <h1 class="page-title">Your Business.<br>Verified. Accountable. Found.</h1>
     <p class="page-sub">The Shield is a status you earn through verification, not a badge you buy. A reviewer checks your business registration and domain before anything goes live and certification can be revoked if standards are later violated.</p>

@@ -20,7 +20,8 @@
 <meta name="description" content="Lunara Society — AI Governance Intelligence. Constitutional standards, compliance risk scoring, and regulatory decision frameworks for enterprises deploying AI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="shield-logo.jpg">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
@@ -52,12 +53,26 @@ html, body {
 }
 #top-nav > * { pointer-events:auto; }
 .nav-logo {
+  display:flex; align-items:center; gap:10px;
+  text-decoration:none;
   font-family:'Cormorant Garamond', serif;
   font-size:16px; font-weight:400; letter-spacing:0.12em;
-  color:rgba(230,212,175,0.95); text-decoration:none;
+  color:rgba(230,212,175,0.95);
   text-transform:uppercase;
 }
-.nav-logo span { color:var(--gold); }
+.nav-logo-img {
+  width:34px; height:34px;
+  border-radius:50%;
+  object-fit:cover;
+  filter: drop-shadow(0 0 6px rgba(196,164,107,0.7));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.nav-logo:hover .nav-logo-img {
+  filter: drop-shadow(0 0 12px rgba(196,164,107,1));
+  transform: scale(1.08);
+}
+.nav-logo-text { color:rgba(230,212,175,0.95); }
+.nav-logo-text span { color:var(--gold); }
 .nav-pill {
   display:flex; align-items:center; gap:0;
   background:rgba(0,0,0,0.55);
@@ -323,7 +338,7 @@ html, body {
 }
 .card-arrow {
   position:absolute; bottom:28px; right:28px;
-  font-size:18px; color:rgba(196,164,107,0.25);
+  font-size:18px; color:rgba(196,164,107,0.5);
   transition:all 0.3s;
 }
 .card:hover .card-arrow { color:var(--gold-70); transform:translate(3px,-3px); }
@@ -369,7 +384,7 @@ html, body {
   animation:pulseBorder 3s ease-in-out infinite;
 }
 @keyframes pulseBorder {
-  0%,100%{border-color:rgba(196,164,107,0.3);color:rgba(196,164,107,0.7)}
+  0%,100%{border-color:rgba(196,164,107,0.55);color:rgba(196,164,107,0.7)}
   50%{border-color:rgba(196,164,107,0.75);color:var(--gold-b)}
 }
 .urgency-badge::before {
@@ -414,9 +429,9 @@ html, body {
   padding:18px 0; border-bottom:1px solid rgba(196,164,107,0.08);
   transition:all 0.25s; cursor:default;
 }
-.pillar-row:hover { border-bottom-color:rgba(196,164,107,0.25); }
+.pillar-row:hover { border-bottom-color:rgba(196,164,107,0.5); }
 .pillar-num {
-  font-size:11px; letter-spacing:0.2em; color:rgba(196,164,107,0.3);
+  font-size:11px; letter-spacing:0.2em; color:rgba(196,164,107,0.55);
   font-family:'Inter', sans-serif; width:24px; flex-shrink:0; padding-top:2px;
 }
 .pillar-name {
@@ -464,7 +479,7 @@ html, body {
 }
 .footer-links a {
   font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
-  color:rgba(196,164,107,0.3); text-decoration:none;
+  color:rgba(196,164,107,0.55); text-decoration:none;
   font-family:'Inter', sans-serif; transition:color 0.2s;
 }
 .footer-links a:hover { color:rgba(196,164,107,0.7); }
@@ -692,13 +707,83 @@ html, body {
 
 @keyframes blink { 50% { opacity: 0; } }
 
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
+
+/* === HERO MEDALLION LOGO === */
+.hero-medallion {
+  display:flex;
+  justify-content:center;
+  margin-bottom:28px;
+  animation: medallionFadeIn 1.2s ease forwards;
+  opacity:0;
+}
+.hero-logo-img {
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid rgba(196,164,107,0.25);
+  box-shadow:
+    0 0 30px rgba(196,164,107,0.25),
+    0 0 60px rgba(196,164,107,0.1),
+    0 0 100px rgba(196,164,107,0.05),
+    inset 0 0 20px rgba(0,0,0,0.3);
+  animation: logoGlow 4s ease-in-out infinite alternate;
+}
+@keyframes medallionFadeIn {
+  from { opacity:0; transform:translateY(20px) scale(0.9); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes logoGlow {
+  from { box-shadow: 0 0 30px rgba(196,164,107,0.25), 0 0 60px rgba(196,164,107,0.1); }
+  to   { box-shadow: 0 0 50px rgba(196,164,107,0.45), 0 0 100px rgba(196,164,107,0.2), 0 0 160px rgba(196,164,107,0.08); }
+}
+@media(max-width:768px){
+  .hero-logo-img { width:88px; height:88px; }
+  .hero-medallion { margin-bottom:20px; }
+}
 </style>
 </head>
 <body>
 
 <!-- ─── NAV ─── -->
 <header id="top-nav">
-  <a class="nav-logo" href="/">Lunara <span>Society</span></a>
+  <a class="nav-logo" href="/"><img src="lunara_logo_512.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara <span>Society</span></span></a>
 
   <nav class="nav-pill">
     <a href="healthcare-intelligence.html">Healthcare AI</a>
@@ -743,6 +828,9 @@ html, body {
   <div id="hero-overlay"></div>
 
   <div id="hero-content">
+    <div class="hero-medallion">
+      <img src="lunara_logo_512.png" alt="Lunara Society" class="hero-logo-img">
+    </div>
     <p class="hero-eyebrow">Lunara Society &nbsp;·&nbsp; Trust Coordination Institution &nbsp;·&nbsp; Est. MMXXVI</p>
     <h1 class="hero-title">The standard<br>for <em>verified AI.</em></h1>
     <p class="hero-subtitle">Lunara Society establishes the constitutional framework for AI identity, governance, and accountability independently certified, publicly auditable.</p>

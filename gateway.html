@@ -6,7 +6,8 @@
 <title>Journal Lunara Society</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="shield-logo.jpg">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 <style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --gold:#C4A46B;--gold-dim:rgba(196,164,107,0.25);--gold-bright:#E0C080;
@@ -283,7 +284,7 @@ input,textarea{
 <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
   <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
-  <span class="nav-logo">Lunara Society</span>
+  <a href="/" class="nav-logo"><img src="lunara_logo_512.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara Society</span></a>
   <div class="nav-right">
     <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
     <span class="nav-link" onclick="fadeNav('registry.html')">Registry</span>

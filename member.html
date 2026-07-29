@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Lunara Society member area. Access certification methodology, audit templates, regulatory mapping details, intelligence briefings, and the vendor transition guide.">
 <title>Member Area Lunara Society</title>
@@ -22,7 +24,7 @@ body{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(0,0,0,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo img{width:28px;height:28px;border-radius:50%}
+.nav-logo img{width:34px;height:34px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 0 6px rgba(196,164,107,0.7));transition:filter 0.3s ease,transform 0.3s ease}
 .nav-wordmark{font-size:14px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--white-90)}
 .nav-right{font-size:12px;color:var(--white-30);letter-spacing:1px}
 
@@ -33,7 +35,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 /* AUTH PANEL */
 .auth-panel{background:var(--black-card);border:1px solid var(--border);padding:56px 48px;width:100%;max-width:480px}
 .auth-logo{margin-bottom:32px}
-.auth-logo img{width:48px;border-radius:50%}
+.auth-logo img{width:72px;border-radius:50%;border:1px solid rgba(196,164,107,0.3);padding:2px}
 .auth-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .auth-title{font-size:28px;font-weight:300;color:var(--white);margin-bottom:8px}
 .auth-sub{font-size:14px;color:var(--white-30);margin-bottom:40px;line-height:1.6}
@@ -205,6 +207,42 @@ input,textarea{
   nav a:not(.back):not(.back-link):not([href="index.html"]) { display: none !important; }
 }
 
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -213,7 +251,7 @@ input,textarea{
 
 <nav>
   <a href="/" class="nav-logo">
-    <img src="shield-logo.jpg" alt="Lunara">
+    <img src="lunara_logo_512.png" alt="Lunara Society">
     <span class="nav-wordmark">Lunara Society</span>
   </a>
   <span class="nav-right" id="nav-status">MEMBER AREA</span>
@@ -222,7 +260,7 @@ input,textarea{
 <!-- AUTH VIEW -->
 <div id="view-auth">
   <div class="auth-panel">
-    <div class="auth-logo"><img src="shield-logo.jpg" alt="Lunara Shield"></div>
+    <div class="auth-logo"><img src="lunara_logo_512.png" alt="Lunara Society" style="border-radius:50%;box-shadow:0 0 30px rgba(196,164,107,0.4),0 0 60px rgba(196,164,107,0.15)"></div>
     <p class="auth-label">Lunara Society</p>
 
     <div class="auth-tabs">

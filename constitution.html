@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Lunara Constitution Lunara Society</title>
 <meta name="description" content="A foundational framework for institutional accountability in the age of autonomous AI. Published by Lunara Society, July 2026.">
@@ -192,7 +194,7 @@
     text-align:center;
   }
   .footer-motto{font-size:13px;letter-spacing:3px;color:var(--gold-dim);margin-bottom:12px;font-style:italic;}
-  .footer-copy{font-size:11px;letter-spacing:1px;color:rgba(196,164,107,0.3);font-family:'Inter',sans-serif;}
+  .footer-copy{font-size:11px;letter-spacing:1px;color:rgba(196,164,107,0.55);font-family:'Inter',sans-serif;}
 
   /* TOC */
   .toc{
@@ -216,6 +218,42 @@
     .hero-divider{display:none;}
     .about-block{padding:32px 24px;}
   }
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
 </style>
 </head>
 <body>

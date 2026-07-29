@@ -7,7 +7,8 @@
 <title>Government Certification — Lunara Society</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="shield-logo.jpg">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#060606}
@@ -27,7 +28,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);
 .back-link:hover{color:var(--gold)}
 .body{max-width:760px;margin:0 auto;padding:64px 48px}
 .section{margin-bottom:64px}
-.section-num{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.3);margin-bottom:12px}
+.section-num{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.55);margin-bottom:12px}
 .section-title{font-size:clamp(22px,3.5vw,34px);font-weight:400;color:#e8d5a3;line-height:1.25;margin-bottom:24px;font-family:'Cormorant Garamond',serif}
 .section-body p{font-size:16px;line-height:1.95;color:var(--text);margin-bottom:20px}
 .section-body p strong{color:#e8d5a3;font-weight:500}
@@ -61,12 +62,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);
  .body{padding:48px 24px}
  .stat-grid,.reg-grid{grid-template-columns:1fr}
 }
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
 </style>
 </head>
 <body>
 
 <nav>
-<a href="/" class="nav-brand">Lunara <span>Society</span></a>
+<a href="/" class="nav-brand"><img src="/lunara_logo_512.png" alt="Lunara Society" class="nav-brand-logo"><span class="nav-brand-text">Lunara <span>Society</span></span></a>
 <div class="nav-links">
 <a href="/constitution.html">Constitution</a>
 <a href="/certify.html">Certification</a>

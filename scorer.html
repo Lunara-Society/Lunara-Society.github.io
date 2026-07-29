@@ -638,13 +638,16 @@ if (!email) {
 alert('Please enter your email address');
 return;
 }
-// Store email for backend processing
 const orgName = document.getElementById('orgName').value || 'Organization';
 const systemName = document.getElementById('systemName').value || 'AI System';
 const score = document.getElementById('scoreNum').textContent;
 const grade = document.getElementById('scoreGrade').textContent;
+const gaps = Array.from(document.querySelectorAll('.gap-item h4')).map(h => h.textContent);
 
-// Use backend function to send the report
+const btn = event.target;
+btn.textContent = 'Sending...';
+btn.disabled = true;
+
 fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/backend/functions/lunaraScoreReport', {
 method: 'POST',
 headers: {'Content-Type': 'application/json'},
@@ -652,14 +655,28 @@ body: JSON.stringify({
 email: email,
 orgName: orgName,
 systemName: systemName,
-score: score,
+score: parseInt(score),
 grade: grade,
-gaps: Array.from(document.querySelectorAll('.gap-item h4')).map(h => h.textContent)
+gaps: gaps
 })
-}).then(r => {
-alert('Your report has been sent to ' + email);
+}).then(r => r.json()).then(data => {
+btn.textContent = 'Report Sent ✓';
+btn.style.borderColor = '#7ac47a';
+btn.style.color = '#7ac47a';
+setTimeout(() => {
+btn.textContent = 'Email Me My Report';
+btn.disabled = false;
+btn.style.borderColor = '';
+btn.style.color = '';
+}, 3000);
 }).catch(e => {
-alert('Report saved. We will email it to ' + email + ' shortly.');
+btn.textContent = 'Saved. We will email you shortly.';
+btn.style.borderColor = '#e8c44a';
+setTimeout(() => {
+btn.textContent = 'Email Me My Report';
+btn.disabled = false;
+btn.style.borderColor = '';
+}, 3000);
 });
 }
 

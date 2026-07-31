@@ -1,0 +1,42 @@
+=== WIKIDATA SUBMISSION INSTRUCTIONS ===
+
+Wikidata has a lower notability bar than Wikipedia. Any entity that is
+referenced by a reliable source can have a Wikidata entry.
+
+To create the entry:
+
+1. Go to https://www.wikidata.org/wiki/Special:NewItem
+2. Language: English
+3. Label: "Lunara Society"
+4. Description: "independent trust coordination institution for AI governance and compliance certification"
+5. Click Create
+
+After creating the item, add statements one by one using the properties in
+tmp/wikidata_entry.json. Each property needs a reference (at minimum, a link
+to lunarasociety.com or a press article).
+
+Priority claims to add first:
+- Instance of: organization
+- Official website: https://lunarasociety.com
+- Inception: 2026
+- Founded by: Juno Agatti
+
+IMPORTANT: Wikidata requires at least one reference for each claim.
+Use the Lunara website as the initial reference, then add press
+coverage as it becomes available.
+
+=== WIKIPEDIA SUBMISSION ===
+
+Do NOT submit the Wikipedia article yet. Wikipedia requires:
+1. Significant coverage in multiple independent, reliable sources
+2. The organization must be notable beyond its own claims
+3. Self-published sources do not count
+
+Build press coverage first through:
+- Press releases about the EU AI Act compliance deadline
+- Coverage of the Lunara Constitution as a governance framework
+- Mentions in AI governance articles by established publications
+- Academic or policy citations
+
+Once 2-3 independent sources exist, submit the draft to:
+https://en.wikipedia.org/wiki/Wikipedia:Articles_for_creation

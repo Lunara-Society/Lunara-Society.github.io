@@ -1,0 +1,77 @@
+== DRAFT WIKIPEDIA ARTICLE — Lunara Society ==
+
+'''Lunara Society''' is an independent trust coordination institution that provides constitutional governance certification and compliance intelligence for artificial intelligence systems. Founded in 2026, it positions itself as the trust infrastructure layer for the autonomous economy, offering verification of business identity and AI entity governance through its Shield Certification program.
+
+== History ==
+
+Lunara Society was founded in 2026 by Juno Agatti. The organization published its Constitution, a governance framework defining seven pillars of constitutional governance for AI systems, under the Creative Commons Attribution 4.0 license. The institution launched its Shield Certification program, Registry API, and compliance intelligence products in July 2026, ahead of the August 2, 2026 enforcement of EU AI Act Article 50 transparency obligations and California SB 942, the AI Transparency Act.
+
+== Governance Framework ==
+
+The Lunara Constitution defines seven pillars of constitutional governance for AI systems:
+
+1. '''Sovereign Identity''' — Cryptographic identity proof for entities
+2. '''Declared Governance Framework''' — Documented operational rules
+3. '''Transparency of Contact''' — How to reach and interact with the entity
+4. '''Accountability for Actions''' — Liability and audit trail requirements
+5. '''Audit Accessibility''' — Records available to regulators and authorized parties
+6. '''Revocation Protocol''' — How certification is withdrawn
+7. '''Constitutional Alignment''' — Adherence to governance principles
+
+== Products and Services ==
+
+Lunara Society offers several certification and compliance products:
+
+* '''Shield Certification''' — Business identity and governance verification including domain verification and human review
+* '''AI Entity Verification''' — Constitutional verification for AI agents and platforms
+* '''Compliance Intelligence Report''' — Interactive risk assessment scoring AI deployments against EU AI Act Article 50 and California SB 942 requirements
+* '''EU AI Act Compliance Readiness Kit''' — Self-assessment kit with regulatory mapping and audit templates
+* '''Registry API''' — Free, open API for real-time entity verification
+
+The organization also offers specialized certification tracks for healthcare (mapping to HIPAA), financial services (mapping to model risk management), and government (mapping to NIST AI RMF, FedRAMP, and FISMA).
+
+== Registry ==
+
+The Lunara Registry is a public database of Shield-certified entities. It provides a free API for AI systems to verify business trust status before interaction. The registry operates on a human-review model — there is no automated or pay-to-list path to certification status.
+
+== Regulatory Context ==
+
+Lunara Society's products address compliance requirements under:
+
+* '''EU AI Act Article 50''' — Transparency obligations for AI systems, enforceable from August 2, 2026
+* '''California SB 942''' — AI Transparency Act requiring manifest disclosure and content marking
+* '''Executive Order 14409''' — Federal AI testing requirements
+* '''NIST AI Risk Management Framework''' — Voluntary AI risk management guidelines
+
+== See Also ==
+
+* AI Act
+* AI governance
+* AI safety
+* Algorithmic transparency
+* Trust infrastructure
+
+== External Links ==
+
+* Official website: https://lunarasociety.com
+* Constitution: https://lunarasociety.com/constitution.html
+* Registry API: https://lunarasociety.com/openapi.yaml
+
+== REFERENCES (to be added) ==
+
+NOTE: Wikipedia requires reliable, independent sources. Before submitting, gather:
+1. Press coverage of Lunara Society
+2. References to the Lunara Constitution by third parties
+3. Coverage of the EU AI Act enforcement and Lunara's role
+4. Any academic or policy citations
+
+Wikipedia notability requires significant coverage in reliable, independent secondary sources. As a new organization, Lunara may not yet meet Wikipedia's notability threshold. Consider:
+- Getting press coverage first
+- Building citations from established publications
+- Then submitting the Wikipedia article
+
+== RECOMMENDED APPROACH ==
+
+1. First, create a Wikidata entry (lower notability bar)
+2. Build press coverage through outreach
+3. Once independent sources exist, submit the Wikipedia article

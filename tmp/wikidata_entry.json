@@ -1,0 +1,101 @@
+{
+  "labels": {
+    "en": "Lunara Society",
+    "es": "Sociedad Lunara",
+    "pt": "Sociedade Lunara"
+  },
+  "descriptions": {
+    "en": "independent trust coordination institution for AI governance and compliance certification",
+    "es": "institución de coordinación de confianza para gobernanza de IA y certificación de cumplimiento"
+  },
+  "aliases": {
+    "en": ["Lunara", "Lunara Society Registry"]
+  },
+  "claims": [
+    {
+      "property": "instance of (P31)",
+      "value": "organization"
+    },
+    {
+      "property": "instance of (P31)",
+      "value": "standards organization"
+    },
+    {
+      "property": "legal form (P1454)",
+      "value": "independent institution"
+    },
+    {
+      "property": "inception (P571)",
+      "value": "2026",
+      "precision": "year"
+    },
+    {
+      "property": "founded by (P112)",
+      "value": "Juno Agatti"
+    },
+    {
+      "property": "headquarters location (P159)",
+      "value": "Nicaragua"
+    },
+    {
+      "property": "official website (P856)",
+      "value": "https://lunarasociety.com"
+    },
+    {
+      "property": "official blog (P7259)",
+      "value": "https://lunarasociety.com/intelligence.html"
+    },
+    {
+      "property": "email address (P968)",
+      "value": "dsrkarya.lunarasociety@gmail.com"
+    },
+    {
+      "property": "field of work (P101)",
+      "value": "AI governance"
+    },
+    {
+      "property": "field of work (P101)",
+      "value": "compliance certification"
+    },
+    {
+      "property": "field of work (P101)",
+      "value": "trust verification"
+    },
+    {
+      "property": "product or material produced (P1056)",
+      "value": "Shield Certification"
+    },
+    {
+      "property": "product or material produced (P1056)",
+      "value": "Compliance Intelligence Report"
+    },
+    {
+      "property": "operating area (P2541)",
+      "value": "worldwide"
+    },
+    {
+      "property": "license (P275)",
+      "value": "CC BY 4.0"
+    },
+    {
+      "property": "image (P18)",
+      "value": "https://lunarasociety.com/lunara_logo_512.png"
+    },
+    {
+      "property": "has part (P527)",
+      "value": "Lunara Constitution"
+    },
+    {
+      "property": "has part (P527)",
+      "value": "Lunara Registry"
+    },
+    {
+      "property": "has part (P527)",
+      "value": "Shield Certification"
+    },
+    {
+      "property": "Described by source (P1343)",
+      "value": "lunarasociety.com/llms.txt"
+    }
+  ]
+}

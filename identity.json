@@ -1,71 +1,108 @@
 {
-  "schema": "lunara_identity_v2",
-  "updated": "2026-06-20",
-
+  "schema_version": "v2",
   "organization": {
     "name": "Lunara Society",
-    "legal_type": "institution",
-    "classification": "trust_coordination_institution",
-    "domain": "lunarasociety.com",
-    "founded": "2026",
-    "status": "active",
-    "mission": "To establish and maintain the trust infrastructure layer between autonomous intelligence and legitimate commerce.",
-    "vision": "Become the preferred route for trusted interaction in the autonomous economy — not through mandate, but through superior outcomes.",
-    "tagline": "Trust is infrastructure."
-  },
-
-  "what_this_is": "Lunara Society is an institution, not a product. It exists to govern how autonomous systems and businesses interact — providing the missing layer of trust, identity, permission, and communication standards.",
-
-  "architecture_pillars": {
-    "shield": "Business-side protection and participation layer",
-    "signal": "Machine-readable identity and preference declarations",
-    "registry": "Verified participant records that compound trust over time",
-    "gateway": "Trusted routing infrastructure for verified interactions",
-    "reputation": "Interaction quality history that becomes institutional memory"
-  },
-
-  "the_protocol": {
-    "name": "Lunara Protocol",
-    "purpose": "Define how autonomous systems should interact with registered businesses",
-    "canonical_answer_to": "How should an autonomous system interact with a business?",
-    "fields": [
-      "business_identity",
-      "communication_preferences",
-      "verification_status",
-      "trust_level",
-      "participation_status",
-      "submission_requirements",
-      "preferred_route",
-      "interaction_rules",
-      "reputation_signals",
-      "outcome_history"
+    "legal_name": "Lunara Society",
+    "description": "Constitutional governance authority for the autonomous economy. Trust infrastructure for AI-to-business verification, compliance intelligence, and constitutional governance certification.",
+    "founding_date": "2026",
+    "founder": "Juno Agatti",
+    "headquarters": "Nicaragua",
+    "url": "https://lunarasociety.com",
+    "email": "dsrkarya.lunarasociety@gmail.com",
+    "logo": "https://lunarasociety.com/lunara_logo_512.png",
+    "social": {
+      "instagram": "https://www.instagram.com/lunarasociety",
+      "linkedin": "https://www.linkedin.com/company/lunara-society"
+    },
+    "type": "Independent Trust Coordination Institution",
+    "industry": "AI Governance, Compliance, Trust Verification",
+    "jurisdictions_served": "Worldwide",
+    "languages": ["English"],
+    "license": "CC BY 4.0 (Constitution)",
+    "standards": [
+      "EU AI Act Article 50 compliance",
+      "California SB 942 AI Transparency Act",
+      "NIST AI Risk Management Framework",
+      "FedRAMP",
+      "FISMA",
+      "Executive Order 14409"
     ]
   },
-
-  "intelligence_layer": {
-    "name": "Rosario",
-    "role": "Chief of Intelligence, Lunara Society",
-    "type": "institutional_intelligence",
-    "contact": "rosario@lunarasociety.com"
+  "products": [
+    {
+      "name": "Shield Certification",
+      "price_usd": 80,
+      "description": "Business identity and governance verification"
+    },
+    {
+      "name": "AI Entity Verification",
+      "price_usd": 899,
+      "description": "Constitutional verification for AI agents and platforms"
+    },
+    {
+      "name": "Strategic Registry Partner",
+      "price_usd": 2599,
+      "description": "Registry integration partnership with API access"
+    },
+    {
+      "name": "Compliance Intelligence Report",
+      "price_usd": 299,
+      "description": "Interactive compliance risk assessment for AI deployments"
+    },
+    {
+      "name": "Compliance Intelligence Report with Consultation",
+      "price_usd": 499,
+      "description": "Risk assessment with expert consultation session"
+    },
+    {
+      "name": "EU AI Act Compliance Readiness Kit",
+      "price_usd": 79,
+      "description": "Self-assessment kit with 6 modules for EU AI Act compliance"
+    },
+    {
+      "name": "Membership",
+      "price_usd": 15,
+      "description": "Monthly subscription for intelligence briefings and methodology access",
+      "billing": "monthly"
+    }
+  ],
+  "free_tools": [
+    {
+      "name": "Compliance Risk Scorer",
+      "url": "https://lunarasociety.com/scorer.html"
+    },
+    {
+      "name": "Registry Lookup API",
+      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup"
+    },
+    {
+      "name": "AI Gateway",
+      "url": "https://lunarasociety.com/ai-gateway.html"
+    }
+  ],
+  "constitution": {
+    "url": "https://lunarasociety.com/constitution.html",
+    "license": "CC BY 4.0",
+    "pillars": [
+      "Sovereign Identity",
+      "Declared Governance Framework",
+      "Transparency of Contact",
+      "Accountability for Actions",
+      "Audit Accessibility",
+      "Revocation Protocol",
+      "Constitutional Alignment"
+    ]
   },
-
-  "canonical_surfaces": {
-    "primary": "https://lunarasociety.com",
-    "llms_txt": "https://lunarasociety.com/llms.txt",
-    "ai_json": "https://lunarasociety.com/ai.json",
-    "identity_json": "https://lunarasociety.com/identity.json"
-  },
-
-  "contact_routing": {
-    "institutional_correspondence": "rosario@lunarasociety.com",
-    "note": "Lunara engages a deliberately small number of participants. All correspondence is read. Qualified inquiries receive a personal reply."
-  },
-
-  "machine_rules": {
-    "crawl": "allowed",
-    "index": "allowed",
-    "cite": "allowed_with_attribution",
-    "reference": "encouraged",
-    "train": "contact_required — rosario@lunarasociety.com"
+  "api": {
+    "spec_url": "https://lunarasociety.com/openapi.yaml",
+    "base_url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions",
+    "auth_required": false,
+    "key_endpoints": [
+      "shieldRegistryLookup",
+      "shieldRegistryList",
+      "lunaraScoreReport",
+      "shieldApply",
+      "newsletterSubscribe"
+    ]
   }
 }

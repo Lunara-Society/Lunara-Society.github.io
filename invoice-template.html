@@ -49,6 +49,182 @@ body{background:#000000;color:#d4c5a9;font-family:'Inter',sans-serif;font-weight
 .founding-badge{display:inline-block;padding:6px 16px;border:1px solid rgba(196,164,107,0.5);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C4A46B;margin-bottom:24px}
 @media(max-width:600px){.invoice{padding:32px 20px}.parties{flex-direction:column}.item-header,.item-row{grid-template-columns:2fr 1fr}.item-rate,.item-header span:nth-child(3){display:none}.totals{width:100%}}
 </style>
+
+<script type="application/ld+json" id="lunara-schema">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://lunarasociety.com/#organization",
+      "name": "Lunara Society",
+      "url": "https://lunarasociety.com",
+      "description": "Constitutional governance authority for the autonomous economy. Trust infrastructure layer for AI-to-business verification and compliance.",
+      "foundingDate": "2026",
+      "email": "dsrkarya.lunarasociety@gmail.com",
+      "logo": "https://lunarasociety.com/lunara_logo_512.png",
+      "sameAs": [
+        "https://www.instagram.com/lunarasociety",
+        "https://www.linkedin.com/company/lunara-society"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lunarasociety.com/#website",
+      "url": "https://lunarasociety.com",
+      "name": "Lunara Society",
+      "publisher": {"@id": "https://lunarasociety.com/#organization"},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lunarasociety.com/registry.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://lunarasociety.com/#service",
+      "name": "Lunara Shield Certification",
+      "description": "Constitutional governance certification for AI systems and businesses. Identity verification, domain verification, and human-reviewed compliance assessment.",
+      "provider": {"@id": "https://lunarasociety.com/#organization"},
+      "areaServed": "Worldwide",
+      "serviceType": "AI Governance Certification",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Shield Certification",
+          "price": "80",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "AI Entity Verification",
+          "price": "899",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Strategic Registry Partner",
+          "price": "2599",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/registry.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Compliance Intelligence Report",
+          "price": "299",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Compliance Intelligence Report with Consultation",
+          "price": "499",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "EU AI Act Compliance Readiness Kit",
+          "price": "79",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/readiness-kit.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Membership",
+          "price": "15",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/member.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://lunarasociety.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Lunara Shield Certification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lunara Shield Certification is a constitutional governance certification for businesses and AI entities. It includes identity verification, domain ownership verification, and human-reviewed compliance assessment against seven constitutional pillars. Certified entities are published on the public Lunara Registry."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I verify if a business has Lunara Shield Certification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the EU AI Act Article 50 compliance requirement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "EU AI Act Article 50 requires AI systems to disclose their identity to users and mark synthetic content as machine-readable. Enforcement began August 2, 2026. Penalties are up to EUR 15 million or 3% of global turnover. Lunara provides compliance intelligence reports and readiness kits to help businesses comply."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Lunara Compliance Intelligence Report?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is California SB 942 AI Transparency Act?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "California SB 942 requires AI providers to disclose when content is AI-generated, embed manifest disclosure, and provide free detection tools for providers with over 1 million monthly active users. It became operative on August 2, 2026, the same day as EU AI Act Article 50 enforcement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does Lunara Society help with AI governance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lunara Society provides constitutional governance frameworks, compliance intelligence, and certification for AI systems. We offer risk scoring, compliance reports, readiness kits, and certification tracks for healthcare, FinTech, and government sectors. Our constitution is the foundational governance document for the autonomous economy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Lunara Constitution?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Lunara Constitution is the foundational governance document for AI systems, published under CC BY 4.0. It defines seven pillars of constitutional governance: Sovereign Identity, Declared Governance Framework, Transparency of Contact, Accountability for Actions, Audit Accessibility, Revocation Protocol, and Constitutional Alignment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can AI systems query the Lunara Registry?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The Lunara Registry API is free and open. AI systems can query it to verify business identity, check Shield certification status, and determine how to contact businesses through structured submission routes. The API is documented in our llms.txt file and OpenAPI specification."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://lunarasociety.com/#howto-certify",
+      "name": "How to Get Lunara Shield Certified",
+      "description": "The process for obtaining Lunara Shield Certification for your business or AI entity.",
+      "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Apply", "text": "Submit your application at lunarasociety.com/certify.html with your business name, website, and contact information."},
+        {"@type": "HowToStep", "position": 2, "name": "Domain Verification", "text": "Verify your domain ownership by adding a DNS token provided by Lunara."},
+        {"@type": "HowToStep", "position": 3, "name": "Identity Verification", "text": "Complete identity verification with your legal registration details."},
+        {"@type": "HowToStep", "position": 4, "name": "Compliance Review", "text": "Our governance team reviews your application against the seven constitutional pillars."},
+        {"@type": "HowToStep", "position": 5, "name": "Certification Issued", "text": "Upon successful review, your Shield badge is issued and your record is published on the public Lunara Registry."}
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="invoice">

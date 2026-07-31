@@ -66,6 +66,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
 </style>
 </head>
 <body>
+<!-- ACCESS GATE -->
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('t');
+  if (!token) {
+    // Check if we already verified in this session
+    var verified = sessionStorage.getItem('lunara_kit_access');
+    if (!verified) {
+      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#060606;font-family:Inter,sans-serif;color:rgba(196,164,107,0.72);text-align:center;padding:40px;"><div><div style="font-family:Cormorant Garamond,serif;font-size:42px;font-weight:300;color:rgba(196,164,107,0.9);margin-bottom:24px;">Lunara Society</div><p style="font-size:16px;line-height:1.8;margin-bottom:24px;max-width:420px;">This page is for verified purchasers of the EU AI Act Compliance Readiness Kit. If you have completed payment, you should have been redirected here automatically.</p><a href="readiness-kit.html" style="display:inline-block;padding:14px 32px;border:1px solid rgba(196,164,107,0.5);border-radius:100px;color:rgba(224,224,176,0.9);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">Purchase the Kit</a></div></div>';
+      throw new Error('Access denied');
+    }
+  } else {
+    sessionStorage.setItem('lunara_kit_access', token);
+  }
+})();
+</script>
+<!-- END ACCESS GATE -->
 
 <nav>
 <a href="/" class="nav-brand"><img src="/lunara_logo_512.png" alt="Lunara Society" class="nav-brand-logo"><span class="nav-brand-text">Lunara <span>Society</span></span></a>

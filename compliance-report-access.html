@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Compliance Report Access — Lunara Society</title>
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.72);--bg:#060606}
+html,body{width:100%;background:#060606;font-family:'Inter',sans-serif;font-weight:300;color:#fff;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.05) 0%,transparent 70%);pointer-events:none;z-index:0}
+.nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);border-bottom:1px solid var(--gold-30);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+.main{max-width:760px;margin:0 auto;padding:80px 32px;position:relative;z-index:1}
+.header{text-align:center;margin-bottom:48px}
+.header h1{font-size:clamp(28px,4vw,44px);font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;margin-bottom:16px}
+.header p{font-size:14px;color:var(--text-dim);letter-spacing:1px}
+.success-bar{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:20px 28px;text-align:center;margin-bottom:48px;border-radius:4px}
+.success-bar .check{font-size:36px;color:var(--gold-b);margin-bottom:12px}
+.success-bar h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:#f0e0b0;margin-bottom:8px}
+.success-bar p{font-size:14px;color:var(--text-dim)}
+.order-info{background:rgba(196,164,107,0.03);border:1px solid rgba(196,164,107,0.15);border-radius:6px;padding:28px 32px;margin-bottom:48px}
+.order-info h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:#f0e0b0;margin-bottom:20px}
+.order-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-size:14px}
+.order-row:last-child{border-bottom:none}
+.order-row .label{color:var(--text-dim)}
+.order-row .value{color:#f0e0b0}
+.section{margin-bottom:48px}
+.section h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#f0e0b0;margin-bottom:16px}
+.section p{font-size:15px;line-height:1.8;color:var(--text-dim);margin-bottom:16px}
+.scoring-form{margin-top:24px}
+.form-group{margin-bottom:24px}
+.form-group label{display:block;font-size:13px;color:var(--text);margin-bottom:8px;letter-spacing:0.05em}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 16px;background:rgba(196,164,107,0.03);border:1px solid rgba(196,164,107,0.2);border-radius:4px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:300;transition:border 0.25s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold)}
+.form-group textarea{min-height:100px;resize:vertical}
+.form-group select option{background:#0a0a0a}
+.form-btn{display:block;width:100%;padding:18px;background:rgba(196,164,107,0.12);border:1px solid var(--gold-50);border-radius:100px;color:#f0e0b0;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;margin-top:12px}
+.form-btn:hover{background:rgba(196,164,107,0.2);border-color:var(--gold)}
+.result-card{background:rgba(196,164,107,0.03);border:1px solid rgba(196,164,107,0.2);border-radius:6px;padding:32px;margin-top:24px;display:none}
+.score-display{text-align:center;margin-bottom:32px}
+.score-num{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:var(--gold-b)}
+.score-label{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-dim);margin-top:8px}
+.gap-item{padding:16px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
+.gap-item:last-child{border-bottom:none}
+.gap-item .severity{display:inline-block;padding:2px 12px;border-radius:100px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
+.severity.critical{background:rgba(220,38,38,0.15);color:#ff6b6b;border:1px solid rgba(220,38,38,0.3)}
+.severity.high{background:rgba(196,164,107,0.15);color:var(--gold-b);border:1px solid var(--gold-30)}
+.severity.moderate{background:rgba(100,100,100,0.15);color:rgba(200,200,200,0.8);border:1px solid rgba(100,100,100,0.3)}
+.gap-item h4{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:#f0e0b0;margin-bottom:6px}
+.gap-item p{font-size:14px;line-height:1.7;color:var(--text-dim);margin-bottom:8px}
+.gap-item .remediation{font-size:13px;color:var(--gold-70);padding:10px 14px;background:rgba(196,164,107,0.04);border-radius:4px;border-left:2px solid var(--gold-30)}
+.consultation-cta{background:rgba(196,164,107,0.05);border:1px solid var(--gold-30);border-radius:6px;padding:32px;text-align:center;margin-top:32px}
+.consultation-cta h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#f0e0b0;margin-bottom:12px}
+.consultation-cta p{font-size:14px;color:var(--text-dim);margin-bottom:20px}
+.consultation-cta a{display:inline-block;padding:14px 32px;background:rgba(196,164,107,0.12);border:1px solid var(--gold-50);border-radius:100px;color:#f0e0b0;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;transition:all 0.3s}
+.consultation-cta a:hover{background:rgba(196,164,107,0.2);border-color:var(--gold)}
+.error-box{text-align:center;padding:80px 32px;display:none}
+.error-box h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:#f0e0b0;margin-bottom:16px}
+.error-box p{font-size:15px;color:var(--text-dim);line-height:1.8;margin-bottom:24px}
+.error-box a{color:var(--gold-b);text-decoration:none;font-size:13px;letter-spacing:0.15em;text-transform:uppercase}
+footer{padding:40px 24px;border-top:1px solid rgba(196,164,107,0.1);text-align:center}
+footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196,164,107,0.4)}
+@media(max-width:768px){.main{padding:60px 20px}.order-info{padding:20px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">LUNARA <span>SOCIETY</span></a>
+  <a href="index.html" style="font-size:11px;color:var(--gold-50);text-decoration:none;letter-spacing:0.15em;text-transform:uppercase">Return Home</a>
+</nav>
+
+<div class="main" id="access-content">
+
+  <div class="success-bar">
+    <div class="check">✓</div>
+    <h2>Payment Confirmed</h2>
+    <p id="tier-label">Your Compliance Intelligence Report is ready</p>
+  </div>
+
+  <div class="order-info">
+    <h3>Order Details</h3>
+    <div class="order-row"><span class="label">Product</span><span class="value" id="product-name">Compliance Intelligence Report</span></div>
+    <div class="order-row"><span class="label">Amount Paid</span><span class="value" id="amount-paid">$299</span></div>
+    <div class="order-row"><span class="label">Transaction ID</span><span class="value" id="txn-id">—</span></div>
+    <div class="order-row"><span class="label">Status</span><span class="value" style="color:#4ade80">Confirmed</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Submit Your Deployment Details</h3>
+    <p>Complete the form below. Our scoring engine evaluates your agentic AI deployment against EU AI Act Article 50 and California SB 942 binding requirements. Your personalized report is generated instantly.</p>
+
+    <div class="scoring-form">
+      <div class="form-group">
+        <label>Organization Name</label>
+        <input type="text" id="org-name" placeholder="Your organization">
+      </div>
+      <div class="form-group">
+        <label>AI System Name</label>
+        <input type="text" id="system-name" placeholder="e.g. Customer Support Agent">
+      </div>
+      <div class="form-group">
+        <label>Agent Type</label>
+        <select id="agent-type">
+          <option value="">Select agent type</option>
+          <option value="conversational">Conversational AI / Chatbot</option>
+          <option value="autonomous">Autonomous Agent</option>
+          <option value="content-gen">Content Generation</option>
+          <option value="decision-support">Decision Support</option>
+          <option value="data-analysis">Data Analysis</option>
+          <option value="multi-agent">Multi-Agent System</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>User Interaction Type</label>
+        <select id="interaction-type">
+          <option value="">Select interaction type</option>
+          <option value="direct">Users interact directly with AI</option>
+          <option value="indirect">AI operates without direct user contact</option>
+          <option value="hybrid">Hybrid — some direct, some indirect</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Jurisdictions</label>
+        <select id="jurisdiction">
+          <option value="">Select primary jurisdiction</option>
+          <option value="eu">EU only</option>
+          <option value="us-ca">California / US only</option>
+          <option value="both">EU + California (dual)</option>
+          <option value="global">Global / Multi-jurisdiction</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Current Disclosure Measures (if any)</label>
+        <textarea id="disclosure-measures" placeholder="Describe any existing AI disclosure, labeling, or transparency measures you have in place..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Monthly Active Users (approximate)</label>
+        <select id="mau">
+          <option value="">Select range</option>
+          <option value="under-10k">Under 10,000</option>
+          <option value="10k-100k">10,000 — 100,000</option>
+          <option value="100k-1m">100,000 — 1,000,000</option>
+          <option value="over-1m">Over 1,000,000</option>
+        </select>
+      </div>
+      <button class="form-btn" onclick="generateReport()">Generate Compliance Report</button>
+    </div>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div class="score-label">Compliance Risk Score</div>
+    </div>
+    <div id="gaps-list"></div>
+    <div class="consultation-cta" id="consult-cta" style="display:none">
+      <h3>Want a Personalized Walkthrough?</h3>
+      <p>Your report shows critical compliance gaps. Book a 30-minute consultation with Lunara's governance team to walk through your findings and remediation plan.</p>
+      <a href="mailto:dsrkarya.lunarasociety@gmail.com?subject=Compliance Consultation Request">Book Consultation</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="error-box" id="error-box">
+  <h2>Access Denied</h2>
+  <p>This page is for verified purchasers of the Lunara Compliance Intelligence Report. If you have completed payment but are seeing this message, please contact us with your PayPal transaction ID.</p>
+  <a href="contact.html">Contact Support</a>
+</div>
+
+<footer>
+  <p>© 2026 Lunara Society. Constitutional Governance Authority.</p>
+</footer>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('t');
+  var priceTier = params.get('p');
+
+  if (!token) {
+    document.getElementById('access-content').style.display = 'none';
+    document.getElementById('error-box').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('txn-id').textContent = token.substring(0, 12) + '...';
+
+  if (priceTier === '499') {
+    document.getElementById('amount-paid').textContent = '$499';
+    document.getElementById('tier-label').textContent = 'Compliance Intelligence Report with Consultation';
+    document.getElementById('product-name').textContent = 'Compliance Intelligence Report + Consultation';
+  } else {
+    document.getElementById('amount-paid').textContent = '$299';
+  }
+})();
+
+function generateReport() {
+  var orgName = document.getElementById('org-name').value.trim();
+  var systemName = document.getElementById('system-name').value.trim();
+  var agentType = document.getElementById('agent-type').value;
+  var interactionType = document.getElementById('interaction-type').value;
+  var jurisdiction = document.getElementById('jurisdiction').value;
+  var mau = document.getElementById('mau').value;
+
+  if (!orgName || !systemName || !agentType || !interactionType || !jurisdiction) {
+    alert('Please complete all required fields to generate your report.');
+    return;
+  }
+
+  var score = calculateScore(agentType, interactionType, jurisdiction, mau);
+  var gaps = identifyGaps(agentType, interactionType, jurisdiction, mau, score);
+  var priceTier = new URLSearchParams(window.location.search).get('p');
+
+  document.getElementById('score-num').textContent = score + '/100';
+  document.getElementById('result-card').style.display = 'block';
+
+  var gapsHtml = '';
+  gaps.forEach(function(gap) {
+    gapsHtml += '<div class="gap-item">' +
+      '<span class="severity ' + gap.severityClass + '">' + gap.severity + '</span>' +
+      '<h4>' + gap.title + '</h4>' +
+      '<p>' + gap.description + '</p>' +
+      '<div class="remediation"><strong>Remediation:</strong> ' + gap.remediation + '</div>' +
+    '</div>';
+  });
+  document.getElementById('gaps-list').innerHTML = gapsHtml;
+
+  if (priceTier === '299' && score < 70) {
+    document.getElementById('consult-cta').style.display = 'block';
+  }
+
+  document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+
+  var params = new URLSearchParams(window.location.search);
+  var txnId = params.get('t');
+  fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraScoreReport', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      organization_name: orgName,
+      system_name: systemName,
+      score: score,
+      gaps: gaps.map(function(g) { return g.title; }).join(', '),
+      grade: score < 40 ? 'CRITICAL RISK' : score < 60 ? 'HIGH RISK' : score < 80 ? 'MODERATE RISK' : 'LOW RISK',
+      email: '',
+      txn_id: txnId,
+      product: 'compliance-intelligence'
+    })
+  }).catch(function() {});
+}
+
+function calculateScore(agentType, interactionType, jurisdiction, mau) {
+  var score = 100;
+  if (interactionType === 'direct') score -= 15;
+  if (interactionType === 'hybrid') score -= 8;
+  if (agentType === 'conversational') score -= 10;
+  if (agentType === 'autonomous') score -= 20;
+  if (agentType === 'content-gen') score -= 12;
+  if (agentType === 'multi-agent') score -= 18;
+  if (jurisdiction === 'both' || jurisdiction === 'global') score -= 15;
+  if (jurisdiction === 'eu') score -= 8;
+  if (mau === 'over-1m') score -= 15;
+  if (mau === '100k-1m') score -= 8;
+  if (score < 15) score = 15;
+  return Math.round(score);
+}
+
+function identifyGaps(agentType, interactionType, jurisdiction, mau, score) {
+  var gaps = [];
+
+  if (interactionType === 'direct' || interactionType === 'hybrid') {
+    gaps.push({
+      severity: 'CRITICAL',
+      severityClass: 'critical',
+      title: 'Article 50(1) — AI Identity Disclosure',
+      description: 'Users interacting directly with your AI system must be informed they are interacting with AI. The EU Code of Practice explicitly excludes this requirement from its guidance, creating implementation ambiguity.',
+      remediation: 'Implement manifest AI disclosure at the start of every user interaction. Include visible labeling in UI and audible disclosure for voice-based systems. Document the disclosure method for audit purposes.'
+    });
+  }
+
+  gaps.push({
+    severity: 'HIGH',
+    severityClass: 'high',
+    title: 'Article 50(2) — Synthetic Content Marking',
+    description: 'AI-generated content (text, images, audio, video) must be machine-readable marked. Technical standards (prEN 18228, prEN 18282) are pending publication.',
+    remediation: 'Embed C2PA content credentials in all AI-generated outputs. Maintain metadata provenance records. Prepare for standards publication by implementing C2PA now.'
+  });
+
+  if (jurisdiction === 'us-ca' || jurisdiction === 'both' || jurisdiction === 'global') {
+    gaps.push({
+      severity: 'HIGH',
+      severityClass: 'high',
+      title: 'SB 942 — Manifest Disclosure Requirement',
+      description: 'California requires AI providers to disclose when content is AI-generated. For providers with 1M+ MAU, free detection tools must be offered.',
+      remediation: 'Implement AI-generated content labels visible to users. If MAU exceeds 1M, develop or partner with a detection tool provider. Verify MAU threshold against current usage data.'
+    });
+  }
+
+  if (mau === 'over-1m') {
+    gaps.push({
+      severity: 'CRITICAL',
+      severityClass: 'critical',
+      title: 'SB 942 — Detection Tool Requirement',
+      description: 'Providers with over 1,000,000 monthly active users must provide free AI detection tools to the public. Non-compliance exposes you to California AG enforcement.',
+      remediation: 'Deploy or partner with a C2PA-compliant detection tool. Make it publicly accessible at no cost. Document the tool availability and usage metrics.'
+    });
+  }
+
+  gaps.push({
+    severity: 'MODERATE',
+    severityClass: 'moderate',
+    title: 'Cross-Jurisdiction Coordination Gap',
+    description: 'EU Article 50 and California SB 942 have overlapping but non-identical requirements. No harmonization mechanism exists. Dual-jurisdiction deployments face interpretation risk.',
+    remediation: 'Map each requirement across both regulations. Build a unified compliance matrix that satisfies both frameworks simultaneously. Document the mapping for legal review.'
+  });
+
+  if (agentType === 'autonomous' || agentType === 'multi-agent') {
+    gaps.push({
+      severity: 'CRITICAL',
+      severityClass: 'critical',
+      title: 'Agent Disclosure — Article 50(1) Implementation Gap',
+      description: 'The Code of Practice explicitly excludes Article 50(1) agent disclosure requirements. Autonomous agents operating without user awareness create the highest compliance exposure under EU enforcement.',
+      remediation: 'Implement agent identity disclosure in all interaction logs and user-facing interfaces. Register agent identity on a public registry (Lunara Shield Certification recommended). Maintain audit trail of all disclosure events.'
+    });
+  }
+
+  gaps.push({
+    severity: 'MODERATE',
+    severityClass: 'moderate',
+    title: 'Audit Trail Documentation',
+    description: 'Both EU and California frameworks expect providers to maintain records of compliance measures. No specific format is mandated, but evidence must be producible on demand.',
+    remediation: 'Establish a compliance documentation repository. Log all AI interactions, disclosure events, and content markings. Retain records for minimum 12 months. Ensure records are accessible to authorized regulators within 72 hours.'
+  });
+
+  return gaps;
+}
+</script>
+
+</body>
+</html>

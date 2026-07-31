@@ -258,7 +258,12 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <script>
 if (window.paypal) {
 paypal.HostedButtons({
-hostedButtonId: "L954695SE2ZDG"
+hostedButtonId: "L954695SE2ZDG",
+onApprove: function(data, actions) {
+  return actions.order.capture().then(function(details) {
+    window.location.href = "kit-access.html?t=" + details.id + "&e=" + btoa(details.payer.email_address);
+  });
+}
 }).render("#paypal-container-L954695SE2ZDG");
 }
 </script>

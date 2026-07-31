@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Thank You — Lunara Society</title>
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.72);--bg:#060606}
+html,body{width:100%;background:#060606;font-family:'Inter',sans-serif;font-weight:300;color:#fff;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,0.05) 0%,transparent 70%);pointer-events:none;z-index:0}
+.nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);border-bottom:1px solid var(--gold-30);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+.main{max-width:700px;margin:0 auto;padding:80px 32px;position:relative;z-index:1;text-align:center}
+.check{font-size:48px;color:var(--gold-b);margin-bottom:24px}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,48px);font-weight:300;color:#f0e0b0;margin-bottom:20px;line-height:1.2}
+h1 em{font-style:italic;color:var(--gold-b)}
+.main p{font-size:16px;line-height:1.8;color:var(--text-dim);margin-bottom:16px;max-width:560px;margin-left:auto;margin-right:auto}
+.order-box{background:rgba(196,164,107,0.03);border:1px solid rgba(196,164,107,0.15);border-radius:6px;padding:28px 32px;margin:40px auto;max-width:480px;text-align:left}
+.order-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-size:14px}
+.order-row:last-child{border-bottom:none}
+.order-row .label{color:var(--text-dim)}
+.order-row .value{color:#f0e0b0}
+.next-steps{text-align:left;max-width:560px;margin:40px auto}
+.next-steps h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:#f0e0b0;margin-bottom:20px;text-align:center}
+.next-steps ol{list-style:none;counter-reset:step}
+.next-steps ol li{padding:16px 0 16px 48px;position:relative;border-bottom:1px solid rgba(196,164,107,0.08);font-size:15px;line-height:1.7;color:var(--text-dim)}
+.next-steps ol li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:14px;width:32px;height:32px;border:1px solid var(--gold-30);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold-b)}
+.next-steps ol li strong{color:#f0e0b0;font-weight:400}
+.btn{display:inline-block;margin-top:32px;padding:16px 40px;border:1px solid var(--gold-50);border-radius:100px;color:#f0e0b0;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;transition:all 0.3s}
+.btn:hover{background:rgba(196,164,107,0.12);border-color:var(--gold)}
+.error-box{text-align:center;padding:80px 32px;display:none}
+.error-box h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:#f0e0b0;margin-bottom:16px}
+.error-box p{font-size:15px;color:var(--text-dim);line-height:1.8;margin-bottom:24px}
+.error-box a{color:var(--gold-b);text-decoration:none;font-size:13px;letter-spacing:0.15em;text-transform:uppercase}
+footer{padding:40px 24px;border-top:1px solid rgba(196,164,107,0.1);text-align:center}
+footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196,164,107,0.4)}
+@media(max-width:768px){.main{padding:60px 20px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">LUNARA <span>SOCIETY</span></a>
+  <a href="index.html" style="font-size:11px;color:var(--gold-50);text-decoration:none;letter-spacing:0.15em;text-transform:uppercase">Return Home</a>
+</nav>
+
+<div class="main" id="thanks-content">
+  <div class="check">✓</div>
+  <h1>Payment <em>confirmed.</em></h1>
+  <p id="intro-text">Thank you. Your Shield Certification application has been received and your payment is confirmed. Here is what happens next.</p>
+
+  <div class="order-box">
+    <div class="order-row"><span class="label">Product</span><span class="value" id="product-name">Shield Certification</span></div>
+    <div class="order-row"><span class="label">Transaction ID</span><span class="value" id="txn-id">—</span></div>
+    <div class="order-row"><span class="label">Status</span><span class="value" style="color:#4ade80">Confirmed</span></div>
+  </div>
+
+  <div class="next-steps">
+    <h2>What Happens Next</h2>
+    <ol id="steps-list">
+      <li><strong>Verification Email</strong> — We will send a confirmation to your PayPal email within 24 hours with your certification reference ID.</li>
+      <li><strong>Domain Verification</strong> — You will receive instructions to verify your business domain via DNS token.</li>
+      <li><strong>Compliance Review</strong> — Our governance team reviews your application against the seven constitutional pillars.</li>
+      <li><strong>Certification Issued</strong> — Upon successful review, your Shield badge is issued and your record is published on the public Lunara Registry.</li>
+    </ol>
+  </div>
+
+  <a href="index.html" class="btn">Return to Lunara</a>
+</div>
+
+<div class="error-box" id="error-box">
+  <h2>Access Denied</h2>
+  <p>This page is for verified purchasers. If you have completed payment but are seeing this message, please contact us with your PayPal transaction ID.</p>
+  <a href="contact.html">Contact Support</a>
+</div>
+
+<footer>
+  <p>© 2026 Lunara Society. Constitutional Governance Authority.</p>
+</footer>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('t');
+  var tier = params.get('tier');
+
+  if (!token) {
+    document.getElementById('thanks-content').style.display = 'none';
+    document.getElementById('error-box').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('txn-id').textContent = token.substring(0, 12) + '...';
+
+  if (tier === 'entity') {
+    document.getElementById('product-name').textContent = 'AI Entity Verification';
+    document.getElementById('intro-text').textContent = 'Thank you. Your AI Entity Verification application has been received and your payment is confirmed. Here is what happens next.';
+    document.getElementById('steps-list').innerHTML = 
+      '<li><strong>Verification Email</strong> — We will send a confirmation to your PayPal email within 24 hours with your verification reference ID.</li>' +
+      '<li><strong>Identity Documentation</strong> — You will receive instructions to submit your AI entity governance documentation and operational rules.</li>' +
+      '<li><strong>Technical Audit</strong> — Our governance team conducts a technical audit of your AI entity architecture and compliance posture.</li>' +
+      '<li><strong>Verification Published</strong> — Upon successful audit, your AI entity verification record is published on the public Lunara Registry.';
+  } else if (tier === 'partner') {
+    document.getElementById('product-name').textContent = 'Strategic Registry Partner';
+    document.getElementById('intro-text').textContent = 'Thank you. Your Strategic Registry Partner application has been received and your payment is confirmed. Here is what happens next.';
+    document.getElementById('steps-list').innerHTML = 
+      '<li><strong>Verification Email</strong> — We will send a confirmation to your PayPal email within 24 hours with your partner reference ID.</li>' +
+      '<li><strong>Partner Onboarding</strong> — You will receive your API key and embed instructions for registry lookup integration.</li>' +
+      '<li><strong>Integration Support</strong> — Our technical team assists with embedding the Lunara Shield verification badge on your platform.</li>' +
+      '<li><strong>Partner Activation</strong> — Your partner profile is published on the Lunara Registry and referral tracking is activated.';
+  }
+})();
+</script>
+
+</body>
+</html>

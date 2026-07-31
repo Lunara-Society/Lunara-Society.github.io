@@ -610,11 +610,21 @@ footer .copyright {
   // $299 button — Self-Service Report
   paypal.HostedButtons({
     hostedButtonId: "ZG7YHP2FWFH5C",
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        window.location.href = "compliance-report-access.html?t=" + details.id + "&p=299";
+      });
+    }
   }).render("#paypal-299");
 
   // $499 button — Report + Consultation
   paypal.HostedButtons({
     hostedButtonId: "9EW5UNV3ZNNNE",
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        window.location.href = "compliance-report-access.html?t=" + details.id + "&p=499";
+      });
+    }
   }).render("#paypal-499");
 </script>
 

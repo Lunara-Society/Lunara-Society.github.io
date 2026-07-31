@@ -299,6 +299,7 @@ p,li,span{
     <div id="form-register" style="display:none">
       <h2 class="auth-title">Create Your Account</h2>
       <p class="auth-sub">Subscribe to access Lunara Society member intelligence, certification methodology, and governance implementation guides.</p>
+      <p style="font-size:11px;color:rgba(196,164,107,0.45);margin-top:12px;line-height:1.6">After subscribing, check your email for the PayPal confirmation. Use the Transaction ID from that email to register below.</p>
       <div class="form-group">
         <label class="form-label">Full Name</label>
         <input type="text" class="form-input" id="reg-name" placeholder="Your name">
@@ -310,6 +311,11 @@ p,li,span{
       <div class="form-group">
         <label class="form-label">Passphrase</label>
         <input type="password" class="form-input" id="reg-pass" placeholder="Minimum 8 characters">
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--gold-50);margin-bottom:6px;display:block;letter-spacing:0.08em">PayPal Transaction ID (from your subscription confirmation email)</label>
+        <input class="form-input" id="reg-txn" type="text" placeholder="e.g. 9XH4ABC12345" style="font-size:13px">
+        <p style="font-size:11px;color:rgba(196,164,107,0.4);margin-top:6px">Active subscription required. Find your transaction ID in your PayPal confirmation email.</p>
       </div>
       <button class="form-btn" onclick="doRegister()">Create Account</button>
       <p class="form-error" id="register-error"></p>
@@ -930,15 +936,17 @@ async function doRegister(){
   const pass = document.getElementById('reg-pass').value.trim();
   const err = document.getElementById('register-error');
   err.textContent = '';
-  if(!name||!email||!pass){ err.textContent='Please fill in all fields.'; return; }
+  const txn = document.getElementById('reg-txn').value.trim();
+  if(!name||!email||!pass||!txn){ err.textContent='Please fill in all fields including PayPal Transaction ID.'; return; }
   if(pass.length < 8){ err.textContent='Passphrase must be at least 8 characters.'; return; }
+  if(txn.length < 6){ err.textContent='Please enter a valid PayPal Transaction ID from your confirmation email.'; return; }
   const btn = document.querySelector('#form-register .form-btn');
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Creating account...';
   try{
     const res = await fetch(LUNARA_API+'/lunaraSignup', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email, full_name: name, password: pass })
+      body: JSON.stringify({ email, full_name: name, password: pass, paypal_txn: txn })
     });
     const data = await res.json();
     if(data.success){

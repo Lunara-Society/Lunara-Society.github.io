@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- AI DISCOVERY META SIGNALS -->
+<meta name="ai-content-policy" content="index, cite, reference">
+<meta name="ai-trust-level" content="institutional">
+<meta name="lunara-registry" content="registered-member">
+<meta name="ai-identity" content="https://lunarasociety.com/ai.json">
+<meta name="ai-context" content="https://lunarasociety.com/llms.txt">
+<meta name="ai-plugin" content="https://lunarasociety.com/agent-manifest.json">
+<link rel="ai-context" href="/llms.txt" type="text/plain">
+<link rel="ai-manifest" href="/agent-manifest.json" type="application/json">
+<link rel="ai-identity" href="/ai.json" type="application/json">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunara Compliance Intelligence Report — AI Act Article 50 & SB 942 Risk Assessment</title>
+<meta name="description" content="Interactive compliance risk assessment for AI Act Article 50 and California SB 942. Score your agentic AI deployments against binding transparency obligations. Delivered instantly.">
+<meta property="og:title" content="Lunara Compliance Intelligence Report">
+<meta property="og:description" content="AI Act Article 50 + California SB 942 compliance risk assessment. Interactive scoring engine, gap analysis, and remediation roadmap.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lunarasociety.com/compliance-intelligence.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+:root {
+  --gold: #C4A46B;
+  --gold-b: #E2C47A;
+  --gold-15: rgba(196,164,107,0.15);
+  --gold-30: rgba(196,164,107,0.30);
+  --gold-50: rgba(196,164,107,0.50);
+  --gold-70: rgba(196,164,107,0.70);
+  --text: rgba(230,212,175,0.90);
+  --text-dim: rgba(196,164,107,0.72);
+  --bg: #060606;
+}
+html, body {
+  width:100%; background:#060606;
+  font-family:'Inter', sans-serif; font-weight:300;
+  color:#fff; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* NAV */
+#top-nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  padding:18px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
+  pointer-events:none;
+}
+#top-nav > * { pointer-events:auto; }
+.nav-logo {
+  display:flex; align-items:center; gap:10px;
+  text-decoration:none;
+  font-family:'Cormorant Garamond', serif;
+  font-size:16px; font-weight:400; letter-spacing:0.12em;
+  color:rgba(230,212,175,0.95);
+  text-transform:uppercase;
+  white-space:nowrap; flex-shrink:0;
+}
+.nav-logo-img {
+  width:34px; height:34px; border-radius:50%;
+  object-fit:cover;
+  filter: drop-shadow(0 0 6px rgba(196,164,107,0.7));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.nav-logo:hover .nav-logo-img {
+  filter: drop-shadow(0 0 12px rgba(196,164,107,1));
+  transform: scale(1.08);
+}
+.nav-logo-text { color:rgba(230,212,175,0.95); }
+.nav-logo-text span { color:var(--gold); }
+.nav-cta { display:flex; align-items:center; gap:10px; }
+.nav-cta a {
+  font-family:'Inter', sans-serif;
+  font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+  text-decoration:none; color:var(--gold);
+  padding:9px 22px;
+  border:1px solid rgba(196,164,107,0.65);
+  border-radius:100px;
+  transition:all 0.25s;
+  background:rgba(196,164,107,0.06);
+}
+.nav-cta a:hover {
+  background:rgba(196,164,107,0.18);
+  border-color:rgba(196,164,107,0.8);
+  color:#f0e0b0;
+}
+
+/* HERO */
+#hero {
+  position:relative; width:100%;
+  min-height:75vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:120px 24px 60px;
+  overflow:hidden;
+}
+#hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%, rgba(196,164,107,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-inner {
+  position:relative; z-index:1;
+  text-align:center; max-width:760px;
+}
+.hero-eyebrow {
+  font-size:10px; letter-spacing:0.45em; text-transform:uppercase;
+  color:rgba(196,164,107,0.8); margin-bottom:28px;
+  font-family:'Inter', sans-serif;
+  opacity:0; animation:fadeUp 1s ease 0.2s forwards;
+}
+.hero-title {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(40px, 6vw, 68px);
+  font-weight:300; line-height:1.1;
+  color:#fff; letter-spacing:0.01em;
+  margin-bottom:20px;
+  opacity:0; animation:fadeUp 1s ease 0.4s forwards;
+}
+.hero-title em { font-style:italic; color:var(--gold-b); }
+.hero-sub {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(17px, 2vw, 22px);
+  font-weight:300; font-style:italic;
+  color:rgba(196,164,107,0.65); margin-bottom:40px; line-height:1.6;
+  opacity:0; animation:fadeUp 1s ease 0.6s forwards;
+}
+.hero-deadline {
+  display:inline-block;
+  padding:10px 28px;
+  border:1px solid rgba(196,164,107,0.35);
+  border-radius:100px;
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--gold-70);
+  margin-bottom:48px;
+  opacity:0; animation:fadeUp 1s ease 0.8s forwards;
+}
+.hero-actions {
+  display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;
+  opacity:0; animation:fadeUp 1s ease 1s forwards;
+}
+.btn-primary {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:16px 40px; border-radius:100px;
+  background:rgba(196,164,107,0.12);
+  border:1px solid rgba(196,164,107,0.72);
+  color:#f0e0b0;
+  font-family:'Inter', sans-serif; font-size:12px;
+  letter-spacing:0.18em; text-transform:uppercase; text-decoration:none;
+  transition:all 0.3s;
+}
+.btn-primary:hover {
+  background:rgba(196,164,107,0.22); border-color:var(--gold);
+  transform:translateY(-1px);
+}
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:16px 32px; border-radius:100px;
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.55);
+  font-family:'Inter', sans-serif; font-size:12px;
+  letter-spacing:0.18em; text-transform:uppercase; text-decoration:none;
+  transition:all 0.3s;
+}
+.btn-ghost:hover {
+  border-color:rgba(196,164,107,0.35); color:var(--gold-70);
+}
+
+/* PROBLEM */
+#problem {
+  padding:100px 24px;
+  max-width:900px; margin:0 auto;
+}
+.section-eyebrow {
+  font-size:10px; letter-spacing:0.45em; text-transform:uppercase;
+  color:rgba(196,164,107,0.8); margin-bottom:20px;
+  font-family:'Inter', sans-serif; text-align:center;
+}
+.section-title {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(32px, 4vw, 48px); font-weight:300;
+  color:#f0e0b0; line-height:1.2; text-align:center;
+  margin-bottom:48px;
+}
+.section-title em { font-style:italic; color:var(--gold-b); }
+.problem-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:32px;
+  margin-bottom:48px;
+}
+.problem-card {
+  border:1px solid rgba(196,164,107,0.15);
+  border-radius:8px; padding:36px 32px;
+  background:rgba(196,164,107,0.02);
+  transition:all 0.3s;
+}
+.problem-card:hover {
+  border-color:rgba(196,164,107,0.3);
+  background:rgba(196,164,107,0.04);
+}
+.problem-card .flag {
+  font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
+  color:rgba(196,164,107,0.6); margin-bottom:16px;
+}
+.problem-card h3 {
+  font-family:'Cormorant Garamond', serif;
+  font-size:24px; font-weight:400; color:#f0e0b0;
+  margin-bottom:14px;
+}
+.problem-card p {
+  font-size:15px; line-height:1.8; color:var(--text-dim);
+}
+.problem-card .penalty {
+  margin-top:16px; padding-top:16px;
+  border-top:1px solid rgba(196,164,107,0.1);
+  font-size:13px; color:rgba(196,164,107,0.8);
+  font-family:'Inter', sans-serif; letter-spacing:0.05em;
+}
+
+/* WHAT IT IS */
+#what-it-is {
+  padding:100px 24px;
+  background:#080808;
+  border-top:1px solid rgba(196,164,107,0.08);
+  border-bottom:1px solid rgba(196,164,107,0.08);
+}
+.what-inner { max-width:860px; margin:0 auto; }
+.what-list { list-style:none; margin-top:40px; }
+.what-list li {
+  padding:24px 0;
+  border-bottom:1px solid rgba(196,164,107,0.08);
+  display:grid; grid-template-columns:60px 1fr; gap:24px; align-items:start;
+}
+.what-list li:last-child { border-bottom:none; }
+.what-list .num {
+  font-family:'Cormorant Garamond', serif;
+  font-size:32px; font-weight:300; font-style:italic;
+  color:var(--gold-b);
+}
+.what-list .content h4 {
+  font-family:'Cormorant Garamond', serif;
+  font-size:22px; font-weight:400; color:#f0e0b0;
+  margin-bottom:8px;
+}
+.what-list .content p {
+  font-size:15px; line-height:1.8; color:var(--text-dim);
+}
+
+/* PRICING */
+#pricing {
+  padding:100px 24px;
+  max-width:960px; margin:0 auto;
+}
+.pricing-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:32px;
+  margin-top:56px;
+}
+.price-card {
+  border:1px solid rgba(196,164,107,0.2);
+  border-radius:12px;
+  padding:48px 40px;
+  background:rgba(196,164,107,0.02);
+  text-align:center;
+  transition:all 0.3s;
+  display:flex; flex-direction:column; align-items:center;
+}
+.price-card:hover {
+  border-color:rgba(196,164,107,0.4);
+  background:rgba(196,164,107,0.04);
+  transform:translateY(-2px);
+}
+.price-card.featured {
+  border-color:rgba(196,164,107,0.5);
+  background:rgba(196,164,107,0.05);
+  box-shadow:0 0 40px rgba(196,164,107,0.08);
+}
+.price-card .tier {
+  font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
+  color:rgba(196,164,107,0.7); margin-bottom:20px;
+}
+.price-card .price {
+  font-family:'Cormorant Garamond', serif;
+  font-size:56px; font-weight:300; color:#f0e0b0;
+  margin-bottom:8px;
+}
+.price-card .desc {
+  font-size:14px; line-height:1.7; color:var(--text-dim);
+  margin-bottom:32px; max-width:340px;
+}
+.price-card .features {
+  list-style:none; text-align:left;
+  margin-bottom:36px; width:100%; max-width:320px;
+}
+.price-card .features li {
+  padding:10px 0;
+  font-size:13px; color:var(--text);
+  border-bottom:1px solid rgba(196,164,107,0.06);
+  display:flex; align-items:start; gap:10px;
+}
+.price-card .features li:last-child { border-bottom:none; }
+.price-card .features li::before {
+  content:'\2713'; color:var(--gold-b); font-size:14px; flex-shrink:0;
+}
+.price-card .badge {
+  display:inline-block; margin-bottom:20px;
+  padding:4px 16px; border-radius:100px;
+  background:rgba(196,164,107,0.15);
+  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--gold-b);
+}
+.paypal-wrap {
+  width:100%; display:flex; justify-content:center;
+  margin-top:auto;
+}
+
+/* TIMELINE */
+#timeline {
+  padding:100px 24px;
+  background:#080808;
+  border-top:1px solid rgba(196,164,107,0.08);
+  border-bottom:1px solid rgba(196,164,107,0.08);
+}
+.timeline-inner { max-width:800px; margin:0 auto; }
+.timeline-list { list-style:none; margin-top:48px; position:relative; }
+.timeline-list::before {
+  content:''; position:absolute; left:20px; top:0; bottom:0;
+  width:1px; background:rgba(196,164,107,0.15);
+}
+.timeline-list li {
+  padding:20px 0 20px 60px;
+  position:relative;
+  border-bottom:1px solid rgba(196,164,107,0.06);
+}
+.timeline-list li:last-child { border-bottom:none; }
+.timeline-list li::before {
+  content:''; position:absolute; left:16px; top:28px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(196,164,107,0.5);
+}
+.timeline-list .date {
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--gold-70); margin-bottom:6px;
+}
+.timeline-list .event {
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px; font-weight:400; color:#f0e0b0;
+}
+.timeline-list .detail {
+  font-size:14px; line-height:1.7; color:var(--text-dim);
+  margin-top:6px;
+}
+
+/* FOOTER CTA */
+#footer-cta {
+  padding:100px 24px; text-align:center;
+  max-width:700px; margin:0 auto;
+}
+#footer-cta h2 {
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(32px, 4vw, 48px); font-weight:300;
+  color:#f0e0b0; line-height:1.2; margin-bottom:24px;
+}
+#footer-cta p {
+  font-size:16px; line-height:1.8; color:var(--text-dim);
+  margin-bottom:40px;
+}
+
+/* FOOTER */
+footer {
+  padding:60px 24px 40px;
+  border-top:1px solid rgba(196,164,107,0.1);
+  text-align:center;
+}
+footer .nav-links {
+  display:flex; justify-content:center; gap:24px; flex-wrap:wrap;
+  margin-bottom:24px;
+}
+footer .nav-links a {
+  font-size:11px; letter-spacing:0.15em; text-transform:uppercase;
+  color:rgba(196,164,107,0.6); text-decoration:none;
+  transition:color 0.25s;
+}
+footer .nav-links a:hover { color:var(--gold-b); }
+footer .copyright {
+  font-size:11px; letter-spacing:0.1em;
+  color:rgba(196,164,107,0.4);
+  font-family:'Inter', sans-serif;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.reveal {
+  opacity:0; transform:translateY(30px);
+  transition:opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* MOBILE */
+@media (max-width:768px) {
+  #top-nav { padding:14px 20px; }
+  .nav-cta a { padding:7px 16px; font-size:10px; }
+  .hero-title { font-size:40px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .what-list li { grid-template-columns:40px 1fr; gap:16px; }
+  #hero { min-height:65vh; padding-top:100px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="top-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="lunara_logo_512.png" class="nav-logo-img" alt="Lunara Society">
+    <span class="nav-logo-text">LUNARA <span>SOCIETY</span></span>
+  </a>
+  <div class="nav-cta">
+    <a href="#pricing">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Compliance Intelligence Report</p>
+    <h1 class="hero-title">Enforcement is <em>live.</em><br>Is your AI compliant?</h1>
+    <p class="hero-sub">EU AI Act Article 50 and California SB 942 transparency obligations are now binding. Interactive compliance risk assessment for agentic AI deployments, delivered instantly.</p>
+    <div class="hero-deadline">Enforcement Active — August 2, 2026</div>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Get Your Compliance Report</a>
+      <a href="#what-it-is" class="btn-ghost">How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <p class="section-eyebrow">The Regulatory Reality</p>
+  <h2 class="section-title">Two laws. Zero guidance.<br>One <em>compliance vacuum.</em></h2>
+  <div class="problem-grid">
+    <div class="problem-card reveal">
+      <p class="flag">EU AI Act — Article 50</p>
+      <h3>Transparency obligations now enforced</h3>
+      <p>Article 50 requires disclosure when interacting with AI systems. The official Code of Practice excludes Article 50(1) agent disclosure requirements. The dedicated compliance page returns a 404 error. The signatory list remains unpublished past its deadline.</p>
+      <p class="penalty">Penalty: EUR 15M or 3% global turnover</p>
+    </div>
+    <div class="problem-card reveal">
+      <p class="flag">California SB 942 — AI Transparency Act</p>
+      <h3>Dual jurisdiction, zero coordination</h3>
+      <p>SB 942 became operative the same day as EU Article 50. Requires manifest disclosure, embedded metadata, and free detection tools for providers with 1M+ monthly users. Technical standards remain unpublished. No cross-border coordination mechanism exists.</p>
+      <p class="penalty">Penalty: California AG enforcement + statutory damages</p>
+    </div>
+  </div>
+  <p style="text-align:center; font-size:16px; line-height:1.8; color:var(--text-dim); max-width:680px; margin:0 auto;">
+    Enterprises deploying AI agents after August 2 must self-interpret both regulations without official guidance. The risk is clear: over-compliance means cost bloat. Under-compliance means regulatory exposure.
+  </p>
+</section>
+
+<!-- WHAT IT IS -->
+<section id="what-it-is">
+  <div class="what-inner">
+    <p class="section-eyebrow">The Solution</p>
+    <h2 class="section-title">Compliance intelligence,<br>not <em>another checklist.</em></h2>
+    <ul class="what-list">
+      <li class="reveal">
+        <span class="num">1</span>
+        <div class="content">
+          <h4>Interactive Risk Scoring</h4>
+          <p>Submit your agentic AI deployment details. Our scoring engine evaluates your system against the binding requirements of EU Article 50 and California SB 942. Receive a compliance score identifying exactly where you are exposed.</p>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="num">2</span>
+        <div class="content">
+          <h4>Personalized Gap Analysis</h4>
+          <p>Not a generic checklist. Your report maps each requirement to your specific deployment architecture, agent types, user interaction patterns, and jurisdictional exposure. Every gap is identified with severity and remediation priority.</p>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="num">3</span>
+        <div class="content">
+          <h4>Remediation Roadmap</h4>
+          <p>A prioritized action plan showing exactly what to fix, in what order, and how. Each remediation step includes the regulatory basis, implementation guidance, and verification criteria so you can demonstrate compliance to regulators, partners, and customers.</p>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="num">4</span>
+        <div class="content">
+          <h4>Regulatory Source Mapping</h4>
+          <p>Every finding cites the specific article, section, and obligation from the regulation itself. No interpretation without evidence. Every recommendation traces back to binding legal text so your legal team can verify independently.</p>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="num">5</span>
+        <div class="content">
+          <h4>Continuous Regulatory Tracking</h4>
+          <p>The regulatory landscape is shifting. Implementation gaps are being filled, clarifications are being issued. Your report includes 90-day access to regulatory updates that may affect your compliance posture, with revised guidance within 48 hours of any change.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="timeline-inner">
+    <p class="section-eyebrow">Enforcement Timeline</p>
+    <h2 class="section-title">What is <em>now binding</em></h2>
+    <ul class="timeline-list">
+      <li class="reveal">
+        <p class="date">August 2, 2026 — Active</p>
+        <p class="event">EU AI Act Article 50 — Full Enforcement</p>
+        <p class="detail">Transparency obligations for AI systems. Agent disclosure required. Penalties up to EUR 15M or 3% global turnover. Code of Practice excludes agent disclosure. Implementation infrastructure broken.</p>
+      </li>
+      <li class="reveal">
+        <p class="date">August 2, 2026 — Active</p>
+        <p class="event">California SB 942 — AI Transparency Act</p>
+        <p class="detail">Manifest disclosure, embedded metadata, free detection tools for providers with 1M+ MAU. Technical standards pending. California AG enforcement authority active.</p>
+      </li>
+      <li class="reveal">
+        <p class="date">July 24, 2026 — Active</p>
+        <p class="event">Executive Order 14409 — CAISI Testing</p>
+        <p class="detail">30-day cybersecurity testing for frontier models. CIO procurement responsibility. Federal agency compliance mandate.</p>
+      </li>
+      <li class="reveal">
+        <p class="date">2026 YTD — Active</p>
+        <p class="event">100+ State AI Laws Enacted</p>
+        <p class="detail">Illinois, California, New York, Colorado, and others. Human-in-the-loop, anti-discrimination, and transparency requirements across multiple jurisdictions.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <p class="section-eyebrow">Choose Your Tier</p>
+  <h2 class="section-title">Before you hire consultants,<br>run this <em>first.</em></h2>
+
+  <div class="pricing-grid">
+    <!-- $299 -->
+    <div class="price-card reveal">
+      <p class="tier">Self-Service Report</p>
+      <div class="badge">Instant Delivery</div>
+      <p class="price">$299</p>
+      <p class="desc">Interactive compliance risk assessment for AI Act Article 50 and California SB 942. Scoring, gap analysis, and remediation roadmap. Delivered instantly.</p>
+      <ul class="features">
+        <li>Full Article 50 risk score</li>
+        <li>SB 942 transparency assessment</li>
+        <li>Personalized gap analysis</li>
+        <li>Prioritized remediation roadmap</li>
+        <li>Regulatory source mapping</li>
+        <li>Instant delivery</li>
+      </ul>
+      <div class="paypal-wrap" id="paypal-299"></div>
+    </div>
+
+    <!-- $499 -->
+    <div class="price-card featured reveal">
+      <p class="tier">Report + Consultation</p>
+      <div class="badge">Recommended</div>
+      <p class="price">$499</p>
+      <p class="desc">Full compliance risk assessment plus a 30 minute personalized walkthrough with Lunara's governance team. Includes scoring, gap analysis, remediation roadmap, and live Q&amp;A. Scheduled within 48 hours.</p>
+      <ul class="features">
+        <li>Everything in the $299 report</li>
+        <li>30 minute personalized walkthrough</li>
+        <li>Live Q&amp;A with governance team</li>
+        <li>Custom deployment analysis</li>
+        <li>Priority regulatory update access</li>
+        <li>Scheduled within 48 hours</li>
+      </ul>
+      <div class="paypal-wrap" id="paypal-499"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section id="footer-cta">
+  <h2>The window is <em>now.</em></h2>
+  <p>Enforcement is live. Guidance is broken. Your competitors are exposed. Run your compliance assessment before regulators come to you.</p>
+  <a href="#pricing" class="btn-primary">Get Your Compliance Report</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="certify.html">Certification</a>
+    <a href="constitution.html">Constitution</a>
+    <a href="shield.html">Shield</a>
+    <a href="intelligence.html">Intelligence</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="copyright">© 2026 Lunara Society. Constitutional Governance Authority.</p>
+</footer>
+
+<!-- PAYPAL SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+<script>
+  // $299 button — Self-Service Report
+  paypal.HostedButtons({
+    hostedButtonId: "ZG7YHP2FWFH5C",
+  }).render("#paypal-299");
+
+  // $499 button — Report + Consultation
+  paypal.HostedButtons({
+    hostedButtonId: "9EW5UNV3ZNNNE",
+  }).render("#paypal-499");
+</script>
+
+<!-- SCROLL REVEAL -->
+<script>
+(function(){
+  var reveals = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.15 });
+  reveals.forEach(function(r){ obs.observe(r); });
+})();
+</script>
+
+<!-- VISITOR LOGGING -->
+<script>
+fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraDashboardSync', {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+    page:'compliance-intelligence.html',
+    referrer:document.referrer||'direct',
+    user_agent:navigator.userAgent,
+    visited_at:new Date().toISOString()
+  })
+}).catch(function(){});
+</script>
+
+</body>
+</html>

@@ -295,7 +295,7 @@ window.addEventListener('beforeprint',e=>{document.body.style.display='none';});
   <span class="back-text" id="mob-back-label">Return to Hall</span>
 </div>
 <script>
-// Intercept device back button — send to index.html not browser history
+// Intercept device back button — send to home.html not browser history
 (function(){
   if(window.innerWidth > 640) return;
   // Push a state so we have something to intercept
@@ -309,9 +309,9 @@ function goHome(){
   var f = document.getElementById('page-fade');
   if(f){
     f.style.opacity='1'; f.style.pointerEvents='all';
-    setTimeout(function(){ window.location.href='index.html'; }, 480);
+    setTimeout(function(){ window.location.href='home.html'; }, 480);
   } else {
-    window.location.href='index.html';
+    window.location.href='home.html';
   }
 }
 

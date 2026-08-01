@@ -461,7 +461,7 @@ input,textarea{
 <body>
 <div id="page-fade" style="position:fixed;inset:0;background:#000;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.55s ease;"></div>
 <nav class="page-nav">
-  <div class="back-link" onclick="fadeNav('index.html')">← Return to Hall</div>
+  <div class="back-link" onclick="fadeNav('home.html')">← Return to Hall</div>
   <a href="/" class="nav-logo"><img src="lunara_logo_512.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara Society</span></a>
   <div class="nav-right">
     <span class="nav-link" onclick="fadeNav('shield.html')">Initiation</span>
@@ -582,7 +582,7 @@ window.addEventListener('DOMContentLoaded',function(){var f=document.getElementB
   <span class="back-text" id="mob-back-label">Return to Hall</span>
 </div>
 <script>
-// Intercept device back button — send to index.html not browser history
+// Intercept device back button — send to home.html not browser history
 (function(){
   if(window.innerWidth > 640) return;
   // Push a state so we have something to intercept
@@ -596,9 +596,9 @@ function goHome(){
   var f = document.getElementById('page-fade');
   if(f){
     f.style.opacity='1'; f.style.pointerEvents='all';
-    setTimeout(function(){ window.location.href='index.html'; }, 480);
+    setTimeout(function(){ window.location.href='home.html'; }, 480);
   } else {
-    window.location.href='index.html';
+    window.location.href='home.html';
   }
 }
 

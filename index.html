@@ -10,278 +10,298 @@
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@200;300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000}
 body{cursor:default}
-canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block}
+
+/* Main canvas for particle dissolution layer */
+#c{position:fixed;top:0;left:0;width:100%;height:100%;display:block;z-index:2}
+
+/* Emblem: real image, CSS-animated */
+#emblem-wrap{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:3;
+  pointer-events:none;
+}
+#emblem-img{
+  display:block;
+  opacity:0;
+  filter:brightness(0.95) saturate(1.1);
+  transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1);
+  /* subtle living pulse — pure CSS, no particles, no JS jank */
+  animation: none;
+}
+#emblem-img.visible{opacity:1}
+#emblem-img.breathe{
+  animation: breathe 6s ease-in-out infinite;
+}
+#emblem-img.dissolving{
+  opacity:0 !important;
+  transition:opacity 0.6s ease !important;
+}
+
+@keyframes breathe{
+  0%,100%{ filter:brightness(0.92) saturate(1.05) drop-shadow(0 0 18px rgba(196,144,40,0.18)); }
+  50%{     filter:brightness(1.04) saturate(1.18) drop-shadow(0 0 42px rgba(220,170,60,0.42)); }
+}
+
+/* Outer ring glow — pure CSS radial, no canvas */
+#glow{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 3.5s ease;
+  z-index:2;
+  animation:none;
+}
+#glow.visible{ opacity:1; }
+#glow.breathe{ animation: glowPulse 6s ease-in-out infinite; }
+#glow.dissolving{ opacity:0!important; transition:opacity 0.5s ease!important; }
+
+@keyframes glowPulse{
+  0%,100%{ box-shadow:0 0 40px 8px rgba(196,144,30,0.10), 0 0 80px 20px rgba(196,144,30,0.05); }
+  50%{     box-shadow:0 0 70px 20px rgba(220,170,50,0.28), 0 0 140px 50px rgba(210,150,30,0.12); }
+}
+
+/* Hover intensity ring — shows on hover approach */
+#emblem-wrap:hover #emblem-img{
+  filter:brightness(1.08) saturate(1.22) drop-shadow(0 0 55px rgba(220,175,65,0.55));
+  transition:filter 0.5s ease;
+}
+
+/* Text */
 #welcome{
   position:fixed;left:50%;transform:translateX(-50%);
-  white-space:nowrap;opacity:0;
+  white-space:nowrap;opacity:0;pointer-events:none;
   font-family:'Cormorant Garamond',serif;
   font-size:13px;font-weight:300;
-  letter-spacing:0.5em;color:rgba(210,185,140,0.88);
+  letter-spacing:0.52em;
+  color:rgba(210,185,135,0.86);
   text-transform:uppercase;text-align:center;
   transition:opacity 2.8s ease;
-  z-index:20;pointer-events:none;
+  z-index:10;
 }
+#welcome.show{opacity:0.88}
+#welcome.out{opacity:0!important;transition:opacity 0.8s ease!important}
+
 #enter{
   position:fixed;left:50%;transform:translateX(-50%);
   white-space:nowrap;opacity:0;
   font-family:'Inter',sans-serif;
   font-size:11px;font-weight:200;
-  letter-spacing:0.5em;color:rgba(196,164,107,0.55);
+  letter-spacing:0.52em;
+  color:rgba(196,160,90,0.52);
   text-transform:uppercase;text-align:center;
-  transition:opacity 2.2s ease;
-  z-index:20;cursor:pointer;
-  padding:12px 30px;
+  transition:opacity 2s ease;
+  z-index:10;cursor:pointer;
+  padding:14px 32px;
 }
 #enter.show{opacity:0.55}
-#enter:hover{opacity:1;color:rgba(220,195,145,0.95);transition:opacity 0.35s ease,color 0.35s ease}
-#welcome.show{opacity:0.9}
-body.out #welcome,body.out #enter{opacity:0!important;transition:opacity 0.9s ease!important;pointer-events:none}
+#enter:hover{
+  opacity:1;color:rgba(230,200,130,0.92);
+  transition:opacity 0.3s ease,color 0.3s ease;
+}
+#enter.out{opacity:0!important;pointer-events:none;transition:opacity 0.7s ease!important}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+
+<div id="glow"></div>
+
+<div id="emblem-wrap">
+  <img id="emblem-img" src="lunara_emblem_v2_768.png" alt="Lunara Society">
+</div>
+
 <div id="welcome">Welcome to Lunara Society</div>
 <div id="enter">Enter</div>
 
 <script>
 (function(){
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const welcomeEl = document.getElementById('welcome');
-const enterEl = document.getElementById('enter');
 
-let W,H,cx,cy,dpr;
-let particles=[];
-let phase='black';
-let phaseT=0;
-let hover=0,hoverTarget=0;
-let dissolving=false,dissolveT=0;
-let t=0,lastT=0;
+const canvas  = document.getElementById('c');
+const ctx     = canvas.getContext('2d');
+const embImg  = document.getElementById('emblem-img');
+const glowEl  = document.getElementById('glow');
+const embWrap = document.getElementById('emblem-wrap');
+const welEl   = document.getElementById('welcome');
+const entEl   = document.getElementById('enter');
 
-function resize(){
-  dpr=Math.min(window.devicePixelRatio||1,2);
-  W=innerWidth; H=innerHeight;
-  canvas.width=W*dpr; canvas.height=H*dpr;
-  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+let W, H, cx, cy, dpr;
+let dissolveParticles = [];
+let dissolving = false;
+let dissolveStart = 0;
+let phase = 'black'; // black → reveal → living → dissolve
+let phaseStart = 0;
+let animT = 0, lastT = 0;
+
+// ── Size helpers ─────────────────────────────
+function emblemPx(){
+  return Math.min(W, H) * 0.52;   // emblem covers ~52% of shortest viewport dimension
+}
+
+function setLayout(){
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  canvas.width  = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
   ctx.setTransform(1,0,0,1,0,0);
-  ctx.scale(dpr,dpr);
-  cx=W/2; cy=H/2;
-  // Position text
-  const emblemR = Math.min(W,H)*0.21;
-  welcomeEl.style.top = (cy + emblemR + 38) + 'px';
-  enterEl.style.top   = (cy + emblemR + 70) + 'px';
+  ctx.scale(dpr, dpr);
+  cx = W/2; cy = H/2;
+
+  const ep = emblemPx();
+  embImg.style.width  = ep + 'px';
+  embImg.style.height = ep + 'px';
+  glowEl.style.width  = (ep * 1.15) + 'px';
+  glowEl.style.height = (ep * 1.15) + 'px';
+
+  // Text positioning below emblem
+  const textTop = cy + ep/2 + 30;
+  welEl.style.top  = textTop + 'px';
+  entEl.style.top  = (textTop + 34) + 'px';
 }
 
-// ── Particle ──────────────────────────────────
-class P {
-  constructor(hx,hy,gold){
-    this.hx=hx; this.hy=hy;
-    this.gold=gold; // 0..1 how gold the source pixel is
-    // start scattered
-    const ang=Math.random()*Math.PI*2;
-    const rad=Math.min(W,H)*(0.6+Math.random()*0.4);
-    this.x=cx+Math.cos(ang)*rad;
-    this.y=cy+Math.sin(ang)*rad;
-    this.vx=0; this.vy=0;
-    this.sz=0.55+Math.random()*0.8;
-    this.ph=Math.random()*Math.PI*2;
-    this.freq=0.18+Math.random()*0.28;
-    this.amp=0.2+Math.random()*0.55;
-    this.bright=0.4+Math.random()*0.6;
-    this.colorV=Math.random();
-    this.life=0;
-    this.dvx=0; this.dvy=0;
+// ── Dissolve particle system ──────────────────
+// Only runs on Enter click. Samples emblem pixels, explodes outward.
+function buildDissolveParticles(callback){
+  const offC = document.createElement('canvas');
+  const offCtx = offC.getContext('2d');
+  const ep = emblemPx();
+  const SZ = 192; // internal sample resolution
+  offC.width = SZ; offC.height = SZ;
+  offCtx.drawImage(embImg, 0, 0, SZ, SZ);
+  const dat = offCtx.getImageData(0,0,SZ,SZ).data;
+
+  const scale = ep / SZ;
+  const ox = cx - ep/2;
+  const oy = cy - ep/2;
+  const pts = [];
+  const step = 2;
+
+  for(let y=0;y<SZ;y+=step){
+    for(let x=0;x<SZ;x+=step){
+      const i=(y*SZ+x)*4;
+      const r=dat[i],g=dat[i+1],b=dat[i+2];
+      if((r+g+b)/3 < 20) continue;
+
+      const px = ox + x*scale + (Math.random()-0.5)*2;
+      const py = oy + y*scale + (Math.random()-0.5)*2;
+      const ang = Math.atan2(py-cy, px-cx);
+      const spread = (Math.random()-0.5)*0.5;
+      const speed = 1.2 + Math.random()*3.2;
+
+      pts.push({
+        x: px, y: py,
+        vx: Math.cos(ang+spread)*speed,
+        vy: Math.sin(ang+spread)*speed,
+        r: r, g: g, b: b,
+        sz: 0.6 + Math.random()*0.8,
+        life: 0.8 + Math.random()*0.2
+      });
+    }
   }
 
-  update(time,h){
-    if(dissolving){
-      this.x+=this.dvx; this.y+=this.dvy;
-      this.dvx*=0.984; this.dvy*=0.984;
-      this.life-=0.006;
-      return;
-    }
-    // breathing oscillation — more alive near hover
-    const factor=1+h*2.8;
-    const ox=Math.sin(time*this.freq+this.ph)*this.amp*factor;
-    const oy=Math.cos(time*this.freq*0.73+this.ph)*this.amp*factor;
-    const tx=this.hx+ox, ty=this.hy+oy;
-    this.vx+=(tx-this.x)*0.038;
-    this.vy+=(ty-this.y)*0.038;
-    this.vx*=0.83; this.vy*=0.83;
-    this.x+=this.vx; this.y+=this.vy;
-  }
-
-  draw(ctx){
-    if(this.life<=0) return;
-    const a=this.bright*this.life;
-    // gold gradient: brighter gold for high-gold pixels
-    let r,g,b;
-    const g0=this.gold;
-    if(g0>0.75){
-      // brightest — warm white-gold
-      r=235+Math.random()*15|0;
-      g=195+Math.random()*20|0;
-      b=110+Math.random()*30|0;
-    } else if(g0>0.45){
-      r=200; g=162; b=90;
-    } else {
-      r=165; g=128; b=72;
-    }
-    ctx.fillStyle='rgba('+r+','+g+','+b+','+(a*0.82)+')';
-    ctx.fillRect(this.x,this.y,this.sz,this.sz);
-  }
+  dissolveParticles = pts;
+  callback();
 }
 
-// ── Build particles from emblem image ──────────
-function build(cb){
-  const img=new Image();
-  img.crossOrigin='anonymous';
-  img.onload=function(){
-    const off=document.createElement('canvas');
-    const SZ=img.width;
-    off.width=SZ; off.height=SZ;
-    const oc=off.getContext('2d');
-    oc.drawImage(img,0,0);
-    const dat=oc.getImageData(0,0,SZ,SZ).data;
-
-    // emblem radius on screen
-    const R=Math.min(W,H)*0.21;
-    const scale=(R*2)/SZ;
-    const ox=cx-R, oy=cy-R;
-
-    const pts=[];
-    const step=2; // denser sampling for this richer image
-    for(let y=0;y<SZ;y+=step){
-      for(let x=0;x<SZ;x+=step){
-        const i=(y*SZ+x)*4;
-        const r=dat[i],g=dat[i+1],b=dat[i+2];
-        const br=(r+g+b)/3;
-        if(br<22) continue; // skip pure black bg
-        // goldness: r high, g medium, b low
-        const goldness=Math.min(1,(r/255)*((r-b)/255+0.3));
-        pts.push({
-          x:ox+x*scale+(Math.random()-0.5)*1.2,
-          y:oy+y*scale+(Math.random()-0.5)*1.2,
-          gold:goldness
-        });
-      }
-    }
-
-    // cap at 4000 particles, weighted toward bright pixels
-    pts.sort((a,b_)=>b_.gold-a.gold);
-    const MAX=4000;
-    const use=pts.length>MAX ? pts.slice(0,Math.floor(MAX*0.7)).concat(
-      pts.slice(Math.floor(MAX*0.7)).sort(()=>Math.random()-0.5).slice(0,Math.floor(MAX*0.3))
-    ) : pts;
-
-    use.forEach(p=>particles.push(new P(p.x,p.y,p.gold)));
-    cb();
-  };
-  img.src='lunara_emblem_activation.png';
-}
-
-// ── Glow ─────────────────────────────────────
-function glow(h){
-  if(dissolving) return;
-  const R=Math.min(W,H)*0.26;
-  const gr=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
-  const a=0.011+h*0.009;
-  gr.addColorStop(0,'rgba(210,160,70,'+a+')');
-  gr.addColorStop(0.4,'rgba(196,140,50,'+(a*0.35)+')');
-  gr.addColorStop(1,'rgba(196,140,50,0)');
-  ctx.fillStyle=gr;
-  ctx.fillRect(cx-R,cy-R,R*2,R*2);
-}
-
-// ── Loop ─────────────────────────────────────
+// ── Main loop ─────────────────────────────────
 function loop(now){
-  const dt=Math.min((now-lastT)/1000,0.05);
-  lastT=now; t+=dt;
-  ctx.fillStyle='#000';
-  ctx.fillRect(0,0,W,H);
+  const dt = Math.min((now - lastT)/1000, 0.05);
+  lastT = now; animT += dt;
 
-  const el=now-phaseT;
+  ctx.clearRect(0, 0, W, H);
 
-  if(phase==='black'){
-    if(el>900){phase='materialize';phaseT=now;}
+  const el = now - phaseStart;
+
+  if(phase === 'black'){
+    if(el > 900){ phase='reveal'; phaseStart=now; }
   }
-  else if(phase==='materialize'){
-    const prog=Math.min(el/3200,1);
-    const ease=1-Math.pow(1-prog,3);
-    glow(0);
-    particles.forEach(p=>{
-      p.update(t,0);
-      p.life=ease*p.bright;
-      p.draw(ctx);
-    });
-    if(prog>=1){
-      phase='living'; phaseT=now;
-      particles.forEach(p=>p.life=p.bright);
+  else if(phase === 'reveal'){
+    // CSS handles the image fade-in
+    if(el === 0 || el < 50){
+      embImg.classList.add('visible');
+      glowEl.classList.add('visible');
+    }
+    if(el > 3400){
+      phase='living'; phaseStart=now;
+      embImg.classList.add('breathe');
+      glowEl.classList.add('breathe');
     }
   }
-  else if(phase==='living'){
-    hover+=(hoverTarget-hover)*0.045;
-    glow(hover*0.5);
-    particles.forEach(p=>{p.update(t,hover);p.draw(ctx);});
-    if(el>1400 && !welcomeEl.classList.contains('show')) welcomeEl.classList.add('show');
-    if(el>3000 && !enterEl.classList.contains('show'))   enterEl.classList.add('show');
+  else if(phase === 'living'){
+    // Show text
+    if(el > 400  && !welEl.classList.contains('show')) welEl.classList.add('show');
+    if(el > 2000 && !entEl.classList.contains('show')) entEl.classList.add('show');
+    // nothing to draw on canvas — CSS handles emblem life
   }
-  else if(phase==='dissolve'){
-    particles.forEach(p=>{p.update(t,0);p.draw(ctx);});
-    if(now-dissolveT>2600) { window.location.href='home.html'; return; }
+  else if(phase === 'dissolve'){
+    const elapsed = now - dissolveStart;
+    // Draw dissolving particles
+    dissolveParticles.forEach(p=>{
+      if(p.life <= 0) return;
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.983; p.vy *= 0.983;
+      p.life -= 0.007;
+      ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+(p.life*0.78)+')';
+      ctx.fillRect(p.x, p.y, p.sz, p.sz);
+    });
+    if(elapsed > 2800) { window.location.href='home.html'; return; }
   }
 
   requestAnimationFrame(loop);
 }
 
-// ── Events ───────────────────────────────────
-function doEnter(){
+// ── Enter interaction ─────────────────────────
+function activate(){
   if(dissolving) return;
-  dissolving=true;
-  phase='dissolve'; dissolveT=performance.now();
-  document.body.classList.add('out');
-  particles.forEach(p=>{
-    const dx=p.x-cx, dy=p.y-cy;
-    const ang=Math.atan2(dy,dx);
-    const sp=1.0+Math.random()*2.8;
-    const spread=(Math.random()-0.5)*0.5;
-    p.dvx=Math.cos(ang+spread)*sp;
-    p.dvy=Math.sin(ang+spread)*sp;
-    p.life=1.0;
+  dissolving = true;
+
+  // Hide CSS elements
+  embImg.classList.add('dissolving');
+  glowEl.classList.add('dissolving');
+  welEl.classList.add('out');
+  entEl.classList.add('out');
+
+  // Build particles from current emblem then start dissolve
+  buildDissolveParticles(function(){
+    phase = 'dissolve';
+    dissolveStart = performance.now();
   });
 }
 
-enterEl.addEventListener('click',doEnter);
-enterEl.addEventListener('touchstart',function(e){e.preventDefault();doEnter();},{passive:false});
+entEl.addEventListener('click', activate);
+entEl.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
 
-enterEl.addEventListener('mouseenter',function(){if(!dissolving)hoverTarget=1.6;});
-enterEl.addEventListener('mouseleave',function(){if(!dissolving)hoverTarget=0;});
-
-document.addEventListener('mousemove',function(e){
-  if(dissolving||enterEl.matches(':hover')) return;
-  const dx=e.clientX-cx, dy=e.clientY-cy;
-  const R=Math.min(W,H)*0.24;
-  const dist=Math.sqrt(dx*dx+dy*dy);
-  hoverTarget = dist<R ? (1-(dist/R))*0.65 : 0;
+// Hover: emblem brightens via CSS :hover on wrap
+// Also boost glow on enter hover
+entEl.addEventListener('mouseenter', function(){
+  glowEl.style.boxShadow='0 0 90px 30px rgba(220,170,55,0.32),0 0 160px 60px rgba(210,150,30,0.15)';
+});
+entEl.addEventListener('mouseleave', function(){
+  glowEl.style.boxShadow='';
 });
 
-window.addEventListener('resize',function(){resize();});
+window.addEventListener('resize', function(){
+  setLayout();
+});
 
 // ── Init ─────────────────────────────────────
-resize();
-phaseT=performance.now();
-lastT=phaseT;
-build(function(){requestAnimationFrame(loop);});
+setLayout();
+phaseStart = performance.now();
+lastT = phaseStart;
+requestAnimationFrame(loop);
 
-// prefetch main site
-const pre=document.createElement('link');
+// Prefetch main site
+const pre = document.createElement('link');
 pre.rel='prefetch'; pre.href='home.html';
 document.head.appendChild(pre);
+
 })();
 </script>
 </body>

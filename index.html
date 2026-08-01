@@ -256,7 +256,7 @@ function loop(now){
       ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+(p.life*0.78)+')';
       ctx.fillRect(p.x, p.y, p.sz, p.sz);
     });
-    if(elapsed > 2800) { window.location.href='home.html'; return; }
+    if(elapsed > 2800) { loadHome(); return; }
   }
 
   requestAnimationFrame(loop);
@@ -302,7 +302,7 @@ lastT = phaseStart;
 requestAnimationFrame(loop);
 
 const pre = document.createElement('link');
-pre.rel='prefetch'; pre.href='home.html';
+pre.rel='prefetch'; pre.href='home.html'; pre.as='fetch';
 document.head.appendChild(pre);
 
 })();

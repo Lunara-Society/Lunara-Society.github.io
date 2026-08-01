@@ -29,9 +29,9 @@ body{cursor:default}
 #emblem-img{
   display:block;
   opacity:0;
+  mix-blend-mode:screen;
   filter:brightness(0.95) saturate(1.1);
   transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1);
-  /* subtle living pulse — pure CSS, no particles, no JS jank */
   animation: none;
 }
 #emblem-img.visible{opacity:1}
@@ -44,8 +44,8 @@ body{cursor:default}
 }
 
 @keyframes breathe{
-  0%,100%{ filter:brightness(0.92) saturate(1.05) drop-shadow(0 0 18px rgba(196,144,40,0.18)); }
-  50%{     filter:brightness(1.04) saturate(1.18) drop-shadow(0 0 42px rgba(220,170,60,0.42)); }
+  0%,100%{ filter:brightness(0.90) saturate(1.05) drop-shadow(0 0 22px rgba(196,144,40,0.25)); }
+  50%{     filter:brightness(1.06) saturate(1.20) drop-shadow(0 0 55px rgba(230,175,60,0.60)); }
 }
 
 /* Outer ring glow — pure CSS radial, no canvas */
@@ -55,8 +55,9 @@ body{cursor:default}
   border-radius:50%;
   pointer-events:none;
   opacity:0;
+  background:transparent;
   transition:opacity 3.5s ease;
-  z-index:2;
+  z-index:1;
   animation:none;
 }
 #glow.visible{ opacity:1; }
@@ -70,7 +71,7 @@ body{cursor:default}
 
 /* Hover intensity ring — shows on hover approach */
 #emblem-wrap:hover #emblem-img{
-  filter:brightness(1.08) saturate(1.22) drop-shadow(0 0 55px rgba(220,175,65,0.55));
+  filter:brightness(1.10) saturate(1.28) drop-shadow(0 0 60px rgba(230,180,65,0.65));
   transition:filter 0.5s ease;
 }
 

@@ -14,23 +14,22 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000}
-body{cursor:default}
 
 /* Main canvas for particle dissolution layer */
 #c{position:fixed;top:0;left:0;width:100%;height:100%;display:block;z-index:2}
 
-/* Emblem: real image, CSS-animated */
+/* Emblem: real image, CSS-animated, clickable */
 #emblem-wrap{
   position:fixed;top:50%;left:50%;
   transform:translate(-50%,-50%);
   z-index:3;
-  pointer-events:none;
+  cursor:default;
 }
 #emblem-img{
   display:block;
   opacity:0;
   filter:brightness(0.95) saturate(1.1);
-  transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1);
+  transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
   animation: none;
 }
 #emblem-img.visible{opacity:1}
@@ -47,7 +46,14 @@ body{cursor:default}
   50%{     filter:brightness(1.06) saturate(1.20) drop-shadow(0 0 55px rgba(230,175,60,0.60)); }
 }
 
-/* Outer ring glow — pure CSS radial, no canvas */
+/* When emblem is clickable (after reveal), show pointer */
+#emblem-wrap.active{cursor:pointer}
+#emblem-wrap.active:hover #emblem-img{
+  filter:brightness(1.12) saturate(1.30) drop-shadow(0 0 65px rgba(235,185,70,0.70)) !important;
+  animation-play-state:paused;
+}
+
+/* Outer ring glow */
 #glow{
   position:fixed;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -57,7 +63,6 @@ body{cursor:default}
   background:transparent;
   transition:opacity 3.5s ease;
   z-index:1;
-  animation:none;
 }
 #glow.visible{ opacity:1; }
 #glow.breathe{ animation: glowPulse 6s ease-in-out infinite; }
@@ -68,18 +73,12 @@ body{cursor:default}
   50%{     box-shadow:0 0 70px 20px rgba(220,170,50,0.28), 0 0 140px 50px rgba(210,150,30,0.12); }
 }
 
-/* Hover intensity ring — shows on hover approach */
-#emblem-wrap:hover #emblem-img{
-  filter:brightness(1.10) saturate(1.28) drop-shadow(0 0 60px rgba(230,180,65,0.65));
-  transition:filter 0.5s ease;
-}
-
-/* Text */
+/* Welcome text — ABOVE emblem */
 #welcome{
   position:fixed;left:50%;transform:translateX(-50%);
   white-space:nowrap;opacity:0;pointer-events:none;
   font-family:'Cormorant Garamond',serif;
-  font-size:13px;font-weight:300;
+  font-size:14px;font-weight:300;
   letter-spacing:0.52em;
   color:rgba(210,185,135,0.86);
   text-transform:uppercase;text-align:center;
@@ -89,24 +88,42 @@ body{cursor:default}
 #welcome.show{opacity:0.88}
 #welcome.out{opacity:0!important;transition:opacity 0.8s ease!important}
 
-#enter{
+/* The threshold — a thin gold line below the emblem */
+#threshold{
   position:fixed;left:50%;transform:translateX(-50%);
-  white-space:nowrap;opacity:0;
-  font-family:'Inter',sans-serif;
-  font-size:11px;font-weight:200;
-  letter-spacing:0.52em;
-  color:rgba(196,160,90,0.52);
-  text-transform:uppercase;text-align:center;
-  transition:opacity 2s ease;
-  z-index:10;cursor:pointer;
-  padding:14px 32px;
+  opacity:0;cursor:pointer;
+  z-index:10;
+  width:48px;height:1px;
+  background:linear-gradient(90deg, transparent, rgba(196,160,90,0.5), transparent);
+  transition:opacity 2s ease, width 0.5s ease, background 0.5s ease;
+  pointer-events:auto;
 }
-#enter.show{opacity:0.55}
-#enter:hover{
-  opacity:1;color:rgba(230,200,130,0.92);
-  transition:opacity 0.3s ease,color 0.3s ease;
+#threshold.show{opacity:1}
+#threshold::after{
+  content:'';
+  position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(210,175,95,0.6);
+  box-shadow:0 0 8px rgba(210,175,95,0.4);
+  transition:all 0.5s ease;
 }
-#enter.out{opacity:0!important;pointer-events:none;transition:opacity 0.7s ease!important}
+#threshold.breathe::after{
+  animation: dotPulse 6s ease-in-out infinite;
+}
+@keyframes dotPulse{
+  0%,100%{ opacity:0.35; box-shadow:0 0 6px rgba(210,175,95,0.3); }
+  50%{     opacity:0.85; box-shadow:0 0 14px rgba(230,190,100,0.65); }
+}
+#threshold:hover{
+  width:90px;
+  background:linear-gradient(90deg, transparent, rgba(230,195,120,0.85), transparent);
+}
+#threshold:hover::after{
+  width:7px;height:7px;
+  background:rgba(235,200,120,0.95);
+  box-shadow:0 0 16px rgba(235,200,120,0.7);
+}
+#threshold.out{opacity:0!important;pointer-events:none;transition:opacity 0.7s ease!important}
 </style>
 </head>
 <body>
@@ -114,12 +131,13 @@ body{cursor:default}
 
 <div id="glow"></div>
 
+<div id="welcome">Welcome to Lunara Society</div>
+
 <div id="emblem-wrap">
   <img id="emblem-img" src="lunara_emblem_transparent.png" alt="Lunara Society">
 </div>
 
-<div id="welcome">Welcome to Lunara Society</div>
-<div id="enter">Enter</div>
+<div id="threshold"></div>
 
 <script>
 (function(){
@@ -130,19 +148,18 @@ const embImg  = document.getElementById('emblem-img');
 const glowEl  = document.getElementById('glow');
 const embWrap = document.getElementById('emblem-wrap');
 const welEl   = document.getElementById('welcome');
-const entEl   = document.getElementById('enter');
+const thrEl   = document.getElementById('threshold');
 
 let W, H, cx, cy, dpr;
 let dissolveParticles = [];
 let dissolving = false;
 let dissolveStart = 0;
-let phase = 'black'; // black → reveal → living → dissolve
+let phase = 'black';
 let phaseStart = 0;
-let animT = 0, lastT = 0;
+let lastT = 0;
 
-// ── Size helpers ─────────────────────────────
 function emblemPx(){
-  return Math.min(W, H) * 0.52;   // emblem covers ~52% of shortest viewport dimension
+  return Math.min(W, H) * 0.50;
 }
 
 function setLayout(){
@@ -160,19 +177,17 @@ function setLayout(){
   glowEl.style.width  = (ep * 1.15) + 'px';
   glowEl.style.height = (ep * 1.15) + 'px';
 
-  // Text positioning below emblem
-  const textTop = cy + ep/2 + 30;
-  welEl.style.top  = textTop + 'px';
-  entEl.style.top  = (textTop + 34) + 'px';
+  // Welcome text ABOVE emblem
+  welEl.style.top = (cy - ep/2 - 36) + 'px';
+  // Threshold line BELOW emblem
+  thrEl.style.top = (cy + ep/2 + 32) + 'px';
 }
 
-// ── Dissolve particle system ──────────────────
-// Only runs on Enter click. Samples emblem pixels, explodes outward.
 function buildDissolveParticles(callback){
   const offC = document.createElement('canvas');
   const offCtx = offC.getContext('2d');
   const ep = emblemPx();
-  const SZ = 192; // internal sample resolution
+  const SZ = 192;
   offC.width = SZ; offC.height = SZ;
   offCtx.drawImage(embImg, 0, 0, SZ, SZ);
   const dat = offCtx.getImageData(0,0,SZ,SZ).data;
@@ -188,13 +203,11 @@ function buildDissolveParticles(callback){
       const i=(y*SZ+x)*4;
       const r=dat[i],g=dat[i+1],b=dat[i+2];
       if((r+g+b)/3 < 20) continue;
-
       const px = ox + x*scale + (Math.random()-0.5)*2;
       const py = oy + y*scale + (Math.random()-0.5)*2;
       const ang = Math.atan2(py-cy, px-cx);
       const spread = (Math.random()-0.5)*0.5;
       const speed = 1.2 + Math.random()*3.2;
-
       pts.push({
         x: px, y: py,
         vx: Math.cos(ang+spread)*speed,
@@ -205,26 +218,20 @@ function buildDissolveParticles(callback){
       });
     }
   }
-
   dissolveParticles = pts;
   callback();
 }
 
-// ── Main loop ─────────────────────────────────
 function loop(now){
-  const dt = Math.min((now - lastT)/1000, 0.05);
-  lastT = now; animT += dt;
-
+  lastT = now;
   ctx.clearRect(0, 0, W, H);
-
   const el = now - phaseStart;
 
   if(phase === 'black'){
     if(el > 900){ phase='reveal'; phaseStart=now; }
   }
   else if(phase === 'reveal'){
-    // CSS handles the image fade-in
-    if(el === 0 || el < 50){
+    if(el < 50){
       embImg.classList.add('visible');
       glowEl.classList.add('visible');
     }
@@ -235,14 +242,12 @@ function loop(now){
     }
   }
   else if(phase === 'living'){
-    // Show text
-    if(el > 400  && !welEl.classList.contains('show')) welEl.classList.add('show');
-    if(el > 2000 && !entEl.classList.contains('show')) entEl.classList.add('show');
-    // nothing to draw on canvas — CSS handles emblem life
+    if(el > 300  && !welEl.classList.contains('show')) welEl.classList.add('show');
+    if(el > 1800 && !thrEl.classList.contains('show')){ thrEl.classList.add('show'); thrEl.classList.add('breathe'); }
+    if(el > 1800 && !embWrap.classList.contains('active')) embWrap.classList.add('active');
   }
   else if(phase === 'dissolve'){
     const elapsed = now - dissolveStart;
-    // Draw dissolving particles
     dissolveParticles.forEach(p=>{
       if(p.life <= 0) return;
       p.x += p.vx; p.y += p.vy;
@@ -257,47 +262,45 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-// ── Enter interaction ─────────────────────────
 function activate(){
   if(dissolving) return;
   dissolving = true;
-
-  // Hide CSS elements
+  embWrap.classList.remove('active');
   embImg.classList.add('dissolving');
   glowEl.classList.add('dissolving');
   welEl.classList.add('out');
-  entEl.classList.add('out');
-
-  // Build particles from current emblem then start dissolve
+  thrEl.classList.add('out');
   buildDissolveParticles(function(){
     phase = 'dissolve';
     dissolveStart = performance.now();
   });
 }
 
-entEl.addEventListener('click', activate);
-entEl.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
+// Both emblem and threshold are clickable
+embWrap.addEventListener('click', activate);
+embWrap.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
+thrEl.addEventListener('click', activate);
+thrEl.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
 
-// Hover: emblem brightens via CSS :hover on wrap
-// Also boost glow on enter hover
-entEl.addEventListener('mouseenter', function(){
+// Hover sync: hovering either element boosts the glow
+function boostGlow(){
   glowEl.style.boxShadow='0 0 90px 30px rgba(220,170,55,0.32),0 0 160px 60px rgba(210,150,30,0.15)';
-});
-entEl.addEventListener('mouseleave', function(){
+}
+function calmGlow(){
   glowEl.style.boxShadow='';
-});
+}
+embWrap.addEventListener('mouseenter', boostGlow);
+embWrap.addEventListener('mouseleave', calmGlow);
+thrEl.addEventListener('mouseenter', boostGlow);
+thrEl.addEventListener('mouseleave', calmGlow);
 
-window.addEventListener('resize', function(){
-  setLayout();
-});
+window.addEventListener('resize', setLayout);
 
-// ── Init ─────────────────────────────────────
 setLayout();
 phaseStart = performance.now();
 lastT = phaseStart;
 requestAnimationFrame(loop);
 
-// Prefetch main site
 const pre = document.createElement('link');
 pre.rel='prefetch'; pre.href='home.html';
 document.head.appendChild(pre);

@@ -1335,6 +1335,29 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
   const vid = document.getElementById('ros-vid');
   const hint = document.getElementById('ros-hint');
   if(!vid) return;
+  
+  // Check if coming from activation page (user gesture occurred)
+  var fromActivation = window.location.search.indexOf('audio=1') !== -1;
+  
+  function tryAutoplayWithSound(){
+    vid.muted = false;
+    vid.currentTime = 0;
+    vid.play().then(function(){
+      if(hint){ hint.textContent='▐▐ Playing · click to restart'; hint.style.opacity='0.6'; }
+    }).catch(function(){
+      // Sticky activation not available — fallback to muted
+      vid.muted = true;
+      vid.play();
+      if(hint){ hint.style.opacity='0.7'; hint.textContent='▶ Click to hear Rosario'; }
+    });
+  }
+  
+  if(fromActivation){
+    // User already interacted on index.html — try autoplay with sound
+    setTimeout(tryAutoplayWithSound, 800);
+  }
+  
+  // Click handler (always available for restart/unmute)
   vid.addEventListener('click',()=>{
     vid.currentTime = 0;
     vid.muted = false;

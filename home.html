@@ -34,7 +34,7 @@
   --gold-50: rgba(196,164,107,0.70);
   --gold-70: rgba(196,164,107,0.70);
   --text: rgba(230,212,175,0.90);
-  --text-dim: rgba(196,164,107,0.72);
+  --text-dim: rgba(196,164,107,0.92);
   --bg: #000;
 }
 html, body {
@@ -89,7 +89,7 @@ html, body {
   font-family:'Inter', sans-serif;
   font-size:11px; font-weight:400; letter-spacing:0.12em;
   text-transform:uppercase; text-decoration:none;
-  color:rgba(196,164,107,0.65);
+  color:rgba(196,164,107,0.92);
   padding:8px 18px; border-radius:100px;
   transition:all 0.25s;
   white-space:nowrap;
@@ -161,7 +161,7 @@ html, body {
   font-family:'Cormorant Garamond', serif;
   font-size:clamp(18px, 2.5vw, 26px);
   font-weight:300; font-style:italic;
-  color:rgba(196,164,107,0.65); margin-bottom:48px; line-height:1.5;
+  color:#e8e2d4; margin-bottom:48px; line-height:1.5;
   opacity:0; animation:fadeUp 1s ease 0.75s forwards;
 }
 .hero-actions {
@@ -238,7 +238,7 @@ html, body {
 .ros-text h2 {
   font-family:'Cormorant Garamond', serif;
   font-size:clamp(32px, 4vw, 52px); font-weight:300;
-  color:#f0e0b0; line-height:1.25; margin-bottom:24px;
+  color:#f0e8d0; line-height:1.25; margin-bottom:24px;
 }
 .ros-text h2 em { font-style:italic; color:var(--gold-b); }
 .ros-text p {
@@ -249,7 +249,7 @@ html, body {
   display:inline-flex; align-items:center; gap:10px;
   margin-top:24px; padding:14px 32px;
   border:1px solid var(--gold-30); border-radius:100px;
-  color:#f0e0b0; font-family:'Inter', sans-serif;
+  color:#eee8d8; font-family:'Inter', sans-serif;
   font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
   text-decoration:none; transition:all 0.3s;
 }
@@ -400,7 +400,7 @@ html, body {
 .urgency-inner h2 {
   font-family:'Cormorant Garamond', serif;
   font-size:clamp(26px, 4vw, 40px); font-weight:300;
-  color:#f0e0b0; margin-bottom:16px; line-height:1.3;
+  color:#f5f0e2; margin-bottom:16px; line-height:1.3;
 }
 .urgency-inner p {
   font-size:16px; line-height:1.9; color:var(--text-dim); margin-bottom:32px;
@@ -410,7 +410,7 @@ html, body {
   padding:16px 44px; border-radius:100px;
   background:rgba(196,164,107,0.12);
   border:1px solid rgba(196,164,107,0.72);
-  color:#f0e0b0; font-family:'Inter', sans-serif;
+  color:#eee8d8; font-family:'Inter', sans-serif;
   font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
   text-decoration:none; transition:all 0.3s;
 }
@@ -461,7 +461,7 @@ html, body {
   display:inline-flex; align-items:center; gap:8px;
   margin-top:20px; padding:13px 28px; border-radius:100px;
   border:1px solid rgba(196,164,107,0.3);
-  color:#f0e0b0; font-family:'Inter', sans-serif;
+  color:#eee8d8; font-family:'Inter', sans-serif;
   font-size:11px; letter-spacing:0.15em; text-transform:uppercase;
   text-decoration:none; transition:all 0.3s;
 }
@@ -492,7 +492,7 @@ html, body {
   font-size:12px; color:rgba(196,164,107,0.35);
   font-family:'Inter', sans-serif;
 }
-.footer-email a { color:rgba(196,164,107,0.65); text-decoration:none; }
+.footer-email a { color:rgba(196,164,107,0.92); text-decoration:none; }
 .footer-email a:hover { color:var(--gold); }
 
 /* ─── ANIMATIONS ─── */
@@ -815,6 +815,43 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 ::-webkit-scrollbar-thumb{background:rgba(196,164,107,0.3);border-radius:2px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(196,164,107,0.6)}
 ::selection{background:rgba(196,164,107,0.25);color:#fff}
+
+
+/* ── PROGRAMMABLE MATTER TEXT ASSEMBLY ── */
+.matter-text {
+  overflow: hidden;
+}
+.matter-text .mw {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(18px) scale(0.94);
+  transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+              transform 0.55s cubic-bezier(0.22,1,0.36,1);
+}
+.matter-text.in .mw { opacity: 1; transform: translateY(0) scale(1); }
+.matter-text.in .mw:nth-child(1)  { transition-delay: 0.00s; }
+.matter-text.in .mw:nth-child(2)  { transition-delay: 0.06s; }
+.matter-text.in .mw:nth-child(3)  { transition-delay: 0.12s; }
+.matter-text.in .mw:nth-child(4)  { transition-delay: 0.18s; }
+.matter-text.in .mw:nth-child(5)  { transition-delay: 0.24s; }
+.matter-text.in .mw:nth-child(6)  { transition-delay: 0.30s; }
+.matter-text.in .mw:nth-child(7)  { transition-delay: 0.36s; }
+.matter-text.in .mw:nth-child(8)  { transition-delay: 0.42s; }
+.matter-text.in .mw:nth-child(9)  { transition-delay: 0.48s; }
+.matter-text.in .mw:nth-child(10) { transition-delay: 0.54s; }
+.matter-text.in .mw:nth-child(11) { transition-delay: 0.60s; }
+.matter-text.in .mw:nth-child(12) { transition-delay: 0.66s; }
+.matter-text.in .mw:nth-child(13) { transition-delay: 0.72s; }
+.matter-text.in .mw:nth-child(14) { transition-delay: 0.78s; }
+.matter-text.in .mw:nth-child(15) { transition-delay: 0.84s; }
+.matter-text.in .mw:nth-child(n+16) { transition-delay: 0.90s; }
+
+/* ── GOLD HIGHLIGHT PULSE on key phrases ── */
+.gold-bam {
+  color: #f0c040;
+  text-shadow: 0 0 22px rgba(240,192,64,0.45), 0 0 60px rgba(240,192,64,0.15);
+  font-style: normal;
+}
 
 </style>
 
@@ -1373,6 +1410,37 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
     entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
   }, {threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
+
+
+// ── PROGRAMMABLE MATTER TEXT ASSEMBLY ──
+(function(){
+  function wrapWords(el){
+    // Already wrapped? Skip
+    if(el.dataset.wrapped) return;
+    el.dataset.wrapped = '1';
+    el.childNodes.forEach(function(node){
+      if(node.nodeType === 3){ // text node
+        var words = node.textContent.split(' ');
+        var frag = document.createDocumentFragment();
+        words.forEach(function(w, i){
+          if(w === '') return;
+          var sp = document.createElement('span');
+          sp.className = 'mw';
+          sp.textContent = w;
+          frag.appendChild(sp);
+          if(i < words.length - 1) frag.appendChild(document.createTextNode(' '));
+        });
+        node.parentNode.replaceChild(frag, node);
+      }
+    });
+  }
+
+  var matterEls = document.querySelectorAll('.matter-text');
+  matterEls.forEach(wrapWords);
+
+  // The existing reveal IntersectionObserver adds class 'in' — 
+  // matter-text.in triggers the CSS transitions
 })();
 
 // ── LIVE TRUST TICKER ──

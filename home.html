@@ -469,31 +469,156 @@ html, body {
 
 /* ─── FOOTER ─── */
 #site-footer {
-  background:#000; border-top:1px solid rgba(196,164,107,0.1);
-  padding:48px 40px;
-  display:flex; align-items:center; justify-content:space-between;
-  flex-wrap:wrap; gap:24px;
+  background:#050505;
+  border-top:1px solid rgba(196,164,107,0.18);
+  padding:64px 60px 0;
+  position:relative;
+  overflow:hidden;
 }
-.footer-brand {
+
+/* Invisible ownership watermark — embeds authorship in rendered layer */
+#site-footer::before {
+  content:'© Lunara Society MMXXVI — All rights reserved. Unauthorized reproduction, distribution, or derivative works of this website, its design system, constitutional framework, or visual identity are strictly prohibited under international copyright law. Original work by Lunara Society, established 2026.';
+  position:absolute;
+  color:rgba(196,164,107,0.004);
+  font-size:1px;
+  letter-spacing:0;
+  top:0; left:0;
+  width:100%;
+  pointer-events:none;
+  user-select:none;
+  z-index:0;
+}
+
+.footer-inner { position:relative; z-index:1; }
+
+.footer-top {
+  display:grid;
+  grid-template-columns:1.4fr 2fr;
+  gap:60px;
+  padding-bottom:52px;
+  border-bottom:1px solid rgba(196,164,107,0.12);
+}
+
+.footer-brand-block { display:flex; flex-direction:column; gap:16px; }
+
+.footer-logo {
+  display:flex; align-items:center; gap:12px;
+}
+
+.footer-mark {
+  width:36px; height:36px;
+  border:1px solid rgba(196,164,107,0.6);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond', serif;
-  font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
-  color:rgba(196,164,107,0.5);
+  font-size:18px; color:var(--gold);
+  box-shadow:0 0 14px rgba(196,164,107,0.12);
 }
-.footer-links {
-  display:flex; gap:24px; flex-wrap:wrap;
+
+.footer-name {
+  font-family:'Cormorant Garamond', serif;
+  font-size:16px; letter-spacing:0.18em; text-transform:uppercase;
+  color:rgba(196,164,107,0.92);
 }
-.footer-links a {
-  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
-  color:rgba(196,164,107,0.72); text-decoration:none;
-  font-family:'Inter', sans-serif; transition:color 0.2s;
-}
-.footer-links a:hover { color:rgba(196,164,107,0.7); }
-.footer-email {
-  font-size:12px; color:rgba(196,164,107,0.35);
+
+.footer-tagline {
   font-family:'Inter', sans-serif;
+  font-size:13px; line-height:1.7;
+  color:rgba(255,255,255,0.48);
+  max-width:260px;
 }
-.footer-email a { color:rgba(196,164,107,0.92); text-decoration:none; }
-.footer-email a:hover { color:var(--gold); }
+
+.footer-contact-block {
+  margin-top:auto;
+  padding-top:20px;
+}
+
+.footer-contact-label {
+  font-family:'Inter', sans-serif;
+  font-size:10px; letter-spacing:0.22em; text-transform:uppercase;
+  color:rgba(196,164,107,0.45);
+  margin-bottom:6px;
+}
+
+.footer-contact-email {
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+  color:rgba(196,164,107,0.82);
+  text-decoration:none;
+  transition:color 0.2s;
+  letter-spacing:0.02em;
+}
+.footer-contact-email:hover { color:var(--gold); }
+
+.footer-cols {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:32px;
+}
+
+.footer-col h4 {
+  font-family:'Inter', sans-serif;
+  font-size:10px; letter-spacing:0.25em; text-transform:uppercase;
+  color:rgba(196,164,107,0.55);
+  margin:0 0 18px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(196,164,107,0.1);
+}
+
+.footer-col a {
+  display:block;
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+  color:rgba(255,255,255,0.62);
+  text-decoration:none;
+  margin-bottom:10px;
+  transition:color 0.2s, padding-left 0.2s;
+  letter-spacing:0.02em;
+}
+.footer-col a:hover {
+  color:rgba(196,164,107,0.92);
+  padding-left:4px;
+}
+
+.footer-bottom {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+  padding:22px 0;
+  border-top:1px solid rgba(196,164,107,0.07);
+  margin-top:0;
+}
+
+.footer-copy {
+  font-family:'Inter', sans-serif;
+  font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+  color:rgba(196,164,107,0.35);
+}
+
+.footer-rights {
+  font-family:'Inter', sans-serif;
+  font-size:11px;
+  color:rgba(255,255,255,0.2);
+  letter-spacing:0.04em;
+  text-align:center;
+  flex:1;
+}
+
+.footer-legal {
+  display:flex; gap:20px;
+}
+
+.footer-legal a {
+  font-family:'Inter', sans-serif;
+  font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(196,164,107,0.38);
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.footer-legal a:hover { color:rgba(196,164,107,0.72); }
 
 /* ─── ANIMATIONS ─── */
 @keyframes fadeUp {
@@ -558,9 +683,12 @@ html, body {
   .hero-subtitle { font-size:15px; line-height:1.6; padding:0 8px; }
 
   #site-footer {
-    flex-direction:column; align-items:flex-start; gap:20px;
-    padding:36px 24px;
+    padding:48px 24px 0;
   }
+  .footer-top { grid-template-columns:1fr; gap:40px; }
+  .footer-cols { grid-template-columns:1fr 1fr; gap:24px; }
+  .footer-bottom { flex-direction:column; align-items:flex-start; gap:12px; }
+  .footer-rights { text-align:left; }
   #cards-section, #rosario-section, #constitution-section { padding:70px 24px; }
   .cards-header { margin-bottom:40px; }
 }
@@ -1302,17 +1430,22 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </style>
 
 <!-- ─── FOOTER ─── -->
-<!-- ─── FOOTER ─── -->
 <footer id="site-footer">
   <div class="footer-inner">
     <div class="footer-top">
+
       <div class="footer-brand-block">
         <div class="footer-logo">
           <div class="footer-mark">L</div>
           <span class="footer-name">Lunara Society</span>
         </div>
-        <p class="footer-tagline">Constitutional governance for autonomous AI systems. Established 2026.</p>
+        <p class="footer-tagline">The first constitutional governance intelligence platform for autonomous AI systems. Established MMXXVI.</p>
+        <div class="footer-contact-block">
+          <div class="footer-contact-label">Contact</div>
+          <a class="footer-contact-email" href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a>
+        </div>
       </div>
+
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Platform</h4>
@@ -1327,7 +1460,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           <a href="constitution.html">Constitution</a>
           <a href="institution.html">The Society</a>
           <a href="intelligence.html">Intelligence</a>
-    <a href="compliance-intelligence.html">Compliance Intelligence</a>
+          <a href="compliance-intelligence.html">Compliance Intelligence</a>
           <a href="doctrine.html">Doctrine</a>
           <a href="whitepaper.html">Whitepaper</a>
         </div>
@@ -1341,13 +1474,14 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         </div>
       </div>
     </div>
+
     <div class="footer-bottom">
-      <span class="footer-copy">Lunara Society · MMXXVI</span>
+      <span class="footer-copy">© MMXXVI Lunara Society</span>
+      <span class="footer-rights">All rights reserved. Unauthorized reproduction strictly prohibited.</span>
       <div class="footer-legal">
         <a href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
       </div>
-      <span class="footer-email"><a href="mailto:dsrkarya.lunarasociety@gmail.com">dsrkarya.lunarasociety@gmail.com</a></span>
     </div>
   </div>
 </footer>

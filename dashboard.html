@@ -163,6 +163,21 @@ p,li,span{
   font-weight:500;
 }
 
+
+.risk-critical{background:rgba(244,67,54,0.1);color:rgba(239,154,154,0.8);border:1px solid rgba(239,154,154,0.2);padding:3px 10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
+.risk-high{background:rgba(255,152,0,0.1);color:rgba(255,183,77,0.8);border:1px solid rgba(255,183,77,0.2);padding:3px 10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
+.risk-moderate{background:rgba(255,193,7,0.1);color:rgba(255,213,79,0.8);border:1px solid rgba(255,213,79,0.2);padding:3px 10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
+.risk-low{background:rgba(76,175,80,0.1);color:rgba(129,199,132,0.8);border:1px solid rgba(129,199,132,0.2);padding:3px 10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
+.score-bar{display:inline-block;width:60px;height:6px;background:var(--gold-15);border-radius:3px;overflow:hidden;vertical-align:middle;margin-right:8px}
+.score-fill{height:100%;border-radius:3px}
+.score-fill.critical{background:rgba(239,154,154,0.7)}
+.score-fill.high{background:rgba(255,183,77,0.7)}
+.score-fill.moderate{background:rgba(255,213,79,0.7)}
+.score-fill.low{background:rgba(129,199,132,0.7)}
+.gap-list{font-size:11px;color:var(--text-dim);line-height:1.5}
+.contact-badge{display:inline-block;padding:3px 10px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;font-family:'Inter',sans-serif}
+.contact-yes{background:rgba(76,175,80,0.1);color:rgba(129,199,132,0.7);border:1px solid rgba(129,199,132,0.15)}
+.contact-no{background:rgba(196,164,107,0.06);color:var(--text-dim);border:1px solid var(--gold-15)}
 </style>
 
 <script type="application/ld+json" id="lunara-schema">{
@@ -477,6 +492,101 @@ p,li,span{
 </div>
 </div>
 
+
+<div class="section">
+<div class="section-header">
+<div class="section-title">Compliance Intelligence Leads</div>
+<div class="section-actions">
+<span class="tab active" data-scorer-filter="all" onclick="filterScorer('all')">All</span>
+<span class="tab" data-scorer-filter="uncontacted" onclick="filterScorer('uncontacted')">Uncontacted</span>
+<span class="tab" data-scorer-filter="contacted" onclick="filterScorer('contacted')">Contacted</span>
+</div>
+</div>
+
+<div class="stats-grid" style="margin-bottom:24px" id="scorer-stats-grid">
+<div class="stat-card"><div class="stat-value" id="scorer-total">0</div><div class="stat-label">Total Leads</div></div>
+<div class="stat-card"><div class="stat-value gold" id="scorer-critical">0</div><div class="stat-label">Critical Risk</div></div>
+<div class="stat-card"><div class="stat-value" id="scorer-high">0</div><div class="stat-label">High Risk</div></div>
+<div class="stat-card"><div class="stat-value" id="scorer-avg">0</div><div class="stat-label">Avg Score</div></div>
+<div class="stat-card"><div class="stat-value" id="scorer-uncontacted">0</div><div class="stat-label">Uncontacted</div></div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Organization</th>
+<th>AI System</th>
+<th>Score</th>
+<th>Risk Grade</th>
+<th>Key Gaps</th>
+<th>Contact</th>
+<th>Assessed</th>
+</tr>
+</thead>
+<tbody id="scorer-body"></tbody>
+</table>
+</div>
+<div class="empty-state" id="scorer-empty" style="display:none">
+<h3>No scorer leads yet</h3>
+<p>When organizations use the Compliance Risk Scorer, their results will appear here. Leads with scores below 60 (CRITICAL/HIGH RISK) are prioritized for outreach.</p>
+</div>
+</div>
+
+<div class="section">
+<div class="section-header">
+<div class="section-title">Aug 15 Prototype Milestone</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--gold-15);padding:28px;margin-bottom:24px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<div style="font-size:14px;color:rgba(196,164,107,0.8);letter-spacing:2px;text-transform:uppercase;font-family:'Inter',sans-serif">Prototype Readiness</div>
+<div style="font-size:24px;color:var(--gold);font-family:'Cormorant Garamond',serif" id="milestone-days">—</div>
+</div>
+<div style="height:4px;background:var(--gold-15);border-radius:2px;overflow:hidden;margin-bottom:20px">
+<div style="height:100%;background:linear-gradient(90deg,var(--gold-30),var(--gold));border-radius:2px;transition:width .8s ease" id="milestone-bar"></div>
+</div>
+
+<div class="milestone-list">
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Certification pipeline live with backend API</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Seven pillar assessment framework</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Compliance Risk Scorer capturing leads</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Verification Matrix v1.0 published</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Healthcare, FinTech, Government tracks mapped</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;background:rgba(196,164,107,0.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px">✓</span>
+<span style="font-size:13px;color:var(--text)">Scorer leads dashboard integrated</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;border:1px solid var(--gold-15);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px">○</span>
+<span style="font-size:13px;color:var(--text-dim)">First real healthcare lead scored and contacted</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(196,164,107,0.06)">
+<span style="width:24px;height:24px;border-radius:50%;border:1px solid var(--gold-15);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px">○</span>
+<span style="font-size:13px;color:var(--text-dim)">Pilot client demo session completed</span>
+</div>
+<div class="milestone-item" style="display:flex;align-items:center;gap:12px;padding:10px 0">
+<span style="width:24px;height:24px;border-radius:50%;border:1px solid var(--gold-15);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px">○</span>
+<span style="font-size:13px;color:var(--text-dim)">First founding pilot certification signed ($75K)</span>
+</div>
+</div>
+</div>
+</div>
+
 <div class="section">
 <div class="section-header">
 <div class="section-title">Recent Activity</div>
@@ -648,6 +758,112 @@ async function loadDashboard() {
   }
 }
 
+
+// === SCORER LEADS ===
+let allScorerLeads = [];
+let currentScorerFilter = 'all';
+
+function filterScorer(filter) {
+  currentScorerFilter = filter;
+  document.querySelectorAll('[data-scorer-filter]').forEach(t => {
+    t.classList.toggle('active', t.dataset.scorerFilter === filter);
+  });
+  renderScorerTable();
+}
+
+function parseGaps(gapsStr) {
+  try {
+    return JSON.parse(gapsStr || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function riskBadge(score) {
+  if (score < 40) return '<span class="risk-critical">Critical</span>';
+  if (score < 60) return '<span class="risk-high">High Risk</span>';
+  if (score < 80) return '<span class="risk-moderate">Moderate</span>';
+  return '<span class="risk-low">Low Risk</span>';
+}
+
+function scoreBar(score) {
+  let cls = score < 40 ? 'critical' : score < 60 ? 'high' : score < 80 ? 'moderate' : 'low';
+  return '<span class="score-bar"><span class="score-fill ' + cls + '" style="width:' + score + '%"></span></span>' + score;
+}
+
+function renderScorerTable() {
+  const tbody = document.getElementById('scorer-body');
+  let records = allScorerLeads;
+  
+  if (currentScorerFilter === 'uncontacted') records = records.filter(r => !r.contacted);
+  if (currentScorerFilter === 'contacted') records = records.filter(r => r.contacted);
+  
+  if (records.length === 0) {
+    tbody.innerHTML = '';
+    document.getElementById('scorer-empty').style.display = 'block';
+    return;
+  }
+  
+  document.getElementById('scorer-empty').style.display = 'none';
+  tbody.innerHTML = records.map(r => {
+    const gaps = parseGaps(r.gaps);
+    const gapText = gaps.slice(0, 3).join(', ') + (gaps.length > 3 ? ' +' + (gaps.length - 3) : '');
+    return '<tr>' +
+      '<td class="business-name">' + (r.organization || 'Unknown') + '</td>' +
+      '<td style="font-size:12px;color:var(--text-dim)">' + (r.system || '—') + '</td>' +
+      '<td>' + scoreBar(r.score || 0) + '</td>' +
+      '<td>' + riskBadge(r.score || 0) + '</td>' +
+      '<td class="gap-list">' + (gapText || '—') + '</td>' +
+      '<td>' + (r.contacted ? '<span class="contact-badge contact-yes">Contacted</span>' : '<span class="contact-badge contact-no">Not Yet</span>') + '</td>' +
+      '<td style="font-size:12px;color:var(--text-dim)">' + formatDate(r.created_date) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function loadScorerLeads() {
+  try {
+    const res = await fetch(API_BASE + '/lunaraScorerLeads', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    
+    if (!data.success) throw new Error(data.error || 'Failed');
+    
+    allScorerLeads = data.records || [];
+    
+    document.getElementById('scorer-total').textContent = data.stats.total;
+    document.getElementById('scorer-critical').textContent = data.stats.critical;
+    document.getElementById('scorer-high').textContent = data.stats.high_risk;
+    document.getElementById('scorer-avg').textContent = data.stats.avg_score;
+    document.getElementById('scorer-uncontacted').textContent = data.stats.uncontacted;
+    
+    renderScorerTable();
+  } catch(err) {
+    console.error('Scorer leads error:', err);
+    document.getElementById('scorer-empty').style.display = 'block';
+  }
+}
+
+// === MILESTONE TRACKER ===
+function updateMilestone() {
+  const target = new Date('2026-08-15');
+  const now = new Date();
+  const diffTime = target - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  document.getElementById('milestone-days').textContent = diffDays > 0 ? diffDays + ' days' : 'Due';
+  
+  const projectStart = new Date('2026-07-28');
+  const totalDuration = target - projectStart;
+  const elapsed = now - projectStart;
+  const pct = Math.min(Math.max((elapsed / totalDuration) * 100, 0), 100);
+  document.getElementById('milestone-bar').style.width = pct + '%';
+}
+
+updateMilestone();
+loadScorerLeads();
 loadDashboard();
 
 // Auto refresh every 60 seconds

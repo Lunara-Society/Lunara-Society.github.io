@@ -18,15 +18,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-weight:200;cursor:default}
 canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block}
 .text-layer{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:10}
-.welcome-text{position:absolute;top:calc(50% + 180px);left:50%;transform:translate(-50%,0);opacity:0;transition:opacity 2.5s ease;white-space:nowrap}
+
+/* Welcome text — ABOVE the emblem */
+.welcome-text{position:absolute;top:calc(50% - 230px);left:50%;transform:translate(-50%,0);opacity:0;transition:opacity 2.5s ease;white-space:nowrap}
 .welcome-text.show{opacity:0.92}
 .welcome-text h1{font-size:15px;font-weight:200;letter-spacing:0.45em;color:rgba(224,224,176,0.92);text-transform:uppercase;text-align:center}
-.enter-text{position:absolute;top:calc(50% + 215px);left:50%;transform:translate(-50%,0);opacity:0;transition:opacity 2s ease;pointer-events:auto;cursor:pointer}
-.enter-text.show{opacity:0.5}
-.enter-text:hover{opacity:0.95;transition:opacity 0.4s ease}
-.enter-text span{font-size:13px;font-weight:200;letter-spacing:0.35em;color:rgba(224,224,176,0.85);text-transform:uppercase}
-body.dissolving .enter-text{opacity:0 !important;pointer-events:none;transition:opacity 0.8s ease}
+
+/* Enter indicator — BELOW the emblem, no text, just a breathing gold line */
+.enter-cue{position:absolute;top:calc(50% + 230px);left:50%;transform:translate(-50%,0);opacity:0;transition:opacity 2s ease;pointer-events:auto;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:14px}
+.enter-cue.show{opacity:0.6}
+.enter-cue:hover{opacity:0.95;transition:opacity 0.4s ease}
+
+.enter-line{width:48px;height:1px;background:linear-gradient(90deg,transparent,rgba(196,164,107,0.9),transparent);animation:breathe 3.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:0.3;transform:scaleX(0.7)}50%{opacity:1;transform:scaleX(1)}}
+
+.enter-dot{width:4px;height:4px;border-radius:50%;background:rgba(224,224,176,0.85);box-shadow:0 0 8px rgba(196,164,107,0.6);animation:pulse 3.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
+
+body.dissolving .enter-cue{opacity:0 !important;pointer-events:none;transition:opacity 0.8s ease}
 body.dissolving .welcome-text{opacity:0 !important;transition:opacity 0.8s ease}
+body.dissolving .enter-line,body.dissolving .enter-dot{animation:none}
 </style>
 </head>
 <body>
@@ -37,8 +48,9 @@ body.dissolving .welcome-text{opacity:0 !important;transition:opacity 0.8s ease}
   <div class="welcome-text" id="welcome">
     <h1>Welcome to Lunara Society</h1>
   </div>
-  <div class="enter-text" id="enter">
-    <span>Enter</span>
+  <div class="enter-cue" id="enter">
+    <div class="enter-line"></div>
+    <div class="enter-dot"></div>
   </div>
 </div>
 
@@ -287,7 +299,7 @@ body.dissolving .welcome-text{opacity:0 !important;transition:opacity 0.8s ease}
     }
   });
 
-  enterEl.addEventListener('click', function() {
+  function startDissolve() {
     if (dissolving) return;
     dissolving = true;
     document.body.classList.add('dissolving');
@@ -297,32 +309,52 @@ body.dissolving .welcome-text{opacity:0 !important;transition:opacity 0.8s ease}
       const dx = p.x - cx;
       const dy = p.y - cy;
       const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const angle = Math.atan2(dy, dx);
-      const speed = 1.2 + Math.random() * 2.5;
-      const spread = (Math.random() - 0.5) * 0.4;
-      p.dvx = Math.cos(angle + spread) * speed;
-      p.dvy = Math.sin(angle + spread) * speed;
-      p.life = 1.0;
+      p.dvx = (dx / dist) * (2 + Math.random() * 4);
+      p.dvy = (dy / dist) * (2 + Math.random() * 4);
     });
+  }
+
+  enterEl.addEventListener('click', startDissolve);
+
+  // Also allow clicking the emblem area itself
+  canvas.addEventListener('click', function(e) {
+    if (dissolving) return;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const emblemSize = Math.min(W, H) * 0.38;
+    if (dist < emblemSize * 0.7) {
+      startDissolve();
+    }
   });
 
-  enterEl.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    if (!dissolving) enterEl.click();
-  }, { passive: false });
+  // Touch support — tap anywhere on the emblem to enter
+  canvas.addEventListener('touchend', function(e) {
+    if (dissolving) return;
+    if (e.changedTouches.length > 0) {
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - cx;
+      const dy = touch.clientY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const emblemSize = Math.min(W, H) * 0.38;
+      if (dist < emblemSize * 0.8) {
+        startDissolve();
+      }
+    }
+  });
 
+  resize();
   window.addEventListener('resize', function() {
     resize();
   });
 
-  resize();
-  phaseStart = performance.now();
-  lastTime = phaseStart;
   generateEmblemPoints(function() {
+    phaseStart = performance.now();
+    lastTime = phaseStart;
     requestAnimationFrame(animate);
   });
+
 })();
 </script>
-
 </body>
 </html>

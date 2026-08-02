@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification Matrix — Lunara Society</title>
+<meta name="description" content="The formal Lunara Verification Matrix defining requirements, criteria, evidence, evaluation methods, pass/fail conditions, and review triggers for all Lunara certification tracks.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"Lunara Verification Matrix","description":"Formal verification methodology for Lunara Society certification tracks","author":{"@type":"Organization","name":"Lunara Society","url":"https://lunarasociety.com/#organization"},"datePublished":"2026-08-02","version":"1.0"}
+</script>
+
+<style>
+:root{
+  --gold:rgba(196,164,107,1);
+  --gold-b:#c5a059;
+  --bg:#060606;
+  --text-dim:rgba(255,255,255,0.6);
+  --border:rgba(196,164,107,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:#fff;
+  font-family:'Inter',sans-serif;font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+
+#top-nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(6,6,6,0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold-b);}
+.nav-logo-img{width:30px;height:30px;border:1px solid rgba(196,164,107,0.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);font-family:'Cormorant Garamond',serif;}
+.nav-back{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196,164,107,0.6);transition:color 0.2s;}
+.nav-back:hover{color:var(--gold);}
+
+#vm-hero{
+  min-height:60vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px 40px 60px;
+}
+.vm-eyebrow{font-size:10px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(196,164,107,0.6);margin-bottom:24px;}
+.vm-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,64px);font-weight:300;letter-spacing:0.01em;line-height:1.1;margin-bottom:24px;}
+.vm-sub{font-size:16px;line-height:1.7;color:rgba(255,255,255,0.55);max-width:620px;margin:0 auto;}
+.vm-version{margin-top:32px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196,164,107,0.4);}
+
+#vm-principles{padding:60px 40px;border-top:1px solid var(--border);}
+.principles-inner{max-width:760px;margin:0 auto;}
+.principles-inner h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold-b);margin-bottom:32px;}
+.principle{padding:24px 0;border-bottom:1px solid rgba(196,164,107,0.08);}
+.principle-num{font-size:11px;letter-spacing:0.3em;color:rgba(196,164,107,0.35);margin-bottom:8px;}
+.principle-text{font-size:16px;line-height:1.7;color:rgba(255,255,255,0.7);}
+.principle-text strong{color:#e8e2d4;font-weight:400;}
+
+#vm-chain{padding:80px 40px;border-top:1px solid var(--border);text-align:center;}
+.chain-inner{max-width:700px;margin:0 auto;}
+.chain-inner h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold-b);margin-bottom:48px;}
+.chain-step{
+  display:inline-block;padding:14px 28px;
+  border:1px solid rgba(196,164,107,0.25);border-radius:4px;
+  font-size:12px;letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(196,164,107,0.7);margin:6px;font-family:'Inter',sans-serif;
+}
+.chain-arrow{display:block;color:rgba(196,164,107,0.3);font-size:14px;margin:4px 0;}
+
+.track-section{padding:80px 40px;border-top:1px solid var(--border);}
+.track-inner{max-width:960px;margin:0 auto;}
+.track-header{margin-bottom:48px;}
+.track-tag{display:inline-block;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(196,164,107,0.4);border:1px solid rgba(196,164,107,0.2);padding:4px 14px;border-radius:100px;margin-bottom:16px;}
+.track-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:#e8e2d4;margin-bottom:12px;}
+.track-desc{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.5);max-width:620px;}
+.track-price{font-size:13px;color:rgba(196,164,107,0.6);margin-top:12px;letter-spacing:0.05em;}
+
+.matrix-table{width:100%;border-collapse:collapse;margin-top:40px;font-family:'Inter',sans-serif;}
+.matrix-table th{text-align:left;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196,164,107,0.5);padding:14px 16px;border-bottom:1px solid rgba(196,164,107,0.2);font-weight:400;vertical-align:top;}
+.matrix-table td{padding:16px;font-size:13px;line-height:1.6;color:rgba(255,255,255,0.65);border-bottom:1px solid rgba(196,164,107,0.06);vertical-align:top;}
+.matrix-table tr:hover td{background:rgba(196,164,107,0.02);}
+.matrix-table .pillar-cell{color:var(--gold-b);font-family:'Cormorant Garamond',serif;font-size:15px;white-space:nowrap;}
+.matrix-table .pass-cell{color:#7ab87a;font-size:12px;}
+.matrix-table .fail-cell{color:#c97777;font-size:12px;}
+
+#vm-evidence{padding:80px 40px;border-top:1px solid var(--border);}
+.evidence-inner{max-width:760px;margin:0 auto;}
+.evidence-inner h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold-b);margin-bottom:16px;}
+.evidence-intro{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.5);margin-bottom:40px;}
+.evidence-tier{padding:28px 0;border-bottom:1px solid rgba(196,164,107,0.08);}
+.evidence-tier-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:#e8e2d4;margin-bottom:8px;}
+.evidence-tier-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,0.55);}
+.evidence-tier-sufficiency{font-size:12px;color:rgba(196,164,107,0.5);margin-top:6px;font-style:italic;}
+
+#vm-lifecycle{padding:80px 40px;border-top:1px solid var(--border);}
+.lifecycle-inner{max-width:760px;margin:0 auto;}
+.lifecycle-inner h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold-b);margin-bottom:40px;}
+.lifecycle-states{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px;}
+.lifecycle-state{padding:16px 28px;border:1px solid rgba(196,164,107,0.25);border-radius:4px;text-align:center;min-width:140px;}
+.lifecycle-state-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-b);margin-bottom:4px;}
+.lifecycle-state-desc{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5;}
+.lifecycle-triggers h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:#e8e2d4;margin-bottom:20px;text-align:center;}
+.trigger-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:700px;margin:0 auto;}
+.trigger-item{font-size:13px;line-height:1.6;color:rgba(255,255,255,0.55);padding:16px;border:1px solid rgba(196,164,107,0.1);border-radius:4px;}
+.trigger-item strong{color:var(--gold-b);font-weight:400;}
+
+#vm-scope{padding:80px 40px;border-top:1px solid var(--border);background:rgba(196,164,107,0.015);}
+.scope-inner{max-width:680px;margin:0 auto;text-align:center;}
+.scope-inner h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold-b);margin-bottom:32px;}
+.scope-statement{font-family:'Cormorant Garamond',serif;font-size:22px;line-height:1.6;color:#e8e2d4;font-style:italic;padding:40px;border:1px solid rgba(196,164,107,0.15);border-radius:4px;}
+.scope-attrs{margin-top:32px;font-size:13px;color:rgba(255,255,255,0.4);line-height:1.8;}
+
+#site-footer{background:#050505;border-top:1px solid rgba(196,164,107,0.18);padding:64px 60px 0;position:relative;overflow:hidden;}
+#site-footer::before{content:'© Lunara Society MMXXVI — All rights reserved. Unauthorized reproduction, distribution, or derivative works of this website, its design system, constitutional framework, or visual identity are strictly prohibited under international copyright law. Original work by Lunara Society, established 2026.';position:absolute;color:rgba(196,164,107,0.004);font-size:1px;top:0;left:0;width:100%;pointer-events:none;user-select:none;z-index:0;}
+.footer-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:1.4fr 2fr;gap:60px;padding-bottom:52px;border-bottom:1px solid rgba(196,164,107,0.12);}
+.footer-brand-block{display:flex;flex-direction:column;gap:16px;}
+.footer-logo{display:flex;align-items:center;gap:12px;}
+.footer-mark{width:36px;height:36px;border:1px solid rgba(196,164,107,0.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);box-shadow:0 0 14px rgba(196,164,107,0.12);}
+.footer-name{font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(196,164,107,0.92);}
+.footer-tagline{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.48);max-width:260px;}
+.footer-contact-block{margin-top:auto;padding-top:20px;}
+.footer-contact-label{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(196,164,107,0.45);margin-bottom:6px;}
+.footer-contact-email{font-size:13px;color:rgba(196,164,107,0.82);text-decoration:none;transition:color 0.2s;}
+.footer-contact-email:hover{color:var(--gold);}
+.footer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}
+.footer-col h4{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(196,164,107,0.55);margin:0 0 18px;padding-bottom:10px;border-bottom:1px solid rgba(196,164,107,0.1);}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,0.62);text-decoration:none;margin-bottom:10px;transition:color 0.2s,padding-left 0.2s;}
+.footer-col a:hover{color:rgba(196,164,107,0.92);padding-left:4px;}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:22px 0;border-top:1px solid rgba(196,164,107,0.07);}
+.footer-copy{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(196,164,107,0.35);}
+.footer-rights{font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.04em;text-align:center;flex:1;}
+.footer-legal{display:flex;gap:20px;}
+.footer-legal a{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(196,164,107,0.38);text-decoration:none;transition:color 0.2s;}
+.footer-legal a:hover{color:rgba(196,164,107,0.72);}
+
+@media(max-width:900px){
+  #top-nav{padding:14px 18px;}
+  #vm-hero{padding:100px 20px 40px;}
+  .track-section{padding:60px 24px;}
+  .matrix-table{font-size:12px;}
+  .matrix-table th,.matrix-table td{padding:10px 8px;}
+  .matrix-table .pillar-cell{white-space:normal;}
+  #site-footer{padding:48px 24px 0;}
+  .footer-top{grid-template-columns:1fr;gap:40px;}
+  .footer-cols{grid-template-columns:1fr 1fr;gap:24px;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:12px;}
+  .footer-rights{text-align:left;}
+  .trigger-list{grid-template-columns:1fr;}
+}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<nav id="top-nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-img">L</span>
+    Lunara Society
+  </a>
+  <a href="home.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<section id="vm-hero">
+  <div class="vm-eyebrow reveal">Standards Document v1.0</div>
+  <h1 class="vm-title reveal">The Verification Matrix</h1>
+  <p class="vm-sub reveal">The formal methodology behind every Lunara certification. Requirements, criteria, evidence, evaluation, and review triggers for each certification track, mapped to the seven constitutional pillars.</p>
+  <div class="vm-version reveal">Published MMXXVI · August 2, 2026</div>
+</section>
+
+<section id="vm-principles">
+  <div class="principles-inner">
+    <h2 class="reveal">Foundational Principles</h2>
+    <div class="principle reveal">
+      <div class="principle-num">PRINCIPLE I</div>
+      <div class="principle-text"><strong>Verification is not a blanket guarantee.</strong> A Lunara certification verifies the specific scope defined in the matrix. It does not certify safety, accuracy, ethics, security, performance, legality, or universal reliability. The verification record explicitly states what it does not cover.</div>
+    </div>
+    <div class="principle reveal">
+      <div class="principle-num">PRINCIPLE II</div>
+      <div class="principle-text"><strong>Every verification follows a chain of reasoning.</strong> No verifier may move from initial impression to certification without passing through the full decision chain: Claim, Subject, Scope, Criteria, Evidence, Evaluation, Findings, Decision, Record.</div>
+    </div>
+    <div class="principle reveal">
+      <div class="principle-num">PRINCIPLE III</div>
+      <div class="principle-text"><strong>Evidence quality is graded, not binary.</strong> Evidence is evaluated as direct, corroborating, declarative, or inferential. The matrix specifies which quality is sufficient for each criterion.</div>
+    </div>
+    <div class="principle reveal">
+      <div class="principle-num">PRINCIPLE IV</div>
+      <div class="principle-text"><strong>Verification has a lifecycle.</strong> Certifications are issued with a validity period. Defined events trigger reassessment. Status changes are reflected in the public registry in real time. A certification is a living trust mechanism, not a permanent badge.</div>
+    </div>
+    <div class="principle reveal">
+      <div class="principle-num">PRINCIPLE V</div>
+      <div class="principle-text"><strong>Proportionality applies to verification depth.</strong> Verification requirements scale with the risk profile and operational scale of the subject. A small business certification does not require the same evidence depth as an AI entity handling protected health data. Governance must be achievable at every scale.</div>
+    </div>
+  </div>
+</section>
+
+<section id="vm-chain">
+  <div class="chain-inner">
+    <h2 class="reveal">The Verification Decision Chain</h2>
+    <div class="reveal">
+      <span class="chain-step">Claim</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Subject</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Scope</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Criteria</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Evidence</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Evaluation</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Findings</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Decision</span><span class="chain-arrow">↓</span>
+      <span class="chain-step">Record</span>
+    </div>
+  </div>
+</section>
+
+<section class="track-section">
+  <div class="track-inner">
+    <div class="track-header reveal">
+      <span class="track-tag">Track I</span>
+      <h2 class="track-title">Shield Certification</h2>
+      <p class="track-desc">Constitutional governance certification for businesses operating or deploying AI systems. Verifies legal identity, domain ownership, and compliance with the seven pillars at a foundational level.</p>
+      <div class="track-price">$80 initial · $149 annual renewal</div>
+    </div>
+    <table class="matrix-table reveal">
+      <thead><tr><th style="width:22%">Pillar</th><th style="width:28%">Criterion</th><th style="width:22%">Evidence Required</th><th style="width:14%">Pass</th><th style="width:14%">Fail</th></tr></thead>
+      <tbody>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>Legal registration of the business entity is confirmed and matches the declared name</td><td>Legal registration number + registration country (declarative, verified against public registry)</td><td class="pass-cell">Registration matches declared entity name</td><td class="fail-cell">Registration absent or name mismatch</td></tr>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>Domain ownership is confirmed</td><td>DNS TXT token placed at declared domain (technical, direct evidence)</td><td class="pass-cell">Token verified at DNS level</td><td class="fail-cell">Token absent or mismatched</td></tr>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>Contact email is operational and controlled by the applicant</td><td>Application submitted from declared email; confirmation link clicked (direct)</td><td class="pass-cell">Email confirmed and reachable</td><td class="fail-cell">Email bounces or unconfirmed</td></tr>
+        <tr><td class="pillar-cell">II. Declared Governance</td><td>Applicant has a public website describing their operations</td><td>Website URL returns 200 with substantive content (technical, direct)</td><td class="pass-cell">Live website with real content</td><td class="fail-cell">Dead link, parked, or no content</td></tr>
+        <tr><td class="pillar-cell">III. Transparency</td><td>Applicant agrees to the Lunara Code of Conduct</td><td>Code of conduct agreement checkbox at application (declarative)</td><td class="pass-cell">Agreement recorded with timestamp</td><td class="fail-cell">Agreement not provided</td></tr>
+        <tr><td class="pillar-cell">IV. Data Sovereignty</td><td>No public fraud flags or enforcement actions against the entity</td><td>Manual review: search public records, scam databases, regulatory alerts (corroborating)</td><td class="pass-cell">No flags found in public records</td><td class="fail-cell">Active fraud flags or enforcement</td></tr>
+        <tr><td class="pillar-cell">V. Audit Accessibility</td><td>Application record is complete and reviewable</td><td>All form fields populated, reviewer notes recorded (documentary)</td><td class="pass-cell">Complete record with reviewer signoff</td><td class="fail-cell">Incomplete application</td></tr>
+        <tr><td class="pillar-cell">VI. Revocability</td><td>Applicant understands certification can be revoked</td><td>Code of conduct includes revocation acknowledgment (declarative)</td><td class="pass-cell">Acknowledgment present</td><td class="fail-cell">Acknowledgment absent</td></tr>
+        <tr><td class="pillar-cell">VII. Proportionality</td><td>Verification depth is appropriate to entity scale</td><td>Entity type classification (business, startup, nonprofit) determines review depth (evaluative)</td><td class="pass-cell">Review matches entity type</td><td class="fail-cell">Review insufficient for declared type</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="track-section">
+  <div class="track-inner">
+    <div class="track-header reveal">
+      <span class="track-tag">Track II</span>
+      <h2 class="track-title">AI Entity Verification</h2>
+      <p class="track-desc">Deep verification for autonomous AI agents and systems. Requires demonstrated governance framework, operational disclosure, human accountability chain, and audit readiness. The entity must show it operates under declared, auditable rules.</p>
+      <div class="track-price">$899 initial · $499 annual renewal</div>
+    </div>
+    <table class="matrix-table reveal">
+      <thead><tr><th style="width:22%">Pillar</th><th style="width:28%">Criterion</th><th style="width:22%">Evidence Required</th><th style="width:14%">Pass</th><th style="width:14%">Fail</th></tr></thead>
+      <tbody>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>The AI entity has a unique, declared identifier and an accountable owner organization</td><td>Shield Certification of parent org (direct) + entity declaration form with system name, version, and scope (documentary)</td><td class="pass-cell">Parent org certified + entity declared</td><td class="fail-cell">No parent certification or entity undefined</td></tr>
+        <tr><td class="pillar-cell">II. Declared Governance</td><td>A published governance framework specifying system scope, boundaries, human oversight, and incident response exists</td><td>Governance framework document (documentary, direct). Must cover: scope, boundaries, oversight protocol, incident response, review cadence</td><td class="pass-cell">All five framework components present</td><td class="fail-cell">Missing components or framework absent</td></tr>
+        <tr><td class="pillar-cell">III. Transparency</td><td>The AI entity discloses its nature when initiating contact with humans</td><td>Disclosed interaction logs or system prompt declaration showing AI self identification (direct or corroborating)</td><td class="pass-cell">Disclosure mechanism demonstrated</td><td class="fail-cell">No disclosure or misrepresentation found</td></tr>
+        <tr><td class="pillar-cell">IV. Data Sovereignty</td><td>The entity's data access and retention practices are documented and minimised to declared purpose</td><td>Data handling declaration (documentary) + technical configuration review if applicable (technical)</td><td class="pass-cell">Declaration matches operational scope</td><td class="fail-cell">Overbroad data access or no declaration</td></tr>
+        <tr><td class="pillar-cell">V. Audit Accessibility</td><td>The entity maintains logs or evidence trails auditable by independent parties</td><td>Log architecture documentation or sample audit trail (technical, direct). For scaled deployments: annual transparency report commitment (declarative)</td><td class="pass-cell">Audit trail exists and is accessible</td><td class="fail-cell">No logs or logs not reviewable</td></tr>
+        <tr><td class="pillar-cell">VI. Revocability</td><td>Revocation protocol is defined: who can revoke, under what conditions, and how users are notified</td><td>Revocation protocol document (documentary). Must define triggers, notification chain, and registry update process</td><td class="pass-cell">Protocol complete with notification chain</td><td class="fail-cell">Protocol absent or incomplete</td></tr>
+        <tr><td class="pillar-cell">VII. Proportionality</td><td>Verification depth scales with entity deployment scope (number of users, autonomous actions, risk profile)</td><td>Deployment declaration with user count, action types, and risk tier (declarative). Higher risk triggers deeper review (evaluative)</td><td class="pass-cell">Review depth matches risk tier</td><td class="fail-cell">Insufficient review for declared risk</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="track-section">
+  <div class="track-inner">
+    <div class="track-header reveal">
+      <span class="track-tag">Track III</span>
+      <h2 class="track-title">Strategic Registry Partner</h2>
+      <p class="track-desc">For organizations embedding Lunara verification into their platform. Requires organizational Shield Certification, technical integration capability, revenue sharing agreement, and ongoing compliance monitoring. Partners carry the Lunara trust mark on their platform.</p>
+      <div class="track-price">$2,599 initial · $999 annual renewal</div>
+    </div>
+    <table class="matrix-table reveal">
+      <thead><tr><th style="width:22%">Pillar</th><th style="width:28%">Criterion</th><th style="width:22%">Evidence Required</th><th style="width:14%">Pass</th><th style="width:14%">Fail</th></tr></thead>
+      <tbody>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>Partner organization holds active Shield Certification</td><td>Existing Shield record with verified status (direct, from registry)</td><td class="pass-cell">Active Shield in good standing</td><td class="fail-cell">No Shield or Shield expired</td></tr>
+        <tr><td class="pillar-cell">I. Verified Identity</td><td>Partner domain verified for embed integration</td><td>DNS verification on embed domain (technical, direct)</td><td class="pass-cell">Domain verified for API embedding</td><td class="fail-cell">Domain unverified</td></tr>
+        <tr><td class="pillar-cell">II. Declared Governance</td><td>Partner has defined how Lunara verification is surfaced in their platform</td><td>Integration specification document (documentary). Must describe placement, display rules, and user experience</td><td class="pass-cell">Spec complete and approved</td><td class="fail-cell">No integration spec or unapproved</td></tr>
+        <tr><td class="pillar-cell">III. Transparency</td><td>Partner discloses Lunara verification status accurately, no misrepresentation</td><td>Review of partner platform showing verification display (direct, observed). Manual testing of lookup flow</td><td class="pass-cell">Accurate display, no exaggeration</td><td class="fail-cell">Misrepresented or misleading display</td></tr>
+        <tr><td class="pillar-cell">IV. Data Sovereignty</td><td>Partner handles API keys securely and does not expose Lunara credentials</td><td>Technical review of API key storage and usage (technical). Security questionnaire (declarative)</td><td class="pass-cell">Keys stored server side, no exposure</td><td class="fail-cell">Keys exposed or insecure storage</td></tr>
+        <tr><td class="pillar-cell">V. Audit Accessibility</td><td>Partner maintains lookup logs and referral records for revenue reconciliation</td><td>API usage logs available for audit (technical). Monthly referral reports (documentary)</td><td class="pass-cell">Logs accessible and reconcilable</td><td class="fail-cell">No logs or logs inconsistent</td></tr>
+        <tr><td class="pillar-cell">VI. Revocability</td><td>Partner agreement includes revocation terms for misuse, misrepresentation, or nonpayment</td><td>Signed partner agreement with revocation clauses (documentary, direct)</td><td class="pass-cell">Agreement signed with revocation terms</td><td class="fail-cell">Agreement absent or terms missing</td></tr>
+        <tr><td class="pillar-cell">VII. Proportionality</td><td>Partner tier and fee structure matches their scale and usage</td><td>Partner type classification and expected lookup volume (declarative). Fee tier validated against usage projections (evaluative)</td><td class="pass-cell">Tier appropriate for scale</td><td class="fail-cell">Tier mismatched or volume undeclared</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="vm-evidence">
+  <div class="evidence-inner">
+    <h2 class="reveal">Evidence Quality Tiers</h2>
+    <p class="evidence-intro reveal">Every piece of evidence submitted or gathered during verification is classified by quality. The matrix specifies which tier is sufficient for each criterion. Higher stakes require higher quality evidence.</p>
+    <div class="evidence-tier reveal">
+      <div class="evidence-tier-name">Direct Evidence</div>
+      <div class="evidence-tier-desc">Evidence that directly demonstrates the criterion is met. DNS token verification, confirmed email clicks, observed behavior, live website responses.</div>
+      <div class="evidence-tier-sufficiency">Sufficient alone for any criterion unless the matrix specifies corroborating evidence.</div>
+    </div>
+    <div class="evidence-tier reveal">
+      <div class="evidence-tier-name">Corroborating Evidence</div>
+      <div class="evidence-tier-desc">Independent evidence that supports a claim made by the subject. Public registry matches, third party database lookups, external scam database checks.</div>
+      <div class="evidence-tier-sufficiency">Sufficient when combined with at least one declarative or direct evidence item for the same criterion.</div>
+    </div>
+    <div class="evidence-tier reveal">
+      <div class="evidence-tier-name">Declarative Evidence</div>
+      <div class="evidence-tier-desc">A statement or declaration made by the subject or responsible entity. Code of conduct agreement, data handling declaration, governance framework self report.</div>
+      <div class="evidence-tier-sufficiency">Sufficient for low risk criteria. Must be combined with corroborating or direct evidence for high risk criteria.</div>
+    </div>
+    <div class="evidence-tier reveal">
+      <div class="evidence-tier-name">Inferential Evidence</div>
+      <div class="evidence-tier-desc">Evidence from which a conclusion can reasonably be drawn without direct demonstration. Entity type classification informing review depth, deployment scale informing risk tier.</div>
+      <div class="evidence-tier-sufficiency">Never sufficient alone. Supports evaluative decisions made by the reviewer but cannot be the sole basis for a pass finding.</div>
+    </div>
+  </div>
+</section>
+
+<section id="vm-lifecycle">
+  <div class="lifecycle-inner">
+    <h2 class="reveal">Verification Lifecycle</h2>
+    <div class="lifecycle-states reveal">
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Pending</div><div class="lifecycle-state-desc">Application submitted, awaiting review</div></div>
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Under Review</div><div class="lifecycle-state-desc">Evidence being evaluated against criteria</div></div>
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Verified</div><div class="lifecycle-state-desc">All mandatory criteria satisfied</div></div>
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Suspended</div><div class="lifecycle-state-desc">Temporary withdrawal pending reassessment</div></div>
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Revoked</div><div class="lifecycle-state-desc">Certification permanently withdrawn</div></div>
+      <div class="lifecycle-state"><div class="lifecycle-state-label">Expired</div><div class="lifecycle-state-desc">Validity elapsed without renewal</div></div>
+    </div>
+    <div class="lifecycle-triggers reveal">
+      <h3>Reassessment Triggers</h3>
+      <div class="trigger-list">
+        <div class="trigger-item"><strong>Material system modification</strong> — Significant change to the AI entity's architecture, capabilities, or deployment scope triggers review within 30 days.</div>
+        <div class="trigger-item"><strong>Change of ownership</strong> — Acquisition, merger, or transfer of the certified organization triggers reassessment of identity and governance.</div>
+        <div class="trigger-item"><strong>Change in declared capability</strong> — If the entity begins operating outside its declared scope, the certification must be reviewed for continued validity.</div>
+        <div class="trigger-item"><strong>Discovery of misleading evidence</strong> — If evidence provided during initial verification is found to be false or misleading, certification moves to suspended immediately and revocation review begins.</div>
+        <div class="trigger-item"><strong>Public complaint or fraud report</strong> — A substantiated complaint from a user, regulator, or third party triggers a review. Unsubstantiated reports are logged but do not trigger reassessment alone.</div>
+        <div class="trigger-item"><strong>Failure to maintain requirements</strong> — If the subject no longer meets mandatory criteria (domain goes offline, registration lapses, email becomes nonfunctional), certification moves to suspended after 14 days.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vm-scope">
+  <div class="scope-inner">
+    <h2 class="reveal">Scope Limitation</h2>
+    <div class="scope-statement reveal">A Lunara certification verifies that the subject meets the defined criteria within the stated scope at the time of evaluation. It does not certify safety, accuracy, ethics, security, performance, legality, merchantability, or universal reliability. Lunara Society is not liable for actions taken by certified entities after certification. The certification record is the authoritative source of what was verified, when, and within what limits.</div>
+    <div class="scope-attrs reveal">Every verification record includes: subject, category, standard version, scope, status, verification ID, issue date, expiry date, and reviewer of record.<br>The public registry reflects current status in real time. A lapsed or revoked certification is immediately visible to all API consumers.</div>
+  </div>
+</section>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-logo">
+          <div class="footer-mark">L</div>
+          <span class="footer-name">Lunara Society</span>
+        </div>
+        <p class="footer-tagline">The first constitutional governance intelligence platform for autonomous AI systems. Established MMXXVI.</p>
+        <div class="footer-contact-block">
+          <div class="footer-contact-label">Contact</div>
+          <a class="footer-contact-email" href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="home.html">Home</a>
+          <a href="scorer.html">Risk Scorer</a>
+          <a href="certify.html">Certification</a>
+          <a href="healthcare-intelligence.html">Healthcare AI</a>
+          <a href="readiness-kit.html">Compliance Kit</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institution</h4>
+          <a href="constitution.html">Constitution</a>
+          <a href="institution.html">The Society</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="verification-matrix.html">Verification Matrix</a>
+          <a href="doctrine.html">Doctrine</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engage</h4>
+          <a href="join.html">Membership</a>
+          <a href="registry.html">Registry</a>
+          <a href="newsletter.html">Dispatch</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© MMXXVI Lunara Society</span>
+      <span class="footer-rights">All rights reserved. Unauthorized reproduction strictly prohibited.</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold:0.12, rootMargin:'0px 0px -60px 0px' });
+  els.forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

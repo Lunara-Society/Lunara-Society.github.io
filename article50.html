@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article 50 Assessment — Lunara Society</title>
+<meta name="description" content="EU AI Act Article 50 readiness assessment. Identify which AI systems fall in scope, map obligations to owners, and build the evidence trail.">
+
+<!-- Google Search Console verification -->
+<meta name="google-site-verification" content="google6494e8d44f7eb7ed.html">
+
+<!-- Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Article 50 Assessment",
+  "provider": {"@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com"},
+  "description": "EU AI Act Article 50 readiness assessment that produces a scoped obligation map, owner matrix, evidence checklist, and uncertainty log.",
+  "areaServed": "European Union",
+  "serviceType": "AI governance compliance assessment"
+}
+</script>
+
+<style>
+:root {
+  --gold: rgba(196,164,107,1);
+  --gold-b: #f0e0b0;
+  --gold-70: rgba(196,164,107,0.7);
+  --gold-30: rgba(196,164,107,0.3);
+  --gold-15: rgba(196,164,107,0.15);
+  --bg: #060606;
+  --text: rgba(230,212,175,0.85);
+  --text-dim: rgba(196,164,107,0.5);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Nav */
+.nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(6,6,6,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gold-15);
+  padding: 14px 32px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-brand { font-family: var(--serif); font-size: 18px; color: var(--gold-b); letter-spacing: 2px; text-decoration: none; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: var(--gold-70); text-decoration: none; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.3s; }
+.nav-links a:hover { color: var(--gold-b); }
+
+/* Hero */
+.hero {
+  padding: 140px 24px 60px;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-block;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold);
+  padding: 6px 18px;
+  border: 1px solid var(--gold-30);
+  border-radius: 100px;
+  margin-bottom: 28px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 42px; font-weight: 400;
+  color: var(--gold-b);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.hero p {
+  color: var(--gold-70);
+  font-size: 14px; line-height: 1.8;
+  margin-bottom: 32px;
+  max-width: 560px;
+  margin-left: auto; margin-right: auto;
+}
+.hero-meta {
+  display: flex; justify-content: center; gap: 32px;
+  margin-top: 24px;
+}
+.hero-meta div { text-align: center; }
+.hero-meta .num { font-family: var(--serif); font-size: 28px; color: var(--gold-b); }
+.hero-meta .lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+
+/* Form */
+.assessment {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.form-section {
+  background: rgba(196,164,107,0.02);
+  border: 1px solid var(--gold-15);
+  border-radius: 4px;
+  padding: 32px 28px;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.form-section.visible { opacity: 1; transform: translateY(0); }
+
+.form-section-num {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.form-section-title {
+  font-family: var(--serif);
+  font-size: 22px; color: var(--gold-b);
+  margin-bottom: 8px;
+}
+.form-section-desc {
+  font-size: 12px; color: var(--text-dim);
+  margin-bottom: 24px; line-height: 1.6;
+}
+
+.field { margin-bottom: 20px; }
+.field-label {
+  display: block; font-size: 12px; color: var(--gold-70);
+  margin-bottom: 8px; letter-spacing: 0.5px;
+}
+.field-label .req { color: rgba(239,154,154,0.7); }
+
+.field input[type="text"],
+.field input[type="email"],
+.field select,
+.field textarea {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--gold-15);
+  border-radius: 3px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--sans);
+  transition: border-color 0.3s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--gold-70);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+
+.field-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+
+/* Radio groups */
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--gold-15);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+}
+.radio-item:hover { border-color: var(--gold-30); }
+.radio-item.selected { border-color: var(--gold); background: rgba(196,164,107,0.05); }
+.radio-item input[type="radio"] {
+  accent-color: var(--gold);
+  width: 16px; height: 16px;
+}
+.radio-item label { cursor: pointer; font-size: 13px; color: var(--text); }
+.radio-item .radio-desc { font-size: 11px; color: var(--text-dim); margin-left: 8px; }
+
+/* System entry */
+.system-entry {
+  border: 1px solid var(--gold-15);
+  border-radius: 3px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.system-entry .field { margin-bottom: 14px; }
+.system-entry .field:last-child { margin-bottom: 0; }
+.system-remove {
+  position: absolute; top: 12px; right: 12px;
+  background: none; border: none;
+  color: var(--text-dim); cursor: pointer;
+  font-size: 16px; transition: color 0.3s;
+}
+.system-remove:hover { color: rgba(239,154,154,0.7); }
+
+.btn-add-system {
+  display: inline-block;
+  font-size: 12px; color: var(--gold-70);
+  border: 1px dashed var(--gold-30);
+  border-radius: 3px;
+  padding: 10px 18px;
+  cursor: pointer;
+  background: none;
+  transition: border-color 0.3s, color 0.3s;
+}
+.btn-add-system:hover { border-color: var(--gold); color: var(--gold-b); }
+
+/* Submit */
+.submit-section {
+  text-align: center;
+  padding: 24px 0;
+}
+.btn-submit {
+  display: inline-block;
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--gold-b);
+  background: rgba(196,164,107,0.08);
+  border: 1px solid var(--gold-70);
+  border-radius: 3px;
+  padding: 14px 48px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  letter-spacing: 2px;
+}
+.btn-submit:hover {
+  background: rgba(196,164,107,0.15);
+  border-color: var(--gold-b);
+  box-shadow: 0 0 30px rgba(196,164,107,0.12);
+}
+.btn-submit:disabled { opacity: 0.5; cursor: wait; }
+
+/* Results */
+.results {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  display: none;
+}
+.result-card {
+  background: rgba(196,164,107,0.03);
+  border: 1px solid var(--gold-15);
+  border-radius: 4px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+}
+.result-card h3 {
+  font-family: var(--serif);
+  font-size: 20px; color: var(--gold-b);
+  margin-bottom: 12px;
+}
+.result-card .obligation {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(196,164,107,0.08);
+}
+.result-card .obligation:last-child { border-bottom: none; }
+.obligation-ref {
+  font-size: 10px; letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.obligation-title {
+  font-size: 14px; color: var(--text);
+  margin-bottom: 4px;
+}
+.obligation-status {
+  display: inline-block;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 100px;
+}
+.status-required { background: rgba(239,154,154,0.1); color: rgba(239,154,154,0.8); border: 1px solid rgba(239,154,154,0.2); }
+.status-likely { background: rgba(255,183,77,0.1); color: rgba(255,183,77,0.8); border: 1px solid rgba(255,183,77,0.2); }
+.status-review { background: rgba(196,164,107,0.1); color: var(--gold-70); border: 1px solid var(--gold-15); }
+
+.source-link {
+  font-size: 11px; color: var(--text-dim);
+  margin-top: 6px;
+}
+.source-link a { color: var(--gold-70); text-decoration: none; }
+.source-link a:hover { color: var(--gold-b); text-decoration: underline; }
+
+/* Source provenance banner */
+.provenance {
+  text-align: center;
+  padding: 16px 24px;
+  border: 1px solid var(--gold-15);
+  border-radius: 4px;
+  margin: 20px 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.provenance strong { color: var(--gold-70); }
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--gold-15);
+  padding: 32px 24px;
+  text-align: center;
+}
+.footer-brand { font-family: var(--serif); font-size: 16px; color: var(--gold-b); letter-spacing: 2px; }
+.footer-links { margin: 12px 0; }
+.footer-links a { color: var(--text-dim); font-size: 11px; text-decoration: none; margin: 0 12px; letter-spacing: 1px; }
+.footer-links a:hover { color: var(--gold-70); }
+.footer-copy { font-size: 10px; color: var(--text-dim); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 30px; }
+  .hero-meta { flex-wrap: wrap; gap: 20px; }
+  .form-section { padding: 24px 18px; }
+}
+
+/* Scroll reveal animation */
+@keyframes assembleIn {
+  from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.form-section.visible {
+  animation: assembleIn 0.7s ease forwards;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  display: none;
+}
+.loading-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin: 0 4px;
+  animation: dotPulse 1.4s infinite ease-in-out;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse { 0%,80%,100% { opacity:0.3; transform:scale(0.8) } 40% { opacity:1; transform:scale(1.1) } }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Lunara Society</a>
+  <div class="nav-links">
+    <a href="/constitution.html">Constitution</a>
+    <a href="/certify.html">Certification</a>
+    <a href="/readiness-kit.html">Readiness Kit</a>
+    <a href="/scorer.html">Risk Scorer</a>
+    <a href="/dashboard.html">Dashboard</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Article 50 · Enforceable August 2, 2026</div>
+  <h1>Article 50 Readiness Assessment</h1>
+  <p>Identify which of your AI systems fall under EU AI Act Article 50 transparency obligations. Map obligations to owners. Build the evidence trail before the audit arrives.</p>
+  <div class="hero-meta">
+    <div><div class="num">4</div><div class="lbl">Obligation Types</div></div>
+    <div><div class="num">15M</div><div class="lbl">EUR Max Penalty</div></div>
+    <div><div class="num">3%</div><div class="lbl">Global Turnover</div></div>
+    <div><div class="num">10</div><div class="lbl">Day Build Target</div></div>
+  </div>
+</div>
+
+<div class="provenance" style="max-width:680px;margin:0 auto 30px">
+  <strong>Source Provenance:</strong> Every obligation in this assessment links directly to the European Commission's published Article 50 guidelines and the EU AI Act legal text. This tool provides governance intelligence, not legal advice.
+</div>
+
+<!-- Assessment Form -->
+<div class="assessment" id="assessment-form">
+
+  <!-- Section 1: Organization -->
+  <div class="form-section" data-section="1">
+    <div class="form-section-num">Section 01</div>
+    <div class="form-section-title">Your Organization</div>
+    <div class="form-section-desc">Tell us about your organization and its relationship to AI systems under your authority.</div>
+
+    <div class="field">
+      <label class="field-label">Organization Name <span class="req">*</span></label>
+      <input type="text" id="org-name" placeholder="Your organization name">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Contact Email <span class="req">*</span></label>
+      <input type="email" id="org-email" placeholder="name@organization.com">
+      <div class="field-hint">Your assessment results will be sent to this address.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Your Role Under the AI Act <span class="req">*</span></label>
+      <div class="radio-group" id="role-group">
+        <div class="radio-item" data-value="deployer">
+          <input type="radio" name="role" id="role-deployer" value="deployer">
+          <label for="role-deployer">Deployer <span class="radio-desc">— We use AI systems under our authority</span></label>
+        </div>
+        <div class="radio-item" data-value="provider">
+          <input type="radio" name="role" id="role-provider" value="provider">
+          <label for="role-provider">Provider <span class="radio-desc">— We develop or place AI systems on the market</span></label>
+        </div>
+        <div class="radio-item" data-value="both">
+          <input type="radio" name="role" id="role-both" value="both">
+          <label for="role-both">Both <span class="radio-desc">— We both develop and deploy AI systems</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Geographic Scope <span class="req">*</span></label>
+      <div class="radio-group" id="geo-group">
+        <div class="radio-item" data-value="eu">
+          <input type="radio" name="geo" id="geo-eu" value="eu">
+          <label for="geo-eu">EU established <span class="radio-desc">— Organization is based in the EU</span></label>
+        </div>
+        <div class="radio-item" data-value="eu-output">
+          <input type="radio" name="geo" id="geo-output" value="eu-output">
+          <label for="geo-output">EU output used <span class="radio-desc">— Based outside EU, but AI output is used in the EU</span></label>
+        </div>
+        <div class="radio-item" data-value="eu-users">
+          <input type="radio" name="geo" id="geo-users" value="eu-users">
+          <label for="geo-users">EU users <span class="radio-desc">— AI systems interact with EU users</span></label>
+        </div>
+        <div class="radio-item" data-value="unsure">
+          <input type="radio" name="geo" id="geo-unsure" value="unsure">
+          <label for="geo-unsure">Not sure <span class="radio-desc">— We need help determining scope</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: AI Systems -->
+  <div class="form-section" data-section="2">
+    <div class="form-section-num">Section 02</div>
+    <div class="form-section-title">AI Systems In Use</div>
+    <div class="form-section-desc">List the AI systems your organization deploys or provides. Each system will be assessed against Article 50 obligations.</div>
+
+    <div id="systems-container">
+      <div class="system-entry">
+        <button class="system-remove" onclick="removeSystem(this)" style="display:none">×</button>
+        <div class="field">
+          <label class="field-label">System Name <span class="req">*</span></label>
+          <input type="text" class="sys-name" placeholder="e.g., Clinical triage chatbot, Diagnostic imaging AI">
+        </div>
+        <div class="field">
+          <label class="field-label">Interaction Type <span class="req">*</span></label>
+          <select class="sys-type">
+            <option value="">Select interaction type</option>
+            <option value="direct-chat">Direct user interaction (chat, voice, text)</option>
+            <option value="content-gen">Generative content (text, images, audio, video)</option>
+            <option value="emotion">Emotion recognition or biometric categorization</option>
+            <option value="deepfake">Deepfake or AI-manipulated media</option>
+            <option value="internal">Internal only (no direct user interaction)</option>
+            <option value="unclear">Not sure</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Current Disclosure Measures</label>
+          <textarea class="sys-disclosure" placeholder="What transparency or disclosure measures are currently in place? (e.g., user notification, content labeling, none)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-add-system" onclick="addSystem()">+ Add another system</button>
+  </div>
+
+  <!-- Section 3: Current State -->
+  <div class="form-section" data-section="3">
+    <div class="form-section-num">Section 03</div>
+    <div class="form-section-title">Current Compliance State</div>
+    <div class="form-section-desc">Help us understand where you are today so we can identify the most critical gaps.</div>
+
+    <div class="field">
+      <label class="field-label">Do you have an AI system inventory?</label>
+      <div class="radio-group" id="inventory-group">
+        <div class="radio-item" data-value="yes"><input type="radio" name="inventory" id="inv-yes" value="yes"><label for="inv-yes">Yes, maintained and current</label></div>
+        <div class="radio-item" data-value="partial"><input type="radio" name="inventory" id="inv-partial" value="partial"><label for="inv-partial">Partial, not complete</label></div>
+        <div class="radio-item" data-value="no"><input type="radio" name="inventory" id="inv-no" value="no"><label for="inv-no">No inventory exists</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Are disclosure notices in place for AI interactions?</label>
+      <div class="radio-group" id="disclosure-group">
+        <div class="radio-item" data-value="all"><input type="radio" name="disclosure" id="disc-all" value="all"><label for="disc-all">Yes, for all AI interactions</label></div>
+        <div class="radio-item" data-value="some"><input type="radio" name="disclosure" id="disc-some" value="some"><label for="disc-some">For some, not all</label></div>
+        <div class="radio-item" data-value="none"><input type="radio" name="disclosure" id="disc-none" value="none"><label for="disc-none">No disclosure notices in place</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Machine-readable content marking implemented?</label>
+      <div class="radio-group" id="marking-group">
+        <div class="radio-item" data-value="yes"><input type="radio" name="marking" id="mark-yes" value="yes"><label for="mark-yes">Yes, implemented for AI-generated content</label></div>
+        <div class="radio-item" data-value="partial"><input type="radio" name="marking" id="mark-partial" value="partial"><label for="mark-partial">Partially implemented</label></div>
+        <div class="radio-item" data-value="no"><input type="radio" name="marking" id="mark-no" value="no"><label for="mark-no">Not implemented</label></div>
+        <div class="radio-item" data-value="na"><input type="radio" name="marking" id="mark-na" value="na"><label for="mark-na">Not applicable</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Who owns AI compliance in your organization?</label>
+      <select id="compliance-owner">
+        <option value="">Select responsible role</option>
+        <option value="ciso">CISO or Security team</option>
+        <option value="dpo">Data Protection Officer</option>
+        <option value="legal">Legal team</option>
+        <option value="product">Product team</option>
+        <option value="cto">CTO or Engineering</option>
+        <option value="none">No clear owner</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-section">
+    <button class="btn-submit" id="submit-btn" onclick="submitAssessment()">Assess My Readiness</button>
+    <div style="margin-top:12px;font-size:11px;color:var(--text-dim)">Your results are generated instantly. No account required.</div>
+  </div>
+
+</div>
+
+<!-- Loading -->
+<div class="loading" id="loading">
+  <div style="color:var(--gold-70);font-size:13px;margin-bottom:16px">Mapping your obligations...</div>
+  <span class="loading-dot"></span>
+  <span class="loading-dot"></span>
+  <span class="loading-dot"></span>
+</div>
+
+<!-- Results -->
+<div class="results" id="results"></div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-brand">LUNARA SOCIETY</div>
+  <div class="footer-links">
+    <a href="/constitution.html">Constitution</a>
+    <a href="/certify.html">Certification</a>
+    <a href="/readiness-kit.html">Readiness Kit</a>
+    <a href="/scorer.html">Risk Scorer</a>
+    <a href="/dashboard.html">Dashboard</a>
+  </div>
+  <div class="footer-copy">© 2026 Lunara Society. All Rights Reserved. lunarasociety@gmail.com</div>
+  <div style="font-size:9px;color:rgba(196,164,107,0.2);margin-top:8px;letter-spacing:2px">ESTABLISHED MMXXVI</div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.form-section').forEach(s => observer.observe(s));
+
+// Radio selection styling
+document.querySelectorAll('.radio-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const group = item.closest('.radio-group');
+    group.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    const input = item.querySelector('input');
+    if (input) input.checked = true;
+  });
+});
+
+// System entries
+let systemCount = 1;
+
+function addSystem() {
+  const container = document.getElementById('systems-container');
+  const entry = document.createElement('div');
+  entry.className = 'system-entry';
+  entry.innerHTML = `
+    <button class="system-remove" onclick="removeSystem(this)">×</button>
+    <div class="field">
+      <label class="field-label">System Name <span class="req">*</span></label>
+      <input type="text" class="sys-name" placeholder="e.g., Clinical triage chatbot, Diagnostic imaging AI">
+    </div>
+    <div class="field">
+      <label class="field-label">Interaction Type <span class="req">*</span></label>
+      <select class="sys-type">
+        <option value="">Select interaction type</option>
+        <option value="direct-chat">Direct user interaction (chat, voice, text)</option>
+        <option value="content-gen">Generative content (text, images, audio, video)</option>
+        <option value="emotion">Emotion recognition or biometric categorization</option>
+        <option value="deepfake">Deepfake or AI-manipulated media</option>
+        <option value="internal">Internal only (no direct user interaction)</option>
+        <option value="unclear">Not sure</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-label">Current Disclosure Measures</label>
+      <textarea class="sys-disclosure" placeholder="What transparency or disclosure measures are currently in place?"></textarea>
+    </div>
+  `;
+  container.appendChild(entry);
+  systemCount++;
+
+  // Show all remove buttons when more than one
+  container.querySelectorAll('.system-remove').forEach(b => b.style.display = 'block');
+}
+
+function removeSystem(btn) {
+  const container = document.getElementById('systems-container');
+  if (container.children.length > 1) {
+    btn.closest('.system-entry').remove();
+    systemCount--;
+    if (container.children.length === 1) {
+      container.querySelector('.system-remove').style.display = 'none';
+    }
+  }
+}
+
+// Submit assessment
+async function submitAssessment() {
+  const orgName = document.getElementById('org-name').value.trim();
+  const orgEmail = document.getElementById('org-email').value.trim();
+  const role = document.querySelector('input[name="role"]:checked')?.value;
+  const geo = document.querySelector('input[name="geo"]:checked')?.value;
+
+  if (!orgName || !orgEmail || !role || !geo) {
+    alert('Please complete all required fields in Section 01.');
+    return;
+  }
+
+  // Collect systems
+  const systems = [];
+  document.querySelectorAll('.system-entry').forEach(entry => {
+    const name = entry.querySelector('.sys-name').value.trim();
+    const type = entry.querySelector('.sys-type').value;
+    const disclosure = entry.querySelector('.sys-disclosure').value.trim();
+    if (name) systems.push({ name, type, disclosure });
+  });
+
+  if (systems.length === 0) {
+    alert('Please add at least one AI system in Section 02.');
+    return;
+  }
+
+  const inventory = document.querySelector('input[name="inventory"]:checked')?.value || 'unknown';
+  const disclosureLevel = document.querySelector('input[name="disclosure"]:checked')?.value || 'unknown';
+  const marking = document.querySelector('input[name="marking"]:checked')?.value || 'unknown';
+  const owner = document.getElementById('compliance-owner').value || 'none';
+
+  const payload = {
+    organization: orgName,
+    email: orgEmail,
+    role,
+    geo,
+    systems,
+    inventory,
+    disclosureLevel,
+    marking,
+    owner
+  };
+
+  // Show loading
+  document.getElementById('assessment-form').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Assess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    renderResults(data, payload);
+
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('assessment-form').style.display = 'block';
+    alert('Assessment failed to process. Please try again.');
+  }
+}
+
+function renderResults(data, payload) {
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+
+  let html = `
+    <div class="hero" style="padding-top:60px;padding-bottom:30px">
+      <div class="hero-badge">Assessment Complete</div>
+      <h1 style="font-size:32px">${payload.organization}</h1>
+      <p style="color:var(--gold-70)">${data.systemsAssessed} system${data.systemsAssessed > 1 ? 's' : ''} assessed · ${data.obligationsIdentified} obligations identified · ${data.gapsFound} gaps found</p>
+    </div>
+  `;
+
+  // Obligation map
+  html += `<div class="result-card">
+    <h3>Obligation Map</h3>`;
+
+  data.obligations.forEach(ob => {
+    let statusClass = ob.status === 'required' ? 'status-required' : ob.status === 'likely' ? 'status-likely' : 'status-review';
+    html += `<div class="obligation">
+      <div class="obligation-ref">${ob.ref}</div>
+      <div class="obligation-title">${ob.title}</div>
+      <div style="font-size:12px;color:var(--text-dim);margin:4px 0">${ob.description}</div>
+      <span class="obligation-status ${statusClass}">${ob.statusLabel}</span>
+      <div class="source-link">Source: <a href="${ob.sourceUrl}" target="_blank">${ob.sourceText}</a></div>
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // Owner matrix
+  if (data.ownerMatrix && data.ownerMatrix.length > 0) {
+    html += `<div class="result-card">
+      <h3>Owner Matrix</h3>`;
+    data.ownerMatrix.forEach(om => {
+      html += `<div class="obligation">
+        <div class="obligation-ref">${om.obligation}</div>
+        <div class="obligation-title">Assigned to: ${om.owner}</div>
+        <div style="font-size:12px;color:var(--text-dim)">${om.note}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Evidence checklist
+  html += `<div class="result-card">
+    <h3>Evidence Checklist</h3>`;
+  data.evidence.forEach(ev => {
+    let icon = ev.present ? '✓' : '○';
+    let color = ev.present ? 'rgba(129,199,132,0.7)' : 'rgba(239,154,154,0.7)';
+    html += `<div class="obligation">
+      <span style="color:${color};font-size:16px">${icon}</span>
+      <span style="font-size:13px;color:var(--text);margin-left:8px">${ev.item}</span>
+      <div style="font-size:11px;color:var(--text-dim);margin-left:24px;margin-top:2px">${ev.detail}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Uncertainty log
+  if (data.uncertainties && data.uncertainties.length > 0) {
+    html += `<div class="result-card">
+      <h3>Uncertainty Log</h3>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Items requiring legal counsel review or further investigation.</div>`;
+    data.uncertainties.forEach(uc => {
+      html += `<div class="obligation">
+        <div class="obligation-title">${uc.item}</div>
+        <div style="font-size:12px;color:var(--text-dim)">${uc.reason}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // CTA
+  html += `<div class="result-card" style="text-align:center;padding:40px 24px">
+    <h3 style="margin-bottom:12px">Next Steps</h3>
+    <p style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:20px">This assessment identifies your Article 50 readiness gaps. Lunara Society can help you build the evidence trail through our Compliance Readiness Kit or a full Article 50 Assessment with consultation.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="/readiness-kit.html" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-70);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s">Compliance Readiness Kit ($79)</a>
+      <a href="/certify.html" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-30);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s">Shield Certification</a>
+    </div>
+    <p style="font-size:11px;color:var(--text-dim);margin-top:16px">Assessment ID: ${data.assessmentId}</p>
+  </div>`;
+
+  results.innerHTML = html;
+  results.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

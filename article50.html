@@ -20,6 +20,57 @@
   "areaServed": "European Union",
   "serviceType": "AI governance compliance assessment"
 }
+
+// Download PDF report
+async function downloadPDF() {
+  const payload = window.lastAssessmentPayload;
+  if (!payload) return;
+
+  // Merge results into payload
+  const fullPayload = {
+    organization: payload.organization,
+    email: payload.email,
+    assessmentId: window.lastAssessmentResult?.assessmentId,
+    systems: payload.systems,
+    obligations: window.lastAssessmentResult?.obligations,
+    ownerMatrix: window.lastAssessmentResult?.ownerMatrix,
+    evidence: window.lastAssessmentResult?.evidence,
+    uncertainties: window.lastAssessmentResult?.uncertainties,
+    gapsFound: window.lastAssessmentResult?.gapsFound
+  };
+
+  // Show loading state on button
+  const btn = event.target;
+  const origText = btn.textContent;
+  btn.textContent = 'Generating report...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fullPayload)
+    });
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Article50_Assessment_' + payload.organization.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    btn.textContent = origText;
+    btn.disabled = false;
+  } catch (err) {
+    btn.textContent = 'Download failed — try again';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = origText; }, 2000);
+  }
+}
+
 </script>
 
 <style>
@@ -757,6 +808,11 @@ function renderResults(data, payload) {
     html += `</div>`;
   }
 
+  // Download button
+  html += `<div style="text-align:center;margin-bottom:16px">
+    <button onclick="downloadPDF()" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);background:rgba(196,164,107,0.08);border:1px solid var(--gold);border-radius:3px;padding:14px 36px;cursor:pointer;transition:all 0.4s;letter-spacing:2px">Download Full Report (PDF)</button>
+  </div>`;
+
   // CTA
   html += `<div class="result-card" style="text-align:center;padding:40px 24px">
     <h3 style="margin-bottom:12px">Next Steps</h3>
@@ -771,6 +827,57 @@ function renderResults(data, payload) {
   results.innerHTML = html;
   results.scrollIntoView({ behavior: 'smooth' });
 }
+
+// Download PDF report
+async function downloadPDF() {
+  const payload = window.lastAssessmentPayload;
+  if (!payload) return;
+
+  // Merge results into payload
+  const fullPayload = {
+    organization: payload.organization,
+    email: payload.email,
+    assessmentId: window.lastAssessmentResult?.assessmentId,
+    systems: payload.systems,
+    obligations: window.lastAssessmentResult?.obligations,
+    ownerMatrix: window.lastAssessmentResult?.ownerMatrix,
+    evidence: window.lastAssessmentResult?.evidence,
+    uncertainties: window.lastAssessmentResult?.uncertainties,
+    gapsFound: window.lastAssessmentResult?.gapsFound
+  };
+
+  // Show loading state on button
+  const btn = event.target;
+  const origText = btn.textContent;
+  btn.textContent = 'Generating report...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fullPayload)
+    });
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Article50_Assessment_' + payload.organization.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    btn.textContent = origText;
+    btn.disabled = false;
+  } catch (err) {
+    btn.textContent = 'Download failed — try again';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = origText; }, 2000);
+  }
+}
+
 </script>
 
 </body>

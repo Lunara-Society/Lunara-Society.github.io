@@ -25,6 +25,32 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      # Deployment sits right on GitHub's ten-minute limit, so three of the
+      # last six deploys were killed mid-flight. The action's own timeout
+      # input does not help — the limit is enforced server side — so the
+      # only lever is publishing less.
+      #
+      # These files are referenced by nothing: no page, script, stylesheet
+      # or manifest anywhere in the repository. Dropping them from the
+      # PUBLISHED artifact removes ~12MB from every deploy.
+      #
+      # This deletes nothing. The files remain in git and on the branch;
+      # they are simply removed from the runner's checkout before it is
+      # packaged, so they stop being served. Delete a line to publish a
+      # file again.
+      - name: Trim unreferenced media from the published artifact
+        run: |
+          before=$(du -sm . | cut -f1)
+          rm -f rosario_talking.webm \
+                lunara_avatar_hook.webm \
+                maya-hologram-v2.png \
+                maya-hologram-new.png \
+                maya-hologram-clean.png \
+                lunara_emblem_full.png \
+                lunara_emblem_v2_768.png
+          after=$(du -sm . | cut -f1)
+          echo "published payload: ${before}MB -> ${after}MB"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

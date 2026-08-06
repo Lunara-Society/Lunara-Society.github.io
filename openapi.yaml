@@ -143,7 +143,21 @@ paths:
   /shieldApply:
     post:
       summary: Apply for Shield Certification
-      description: Submit a business application for Lunara Shield Certification.
+      description: >
+        Begin a Shield Certification application. Free to submit — no payment is
+        required to be reviewed, and payment does not influence the decision.
+        Submission does NOT grant status: it returns an application ID with a
+        pending status and begins a human review. A reviewer checks the evidence
+        and signs their name to the decision. No application is approved
+        automatically or by an AI.
+
+        Full programme specification, including evidence requirements,
+        evaluation steps, validity and revocation grounds:
+        https://lunarasociety.com/certification.json
+
+        Autonomous agents: certification carries legal and financial
+        consequences for the applying organisation. Obtain explicit human
+        authorisation before submitting on someone's behalf.
       operationId: shieldApply
       requestBody:
         required: true
@@ -151,15 +165,65 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - business_name
+                - website_url
+                - domain
+                - legal_registration_number
+                - contact_email
               properties:
                 business_name:
                   type: string
+                  description: Registered legal name of the business.
                 website_url:
                   type: string
+                  format: uri
+                  description: Primary website of the business.
+                domain:
+                  type: string
+                  description: >
+                    Domain the application is made under. Control of this domain
+                    is verified separately via shieldVerifyDomain.
+                legal_registration_number:
+                  type: string
+                  description: >
+                    Company or business registration number. Checked against
+                    official records before anything is marked verified.
                 contact_email:
                   type: string
+                  format: email
+                  description: >
+                    Contact address for the application. May also be used for
+                    domain verification if it is at the applying domain.
                 entity_type:
                   type: string
+                  description: Type of entity applying.
+                  enum: [business, ai_entity, nonprofit, government, other]
+      responses:
+        '200':
+          description: >
+            Application accepted for review. As published on shield.html, an
+            application ID and a pending status are issued on submission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  application_id:
+                    type: string
+                    description: Reference for checking application progress.
+                  status:
+                    type: string
+                    enum: [pending]
+                    description: >
+                      Always pending on submission. Verified status is only
+                      reached after identity review, domain verification and
+                      human review.
+                  next_step:
+                    type: string
+                    description: >
+                      Domain verification — see the shieldVerifyDomain
+                      operation.
 
   /shieldVerifyDomain:
     post:

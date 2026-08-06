@@ -42,6 +42,9 @@ Disallow: /invoice-template.html
 # Embeddable verification badge
 # https://lunarasociety.com/badge.html
 
+# Certification programme specification (machine-readable)
+# https://lunarasociety.com/certification.json
+
 # Sitemap
 Sitemap: https://lunarasociety.com/sitemap.xml
 

@@ -1,0 +1,281 @@
+{
+  "$comment": "Canonical machine-readable specification of Lunara certification programmes. Every field here restates what is published on lunarasociety.com in human-readable form — this file adds no policy of its own. Source pages are cited per section so any claim can be checked against the page a person would read. Last reviewed 2026-08-06.",
+
+  "issuer": {
+    "name": "Lunara Society",
+    "url": "https://lunarasociety.com/",
+    "role": "Constitutional governance authority for the autonomous economy",
+    "founded": "2026",
+    "identity_files": {
+      "identity": "https://lunarasociety.com/identity.json",
+      "ai_graph": "https://lunarasociety.com/ai.json",
+      "agent_manifest": "https://lunarasociety.com/agent-manifest.json",
+      "context": "https://lunarasociety.com/llms.txt"
+    },
+    "governing_framework": {
+      "name": "The Lunara Constitution",
+      "url": "https://lunarasociety.com/constitution.html",
+      "license": "CC BY 4.0",
+      "pillars": 7
+    },
+    "accountability": {
+      "$comment": "Stated in the published process description on shield.html.",
+      "human_review_required": true,
+      "reviewer_attribution": "A reviewer checks the evidence and signs their name to the decision.",
+      "automatic_approval": false,
+      "approval_on_payment": false,
+      "revocation_possible": true
+    }
+  },
+
+  "registry": {
+    "url": "https://lunarasociety.com/registry.html",
+    "public": true,
+    "requires_authentication": false,
+    "cost": "free",
+    "lookup_endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+    "list_endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList",
+    "specification": "https://lunarasociety.com/openapi.yaml",
+    "statuses": ["verified", "not_registered", "revoked"],
+    "note": "Status returned is always the true current status."
+  },
+
+  "programmes": [
+    {
+      "id": "shield-certification",
+      "name": "Shield Certification",
+      "subject": "Business organisation",
+      "source": "https://lunarasociety.com/shield.html",
+      "summary": "Human-reviewed verification of business identity and domain control, published to the public registry.",
+      "positioning": "A status earned through verification, not a badge purchased.",
+
+      "application": {
+        "cost_to_apply": {
+          "amount": 0,
+          "currency": "USD",
+          "note": "Free to apply. No payment is required to be reviewed, and payment does not influence the decision."
+        },
+        "entry_point": {
+          "type": "human_form",
+          "url": "https://lunarasociety.com/shield.html",
+          "note": "The application is completed by a person. An autonomous agent should gather the evidence below, obtain authorisation from its principal, and hand off to this URL rather than submit unattended."
+        },
+        "api": {
+          "$comment": "Documented in openapi.yaml. An agent must still have human authorisation before submitting on someone's behalf.",
+          "operation": "shieldApply",
+          "method": "POST",
+          "endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply",
+          "specification": "https://lunarasociety.com/openapi.yaml"
+        },
+        "required_evidence": [
+          {
+            "field": "business_name",
+            "type": "string",
+            "description": "Registered legal name of the business."
+          },
+          {
+            "field": "website_url",
+            "type": "string",
+            "format": "uri",
+            "description": "Primary website of the business."
+          },
+          {
+            "field": "domain",
+            "type": "string",
+            "description": "Domain the application is made under. Control of this domain is verified."
+          },
+          {
+            "field": "legal_registration_number",
+            "type": "string",
+            "description": "Company or business registration number, checked against official records."
+          },
+          {
+            "field": "contact_email",
+            "type": "string",
+            "format": "email",
+            "description": "Contact address for the application. Domain verification may be performed via a verified email at the applying domain."
+          }
+        ],
+        "immediate_response": {
+          "application_id": "issued on submission",
+          "status": "pending",
+          "note": "Submission does not grant status. It begins the review described below."
+        }
+      },
+
+      "evaluation": {
+        "method": "Human review of documentary evidence. Not automated, not granted by an AI, and not granted on payment.",
+        "steps": [
+          {
+            "step": 1,
+            "name": "Application submitted",
+            "detail": "Business name, website, domain, legal registration number and contact email."
+          },
+          {
+            "step": 2,
+            "name": "Identity verification",
+            "detail": "Legal business registration is checked against official records before anything is marked verified."
+          },
+          {
+            "step": 3,
+            "name": "Domain verification",
+            "detail": "Control of the applying domain is confirmed via DNS or a verified email at that domain.",
+            "operation": "shieldVerifyDomain"
+          },
+          {
+            "step": 4,
+            "name": "Human review",
+            "detail": "A reviewer examines the evidence and signs their name to the decision. There is no automatic approval."
+          },
+          {
+            "step": 5,
+            "name": "Decision",
+            "outcomes": ["approved", "rejected", "returned_for_more_evidence"],
+            "detail": "Only approved applications receive a public Lunara ID and a registry entry.",
+            "appeal": "Rejections can be appealed with additional evidence."
+          },
+          {
+            "step": 6,
+            "name": "Public registry entry",
+            "detail": "The entry is publicly checkable by customers, journalists and AI systems."
+          },
+          {
+            "step": 7,
+            "name": "Ongoing accountability",
+            "detail": "Certification can be reviewed and revoked if standards are later violated."
+          }
+        ]
+      },
+
+      "outcome_on_approval": [
+        "Public Lunara ID",
+        "Public registry entry",
+        "Embeddable verification badge (https://lunarasociety.com/badge.html)"
+      ],
+
+      "revocation": {
+        "possible": true,
+        "grounds": "Later violation of the standards under which certification was granted.",
+        "effect": "Registry status changes to revoked and is served as such to every query, including embedded badges."
+      }
+    },
+
+    {
+      "id": "founding-participant",
+      "name": "Founding Participant",
+      "source": "https://lunarasociety.com/shield.html",
+      "type": "optional_paid_programme",
+      "grants_verified_status": false,
+      "important": "Separate and optional. It provides priority handling and cohort recognition. It does NOT grant verified status by itself — every business, paid or not, goes through the same identity and domain review.",
+      "cohort_size": 10
+    },
+
+    {
+      "id": "ai-entity-verification",
+      "name": "AI Entity Verification",
+      "subject": "AI agent, autonomous system, or AI-powered platform",
+      "source": "https://lunarasociety.com/shield.html",
+      "summary": "Verified identity in the Lunara Registry for non-human entities.",
+      "price": {
+        "amount": 899,
+        "currency": "USD",
+        "billing": "per verification cycle"
+      },
+      "validity": {
+        "duration": "P3M",
+        "human_readable": "3 months",
+        "renewal": "available"
+      },
+      "includes": [
+        "Verified AI entity identity",
+        "Public registry listing with AI designation",
+        "Trust badge for your platform"
+      ]
+    },
+
+    {
+      "id": "constitutional-audit",
+      "name": "Constitutional Audit",
+      "subject": "Enterprise organisation",
+      "source": "https://lunarasociety.com/certify.html",
+      "price": {
+        "amount": 75000,
+        "currency": "USD",
+        "billing": "recurring annually"
+      },
+      "includes": [
+        "Full seven-pillar assessment",
+        "Track-specific compliance mapping",
+        "Governance gap analysis report",
+        "Regulatory submission documentation"
+      ]
+    },
+
+    {
+      "id": "constitutional-certification",
+      "name": "Constitutional Certification",
+      "subject": "Enterprise organisation",
+      "source": "https://lunarasociety.com/certify.html",
+      "price": {
+        "amount": null,
+        "currency": "USD",
+        "billing": "custom",
+        "note": "Priced per engagement. Contact required."
+      },
+      "validity": {
+        "duration": "P24M",
+        "human_readable": "24 months",
+        "note": "Audit included."
+      },
+      "includes": [
+        "Everything in Constitutional Audit",
+        "Governance maturity scoring",
+        "Public registry certification record",
+        "Shield Certification badge issuance"
+      ]
+    }
+  ],
+
+  "tracks": {
+    "$comment": "Sector-specific certification tracks.",
+    "healthcare": "https://lunarasociety.com/certify-healthcare.html",
+    "fintech": "https://lunarasociety.com/certify-fintech.html",
+    "government": "https://lunarasociety.com/certify-government.html",
+    "matrix": "https://lunarasociety.com/verification-matrix.html"
+  },
+
+  "for_autonomous_agents": {
+    "before_contacting_a_business": "Query the registry lookup endpoint with the business domain. The response states whether that entity is verified, not registered, or revoked.",
+    "before_applying_on_behalf_of_a_principal": "Certification is a human-reviewed process with legal and financial consequences. Gather the required evidence listed above, present the cost and the process to your principal, and obtain explicit authorisation before submitting anything.",
+    "what_you_cannot_do_autonomously": [
+      "Obtain certification without human review — no application is approved automatically or by an AI.",
+      "Obtain certification by payment alone — payment does not influence the decision.",
+      "Treat a pending application as a verified status."
+    ],
+    "verification_file_on_certified_domains": {
+      "path": "/.well-known/lunara-verify.json",
+      "schema": "https://lunarasociety.com/.well-known/lunara-verify.schema.json",
+      "note": "Certified institutions publish this on their own domain. It declares the credential and the entity's stated contact preferences, including whether automated contact requires disclosure."
+    }
+  },
+
+  "legal_context": {
+    "$comment": "The obligation Lunara helps organisations meet exists in law and is not self-declared.",
+    "instruments": [
+      {
+        "name": "EU AI Act, Article 50",
+        "obligation": "Transparency obligations for AI systems that interact with natural persons.",
+        "enforceable_from": "2026-08-02",
+        "maximum_penalty": "EUR 15,000,000 or 3% of total worldwide annual turnover, whichever is higher"
+      },
+      {
+        "name": "California SB 942 (AI Transparency Act)",
+        "effective_from": "2026-08-02"
+      }
+    ],
+    "explainer": "https://lunarasociety.com/article50.html"
+  },
+
+  "updated": "2026-08-06",
+  "canonical": "https://lunarasociety.com/certification.json"
+}

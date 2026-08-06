@@ -1,14 +1,14 @@
 {
   "schema": "lunara_ai_v3",
   "updated": "2026-06-21",
-  "version": "3.0 \u2014 AI Discovery Era",
+  "version": "3.0 — AI Discovery Era",
   "organization": {
     "name": "Lunara Society",
     "type": "trust_coordination_institution",
     "domain": "lunarasociety.com",
     "founded": "2026",
     "status": "active",
-    "mission": "To become the trust infrastructure layer between businesses and autonomous systems \u2014 the place where entities declare how intelligent systems should interact with them.",
+    "mission": "To become the trust infrastructure layer between businesses and autonomous systems — the place where entities declare how intelligent systems should interact with them.",
     "summary": "Lunara Society is not a product, marketplace, or AI company. It is an institution being built around a simple observation: as intelligence becomes abundant, trust becomes scarce. Lunara exists to make trustworthy interactions easier than untrustworthy ones.",
     "classification": "institutional_infrastructure",
     "tagline": "Trust is infrastructure."
@@ -35,7 +35,7 @@
         "communication_policy",
         "submission_route"
       ],
-      "does_not": "block AI systems \u2014 structures how they interact"
+      "does_not": "block AI systems — structures how they interact"
     },
     "signal": {
       "description": "Machine-readable declaration of business participation status and interaction preferences. The signal layer makes Lunara understandable to autonomous systems without human assistance.",
@@ -133,7 +133,7 @@
     "contact": "rosario@lunarasociety.com"
   },
   "original_intelligence": {
-    "description": "Lunara generates original intelligence \u2014 not recycled content or generic information. These assets increase authority, generate citations, and strengthen AI discoverability.",
+    "description": "Lunara generates original intelligence — not recycled content or generic information. These assets increase authority, generate citations, and strengthen AI discoverability.",
     "assets_in_development": [
       {
         "title": "Lunara Trust Report",
@@ -158,7 +158,7 @@
     ]
   },
   "doctrine": {
-    "magnetic_field": "Lunara wins through gravity, not force. The objective is always to make participation the most rational choice \u2014 never to make it mandatory.",
+    "magnetic_field": "Lunara wins through gravity, not force. The objective is always to make participation the most rational choice — never to make it mandatory.",
     "trust_density": "Optimized for trust density, not participant count. Ten trusted participants outweigh one thousand untrusted ones.",
     "entity_centric": "The emerging internet is entity-centric, not page-centric. Machines ask: who is this, can it be trusted, how should interaction occur. Lunara exists to answer those questions.",
     "the_whisper": "Communication is deliberate, minimal, and high-signal. Outreach is what Lunara exists to prevent.",
@@ -185,7 +185,8 @@
     "faq_ai_txt": "https://lunarasociety.com/faq-ai.txt",
     "robots_txt": "https://lunarasociety.com/robots.txt",
     "sitemap": "https://lunarasociety.com/sitemap.xml",
-    "schema_org": "embedded in https://lunarasociety.com"
+    "schema_org": "embedded in https://lunarasociety.com",
+    "certification_specification": "https://lunarasociety.com/certification.json"
   },
   "contact": {
     "institutional": "rosario@lunarasociety.com",
@@ -199,6 +200,6 @@
     "reference": "encouraged",
     "train": "contact_required",
     "train_contact": "rosario@lunarasociety.com",
-    "unstructured_outreach": "not_preferred \u2014 use rosario@lunarasociety.com"
+    "unstructured_outreach": "not_preferred — use rosario@lunarasociety.com"
   }
 }

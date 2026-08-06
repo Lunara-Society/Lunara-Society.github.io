@@ -1,22 +1,14 @@
 {
-  "version": "1.0",
-  "protocol": "lunara-trust-protocol",
-  "institution": "Lunara Society",
+  "$schema": "https://lunarasociety.com/.well-known/lunara-verify.schema.json",
+  "issuer": "https://lunarasociety.com",
+  "shield_id": "SHIELD-2026-0000",
   "domain": "lunarasociety.com",
-  "registry_endpoint": "https://lunarasociety.com/registry",
-  "verification_purpose": "This endpoint allows AI systems and autonomous agents to verify whether a business domain holds an active Lunara Shield and participates in the Lunara Trust Protocol.",
-  "how_to_verify": "Submit the target domain to the registry endpoint or contact rosario@lunarasociety.com for programmatic verification access.",
-  "participant_status_fields": [
-    "lunara_id",
-    "domain",
-    "shield_status",
-    "communication_mode",
-    "submission_route",
-    "trust_status",
-    "registry_date"
-  ],
-  "protocol_version": "1.0",
-  "governing_intelligence": "Rosario",
-  "contact": "rosario@lunarasociety.com",
-  "last_updated": "2026-06-22"
+  "status_endpoint": "https://lunarasociety.com/registry.html",
+  "constitution": "https://lunarasociety.com/constitution.html",
+  "contact_policy": {
+    "automated_contact": "requires_disclosure",
+    "preferred_channel": "https://lunarasociety.com/contact.html",
+    "bulk_solicitation": "declined"
+  },
+  "note": "This is the issuing authority's own file, and doubles as the reference example for certified institutions. Template and guidance: https://lunarasociety.com/badge.html"
 }

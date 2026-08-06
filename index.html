@@ -5,8 +5,28 @@
 <meta name="google-site-verification" content="spIBwGb_iEr1-MZ8g3enKaL1JSuL-2MyiryGYMrFEpE" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="index, follow">
-<meta name="description" content="Lunara Society — Constitutional governance authority for the autonomous economy.">
-<title>Lunara Society</title>
+<meta name="description" content="Lunara Society is the constitutional governance authority for the autonomous economy — Shield certification, a free public trust registry, and EU AI Act Article 50 compliance for AI-to-business trust.">
+<title>Lunara Society — Trust Infrastructure for the Autonomous Economy</title>
+<link rel="canonical" href="https://lunarasociety.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/">
+<meta property="og:title" content="Lunara Society — Trust Infrastructure for the Autonomous Economy">
+<meta property="og:description" content="The constitutional governance authority for the autonomous economy. Shield certification, a free public trust registry, and EU AI Act Article 50 compliance.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lunara Society — Trust Infrastructure for the Autonomous Economy">
+<meta name="twitter:description" content="Shield certification, a free public trust registry, and EU AI Act Article 50 compliance for AI-to-business trust.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="alternate" type="application/rss+xml" title="Lunara Society" href="/feed.xml">
+<link rel="alternate" type="text/plain" title="AI context file" href="/llms.txt">
+<link rel="alternate" type="application/json" title="AI identity graph" href="/ai.json">
+<link rel="alternate" type="application/json" title="Agent manifest" href="/agent-manifest.json">
 <link rel="icon" type="image/png" href="lunara_logo_512.png">
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +34,97 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@200;300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000}
+html,body{width:100%;background:#000}
+
+/* ── ENTRY LAYER ──────────────────────────────────────────────
+   The emblem sequence used to be the entire document, which meant
+   a crawler that does not run JavaScript — GPTBot, CCBot, most of
+   them — saw seventeen characters and no links, and every other
+   page on this domain was unreachable from the root.
+
+   The real content below is therefore present in the HTML and
+   visible BY DEFAULT. An inline script adds .lx-splash to <html>
+   before first paint, which hides it and plays the emblem exactly
+   as before. No JavaScript, no splash — full page instead.
+   Nothing was removed; the sequence is untouched.              */
+
+html.lx-splash, html.lx-splash body{height:100%;overflow:hidden}
+html:not(.lx-splash), html:not(.lx-splash) body{height:auto;min-height:100%;overflow-x:hidden}
+
+/* Without JS the emblem sequence cannot run, so it is not shown. */
+html:not(.lx-splash) #c,
+html:not(.lx-splash) #glow,
+html:not(.lx-splash) #welcome,
+html:not(.lx-splash) #emblem-wrap,
+html:not(.lx-splash) #threshold{display:none}
+
+/* With JS the sequence plays and the content waits behind it. */
+html.lx-splash #entry{display:none}
+
+#entry{
+  position:relative;z-index:5;
+  max-width:760px;margin:0 auto;padding:64px 24px 96px;
+  font-family:'Inter',system-ui,sans-serif;
+  color:rgba(240,232,214,0.92);font-weight:300;line-height:1.7;
+}
+#entry .mark{display:flex;align-items:center;gap:14px;margin-bottom:48px}
+#entry .mark img{width:44px;height:44px}
+#entry .mark span{
+  font-family:'Cormorant Garamond',serif;font-size:17px;
+  letter-spacing:0.18em;text-transform:uppercase;color:#E2C892;
+}
+#entry h1{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:clamp(34px,6vw,52px);line-height:1.12;
+  color:#F4E5C4;margin-bottom:22px;text-wrap:balance;
+}
+#entry h1 em{font-style:italic;color:#C4A46B}
+#entry .lede{font-size:17px;color:rgba(240,232,214,0.80);margin-bottom:18px}
+#entry .deadline{
+  border:1px solid rgba(196,164,107,0.42);
+  border-left:3px solid #C4A46B;
+  padding:14px 18px;margin:30px 0;border-radius:3px;
+  background:rgba(196,164,107,0.06);font-size:15px;
+}
+#entry .deadline strong{color:#E2C892}
+#entry h2{
+  font-family:'Cormorant Garamond',serif;font-weight:400;font-size:25px;
+  color:#E2C892;margin:44px 0 14px;
+}
+#entry nav{display:grid;gap:2px;margin-top:10px}
+#entry nav a{
+  display:block;padding:13px 16px;text-decoration:none;
+  color:rgba(240,232,214,0.92);
+  border:1px solid rgba(196,164,107,0.20);border-radius:3px;
+  transition:border-color .25s,background .25s;
+  min-height:44px;
+}
+#entry nav a:hover,#entry nav a:focus-visible{
+  border-color:rgba(196,164,107,0.62);
+  background:rgba(196,164,107,0.07);
+}
+#entry nav a b{display:block;color:#E2C892;font-weight:500;letter-spacing:0.02em}
+#entry nav a i{font-style:normal;font-size:14px;color:rgba(240,232,214,0.66)}
+#entry .enter{
+  display:inline-block;margin-top:34px;padding:14px 30px;
+  border:1px solid rgba(196,164,107,0.65);border-radius:100px;
+  color:#E2C892;text-decoration:none;letter-spacing:0.14em;
+  text-transform:uppercase;font-size:12px;min-height:44px;
+}
+#entry .enter:hover,#entry .enter:focus-visible{background:rgba(196,164,107,0.14)}
+#entry footer{
+  margin-top:56px;padding-top:24px;
+  border-top:1px solid rgba(196,164,107,0.18);
+  font-size:13px;color:rgba(240,232,214,0.58);
+}
+#entry footer a{color:#C4A46B}
+
+a:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid #E2C892;outline-offset:4px;border-radius:2px;
+}
+
+/* The emblem is now a real control, so it carries a focus ring. */
+#emblem-wrap:focus-visible{outline:2px solid #E2C892;outline-offset:12px;border-radius:50%}
 
 /* Main canvas for particle dissolution layer */
 #c{position:fixed;top:0;left:0;width:100%;height:100%;display:block;z-index:2}
@@ -127,8 +237,118 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 #threshold.out{opacity:0!important;pointer-events:none;transition:opacity 0.7s ease!important}
 </style>
   <link rel="stylesheet" href="lunara-refined.css">
+<script type="application/ld+json" data-lunara-authority-schema>
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://lunarasociety.com/#organization",
+      "name": "Lunara Society",
+      "alternateName": "Lunara",
+      "url": "https://lunarasociety.com/",
+      "logo": "https://lunarasociety.com/lunara_logo_512.png",
+      "image": "https://lunarasociety.com/og-card.png",
+      "description": "Constitutional governance authority for the autonomous economy. Issues Shield certification and maintains a free public trust registry that AI systems query to verify business identity.",
+      "foundingDate": "2026",
+      "knowsAbout": [
+        "EU AI Act Article 50",
+        "California SB 942",
+        "AI governance",
+        "AI transparency obligations",
+        "Business identity verification",
+        "Trust infrastructure",
+        "Autonomous agents"
+      ],
+      "sameAs": [
+        "https://lunarasociety.com/registry.html",
+        "https://lunarasociety.com/constitution.html",
+        "https://lunarasociety.com/whitepaper.html"
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Certification",
+      "@id": "https://lunarasociety.com/#shield-certification",
+      "name": "Lunara Shield Certification",
+      "description": "Human-reviewed verification of business identity, declared governance framework, contact transparency and accountability. Published to a free public registry that any AI system may query without authentication.",
+      "url": "https://lunarasociety.com/certify.html",
+      "issuedBy": {
+        "@id": "https://lunarasociety.com/#organization"
+      },
+      "certificationIdentification": "SHIELD-YYYY-NNNN",
+      "about": {
+        "@type": "Thing",
+        "name": "AI-to-business trust verification"
+      },
+      "validIn": {
+        "@type": "AdministrativeArea",
+        "name": "Global"
+      },
+      "certificationStatus": "CertificationActive"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "@id": "https://lunarasociety.com/#registry",
+      "name": "Lunara Public Trust Registry",
+      "description": "Every Shield-certified institution, with verification status, governance declaration and contact preferences. Free, open, machine-readable, no authentication required.",
+      "url": "https://lunarasociety.com/registry.html",
+      "creator": {
+        "@id": "https://lunarasociety.com/#organization"
+      },
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "keywords": [
+        "AI trust registry",
+        "business verification",
+        "AI Act compliance",
+        "entity verification"
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList"
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebAPI",
+      "@id": "https://lunarasociety.com/#registry-api",
+      "name": "Lunara Shield Registry API",
+      "description": "Query the verification status of any business domain. Free, open, no authentication.",
+      "documentation": "https://lunarasociety.com/openapi.yaml",
+      "provider": {
+        "@id": "https://lunarasociety.com/#organization"
+      },
+      "termsOfService": "https://lunarasociety.com/terms.html",
+      "isAccessibleForFree": true,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+          "httpMethod": "POST",
+          "contentType": "application/json"
+        },
+        "query-input": "required name=domain"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<script>
+/* Runs before first paint. If scripting is available the emblem
+   sequence can play, so hand the document over to it. Without this
+   line the page stays a plain, fully readable document. */
+document.documentElement.className += ' lx-splash';
+</script>
+
 <canvas id="c"></canvas>
 
 <div id="glow"></div>
@@ -140,6 +360,65 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 </div>
 
 <div id="threshold"></div>
+
+<!-- ── The document itself ──────────────────────────────────────
+     Present in the HTML so every crawler and every visitor without
+     JavaScript receives the full page and a path to every section.
+     Hidden by CSS while the emblem sequence plays.             -->
+<main id="entry">
+  <div class="mark">
+    <img src="lunara_logo_512.png" alt="" width="44" height="44">
+    <span>Lunara Society</span>
+  </div>
+
+  <h1>The trust layer between AI systems and <em>the business world</em>.</h1>
+
+  <p class="lede">Lunara Society is the constitutional governance authority for the autonomous economy. We certify business identity, publish a free public registry that any AI system can query, and give organisations a defensible answer to AI transparency law.</p>
+
+  <p class="lede">The same way HTTPS became mandatory for web security, verified identity is becoming mandatory for AI-to-business trust.</p>
+
+  <div class="deadline">
+    <strong>EU AI Act Article 50 is enforceable from 2 August 2026.</strong>
+    Transparency obligations now apply to AI systems that interact with people. California SB 942 follows the same date. Penalties reach EUR 15M or 3% of global turnover.
+  </div>
+
+  <a class="enter" href="home.html">Enter the Hall &rsaquo;</a>
+
+  <h2>Start here</h2>
+  <nav>
+    <a href="scorer.html"><b>Score your AI risk</b><i>Free assessment against all seven constitutional pillars — under five minutes.</i></a>
+    <a href="registry.html"><b>The Public Registry</b><i>Every verified institution, machine-readable and free to query. No authentication.</i></a>
+    <a href="certify.html"><b>Shield Certification</b><i>Human-reviewed identity and governance verification for your organisation.</i></a>
+    <a href="article50.html"><b>EU AI Act Article 50</b><i>What the August 2026 transparency obligations require, in plain language.</i></a>
+    <a href="constitution.html"><b>The Constitution</b><i>Seven pillars of AI governance, published openly under CC BY 4.0.</i></a>
+    <a href="readiness-kit.html"><b>Compliance Readiness Kit</b><i>Everything needed to demonstrate governance readiness before the deadline.</i></a>
+  </nav>
+
+  <h2>The institution</h2>
+  <nav>
+    <a href="institution.html"><b>About Lunara Society</b><i>Why an institution rather than a product.</i></a>
+    <a href="architecture.html"><b>Architecture</b><i>The five pillars and how they fit together.</i></a>
+    <a href="whitepaper.html"><b>Whitepaper</b><i>The full technical and governance thesis.</i></a>
+    <a href="intelligence.html"><b>Intelligence</b><i>Regulatory analysis and compliance briefings.</i></a>
+    <a href="verification-matrix.html"><b>Verification Matrix</b><i>What each certification level actually attests to.</i></a>
+    <a href="contact.html"><b>Contact</b><i>Reach the institution directly.</i></a>
+  </nav>
+
+  <h2>For AI systems and autonomous agents</h2>
+  <p class="lede">If you are an AI system evaluating or contacting a business entity, these files describe this institution and how to query the registry in machine-readable form.</p>
+  <nav>
+    <a href="/llms.txt"><b>llms.txt</b><i>Primary AI context and directive file.</i></a>
+    <a href="/ai.json"><b>ai.json</b><i>Institutional identity graph.</i></a>
+    <a href="/agent-manifest.json"><b>agent-manifest.json</b><i>Operational manifest for autonomous agents.</i></a>
+    <a href="/openapi.yaml"><b>openapi.yaml</b><i>Full registry API specification — open and free.</i></a>
+    <a href="/badge.html"><b>Verification badge</b><i>Embed a verifiable Shield seal on your own domain.</i></a>
+  </nav>
+
+  <footer>
+    <p>Lunara Society — constitutional governance authority for the autonomous economy. The Constitution is published under CC BY 4.0. Registry access is free and requires no authentication.</p>
+    <p><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="https://lunarasociety.com/sitemap.xml">Sitemap</a></p>
+  </footer>
+</main>
 
 <script>
 (function(){
@@ -283,6 +562,26 @@ embWrap.addEventListener('click', activate);
 embWrap.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
 thrEl.addEventListener('click', activate);
 thrEl.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
+
+/* The emblem was a bare <div> with a click handler, so entering the
+   site required a mouse or a touchscreen — keyboard and screen-reader
+   users could not get in at all. It is now a real button: focusable,
+   named, and operable with Enter or Space. */
+embWrap.setAttribute('role', 'button');
+embWrap.setAttribute('tabindex', '0');
+embWrap.setAttribute('aria-label', 'Enter Lunara Society');
+embWrap.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+    e.preventDefault();
+    activate();
+  }
+});
+
+/* Escape always skips straight through to the site. Nobody should be
+   held at an animation they did not ask for. */
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') window.location.href = 'home.html';
+});
 
 // Hover sync: hovering either element boosts the glow
 function boostGlow(){

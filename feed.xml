@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lunara Society</title>
+    <link>https://lunarasociety.com/</link>
+    <atom:link href="https://lunarasociety.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Constitutional governance authority for the autonomous economy. Shield certification, a free public trust registry, and EU AI Act Article 50 compliance.</description>
+    <language>en</language>
+    <lastBuildDate>Thu, 06 Aug 2026 06:28:08 +0000</lastBuildDate>
+    <image>
+      <url>https://lunarasociety.com/og-card.png</url>
+      <title>Lunara Society</title>
+      <link>https://lunarasociety.com/</link>
+    </image>
+    <item>
+      <title>EU AI Act Article 50 — what enforcement requires</title>
+      <link>https://lunarasociety.com/article50.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/article50.html</guid>
+      <description>Transparency obligations for AI systems become enforceable on 2 August 2026. What Article 50 actually requires, in plain language.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>The Lunara Constitution</title>
+      <link>https://lunarasociety.com/constitution.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/constitution.html</guid>
+      <description>Seven pillars of AI governance, published openly under CC BY 4.0.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>The Public Trust Registry</title>
+      <link>https://lunarasociety.com/registry.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/registry.html</guid>
+      <description>Every Shield-certified institution, machine-readable and free for any AI system to query.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>Shield Certification</title>
+      <link>https://lunarasociety.com/certify.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/certify.html</guid>
+      <description>Human-reviewed business identity and governance verification.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>Score your AI risk</title>
+      <link>https://lunarasociety.com/scorer.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/scorer.html</guid>
+      <description>Free assessment against all seven constitutional pillars in under five minutes.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>Verification badge for certified institutions</title>
+      <link>https://lunarasociety.com/badge.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/badge.html</guid>
+      <description>Embed a live Shield seal on your own domain, readable by people and machines alike.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>Whitepaper — trust infrastructure for the autonomous economy</title>
+      <link>https://lunarasociety.com/whitepaper.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/whitepaper.html</guid>
+      <description>The full technical and governance thesis behind Lunara Society.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+    <item>
+      <title>Compliance Readiness Kit</title>
+      <link>https://lunarasociety.com/readiness-kit.html</link>
+      <guid isPermaLink="true">https://lunarasociety.com/readiness-kit.html</guid>
+      <description>Everything required to demonstrate governance readiness before the deadline.</description>
+      <pubDate>Thu, 06 Aug 2026 06:28:08 +0000</pubDate>
+    </item>
+  </channel>
+</rss>

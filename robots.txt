@@ -31,6 +31,17 @@ Disallow: /invoice-template.html
 # Organization Identity
 # https://lunarasociety.com/identity.json
 
+# ─── SYNDICATION & VERIFICATION ───
+# RSS feed
+# https://lunarasociety.com/feed.xml
+#
+# Verification file schema for certified institutions.
+# Certified domains publish /.well-known/lunara-verify.json
+# https://lunarasociety.com/.well-known/lunara-verify.schema.json
+#
+# Embeddable verification badge
+# https://lunarasociety.com/badge.html
+
 # Sitemap
 Sitemap: https://lunarasociety.com/sitemap.xml
 

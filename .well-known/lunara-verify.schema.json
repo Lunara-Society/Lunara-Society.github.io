@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lunarasociety.com/.well-known/lunara-verify.schema.json",
+  "title": "Lunara Shield verification file",
+  "description": "Published by a certified institution at /.well-known/lunara-verify.json on its own domain. An AI system or agent reads this before evaluating or contacting the business.",
+  "type": "object",
+  "required": ["issuer", "shield_id", "domain"],
+  "properties": {
+    "issuer": {
+      "type": "string",
+      "format": "uri",
+      "const": "https://lunarasociety.com",
+      "description": "The authority that issued this credential."
+    },
+    "shield_id": {
+      "type": "string",
+      "pattern": "^SHIELD-[0-9]{4}-[A-Z0-9]{4,}$",
+      "description": "The credential identifier, verifiable against the public registry."
+    },
+    "domain": {
+      "type": "string",
+      "description": "The domain this credential was issued for. Must match the host serving this file."
+    },
+    "status_endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the live status of this credential can be confirmed."
+    },
+    "constitution": {
+      "type": "string",
+      "format": "uri",
+      "description": "The governance framework this institution has adopted."
+    },
+    "contact_policy": {
+      "type": "object",
+      "description": "How this institution wishes to be contacted by automated systems.",
+      "properties": {
+        "automated_contact": {
+          "type": "string",
+          "enum": ["permitted", "requires_disclosure", "declined"],
+          "description": "requires_disclosure means an AI system must identify itself as such before making contact — the Article 50 transparency obligation expressed in machine-readable form."
+        },
+        "preferred_channel": { "type": "string", "format": "uri" },
+        "bulk_solicitation": { "type": "string", "enum": ["permitted", "declined"] }
+      }
+    }
+  }
+}

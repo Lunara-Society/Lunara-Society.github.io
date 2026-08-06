@@ -32,3 +32,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # This site's deployment step reliably takes about ten minutes,
+          # which is exactly the action's default timeout — so deploys were
+          # failing or succeeding at random. Observed: 9m26s succeeded,
+          # 10m05s timed out, two earlier runs timed out the same way.
+          # Thirty minutes leaves real headroom; a healthy deploy still
+          # finishes in ten and exits as soon as it is done.
+          timeout: 1800000
+          # Report progress less often so a slow deployment is not mistaken
+          # for a stalled one.
+          reporting_interval: 15000

@@ -167,8 +167,13 @@ body.lx-has-banner .lx-fixed-header {
    Expressed as a cap rather than a size on purpose: the pages that do
    declare a size use 28-30px and sit under the ceiling, so they keep
    exactly the proportions they were given. Only the runaway case is
-   brought back into line. */
-.nav-logo-img {
+   brought back into line.
+
+   A second class carries the same defect: kit-access and whitepaper
+   mark their emblem .nav-brand-logo and never size it either, so the
+   512px file drew full-size and pushed those pages 162px sideways. */
+.nav-logo-img,
+.nav-brand-logo {
   max-width: 34px;
   max-height: 34px;
   flex: 0 0 auto;

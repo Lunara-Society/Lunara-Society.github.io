@@ -594,6 +594,28 @@ input:focus, select:focus, textarea:focus {
   color: var(--lx-gold-lit);
 }
 
+/* The brand wrapper is in the markup on every page and styled on none,
+   so it had no layout of its own. */
+.footer-brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Same story in the header: .nav-logo-text appears in the markup
+   sitewide but is declared on only a couple of pages, so elsewhere the
+   wordmark simply inherited the body colour and came out plain white
+   next to a gold emblem. It is gold everywhere now. */
+.nav-logo-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--lx-gold-lit);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-logo-text span { color: var(--lx-gold); }
+
 .footer-tagline {
   font-size: 13.5px;
   line-height: 1.75;

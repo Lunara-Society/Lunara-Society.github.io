@@ -1,0 +1,756 @@
+/* ============================================================
+   LUNARA REFINED — luxury interface layer
+   ------------------------------------------------------------
+   An ADDITIVE layer. It is loaded after each page's own styles
+   and only enriches them: depth, engraving, motion, hierarchy.
+   It removes no content and rewrites no page structure.
+
+   Everything is namespaced --lx-* so it can never collide with
+   the per-page --gold / --text tokens already in the site.
+   ============================================================ */
+
+:root {
+  /* ── Antique gold, full tonal range ───────────────────────
+     The site had a single flat gold. Metal needs a range:
+     a highlight, a body, a shadow. That is what reads as gold
+     rather than as yellow.                                    */
+  --lx-gold:        #C4A46B;
+  --lx-gold-pale:   #F4E5C4;
+  --lx-gold-lit:    #E2C892;
+  --lx-gold-deep:   #8A6B3C;
+  --lx-gold-ember:  #5C4724;
+
+  /* ── Ink ──────────────────────────────────────────────────
+     Pure #000 kills gold — there is no air for it to glow into.
+     These near-blacks keep the page black to the eye while
+     giving the metal something to sit on.                     */
+  --lx-ink-1: #070603;
+  --lx-ink-2: #0C0A06;
+  --lx-ink-3: #131009;
+
+  --lx-hair:       rgba(196,164,107,0.14);
+  --lx-border:     rgba(196,164,107,0.26);
+  --lx-border-lit: rgba(196,164,107,0.48);
+
+  /* ── Physical surface treatments ─────────────────────────── */
+  --lx-engrave: inset 0 1px 0 rgba(244,229,196,0.09),
+                inset 0 -1px 0 rgba(0,0,0,0.55);
+  --lx-lift:    0 18px 44px -26px rgba(0,0,0,1);
+  --lx-halo:    0 0 30px -8px rgba(196,164,107,0.32);
+  --lx-halo-up: 0 0 46px -10px rgba(196,164,107,0.50);
+
+  --lx-ease:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --lx-ease-o: cubic-bezier(0.16, 1, 0.30, 1);
+
+  /* Measured at runtime by lunara-immersive.js */
+  --lx-banner-h: 0px;
+  --lx-scroll: 0;
+}
+
+/* ============================================================
+   1. INK DEPTH
+   A fixed, non-interactive wash behind all content. Sits at
+   z-index -1 so it paints over the body background but under
+   every piece of real content.
+   ============================================================ */
+
+#lx-ink {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 800px at 50% -10%, rgba(196,164,107,0.085), transparent 62%),
+    radial-gradient(900px 700px at 12% 22%,  rgba(138,107,60,0.055), transparent 60%),
+    radial-gradient(1000px 800px at 88% 78%, rgba(92,71,36,0.065),  transparent 62%),
+    linear-gradient(180deg, var(--lx-ink-1) 0%, var(--lx-ink-2) 48%, #000 100%);
+}
+
+/* A fine vignette to pull the eye to the centre of the page. */
+#lx-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%,
+              transparent 52%, rgba(0,0,0,0.55) 100%);
+}
+
+/* Ambient gold dust. Canvas is painted by the motion engine. */
+#lx-dust {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+/* ============================================================
+   2. THE HEADER COLLISION FIX
+   The enforcement banner is a normal-flow div; the nav is
+   position:fixed;top:0 — so the nav was painted straight over
+   it. On mobile the banner wrapped to three lines and the
+   header became unreadable.
+
+   We measure the banner at runtime and push every fixed header
+   down by exactly that much. No markup is changed.
+   ============================================================ */
+
+body.lx-has-banner #top-nav,
+body.lx-has-banner header[id*="nav"],
+body.lx-has-banner .lx-fixed-header {
+  top: var(--lx-banner-h);
+  transition: top 0.25s var(--lx-ease);
+}
+
+/* The banner itself, refined into a struck bar of metal. */
+.lx-banner {
+  position: relative;
+  z-index: 240;
+  background:
+    linear-gradient(90deg,
+      rgba(92,71,36,0.16) 0%,
+      rgba(196,164,107,0.20) 50%,
+      rgba(92,71,36,0.16) 100%) !important;
+  border-bottom: 1px solid var(--lx-border) !important;
+  box-shadow: var(--lx-engrave), 0 8px 24px -18px #000;
+}
+
+/* A slow shine travelling along the banner — signals "live". */
+.lx-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    transparent 20%,
+    rgba(244,229,196,0.13) 48%,
+    transparent 72%);
+  background-size: 220% 100%;
+  animation: lx-banner-shine 9s var(--lx-ease) infinite;
+}
+
+@keyframes lx-banner-shine {
+  0%   { background-position: 180% 0; }
+  55%  { background-position: -80% 0; }
+  100% { background-position: -80% 0; }
+}
+
+/* ============================================================
+   3. NAVIGATION
+   Deeper glass, a true hairline, and breathing room so the
+   wordmark stops colliding with the nav pill.
+   ============================================================ */
+
+#top-nav {
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  background: linear-gradient(to bottom,
+              rgba(7,6,3,0.88) 0%,
+              rgba(7,6,3,0.55) 62%,
+              transparent 100%);
+  gap: 14px;
+}
+
+/* The wordmark and the pill were touching at 1440px. */
+.nav-logo { margin-right: 4px; }
+
+.nav-logo-img {
+  filter: drop-shadow(0 0 8px rgba(196,164,107,0.65));
+}
+
+.nav-pill {
+  background: linear-gradient(180deg,
+              rgba(19,16,9,0.92), rgba(7,6,3,0.92));
+  border: 1px solid var(--lx-hair);
+  box-shadow: var(--lx-engrave), var(--lx-lift);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* The pill carries ten links inside `overflow:hidden`, so the
+     last few were unreachable at every desktop width — they were
+     simply painted out of existence. Let it scroll instead, and
+     fade the trailing edge so there is a visible cue that more
+     sits beyond it. Nothing is hidden and nothing is dropped. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(90deg,
+                      #000 0, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg,
+              #000 0, #000 92%, transparent 100%);
+}
+
+.nav-pill::-webkit-scrollbar { display: none; }
+
+.nav-pill a { scroll-snap-align: start; }
+
+/* Tighten the links before resorting to scrolling, so that on
+   roomy displays the whole set fits with no interaction at all. */
+@media (max-width: 1600px) {
+  .nav-pill a {
+    padding-left: 12px;
+    padding-right: 12px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 1320px) {
+  .nav-pill a {
+    padding-left: 9px;
+    padding-right: 9px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* Nav links: a gold underline that draws itself on hover. */
+.nav-pill a,
+.nav-link {
+  position: relative;
+  transition: color 0.32s var(--lx-ease);
+}
+
+.nav-pill a::after,
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 1px;
+  background: linear-gradient(90deg,
+              transparent,
+              var(--lx-gold-lit),
+              transparent);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 0.42s var(--lx-ease-o);
+}
+
+.nav-pill a:hover::after,
+.nav-link:hover::after,
+.nav-pill a.lx-current::after {
+  transform: scaleX(1);
+}
+
+.nav-pill a:hover,
+.nav-link:hover {
+  color: var(--lx-gold-pale);
+}
+
+/* The page you are actually on, marked in the nav. */
+.nav-pill a.lx-current {
+  color: var(--lx-gold-pale);
+}
+
+/* Keep the header CTAs on one line — they were wrapping. */
+.nav-cta > a {
+  white-space: nowrap;
+}
+
+/* ============================================================
+   4. SURFACES — cards, pillars, panels
+   Flat bordered boxes become struck metal plates: engraved
+   edge, inner light, a lift on approach.
+   ============================================================ */
+
+.card,
+.pillar,
+.stat-card,
+.panel,
+.tier,
+.metric {
+  position: relative;
+  background: linear-gradient(165deg,
+              rgba(19,16,9,0.72) 0%,
+              rgba(7,6,3,0.78) 100%);
+  border-color: var(--lx-border);
+  box-shadow: var(--lx-engrave), var(--lx-lift);
+  transition:
+    transform 0.55s var(--lx-ease-o),
+    box-shadow 0.55s var(--lx-ease-o),
+    border-color 0.45s var(--lx-ease);
+  will-change: transform;
+}
+
+/* Light-follow: a soft gold pool tracks the cursor across the
+   surface. Coordinates are fed in by the motion engine. */
+.card::before,
+.pillar::before,
+.tier::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--lx-ease);
+  background: radial-gradient(
+    420px circle at var(--lx-mx, 50%) var(--lx-my, 50%),
+    rgba(196,164,107,0.13),
+    transparent 60%);
+}
+
+.card:hover::before,
+.pillar:hover::before,
+.tier:hover::before { opacity: 1; }
+
+.card:hover,
+.pillar:hover,
+.tier:hover {
+  transform: translateY(-4px);
+  border-color: var(--lx-border-lit);
+  box-shadow: var(--lx-engrave), var(--lx-lift), var(--lx-halo);
+}
+
+/* Numerals on cards, treated as struck metal. */
+.card-num,
+.stat-num,
+.metric-num {
+  background: linear-gradient(180deg,
+              var(--lx-gold-pale) 0%,
+              var(--lx-gold) 52%,
+              var(--lx-gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+
+/* ============================================================
+   5. TYPE
+   The site already uses the right faces. This tightens the
+   optical details: rendering, tracking, and a comfortable
+   reading measure for long-form body copy.
+   ============================================================ */
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.section-title,
+.hero-title,
+h1, h2 {
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+/* Gold display type gets a real metallic gradient. */
+.hero-title em,
+.hero-title i,
+.section-title em {
+  background: linear-gradient(180deg,
+              var(--lx-gold-pale) 0%,
+              var(--lx-gold-lit) 40%,
+              var(--lx-gold) 72%,
+              var(--lx-gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 14px rgba(196,164,107,0.30));
+}
+
+/* Engraved eyebrow labels. */
+.section-label,
+.stat-label,
+.card-label {
+  color: var(--lx-gold);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+}
+
+/* Long-form copy held to a readable measure. */
+.section-body,
+.card-text,
+.pillar-text {
+  max-width: 68ch;
+}
+
+/* ============================================================
+   6. RULES & DIVIDERS
+   ============================================================ */
+
+.gold-rule,
+.divider,
+hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+              transparent,
+              var(--lx-gold-deep) 18%,
+              var(--lx-gold-lit) 50%,
+              var(--lx-gold-deep) 82%,
+              transparent);
+  opacity: 0.75;
+}
+
+/* ============================================================
+   7. ACTIONS — buttons and calls to action
+   ============================================================ */
+
+.btn, .cta, .button,
+.hero-actions a,
+.nav-cta a,
+button[type="submit"],
+input[type="submit"] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.4s var(--lx-ease-o),
+    box-shadow 0.4s var(--lx-ease-o),
+    border-color 0.4s var(--lx-ease),
+    color 0.4s var(--lx-ease);
+}
+
+/* A sweep of light crossing the button on hover.
+   Driven by transform rather than background-position: with a
+   background larger than its box, percentage positioning resolves
+   against (box - image) and moves the opposite way to intuition,
+   which parks the highlight in view instead of off to the side. */
+.btn::after, .cta::after,
+.hero-actions a::after,
+.nav-cta a::after,
+button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    transparent 0%,
+    rgba(244,229,196,0.22) 50%,
+    transparent 100%);
+  transform: translateX(-160%);
+  transition: transform 0.9s var(--lx-ease-o);
+}
+
+.btn:hover::after, .cta:hover::after,
+.hero-actions a:hover::after,
+.nav-cta a:hover::after,
+button[type="submit"]:hover::after {
+  transform: translateX(340%);
+}
+
+.btn:hover, .cta:hover,
+.hero-actions a:hover,
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lx-halo-up), var(--lx-lift);
+  border-color: var(--lx-border-lit);
+}
+
+.btn:active, .cta:active,
+.hero-actions a:active { transform: translateY(0); }
+
+/* ============================================================
+   8. FORMS
+   ============================================================ */
+
+input[type="text"], input[type="email"], input[type="url"],
+input[type="tel"], input[type="search"], select, textarea {
+  background: linear-gradient(180deg,
+              rgba(7,6,3,0.90), rgba(12,10,6,0.90));
+  border: 1px solid var(--lx-hair);
+  box-shadow: var(--lx-engrave);
+  transition:
+    border-color 0.35s var(--lx-ease),
+    box-shadow 0.35s var(--lx-ease),
+    background 0.35s var(--lx-ease);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--lx-border-lit);
+  box-shadow: var(--lx-engrave), var(--lx-halo);
+}
+
+::placeholder { color: rgba(196,164,107,0.38); }
+
+/* Selection styled in house colours. */
+::selection {
+  background: rgba(196,164,107,0.28);
+  color: var(--lx-gold-pale);
+}
+
+/* ============================================================
+   9. FOOTER — shared by 32 pages
+   ============================================================ */
+
+.footer-inner,
+.footer-top {
+  border-top-color: var(--lx-hair);
+}
+
+.footer-logo,
+.footer-mark {
+  filter: drop-shadow(0 0 10px rgba(196,164,107,0.35));
+  transition: filter 0.45s var(--lx-ease);
+}
+
+.footer-logo:hover,
+.footer-mark:hover {
+  filter: drop-shadow(0 0 20px rgba(196,164,107,0.65));
+}
+
+.footer-col a,
+.footer-legal a,
+.footer-email {
+  position: relative;
+  transition: color 0.3s var(--lx-ease);
+}
+
+.footer-col a:hover,
+.footer-legal a:hover,
+.footer-email:hover { color: var(--lx-gold-pale); }
+
+/* ============================================================
+   10. COMPREHENSION MECHANICS
+   Orientation aids: where am I, how far through, how do I get
+   back. Injected by the motion engine.
+   ============================================================ */
+
+/* Scroll progress rail across the very top of the viewport. */
+#lx-rail {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 100%;
+  z-index: 300;
+  pointer-events: none;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--lx-scroll));
+  background: linear-gradient(90deg,
+              var(--lx-gold-ember),
+              var(--lx-gold),
+              var(--lx-gold-pale));
+  box-shadow: 0 0 12px rgba(196,164,107,0.55);
+}
+
+/* Return to top. Appears once you are well down the page. */
+#lx-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 260;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid var(--lx-border);
+  background: linear-gradient(180deg,
+              rgba(19,16,9,0.95), rgba(7,6,3,0.95));
+  box-shadow: var(--lx-engrave), var(--lx-lift);
+  color: var(--lx-gold-lit);
+  font-size: 15px;
+  opacity: 0;
+  transform: translateY(14px) scale(0.9);
+  pointer-events: none;
+  transition:
+    opacity 0.45s var(--lx-ease),
+    transform 0.45s var(--lx-ease-o),
+    box-shadow 0.45s var(--lx-ease);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#lx-top.lx-on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+#lx-top:hover {
+  box-shadow: var(--lx-engrave), var(--lx-lift), var(--lx-halo-up);
+  border-color: var(--lx-border-lit);
+  color: var(--lx-gold-pale);
+}
+
+/* ============================================================
+   11. MOTION — entrances
+   The site already ships .reveal on 134 elements. We refine the
+   easing and add a variant for elements the engine finds itself,
+   so pages without their own observer still come alive.
+   ============================================================ */
+
+/* Refine the easing only. Deliberately longhand: the `transition`
+   shorthand would reset transition-delay to 0 and wipe out the
+   site's own .reveal-delay-1..4 stagger classes. */
+.reveal {
+  transition-duration: 0.95s;
+  transition-timing-function: var(--lx-ease-o);
+}
+
+.lx-rise {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.95s var(--lx-ease-o),
+    transform 0.95s var(--lx-ease-o);
+}
+
+.lx-rise.lx-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Note: no blanket `img { transition: ... }` here on purpose. The
+   shorthand would reset transition-property and strip transform
+   from any image transition a page defines for itself. */
+
+/* ============================================================
+   12. ACCESSIBILITY
+   Keyboard focus was invisible against black. Now it is gold.
+   ============================================================ */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--lx-gold-lit);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ============================================================
+   13. MOBILE
+   The banner wrap was the worst offender. Tighter tracking and
+   a smaller face bring it to one or two lines, and every touch
+   target is brought up to a comfortable size.
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .lx-banner {
+    font-size: 9.5px !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.5 !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Comfortable tap targets.
+     Note: we deliberately do NOT touch `display` here. The site
+     hides .nav-cta links on mobile to make room for the hamburger,
+     and any display value set at this width would override that
+     and push the menu button off screen. Padding does the job
+     without disturbing layout. */
+  .btn, .cta,
+  .hero-actions a {
+    padding-top: max(12px, 0.7em);
+    padding-bottom: max(12px, 0.7em);
+  }
+
+  /* Hover lift is meaningless on touch — it only causes
+     sticky-hover artefacts. Let surfaces sit flat. */
+  .card:hover,
+  .pillar:hover,
+  .tier:hover { transform: none; }
+
+  .card, .pillar, .tier {
+    box-shadow: var(--lx-engrave), 0 10px 26px -20px #000;
+  }
+
+  #lx-top {
+    right: 14px;
+    bottom: 14px;
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Dust is a desktop luxury; keep mobile scrolling cheap. */
+  #lx-dust { display: none; }
+
+  .section-body,
+  .card-text { max-width: none; }
+
+  /* Wide comparison tables (up to 619px on a 390px screen) were
+     dragging entire pages sideways. The tables themselves are moved
+     into their own scroll container by the motion engine, so nothing
+     becomes unreachable — this just stops the page as a whole from
+     sliding under the reader's thumb. */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+}
+
+/* A table too wide for the screen scrolls within its own frame
+   rather than breaking the page around it. */
+.lx-scroll-x {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  /* The fade signals there is more table beyond the right edge. */
+  -webkit-mask-image: linear-gradient(90deg,
+                      #000 0, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg,
+              #000 0, #000 94%, transparent 100%);
+}
+
+.lx-scroll-x::-webkit-scrollbar { height: 3px; }
+
+.lx-scroll-x::-webkit-scrollbar-thumb {
+  background: var(--lx-border-lit);
+  border-radius: 3px;
+}
+
+/* Once framed, the table is free to keep its natural width. */
+.lx-scroll-x > table { min-width: max-content; }
+
+@media (max-width: 480px) {
+  .lx-banner {
+    font-size: 8.5px !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+/* ============================================================
+   14. REDUCED MOTION
+   Every ambient effect is a preference, not a requirement.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  #lx-dust { display: none; }
+
+  .lx-banner::after { animation: none; }
+
+  .reveal,
+  .lx-rise {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .card, .pillar, .tier,
+  .btn, .cta, .hero-actions a {
+    transition: none !important;
+  }
+
+  .card:hover,
+  .pillar:hover,
+  .tier:hover,
+  .btn:hover,
+  .cta:hover { transform: none !important; }
+}
+
+/* Printing: drop the theatre, keep the substance. */
+@media print {
+  #lx-ink, #lx-vignette, #lx-dust, #lx-rail, #lx-top { display: none !important; }
+  .reveal, .lx-rise { opacity: 1 !important; transform: none !important; }
+}

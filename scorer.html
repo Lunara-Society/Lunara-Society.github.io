@@ -443,6 +443,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   ]
 }
 </script>
+  <link rel="stylesheet" href="lunara-refined.css">
 </head>
 <body>
 
@@ -985,7 +986,7 @@ return `
 <div style="margin-bottom:20px;padding:20px;background:#060606;border-left:3px solid ${r.color}">
 <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${r.color};margin-bottom:8px">${r.phase} · ${r.title}</div>
 ${r.items.map(i => `<div style="font-size:13px;color:var(--text-dim);line-height:1.8;padding:4px 0">• ${i.desc}<br><span style="font-size:11px;color:rgba(196,164,107,0.8)">${i.reg}</span></div>`).join('')}
-</div>
+</div>`;
 }).join('');
 
 // Rec links
@@ -1184,5 +1185,6 @@ updateProgress();
   setTimeout(checkVisibility, 500);
 })();
 </script>
+<script src="lunara-immersive.js" defer></script>
 </body>
 </html>

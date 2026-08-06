@@ -1041,3 +1041,226 @@ html { scroll-behavior: smooth; }
   #lx-ink, #lx-vignette, #lx-dust, #lx-rail, #lx-top { display: none !important; }
   .reveal, .lx-rise { opacity: 1 !important; transform: none !important; }
 }
+
+/* ============================================================
+   15. CINEMATIC LAYER
+   ------------------------------------------------------------
+   The site's written language is architectural — Hall, Threshold,
+   Initiation, "you were expected" — while the pages were laid out
+   as documents. This layer closes that gap.
+
+   Five moves, in order of how much they change the feel:
+   light direction, film grain, colour temperature, display type,
+   and the emblem as a presence rather than a logo.
+
+   No new colours. Black and antique gold throughout; what changes
+   is where the light comes from and how the black behaves.
+   ============================================================ */
+
+:root {
+  /* Where the light is. Everything gold answers to this point. */
+  --lx-key-x: 50%;
+  --lx-key-y: -8%;
+
+  /* Blacks now carry temperature. The cool end is still black —
+     it simply makes the gold read warmer by contrast, which is
+     the oldest trick in colour grading and costs nothing. */
+  --lx-black-warm: #0C0A06;
+  --lx-black-cool: #05060A;
+}
+
+/* ── 15.1 THE KEY LIGHT ──────────────────────────────────────
+   A single implied source, high and centred, like an oculus.
+   Gold falls off away from it instead of sitting flat.        */
+
+#lx-ink {
+  background:
+    /* the key */
+    radial-gradient(1400px 900px at var(--lx-key-x) var(--lx-key-y),
+      rgba(244,229,196,0.11) 0%,
+      rgba(196,164,107,0.075) 26%,
+      transparent 62%),
+    /* warm bounce, low and to one side */
+    radial-gradient(900px 700px at 14% 78%,
+      rgba(138,107,60,0.06), transparent 60%),
+    /* cool fill in the depths — this is what makes gold glow */
+    radial-gradient(1100px 900px at 88% 92%,
+      rgba(24,32,54,0.20), transparent 64%),
+    linear-gradient(178deg,
+      var(--lx-black-warm) 0%,
+      #070603 46%,
+      var(--lx-black-cool) 100%);
+}
+
+/* Deepen the corners so the centre reads as lit. */
+#lx-vignette {
+  background:
+    radial-gradient(ellipse 82% 68% at var(--lx-key-x) 42%,
+      transparent 40%, rgba(0,0,0,0.62) 100%);
+}
+
+/* ── 15.2 FILM GRAIN ─────────────────────────────────────────
+   Digital black is dead flat; film black has grain. Kept at ~3%
+   so it is felt rather than seen. This is the detail people
+   never name and always register.                             */
+
+#lx-grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  will-change: transform;
+  animation: lx-grain-shift 700ms steps(1) infinite;
+}
+
+/* Grain that sits still reads as a texture overlay. Grain that
+   jumps a few pixels reads as film. */
+@keyframes lx-grain-shift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-2%, 1%); }
+  50%  { transform: translate(1%, -2%); }
+  75%  { transform: translate(-1%, -1%); }
+  100% { transform: translate(2%, 1%); }
+}
+
+/* ── 15.3 DISPLAY TYPE ───────────────────────────────────────
+   Cormorant Garamond is the right face and it was never allowed
+   to sing — nothing on the site exceeded ~52px. One enormous
+   line per page, with air around it.                          */
+
+.hero-title,
+#entry h1 {
+  font-size: clamp(46px, 8.5vw, 122px);
+  line-height: 0.98;
+  letter-spacing: -0.022em;
+}
+
+.hero-subtitle,
+#entry .lede:first-of-type {
+  font-size: clamp(16px, 1.5vw, 21px);
+}
+
+/* Section titles lift with it, but stay clearly subordinate. */
+.section-title { font-size: clamp(30px, 4.2vw, 60px); line-height: 1.04; }
+
+/* ── 15.4 THE EMBLEM AS PRESENCE ─────────────────────────────
+   It had two states: seal, and 34px mark. This is the third —
+   enormous, barely there, bleeding off the edge, so the
+   medallion is part of the architecture rather than a logo in
+   the corner. Drawn, not fetched: costs no bytes.             */
+
+.lx-watermark {
+  position: absolute;
+  right: -14vw;
+  bottom: -18vh;
+  width: min(760px, 78vw);
+  aspect-ratio: 1;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.055;
+  color: var(--lx-gold);
+}
+
+.lx-watermark svg { width: 100%; height: 100%; display: block; }
+
+/* ── 15.5 LETTERBOX ──────────────────────────────────────────
+   A ratio, not an effect. 2.39:1 reads as cinema instantly.   */
+
+.lx-letterbox {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  aspect-ratio: 2.39 / 1;
+  max-height: 340px;
+  overflow: hidden;
+  background: #000;
+  border-top: 1px solid var(--lx-hair);
+  border-bottom: 1px solid var(--lx-hair);
+}
+
+.lx-letterbox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  filter: grayscale(0.25) contrast(1.1);
+}
+
+.lx-letterbox::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.75) 100%),
+    linear-gradient(90deg, #000 0%, transparent 14%, transparent 86%, #000 100%);
+}
+
+/* ── 15.6 THE REGISTRY, AS A MONUMENT ────────────────────────
+   The most important page on the site was its plainest: a list
+   of rows in a box. It is the public record — it should read
+   like names struck into a wall.                              */
+
+#reg-live-list {
+  border-top: 1px solid var(--lx-border);
+  border-bottom: 1px solid var(--lx-border);
+  padding: 4px 0;
+  box-shadow: var(--lx-engrave);
+  background: linear-gradient(180deg,
+              rgba(196,164,107,0.035), transparent 70%);
+}
+
+#reg-live-list > div {
+  position: relative;
+  padding: 18px 20px 18px 34px !important;
+  border-bottom: 1px solid var(--lx-hair) !important;
+  transition: background .35s var(--lx-ease);
+}
+
+#reg-live-list > div:last-child { border-bottom: 0 !important; }
+
+/* A struck mark before every entry on the record. */
+#reg-live-list > div::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--lx-gold-pale), var(--lx-gold-deep));
+  box-shadow: 0 0 10px -1px rgba(196,164,107,0.7);
+}
+
+#reg-live-list > div:hover { background: rgba(196,164,107,0.05); }
+
+#reg-live-list strong {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px;
+  letter-spacing: 0.02em;
+  color: var(--lx-gold-pale) !important;
+}
+
+/* ── 15.7 RESTRAINT ──────────────────────────────────────────
+   Cinematic is not "more motion". Grain and light are ambient;
+   everything else stays still unless touched.                 */
+
+@media (prefers-reduced-motion: reduce) {
+  #lx-grain { animation: none; }
+}
+
+@media (max-width: 900px) {
+  /* Grain is cheap, but the animation is not worth it on a phone. */
+  #lx-grain { animation: none; opacity: 0.028; }
+  .lx-watermark { opacity: 0.04; right: -30vw; bottom: -8vh; }
+  .lx-letterbox { max-height: 190px; }
+}
+
+@media print {
+  #lx-grain, .lx-watermark, .lx-letterbox { display: none !important; }
+}

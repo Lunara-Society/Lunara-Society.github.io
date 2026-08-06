@@ -51,6 +51,110 @@
     }
 
     document.body.insertBefore(frag, document.body.firstChild);
+
+    /* Grain sits above everything, so it is appended rather than
+       inserted. Purely decorative and never interactive. */
+    if (!document.getElementById('lx-grain')) {
+      var grain = el('div', 'lx-grain');
+      grain.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(grain);
+    }
+  }
+
+  /* ==========================================================
+     THE EMBLEM AS PRESENCE
+     A third state for the mark: enormous, barely there, bleeding
+     off the edge of one section per page. Drawn as SVG rather
+     than fetched, so it costs no bytes and stays crisp at any
+     size.
+     ========================================================== */
+
+  function emblemMark() {
+    return '' +
+      '<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">' +
+      '<g fill="none" stroke="currentColor" stroke-width="0.6">' +
+      '<circle cx="50" cy="50" r="47"/>' +
+      '<circle cx="50" cy="50" r="41"/>' +
+      '<circle cx="50" cy="50" r="33"/>' +
+      '</g>' +
+      '<path d="M50 20 L74 33 L74 54 C74 68 63 78 50 83 C37 78 26 68 26 54 L26 33 Z" ' +
+      '      fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round"/>' +
+      '<text x="50" y="63" text-anchor="middle" font-family="Georgia,serif" ' +
+      '      font-size="34" fill="currentColor">L</text>' +
+      '</svg>';
+  }
+
+  function placeWatermark() {
+    if (document.querySelector('.lx-watermark')) return;
+
+    /* One per page, on a section with enough height to hold it.
+       Never the first screen — the emblem already leads there. */
+    var candidates = document.querySelectorAll(
+      'section, .section, article, main, [class*="section"], #site-footer, footer'
+    );
+    var host = null;
+
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      if (c.offsetHeight < 380) continue;
+      if (c.getBoundingClientRect().top + window.pageYOffset < window.innerHeight * 0.8) continue;
+      host = c;
+      break;
+    }
+
+    /* Every page has a footer, so it is the fallback: better a
+       presence low on the page than none at all. */
+    if (!host) host = document.getElementById('site-footer') ||
+                      document.querySelector('footer');
+    if (!host) return;
+
+    /* The watermark is absolutely positioned, so its host needs a
+       positioning context and must clip the overhang. */
+    var cs = getComputedStyle(host);
+    if (cs.position === 'static') host.style.position = 'relative';
+    if (cs.overflow === 'visible') host.style.overflow = 'hidden';
+
+    var w = document.createElement('div');
+    w.className = 'lx-watermark';
+    w.setAttribute('aria-hidden', 'true');
+    w.innerHTML = emblemMark();
+    host.appendChild(w);
+  }
+
+  /* ==========================================================
+     THE LETTERBOX
+     A ratio, not an effect. 2.39:1 is the width of cinema, and
+     the eye recognises it before it reads anything. One band per
+     page, placed at the seam between the content and the footer,
+     using imagery the site already owns.
+
+     Lazy-loaded, so it costs nothing until it is nearly in view.
+     ========================================================== */
+
+  function placeLetterbox() {
+    if (REDUCED) return;
+    if (document.querySelector('.lx-letterbox')) return;
+
+    var footer = document.getElementById('site-footer') ||
+                 document.querySelector('footer');
+    if (!footer || !footer.parentNode) return;
+
+    /* Only on pages with enough content for a pause to mean
+       something. A band on a short page is just decoration. */
+    if (document.body.scrollHeight < window.innerHeight * 2.2) return;
+
+    var band = document.createElement('div');
+    band.className = 'lx-letterbox';
+    band.setAttribute('aria-hidden', 'true');
+
+    var img = document.createElement('img');
+    img.src = 'shield_gate.jpg';
+    img.alt = '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    band.appendChild(img);
+    footer.parentNode.insertBefore(band, footer);
   }
 
   /* ==========================================================
@@ -421,6 +525,8 @@
     safe('light-follow', buildLightFollow);
     safe('entrances', buildEntrances);
     safe('wide-tables', containWideTables);
+    safe('watermark', placeWatermark);
+    safe('letterbox', placeLetterbox);
     safe('current-page', markCurrentPage);
 
     // Widths settle after fonts and images land; re-check then.

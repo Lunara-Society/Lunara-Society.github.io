@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-readable certification specification — Lunara Society</title>
+<link rel="canonical" href="https://lunarasociety.com/certification.json">
+<meta name="robots" content="noindex, follow">
+<meta http-equiv="refresh" content="0; url=/certification.json">
+<link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
+<style>
+  body{background:#070603;color:#E2C892;font-family:system-ui,-apple-system,sans-serif;
+       display:grid;place-items:center;min-height:100vh;margin:0;text-align:center;padding:24px}
+  a{color:#F4E5C4}
+</style>
+</head>
+<body>
+<!-- Shortcut. Query strings are carried through, so a prefilled
+     application URL such as /apply?business_name=Acme&domain=acme.com
+     survives the redirect. -->
+<main>
+  <p>Machine-readable certification specification</p>
+  <p><a href="/certification.json">Continue to /certification.json</a></p>
+</main>
+<script>
+(function () {
+  var q = window.location.search || '';
+  var h = window.location.hash || '';
+  window.location.replace('/certification.json' + q + h);
+})();
+</script>
+</body>
+</html>

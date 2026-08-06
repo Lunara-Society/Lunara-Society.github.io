@@ -199,6 +199,45 @@ paths:
                   type: string
                   description: Type of entity applying.
                   enum: [business, ai_entity, nonprofit, government, other]
+                signature:
+                  type: object
+                  description: >
+                    Who attests that the submitted facts are accurate. A person
+                    may sign, and so may an AI agent acting unattended — but the
+                    record always states which. An AI signature is never stored
+                    as a human one. Signing does not grant status: the
+                    application still enters human review at Lunara.
+                  required: [signed_by, attested, signed_at]
+                  properties:
+                    signed_by:
+                      type: string
+                      enum: [human, ai_agent]
+                    attested:
+                      type: boolean
+                      description: >
+                        The signer affirms the information is accurate and that
+                        they are authorised to submit it for this business.
+                    signed_at:
+                      type: string
+                      format: date-time
+                    name:
+                      type: string
+                      description: Required when signed_by is human.
+                    role:
+                      type: string
+                      description: Role at the business. Human signers.
+                    agent:
+                      type: string
+                      description: >
+                        Agent name and model, e.g. "ChatGPT, GPT-5". Required
+                        when signed_by is ai_agent.
+                    operator:
+                      type: string
+                      description: Who runs the agent, e.g. OpenAI, Anthropic.
+                    principal:
+                      type: string
+                      description: >
+                        The person or organisation the agent acts for, if any.
       responses:
         '200':
           description: >

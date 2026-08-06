@@ -45,6 +45,9 @@ Disallow: /invoice-template.html
 # Certification programme specification (machine-readable)
 # https://lunarasociety.com/certification.json
 
+# Shortcuts
+# /apply  /verify  /score  /spec  /badge  /registry
+
 # Sitemap
 Sitemap: https://lunarasociety.com/sitemap.xml
 

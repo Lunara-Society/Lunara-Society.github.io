@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lunara Constitution — Lunara Society</title>
+<link rel="canonical" href="https://lunarasociety.com/constitution.html">
+<meta name="robots" content="noindex, follow">
+<meta http-equiv="refresh" content="0; url=/constitution.html">
+<link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
+<style>
+  body{background:#070603;color:#E2C892;font-family:system-ui,-apple-system,sans-serif;
+       display:grid;place-items:center;min-height:100vh;margin:0;text-align:center;padding:24px}
+  a{color:#F4E5C4}
+</style>
+</head>
+<body>
+<!-- Shortcut. Query strings are carried through, so a prefilled
+     application URL such as /apply?business_name=Acme&domain=acme.com
+     survives the redirect. -->
+<main>
+  <p>The Lunara Constitution</p>
+  <p><a href="/constitution.html">Continue to /constitution.html</a></p>
+</main>
+<script>
+(function () {
+  var q = window.location.search || '';
+  var h = window.location.hash || '';
+  window.location.replace('/constitution.html' + q + h);
+})();
+</script>
+</body>
+</html>

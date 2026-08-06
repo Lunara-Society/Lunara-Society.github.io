@@ -729,6 +729,50 @@ How verification actually works</h2>
       <input type="email" id="sa-email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <input type="text" id="sa-regnum" placeholder="Legal registration number" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <input type="text" id="sa-country" placeholder="Registration country" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+
+      <!-- ── SIGNATURE ─────────────────────────────────────────────
+           An application is an attestation about a legal entity, so it
+           carries a signature. A person may sign, and so may an AI agent
+           acting for a principal — but the record always says which.
+           An AI signature is never recorded as a human one.          -->
+      <fieldset id="sa-signature" style="border:1px solid var(--border);background:rgba(196,164,107,0.03);padding:18px 16px;margin-top:6px;">
+        <legend style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:11px;padding:0 8px;">Signature</legend>
+
+        <p style="font-size:12.5px;color:var(--white-50);line-height:1.6;margin:0 0 14px;">
+          Who attests that the information above is accurate?
+        </p>
+
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-90);cursor:pointer;min-height:44px;">
+            <input type="radio" name="signer_type" value="human" checked style="accent-color:var(--gold);width:16px;height:16px;">
+            A person
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-90);cursor:pointer;min-height:44px;">
+            <input type="radio" name="signer_type" value="ai_agent" style="accent-color:var(--gold);width:16px;height:16px;">
+            An AI agent
+          </label>
+        </div>
+
+        <div id="sig-human" style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="sa-signer-name" placeholder="Full name of the person signing" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+          <input type="text" id="sa-signer-role" placeholder="Role at the business (e.g. Director)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+        </div>
+
+        <div id="sig-ai" style="display:none;flex-direction:column;gap:12px;">
+          <input type="text" id="sa-agent-name" placeholder="Agent name and model (e.g. ChatGPT, GPT-5)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+          <input type="text" id="sa-agent-operator" placeholder="Operator (e.g. OpenAI, Anthropic, self-hosted)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+          <input type="text" id="sa-agent-principal" placeholder="Acting for (person or organisation, if any)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+          <p style="font-size:12px;color:var(--white-50);line-height:1.6;margin:0;">
+            Agents may sign and submit unattended. The application is recorded as AI-signed and enters the same review as any other — a human reviewer at Lunara still decides, and nothing is marked verified without that. Do not submit a registration number you cannot source; leave it blank instead.
+          </p>
+        </div>
+
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--white-70);line-height:1.6;margin-top:14px;cursor:pointer;">
+          <input type="checkbox" id="sa-attest" required style="accent-color:var(--gold);width:16px;height:16px;margin-top:2px;flex:0 0 auto;">
+          <span>I attest that the information above is accurate to the best of my knowledge, and that I am authorised to submit it on behalf of this business.</span>
+        </label>
+      </fieldset>
+
       <button type="submit" class="cta-btn" style="border:none;">Submit application →</button>
       <div id="sa-result" style="font-size:13px;color:var(--white-70);line-height:1.6;"></div>
       <div id="dns-panel" style="display:none;margin-top:6px;padding:16px;border:1px solid var(--border);background:rgba(196,164,107,0.04);font-size:13px;line-height:1.7;color:var(--white-70);">
@@ -749,9 +793,110 @@ How verification actually works</h2>
       <div id="sc-check-result" style="font-size:12px;color:var(--white-50);margin-top:10px;line-height:1.6;"></div>
     </div>
     <script>
+    /* ── Signature mode ──────────────────────────────────────────
+       Show the fields belonging to whoever is signing. */
+    (function () {
+      var human = document.getElementById('sig-human');
+      var ai = document.getElementById('sig-ai');
+      function sync() {
+        var mode = document.querySelector('input[name="signer_type"]:checked').value;
+        human.style.display = (mode === 'human') ? 'flex' : 'none';
+        ai.style.display = (mode === 'ai_agent') ? 'flex' : 'none';
+      }
+      Array.prototype.forEach.call(
+        document.querySelectorAll('input[name="signer_type"]'),
+        function (r) { r.addEventListener('change', sync); }
+      );
+      sync();
+    })();
+
+    /* ── Prefill from the URL ────────────────────────────────────
+       Most AI browsing tools can read a page but cannot operate its
+       controls, so an agent that has gathered the evidence has no way
+       to act on it. It can now build a link instead:
+
+         /apply?business_name=Acme%20Ltd&domain=acme.com&signer_type=ai_agent
+
+       and hand that to the person who owns the business, arriving with
+       the form already filled in. Nothing is submitted automatically —
+       a URL should never be able to file an application on its own. */
+    (function () {
+      var q = new URLSearchParams(window.location.search);
+      if (!q.toString()) return;
+
+      var map = {
+        business_name: 'sa-business-name',
+        website_url: 'sa-website',
+        website: 'sa-website',
+        domain: 'sa-domain',
+        contact_email: 'sa-email',
+        email: 'sa-email',
+        legal_registration_number: 'sa-regnum',
+        registration_number: 'sa-regnum',
+        registration_country: 'sa-country',
+        country: 'sa-country',
+        signer_name: 'sa-signer-name',
+        signer_role: 'sa-signer-role',
+        agent_name: 'sa-agent-name',
+        agent_operator: 'sa-agent-operator',
+        agent_principal: 'sa-agent-principal'
+      };
+
+      var filled = 0;
+      Object.keys(map).forEach(function (key) {
+        var v = q.get(key);
+        var el = document.getElementById(map[key]);
+        if (v && el && !el.value) { el.value = v; filled++; }
+      });
+
+      var type = q.get('signer_type');
+      if (type === 'ai_agent' || type === 'human') {
+        var radio = document.querySelector('input[name="signer_type"][value="' + type + '"]');
+        if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+      }
+
+      if (filled) {
+        var note = document.getElementById('sa-result');
+        if (note) {
+          note.innerHTML = '<span style="color:var(--gold);">' + filled +
+            ' field' + (filled === 1 ? '' : 's') +
+            ' prefilled from the link.</span> Check every value before signing and submitting.';
+        }
+        var form = document.getElementById('shield-apply-form');
+        if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    })();
+
     document.getElementById('shield-apply-form').addEventListener('submit', async function(e){
       e.preventDefault();
       var resultEl = document.getElementById('sa-result');
+
+      /* Build the signature. It always records which kind of signer
+         it was; an AI signature is never stored as a human one. */
+      var signerType = document.querySelector('input[name="signer_type"]:checked').value;
+      var signature = {
+        signed_by: signerType,
+        attested: document.getElementById('sa-attest').checked,
+        signed_at: new Date().toISOString()
+      };
+      if (signerType === 'human') {
+        signature.name = document.getElementById('sa-signer-name').value;
+        signature.role = document.getElementById('sa-signer-role').value;
+        if (!signature.name.trim()) {
+          resultEl.textContent = 'Please give the name of the person signing.';
+          return;
+        }
+      } else {
+        signature.agent = document.getElementById('sa-agent-name').value;
+        signature.operator = document.getElementById('sa-agent-operator').value;
+        signature.principal = document.getElementById('sa-agent-principal').value;
+        signature.user_agent = navigator.userAgent;
+        if (!signature.agent.trim()) {
+          resultEl.textContent = 'Please identify the agent that is signing.';
+          return;
+        }
+      }
+
       resultEl.textContent = 'Submitting...';
       try {
         var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply', {
@@ -763,7 +908,8 @@ How verification actually works</h2>
             domain: document.getElementById('sa-domain').value,
             contact_email: document.getElementById('sa-email').value,
             legal_registration_number: document.getElementById('sa-regnum').value,
-            registration_country: document.getElementById('sa-country').value
+            registration_country: document.getElementById('sa-country').value,
+            signature: signature
           })
         });
         var data = await res.json();

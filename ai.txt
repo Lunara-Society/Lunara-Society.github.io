@@ -23,7 +23,7 @@ POST https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegist
 Body: {"domain": "example.com"}
 Returns: verified | not_registered | revoked
 
-Contact: dsrkarya.lunarasociety@gmail.com
+Contact: lunarasociety@gmail.com
 Website: https://lunarasociety.com
 LLM context: https://lunarasociety.com/llms.txt
 API spec: https://lunarasociety.com/openapi.yaml

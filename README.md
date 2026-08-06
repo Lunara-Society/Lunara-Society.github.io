@@ -62,6 +62,6 @@ The Lunara Constitution is published under CC BY 4.0. All other content is copyr
 
 ## Contact
 
-- Email: dsrkarya.lunarasociety@gmail.com
+- Email: lunarasociety@gmail.com
 - Instagram: @lunarasociety
 - AI Gateway: https://lunarasociety.com/ai-gateway.html

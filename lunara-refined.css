@@ -514,6 +514,213 @@ input:focus, select:focus, textarea:focus {
    9. FOOTER — shared by 32 pages
    ============================================================ */
 
+/* ── THE FOOTER ───────────────────────────────────────────────
+   30 of 39 pages carry the full footer markup and never declare a
+   single rule for it, so it collapsed to a column of plain white
+   text with every link running together on one line. The markup
+   was always right; only two pages had the stylesheet.
+
+   The whole thing is defined here so every page gets it, and the
+   two pages that style it themselves keep their own values —
+   nothing below uses !important.                              */
+
+#site-footer {
+  background: linear-gradient(180deg, var(--lx-ink-2) 0%, #050403 100%);
+  border-top: 1px solid var(--lx-border);
+  padding: 64px 48px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* A hairline of light along the top edge, as on a struck plate. */
+#site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+              transparent, var(--lx-gold-lit) 45%,
+              var(--lx-gold) 55%, transparent);
+  opacity: 0.5;
+}
+
+.footer-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.3fr 2fr;
+  gap: 56px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--lx-hair);
+}
+
+/* ── Brand block ── */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* The mark is a bare letter "L" in the markup — given the weight
+   of an engraved medallion rather than left as stray text. */
+.footer-mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--lx-border-lit);
+  background: radial-gradient(circle at 50% 34%,
+              rgba(196,164,107,0.20), rgba(7,6,3,0.9) 70%);
+  box-shadow: var(--lx-engrave), 0 0 22px -8px rgba(196,164,107,0.55);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px;
+  line-height: 1;
+  color: var(--lx-gold-pale);
+}
+
+.footer-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--lx-gold-lit);
+}
+
+.footer-tagline {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: rgba(240,232,214,0.62);
+  max-width: 34ch;
+}
+
+/* ── Link columns ── */
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 34px;
+}
+
+.footer-col h4 {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--lx-gold);
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--lx-hair);
+}
+
+/* Each link on its own line. Without this they ran together as
+   one unreadable sentence. */
+.footer-col a {
+  display: block;
+  font-size: 13.5px;
+  color: rgba(240,232,214,0.70);
+  text-decoration: none;
+  padding: 5px 0;
+  letter-spacing: 0.015em;
+  transition: color .22s var(--lx-ease), padding-left .22s var(--lx-ease);
+}
+
+.footer-col a:hover,
+.footer-col a:focus-visible {
+  color: var(--lx-gold-lit);
+  padding-left: 5px;
+}
+
+/* ── Bottom bar ── */
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 28px;
+  padding: 26px 0 30px;
+  font-size: 12.5px;
+  color: rgba(240,232,214,0.55);
+}
+
+.footer-copy {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--lx-gold-deep);
+}
+
+.footer-legal {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-legal a,
+.footer-email a {
+  color: rgba(240,232,214,0.66);
+  text-decoration: none;
+  transition: color .22s var(--lx-ease);
+}
+
+.footer-legal a:hover,
+.footer-email a:hover,
+.footer-legal a:focus-visible,
+.footer-email a:focus-visible {
+  color: var(--lx-gold-lit);
+}
+
+.footer-email {
+  margin-left: auto;
+}
+
+.footer-email a {
+  border-bottom: 1px solid var(--lx-hair);
+  padding-bottom: 2px;
+}
+
+@media (max-width: 900px) {
+  #site-footer { padding: 48px 22px 0; }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 38px;
+    padding-bottom: 36px;
+  }
+
+  /* Two columns rather than three: three at 390px gives each link
+     about 40px of width, which is where the run-together reading
+     came from even once the links were stacked. */
+  .footer-cols {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 20px;
+  }
+
+  .footer-tagline { max-width: none; }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .footer-email { margin-left: 0; }
+
+  /* Comfortable tap targets in a dense link list. */
+  .footer-col a { padding: 8px 0; }
+}
+
+/* Only fall to a single column on genuinely narrow screens. At 390px
+   two columns still give each link ~170px, which fits every label
+   and halves the height of the footer. */
+@media (max-width: 340px) {
+  .footer-cols { grid-template-columns: 1fr; }
+}
+
 .footer-inner,
 .footer-top {
   border-top-color: var(--lx-hair);

@@ -159,6 +159,32 @@ body.lx-has-banner .lx-fixed-header {
   filter: drop-shadow(0 0 8px rgba(196,164,107,0.65));
 }
 
+/* Seven pages (architecture, doctrine, gateway, institution, network,
+   protocol, signal) carry the .nav-logo-img markup but never declare
+   the rule, so a 512px emblem rendered at its natural size — 299px on
+   a phone — and buried the header and the headline beneath it.
+
+   Expressed as a cap rather than a size on purpose: the pages that do
+   declare a size use 28-30px and sit under the ceiling, so they keep
+   exactly the proportions they were given. Only the runaway case is
+   brought back into line. */
+.nav-logo-img {
+  max-width: 34px;
+  max-height: 34px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+/* Those same pages never make .nav-logo a flex row, so the emblem and
+   the wordmark stacked vertically and pushed the bar out of shape.
+   Laying them side by side matches how every other page renders it. */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
 .nav-pill {
   background: linear-gradient(180deg,
               rgba(19,16,9,0.92), rgba(7,6,3,0.92));
@@ -683,6 +709,33 @@ html { scroll-behavior: smooth; }
     overflow-x: hidden;
     max-width: 100vw;
   }
+}
+
+/* ============================================================
+   THE FLOATING RETURN CONTROL
+   Several pages carry a fixed bottom-centre "Return to Hall"
+   button. At 82% opacity the card text behind it showed straight
+   through, so it read as a smear across the content rather than a
+   control sitting above it. Solid ink, an engraved edge and a
+   lift shadow separate it from the page properly.
+   ============================================================ */
+
+#mob-back-btn {
+  background: linear-gradient(180deg,
+              rgba(19,16,9,0.97), rgba(7,6,3,0.98)) !important;
+  border: 1px solid var(--lx-border-lit) !important;
+  box-shadow: var(--lx-engrave), var(--lx-lift), var(--lx-halo);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+}
+
+#mob-back-btn .back-text { color: var(--lx-gold-lit); }
+#mob-back-btn .back-arrow { color: var(--lx-gold-pale); }
+
+/* Let the page scroll clear of the button so the last of the
+   content is never parked underneath it. */
+@media (max-width: 640px) {
+  body:has(#mob-back-btn) { padding-bottom: 88px; }
 }
 
 /* A table too wide for the screen scrolls within its own frame

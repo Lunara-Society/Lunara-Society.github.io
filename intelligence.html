@@ -32,6 +32,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.94);
 .section-title{font-size:clamp(24px,3.5vw,36px);font-weight:400;color:#f0e0b0;line-height:1.25;margin-bottom:28px;font-family:'Cormorant Garamond',serif}
 .section-body p{font-size:16px;line-height:1.95;color:var(--text);margin-bottom:20px}
 .section-body p strong{color:#f0e0b0;font-weight:500}
+/* The three-layer market map. This section already told the reader the
+   market was fragmenting into three categories, then never named them.
+   These are the names. Existing tokens only, no new colour. */
+.layer-map{display:grid;gap:14px;margin:34px 0}
+.layer{border:1px solid var(--gold-15);border-left:2px solid var(--gold-30);background:rgba(196,164,107,0.03);padding:22px 24px;border-radius:2px}
+.layer-own{border-left-color:var(--gold-b);background:rgba(196,164,107,0.07)}
+.layer-tag{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.layer-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;line-height:1.25;color:var(--gold-b);margin-bottom:10px}
+.layer-q{font-size:13.5px;line-height:1.75;color:var(--text);margin-bottom:10px}
+.layer-who{font-size:12px;line-height:1.7;color:rgba(196,164,107,0.62);letter-spacing:0.03em}
+@media (max-width:600px){.layer{padding:18px 18px}.layer-name{font-size:19px}}
 .callout{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:32px;margin:32px 0;border-radius:2px}
 .callout p{font-size:18px;line-height:1.8;color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-style:italic;margin:0}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin:40px 0}
@@ -358,6 +369,27 @@ p,li,span{
 <div class="section-title">Tools Are Not Standards</div>
 <div class="section-body">
 <p>The AI governance market is fragmenting into three categories. Each addresses a real need. None of them is a constitutional authority.</p>
+<div class="layer-map">
+<div class="layer">
+<div class="layer-tag">Layer One — Infrastructure</div>
+<div class="layer-name">Proving an agent is who it claims to be</div>
+<p class="layer-q">Cryptographic identity, issued and attested. It answers <strong>who is this</strong> with certainty, and stops there. Identity is a fact about an agent, not a judgement about whether it should be trusted with anything.</p>
+<p class="layer-who">DigiCert AI Passport and the certificate authorities. Well capitalised. Largely solved.</p>
+</div>
+<div class="layer">
+<div class="layer-tag">Layer Two — Runtime Security</div>
+<div class="layer-name">Deciding what an agent may do at the moment it acts</div>
+<p class="layer-q">Permissions, lifecycle, credentials and enforcement at runtime. It answers <strong>what may this agent do right now</strong>. This is the layer consolidating fastest, and the one attracting infrastructure-scale capital. It is control, not obligation: an action can be perfectly permitted by policy and still be unlawful.</p>
+<p class="layer-who">Okta, SailPoint, ServiceNow and the agent-identity entrants. Converging on the same primitives.</p>
+</div>
+<div class="layer layer-own">
+<div class="layer-tag">Layer Three — Governance Intelligence</div>
+<div class="layer-name">Answering the question a regulator actually asks</div>
+<p class="layer-q">Evidence normalised across every vendor, mapped to the obligation that governs it, with a named owner and the gaps stated plainly. It answers <strong>is this defensible, and who is accountable</strong>. No tool in the first two layers produces this, because each sees only its own estate — and an obligation does not stop at a vendor boundary.</p>
+<p class="layer-who">This is where Lunara Society operates, and it is the layer no incumbent owns.</p>
+</div>
+</div>
+<p>The first two layers are being built well and funded heavily. Neither interprets. A permission engine can tell you an agent was allowed to act; it cannot tell you whether Article 50 required that agent to disclose itself first, whether anyone owns that obligation, or what evidence you would produce if asked. That distance — between a control that passed and an obligation that holds — is where liability accumulates.</p>
 <table class="compare-table">
 <tr>
 <th>Provider</th>

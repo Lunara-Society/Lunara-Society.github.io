@@ -938,9 +938,17 @@ html { scroll-behavior: smooth; }
      dragging entire pages sideways. The tables themselves are moved
      into their own scroll container by the motion engine, so nothing
      becomes unreachable — this just stops the page as a whole from
-     sliding under the reader's thumb. */
+     sliding under the reader's thumb.
+
+     `clip` rather than `hidden`: both stop the sideways drag, but
+     `hidden` turns the element into a scroll container, and
+     `position: sticky` anchors to its nearest scroll container. On a
+     page whose body never scrolls, that means sticky quietly stops
+     working. `hidden` is kept first so browsers without `clip` still
+     get the guard. */
   html, body {
     overflow-x: hidden;
+    overflow-x: clip;
     max-width: 100vw;
   }
 }
@@ -1263,4 +1271,339 @@ html { scroll-behavior: smooth; }
 
 @media print {
   #lx-grain, .lx-watermark, .lx-letterbox { display: none !important; }
+}
+
+/* ============================================================
+   16. THE THRESHOLD
+   ------------------------------------------------------------
+   Six devices, each earning its place. They appear only where
+   there is no reading task — the entrance, the record, the
+   gateway — and never on the Constitution or the legal pages,
+   where performance would just be an obstacle.
+
+   Everything here is decoration over static HTML. Remove the
+   JavaScript and every word is still on the page, which is what
+   keeps the site readable to crawlers that do not render.
+   ============================================================ */
+
+/* ── 16.1 SCROLL GRAMMAR ─────────────────────────────────────
+   The page scrolls exactly as it always did. Things simply
+   happen as you pass them. Native scroll-driven animation runs
+   on the compositor, so this costs no JavaScript and cannot
+   stutter the way a scroll listener does.
+
+   Where the browser lacks it, the existing IntersectionObserver
+   reveal still runs — nobody sees a broken page.               */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+
+    /* Only .lx-rise — our own class, which we control end to end.
+       Deliberately NOT .reveal, and not body copy.
+
+       The pages manage .reveal with their own IntersectionObserver:
+       .reveal is opacity 0, and .reveal.in — added when the element
+       arrives — is opacity 1. An animation with fill-mode `both`
+       outranks a plain declaration in the cascade, so a scroll-driven
+       animation placed on .reveal would silently outrank .reveal.in.
+       Any range that failed to resolve would leave the element
+       holding the `from` keyframe: a paragraph nobody can read, with
+       no error anywhere to explain it.
+
+       Two independent mechanisms competing for one element's opacity
+       is a bet, and the losing side of that bet is unreadable text.
+       So this layer keeps to its own class and lets each page keep
+       the wheel. Enrich what the page already does; never take it
+       over. */
+    .lx-rise {
+      animation: lx-enter linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 34%;
+    }
+
+    /* Rules draw themselves as they arrive. Decorative only — if one
+       ever failed to resolve, the cost is an invisible hairline, not
+       a paragraph nobody can read. */
+    .gold-rule, .divider {
+      animation: lx-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 12% cover 40%;
+      transform-origin: 0 50%;
+    }
+  }
+}
+
+@keyframes lx-enter {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lx-lift {
+  from { opacity: 0.25; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lx-draw {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 0.75; }
+}
+
+/* ── 16.2 THE GATE ───────────────────────────────────────────
+   Two panels of tinted glass, closed, that travel apart as you
+   reach them. The tint clears as they separate. This is the
+   site's own vocabulary made literal: threshold, gateway,
+   return to hall.
+
+   The content behind is always in the DOM and always readable;
+   the panels sit above it and get out of the way.             */
+
+.lx-gate {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The panels travel a full width sideways to open. Unclipped, that put
+   118px of the page beyond the right edge for the length of the
+   animation — enough to flash a horizontal scrollbar and let the whole
+   page be dragged sideways on a phone mid-gesture.
+
+   Clip only while they are moving. `:not(.lx-done)` releases the clip
+   the moment the panels are retired, so the glass keeps its full glow
+   and shadow afterwards — nothing is cropped once the gate is open. */
+.lx-gate:not(.lx-done) {
+  overflow: hidden;
+}
+
+.lx-gate-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;              /* the overlap hides the seam */
+  z-index: 3;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 1.9s cubic-bezier(0.16, 1, 0.30, 1),
+              opacity 1.5s ease 0.5s;
+  backdrop-filter: blur(9px) saturate(0.85) brightness(0.5);
+  -webkit-backdrop-filter: blur(9px) saturate(0.85) brightness(0.5);
+  background: linear-gradient(180deg,
+    rgba(10,9,6,0.90) 0%,
+    rgba(14,12,8,0.84) 45%,
+    rgba(8,7,4,0.92) 100%);
+}
+
+.lx-gate-l { left: 0;  border-right: 1px solid var(--lx-border-lit); }
+.lx-gate-r { right: 0; border-left:  1px solid var(--lx-border-lit); }
+
+/* A vertical highlight down the leading edge — the light
+   catching the edge of the glass. */
+.lx-gate-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent, var(--lx-gold-lit) 42%, var(--lx-gold) 58%, transparent);
+  opacity: 0.65;
+}
+.lx-gate-l::after { right: -1px; }
+.lx-gate-r::after { left: -1px; }
+
+/* Open. */
+.lx-gate.lx-open .lx-gate-l { transform: translateX(-100.5%); opacity: 0; }
+.lx-gate.lx-open .lx-gate-r { transform: translateX(100.5%);  opacity: 0; }
+
+/* Once open, the panels stop existing entirely. */
+.lx-gate.lx-done .lx-gate-panel { display: none; }
+
+/* ── 16.3 THE GLASS DISPLAY ──────────────────────────────────
+   A dark transparent surface with the page moving behind it.
+   One per viewport — a large backdrop-filter is the single most
+   expensive thing on this site, and two would show.           */
+
+.lx-glass {
+  position: relative;
+  border: 1px solid var(--lx-border);
+  border-radius: 4px;
+  padding: 30px 28px;
+  background: linear-gradient(155deg,
+    rgba(18,20,26,0.58) 0%,
+    rgba(7,8,11,0.72) 100%);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: var(--lx-engrave), var(--lx-lift);
+  overflow: hidden;
+}
+
+/* A slow sheen crossing the surface, as on angled glass. */
+.lx-glass::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0;
+  width: 40%;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    transparent, rgba(244,229,196,0.05) 50%, transparent);
+  transform: translateX(-140%);
+  animation: lx-sheen 11s cubic-bezier(0.16, 1, 0.30, 1) infinite;
+}
+
+@keyframes lx-sheen {
+  0%   { transform: translateX(-140%); }
+  55%  { transform: translateX(320%); }
+  100% { transform: translateX(320%); }
+}
+
+.lx-glass-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lx-gold);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* A live indicator, because the registry is live. */
+.lx-glass-label::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--lx-gold-lit);
+  box-shadow: 0 0 8px var(--lx-gold);
+  animation: lx-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes lx-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+/* ── 16.4 THE SWARM ──────────────────────────────────────────
+   Ten to thirty motes, not thousands. At this count each one is
+   a discrete object doing something deliberate — programmable
+   matter rather than weather. Painted by the motion engine.    */
+
+.lx-swarm {
+  display: block;
+  width: 100%;
+  height: 132px;
+  pointer-events: none;
+}
+
+/* ── 16.5 THE MACHINE VOICE ──────────────────────────────────
+   Typewriter, but only where a machine is genuinely speaking.
+   Monospace, short, one or two lines. Never on prose.         */
+
+.lx-type {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--lx-gold-lit);
+  line-height: 2;
+  min-height: 2em;
+  white-space: pre-wrap;
+}
+
+.lx-type::after {
+  content: "▊";
+  color: var(--lx-gold);
+  animation: lx-caret 1.05s steps(1) infinite;
+  margin-left: 1px;
+}
+
+.lx-type.lx-type-done::after { display: none; }
+
+@keyframes lx-caret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ── 16.6 THE CHAPTER ────────────────────────────────────────
+   One pinned moment on the whole site. A section holds for a
+   screen-height while the line inside it resolves, then
+   releases. One reads as intent; five reads as broken.
+
+   Sticky, not scroll-jacking: the scrollbar keeps telling the
+   truth and find-in-page still works.                          */
+
+.lx-chapter {
+  position: relative;
+  height: 190vh;
+  /* The timeline is declared HERE, on the tall outer element, and not
+     on the line itself. A view timeline measures how far its subject
+     has travelled through the viewport — and the line is inside the
+     sticky box, which is pinned, so as its own subject it never
+     travels and the timeline freezes solid. This element is the thing
+     that actually moves past the reader, so it is the thing that gets
+     to keep time. */
+  view-timeline-name: --lx-chapter;
+  view-timeline-axis: block;
+}
+
+.lx-chapter-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0 24px;
+  overflow: hidden;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lx-chapter-inner > * {
+      animation: lx-chapter-hold linear both;
+      animation-timeline: --lx-chapter;
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes lx-chapter-hold {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.985); filter: blur(6px); }
+  22%  { opacity: 1; transform: none; filter: blur(0); }
+  74%  { opacity: 1; transform: none; filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-26px) scale(0.99); filter: blur(4px); }
+}
+
+/* ── 16.7 RESTRAINT ──────────────────────────────────────────
+   Every device above is a preference, not a requirement.      */
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-gate-panel { display: none !important; }
+  .lx-glass::before { animation: none; }
+  .lx-glass-label::before { animation: none; }
+  .lx-type::after { display: none; }
+  .lx-swarm { display: none; }
+  .lx-chapter { height: auto; }
+  .lx-chapter-inner { position: static; height: auto; padding: 80px 24px; }
+}
+
+@media (max-width: 900px) {
+  /* A full-width backdrop-filter is the one thing phones truly
+     hate. The surface keeps its shape and loses the blur. */
+  .lx-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: linear-gradient(155deg,
+      rgba(18,20,26,0.86) 0%, rgba(7,8,11,0.94) 100%);
+    padding: 22px 18px;
+  }
+  .lx-gate-panel {
+    backdrop-filter: blur(5px) brightness(0.5);
+    -webkit-backdrop-filter: blur(5px) brightness(0.5);
+  }
+  .lx-swarm { height: 96px; }
+  .lx-chapter { height: 150vh; }
+}
+
+@media print {
+  .lx-gate-panel, .lx-swarm { display: none !important; }
+  .lx-chapter { height: auto; }
+  .lx-chapter-inner { position: static; height: auto; }
 }

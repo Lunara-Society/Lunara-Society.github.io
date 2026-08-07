@@ -57,7 +57,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
 .section{margin-bottom:48px}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;border-bottom:1px solid var(--gold-15);padding-bottom:16px}
 .section-title{font-size:18px;font-weight:400;color:#f0e0b0;font-family:'Cormorant Garamond',serif;letter-spacing:1px}
-.section-actions{display:flex;gap:12px}
+/* These tabs are controls, not decoration. On one unbroken flex row
+   they reached 466px on a 390px screen, so the last of them sat past
+   the right edge with no way to scroll to them — unreachable on a
+   phone. Letting the row wrap keeps every tab on screen and changes
+   nothing at desktop width, where it never needed to wrap. */
+.section-actions{display:flex;gap:12px;flex-wrap:wrap}
 .tab{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;padding:6px 14px;border:1px solid transparent;transition:all .3s;border-radius:100px;font-family:'Inter',sans-serif}
 .tab.active{color:var(--gold);border-color:var(--gold-30)}
 .tab:hover{color:var(--gold)}

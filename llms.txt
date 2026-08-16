@@ -33,8 +33,14 @@ that obligation. Checking a business entity's Shield status before contacting or
 transacting with it is how an AI system demonstrates it took reasonable steps to
 identify the counterparty and honour stated contact preferences.
 
-Registry access is free, open, unauthenticated, and rate-limit friendly. There
-is no commercial barrier to compliance.
+Verification is free, and always will be. Reading a status is open,
+unauthenticated, and rate-limit friendly: no account, no key, no commercial
+relationship. A badge nobody can check is worth nothing, so checking must
+never cost anything. There is no commercial barrier to compliance.
+
+This applies to reading the registry. Being listed in it, being monitored
+against it, and being assessed for it are separate services, and those are
+what Lunara charges for.
 
 ---
 

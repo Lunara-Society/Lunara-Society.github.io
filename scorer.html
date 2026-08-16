@@ -170,6 +170,30 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .gap-item .reg{font-size:10px;letter-spacing:1px;color:rgba(196,164,107,0.8);text-transform:uppercase;margin-top:4px}
 .gap-item .timeline{font-size:11px;color:var(--amber);margin-top:4px;font-weight:500}
 
+/* The line between diagnosis and prescription.
+   This assessment names every gap it finds, for free and in full. What
+   it stops short of is the fix: the remediation action, the timeline,
+   the phased plan, and the regulatory requirement text. Those are
+   precisely the three things the Compliance Intelligence Report is sold
+   as — gap analysis, remediation roadmap, regulatory source mapping —
+   so handing them over here left nothing to buy.
+
+   Nothing is withheld that changes whether a reader understands their
+   exposure. They are told exactly what is wrong and how much of it
+   there is. They are not told how to fix it. */
+.locked{background:#060606;border:1px solid var(--gold-30);border-left:3px solid var(--gold);padding:26px 28px;margin-top:16px}
+.locked-tag{font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.locked h4{font-size:17px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-weight:400;margin-bottom:10px;line-height:1.3}
+.locked p{font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;max-width:520px}
+.locked ul{list-style:none;margin:0 0 18px;padding:0}
+.locked li{font-size:12.5px;color:var(--text-dim);line-height:1.9;padding-left:16px;position:relative}
+.locked li::before{content:"—";position:absolute;left:0;color:rgba(196,164,107,0.7)}
+.locked-count{color:#e8d5a3}
+.locked a{display:inline-block;padding:12px 30px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:3px;text-transform:uppercase;transition:all .3s;margin:4px 6px 0 0}
+.locked a:hover{background:rgba(196,164,107,0.1);border-color:var(--gold)}
+.locked-note{font-size:11px;color:rgba(196,164,107,0.5);margin-top:14px;line-height:1.7}
+@media(max-width:600px){.locked{padding:20px 18px}.locked a{display:block;text-align:center;margin:8px 0 0}}
+
 .reg-item{padding:14px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
 .reg-item .reg-name{font-size:13px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:4px}
 .reg-item .reg-desc{font-size:12px;color:var(--text-dim);line-height:1.7}
@@ -422,7 +446,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "Can AI systems query the Lunara Registry?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. The Lunara Registry API is free and open. AI systems can query it to verify business identity, check Shield certification status, and determine how to contact businesses through structured submission routes. The API is documented in our llms.txt file and OpenAPI specification."
+            "text": "Yes. Verification is free, and always will be. Status lookups are open, unauthenticated, and require no account, no key, and no commercial relationship — a badge nobody can check is worth nothing, so checking must never cost anything. AI systems can query the registry to verify business identity, check Shield certification status, and determine how to contact businesses through structured submission routes. The API is documented in our llms.txt file and OpenAPI specification."
           }
         }
       ]
@@ -713,19 +737,22 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <div class="results-section" id="gapSection">
 <h2>Compliance Gaps Identified</h2>
-<p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Sorted by severity. Each gap includes the specific regulation it violates and recommended remediation timeline.</p>
+<p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Every gap this assessment found, sorted by severity, with the regulation each one sits under. Named in full and free.</p>
 <div class="gap-list" id="gapList"></div>
+<div class="locked" id="gapLocked"></div>
 </div>
 
 <div class="results-section" id="regSection">
 <h2>Regulatory Requirements Applicable to Your System</h2>
 <div id="regList"></div>
+<div class="locked" id="regLocked"></div>
 </div>
 
 <div class="results-section" id="roadmapSection">
 <h2>30 Day Remediation Roadmap</h2>
-<p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Prioritized action plan based on your assessment results.</p>
+<p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">A phased, prioritised plan built from your answers.</p>
 <div id="roadmapList"></div>
+<div class="locked" id="roadmapLocked"></div>
 </div>
 
 <div class="recommendation" id="recommendation">
@@ -736,7 +763,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <div class="share-box">
 <h3>Save Your Results</h3>
-<p>Enter your email to receive a copy of this assessment and your custom gap report.</p>
+<p>Enter your email and we will send your score and the full list of gaps we found. The remediation plan comes with the report.</p>
 <input type="email" id="shareEmail" placeholder="you@organization.com">
 <button class="btn btn-secondary" onclick="shareResults()">Email Me My Report</button>
 </div>
@@ -958,14 +985,31 @@ pillarScoresDiv.innerHTML += `
 const gapList = document.getElementById('gapList');
 const order = { high: 0, medium: 1, low: 2 };
 const sortedGaps = gaps.sort((a, b) => order[a.severity] - order[b.severity]);
+// Free: the finding and the regulation it sits under — the full
+// diagnosis. Withheld: g.action and g.timeline, which are the fix.
 gapList.innerHTML = sortedGaps.map(g => `
 <div class="gap-item ${g.severity}">
 <h4>${g.desc}</h4>
-<p>${g.action}</p>
 <div class="reg">${g.reg} · ${g.pillar}</div>
-<div class="timeline">⏱ Remediation timeline: ${g.timeline}</div>
 </div>
 `).join('');
+
+const nHigh = sortedGaps.filter(g => g.severity === 'high').length;
+document.getElementById('gapLocked').innerHTML = `
+<div class="locked-tag">Remediation · Compliance Intelligence Report</div>
+<h4>You now know what is wrong. The report is how it gets fixed.</h4>
+<p>This assessment names all <span class="locked-count">${sortedGaps.length}</span> of your gaps${nHigh ? ` — <span class="locked-count">${nHigh}</span> of them critical` : ''}, and it stops there. The report carries the part that closes them:</p>
+<ul>
+<li>The specific remediation action for each of the ${sortedGaps.length} gaps</li>
+<li>A deadline per gap, ordered by regulatory exposure</li>
+<li>The full text of every requirement you are measured against</li>
+<li>A phased 30-day plan, sequenced so the critical items clear first</li>
+<li>Human review of your answers, not an automated score</li>
+</ul>
+<a href="/compliance-intelligence.html">Report · $299</a>
+<a href="/compliance-intelligence.html">With consultation · $499</a>
+<p class="locked-note">Your score, your gaps and the regulations above are free, and stay free. Checking a business in the public registry is free too, and always will be.</p>
+`;
 
 // Regulatory requirements
 const regList = document.getElementById('regList');
@@ -979,13 +1023,21 @@ regs.push({ reg: 'Joint Commission IM.01.01.03', req: 'Information management fo
 if (phi === 'yes' || riskCat === 'high') regs.push({ reg: 'CA SB 1001', req: 'AI vendors must disclose model training data composition to enterprises', deadline: 'Effective January 2027' });
 regs.push({ reg: 'ONC HTI-1 Rule', req: 'Interoperability and algorithm transparency requirements for certified health IT', deadline: 'Phase-in through 2026' });
 
+// Free: which regulations apply to you, and when they bite. Withheld:
+// r.req — the requirement text itself, which is the source mapping.
 regList.innerHTML = regs.map(r => `
 <div class="reg-item">
 <div class="reg-name">${r.reg}</div>
-<div class="reg-desc">${r.req}</div>
 <div class="reg-deadline">⚠ ${r.deadline}</div>
 </div>
 `).join('');
+
+document.getElementById('regLocked').innerHTML = `
+<div class="locked-tag">Regulatory source mapping</div>
+<h4><span class="locked-count">${regs.length}</span> regimes reach your system. Knowing their names is not the same as knowing what they demand.</h4>
+<p>Every regime above is listed free, with its deadline. The report sets out what each one actually requires of you, clause by clause, mapped to the specific gaps it found in your assessment.</p>
+<a href="/compliance-intelligence.html">Get the mapping · $299</a>
+`;
 
 // 30 day remediation roadmap
 const roadmapList = document.getElementById('roadmapList');
@@ -999,17 +1051,28 @@ roadmap.push({ phase: 'Days 8-14', title: 'High Priority Actions', items: highGa
 roadmap.push({ phase: 'Days 15-21', title: 'Framework Completion', items: mediumGaps.slice(3).concat(lowGaps.slice(0, 2)), color: '#e8c44a' });
 roadmap.push({ phase: 'Days 22-30', title: 'Documentation & Certification', items: lowGaps.slice(2), color: '#7ac47a' });
 
-roadmapList.innerHTML = roadmap.map(r => {
-if (r.items.length === 0) return '';
-return `
-<div style="margin-bottom:20px;padding:20px;background:#060606;border-left:3px solid ${r.color}">
-<div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${r.color};margin-bottom:8px">${r.phase} · ${r.title}</div>
-${r.items.map(i => `<div style="font-size:13px;color:var(--text-dim);line-height:1.8;padding:4px 0">• ${i.desc}<br><span style="font-size:11px;color:rgba(196,164,107,0.8)">${i.reg}</span></div>`).join('')}
-</div>`;
-}).join('');
+// Free: the shape of the plan — the phases, and how much work sits in
+// each. Withheld: the items themselves. The plan IS the product.
+const activePhases = roadmap.filter(r => r.items.length > 0);
+roadmapList.innerHTML = activePhases.map(r => `
+<div style="margin-bottom:12px;padding:18px 20px;background:#060606;border-left:3px solid ${r.color}">
+<div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:${r.color};margin-bottom:6px">${r.phase} · ${r.title}</div>
+<div style="font-size:13px;color:var(--text-dim);line-height:1.7">${r.items.length} action${r.items.length === 1 ? '' : 's'} to complete in this phase</div>
+</div>`).join('');
+
+const totalActions = activePhases.reduce((n, r) => n + r.items.length, 0);
+document.getElementById('roadmapLocked').innerHTML = `
+<div class="locked-tag">The plan itself</div>
+<h4><span class="locked-count">${totalActions}</span> actions across <span class="locked-count">${activePhases.length}</span> phases, sequenced so the critical exposure clears first.</h4>
+<p>The shape of the work is above and free: how many actions, in which phase, and how urgent. The report is the work — each action written out, assigned to its gap and its regulation, in the order that reduces exposure fastest.</p>
+<a href="/compliance-intelligence.html">Get the roadmap · $299</a>
+<a href="/compliance-intelligence.html">Walk it through with us · $499</a>
+`;
 
 // Rec links
-document.getElementById('recLinks').innerHTML = '<a href="/readiness-kit.html">Get Compliance Kit $80</a><a href="/certify.html">Get Certified</a><a href="/healthcare-intelligence.html">Learn More</a>';
+// The report is the next step from an assessment, so it leads. The kit
+// and certification follow it rather than standing in for it.
+document.getElementById('recLinks').innerHTML = '<a href="/compliance-intelligence.html">Compliance Report $299</a><a href="/readiness-kit.html">Compliance Kit $80</a><a href="/certify.html">Get Certified</a>';
 
 // Scroll to results
 document.getElementById('results').scrollIntoView({ behavior: 'smooth' });

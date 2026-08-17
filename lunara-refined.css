@@ -862,6 +862,24 @@ input:focus, select:focus, textarea:focus {
   transform: none;
 }
 
+/* Section-sized blocks travel less than the surfaces inside them.
+   Distance reads as weight: a card lifting 26px feels picked up, while
+   a whole section lifting 26px feels like a slide deck changing slide.
+   Fourteen pixels and a slightly longer settle reads as the section
+   arriving rather than being pushed on. */
+.lx-rise-soft {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 1.05s var(--lx-ease-o),
+    transform 1.05s var(--lx-ease-o);
+}
+
+.lx-rise-soft.lx-in {
+  opacity: 1;
+  transform: none;
+}
+
 /* Note: no blanket `img { transition: ... }` here on purpose. The
    shorthand would reset transition-property and strip transform
    from any image transition a page defines for itself. */
@@ -1007,9 +1025,91 @@ html { scroll-behavior: smooth; }
 .lx-scroll-x > table { min-width: max-content; }
 
 @media (max-width: 480px) {
+  /* This was 8.5px, chosen to stop the banner wrapping to three lines.
+     It stopped the wrap and cost the reading: 8.5px is below the size
+     at which small uppercase type resolves at arm's length, and this
+     banner carries the enforcement date — the most consequential
+     sentence on the site. Ten pixels across two lines is worth more
+     than eight and a half across one. */
   .lx-banner {
-    font-size: 8.5px !important;
-    letter-spacing: 0.05em !important;
+    font-size: 10px !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* ============================================================
+   13.1 THE TYPE FLOOR
+   The design language leans on small uppercase letterspaced
+   labels, and that is right — it is what makes the page read as
+   an instrument rather than a brochure. But a floor exists.
+
+   Below roughly 10px, letterspaced uppercase stops resolving on
+   a phone at arm's length; below 12px, anything a finger is
+   meant to hit becomes a guess. The audit found eighty pieces of
+   text under 11.5px and thirty-six touch targets under 26px.
+
+   These rules raise only what sits under the floor. Every label
+   already at or above it keeps exactly the size it was given.
+   ============================================================ */
+
+/* Micro-labels: 9px and 8.5px come up to 10px. Nothing else moves. */
+.shield-note-label,
+.pillars-label,
+.founding-badge,
+.paper-label,
+.tagline {
+  font-size: max(10px, 1em);
+}
+
+/* Anything a reader is meant to click carries a heavier obligation
+   than a label they only read. Twelve pixels is the floor for text
+   inside a control. */
+.back-link,
+a.back,
+.footer a,
+.site-footer a,
+#site-footer a {
+  font-size: max(12px, 1em);
+}
+
+@media (max-width: 900px) {
+  /* Touch targets. WCAG 2.2 asks for 24x24 CSS pixels; these links
+     were rendering 41x14 and 68x19.
+
+     The hit area is grown with a pseudo-element rather than padding
+     so the target gets bigger while the layout does not move a
+     pixel — footers stay exactly as composed. */
+  .footer a,
+  .site-footer a,
+  #site-footer a,
+  .back-link,
+  a.back,
+  .nav-links a {
+    position: relative;
+  }
+
+  .footer a::after,
+  .site-footer a::after,
+  #site-footer a::after,
+  .back-link::after,
+  a.back::after,
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    /* Exactly 24px tall, and not one pixel wider than the link.
+       A more generous box was measured first — 30px tall with 6px of
+       horizontal bleed — and it made two pairs of footer links on
+       architecture and doctrine overlap each other. Overlapping hit
+       areas are worse than small ones: the later link in the DOM
+       silently swallows taps meant for the one before it. These
+       numbers reach the WCAG minimum and collide with nothing. */
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 24px;
+    transform: translateY(-50%);
+    z-index: 0;
   }
 }
 
@@ -1026,7 +1126,9 @@ html { scroll-behavior: smooth; }
   .lx-banner::after { animation: none; }
 
   .reveal,
-  .lx-rise {
+  .fade-in,
+  .lx-rise,
+  .lx-rise-soft {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
@@ -1047,7 +1149,9 @@ html { scroll-behavior: smooth; }
 /* Printing: drop the theatre, keep the substance. */
 @media print {
   #lx-ink, #lx-vignette, #lx-dust, #lx-rail, #lx-top { display: none !important; }
-  .reveal, .lx-rise { opacity: 1 !important; transform: none !important; }
+  .reveal, .fade-in, .lx-rise, .lx-rise-soft {
+    opacity: 1 !important; transform: none !important;
+  }
 }
 
 /* ============================================================

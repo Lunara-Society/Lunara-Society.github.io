@@ -769,41 +769,157 @@
   function buildEntrances() {
     if (REDUCED || !('IntersectionObserver' in window)) return;
 
-    var candidates = document.querySelectorAll('.card, .pillar, .tier');
+    /* Claim by role, not by one page's class names.
+
+       This asked for `.card, .pillar, .tier` — three names that only
+       seven of forty-three pages use. Everywhere else it matched
+       nothing, claimed nothing, and returned before observing
+       anything, so thirty-six pages arrived flat: every word already
+       on screen, nothing earned by scrolling. The machinery was never
+       broken; it simply had almost nothing to hold.
+
+       Two families, two different travels. Repeating surfaces keep
+       the firmer rise they always had. Section-sized blocks get a
+       shorter one — a large block sliding a long way reads as a slide
+       transition, while the same block barely moving reads as
+       arrival. */
+
+    /* The site names its repeating blocks by a consistent convention —
+       doctrine-item, step-item, track-card, reg-box, timeline-item and
+       two dozen more. Matching the convention rather than listing every
+       name covers the pages that exist and the ones written next.
+
+       `$=` alone would miss `class="card-box active"`, so each suffix is
+       matched both as the final class and as one among several. */
+    function suffixes(list) {
+      var out = [];
+      for (var i = 0; i < list.length; i++) {
+        out.push('[class$="' + list[i] + '"]', '[class*="' + list[i] + ' "]');
+      }
+      return out.join(',');
+    }
+
+    var SURFACES = '.card, .pillar, .tier, .stat, .price-tier, .layer,' +
+                   '.gap-item, .reg-item, .locked, .feature, .step,' +
+                   '.faq-item, .principle, .metric, .benchmark-stat,' +
+                   suffixes(['-item', '-card', '-box', '-tile', '-entry', '-panel']);
+
+    var BLOCKS = '.section, section, article, .callout, .data-callout,' +
+                 '.results-section, .content-block, .doc-section,' +
+                 '.page-inner > div, .doctrine-body, .prose';
+
     var claimed = [];
 
-    for (var i = 0; i < candidates.length; i++) {
-      var c = candidates[i];
-
-      // Leave anything the page is already animating alone.
+    function eligible(c) {
+      /* Never take something the page already animates. Its own
+         observer owns it, and two mechanisms competing for one
+         element's opacity is exactly how content gets stranded. */
       if (c.classList.contains('reveal') ||
           c.classList.contains('fade-in') ||
-          c.closest('.reveal, .fade-in')) continue;
+          c.classList.contains('lx-rise') ||
+          c.classList.contains('lx-rise-soft')) return false;
+      if (c.closest && c.closest('.reveal, .fade-in')) return false;
 
-      c.classList.add('lx-rise');
-      claimed.push(c);
+      /* Never the first screen. What is above the fold is what the
+         reader came for and what the browser is judged on. Fading it
+         delays both. Motion starts where scrolling starts. */
+      var box = c.getBoundingClientRect();
+      var top = box.top + (window.pageYOffset || 0);
+      if (top < window.innerHeight * 0.9) return false;
+
+      /* Nothing empty, nothing decorative, nothing enormous. A block
+         taller than the screen can never be watched arriving — its top
+         has finished moving before its bottom exists. The height floor
+         also excludes the thin rows the suffix match picks up:
+         checkbox-item, config-row, dash-nav-item and the like. */
+      if (box.height < 56 || box.height > window.innerHeight * 1.5) return false;
+      if (!c.textContent || c.textContent.trim().length < 25) return false;
+
+      /* Never a form. A control the reader is trying to use is function,
+         not theatre, and a half-arrived field is worse than a plain one.
+         Nothing that is, contains, or sits inside a form is claimed. */
+      if (c.closest && c.closest('form, fieldset, label')) return false;
+      if (c.querySelector && c.querySelector('input, select, textarea')) return false;
+
+      /* Nor anything fixed or sticky. Those are placed deliberately and
+         are usually on screen from the start; fading them reads as a
+         glitch rather than an entrance. */
+      var pos = getComputedStyle(c).position;
+      if (pos === 'fixed' || pos === 'sticky') return false;
+
+      return true;
     }
+
+    function gather(selector, cls) {
+      var found = document.querySelectorAll(selector);
+      for (var i = 0; i < found.length; i++) {
+        if (eligible(found[i])) claimed.push({ el: found[i], cls: cls });
+      }
+    }
+
+    gather(SURFACES, 'lx-rise');
+    gather(BLOCKS, 'lx-rise-soft');
+
+    /* Fallback for pages with no shared vocabulary at all. The badge
+       guide names every block once — wrap, preview, note, copy, end —
+       and the legal pages are plain prose, so neither matches anything
+       above and both arrived flat despite running to several screens.
+
+       Where nothing has been claimed, take the direct children of
+       whatever holds the content. The same eligibility rules apply, so
+       this can only ever add what was already safe to add. */
+    if (!claimed.length) {
+      var host = document.querySelector(
+        'main, .wrap, .page-inner, .container, .content, .body'
+      );
+      if (host && document.body.scrollHeight > window.innerHeight * 1.4) {
+        var kids = host.children;
+        for (var k = 0; k < kids.length; k++) {
+          if (eligible(kids[k])) claimed.push({ el: kids[k], cls: 'lx-rise-soft' });
+        }
+      }
+    }
+
+    /* Never animate a thing and its own contents. Where a claimed
+       block contains another claimed element, the outer one stands
+       down: the inner surfaces are what the eye follows, and nesting
+       the two produces a fade inside a fade. */
+    claimed = claimed.filter(function (c) {
+      for (var i = 0; i < claimed.length; i++) {
+        if (claimed[i].el !== c.el && c.el.contains(claimed[i].el)) return false;
+      }
+      return true;
+    });
 
     if (!claimed.length) return;
 
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('lx-in');
-          io.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('lx-in');
+        io.unobserve(entry.target);
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
 
-    claimed.forEach(function (c, idx) {
-      // A short stagger so rows arrive in sequence, not as a slab.
-      c.style.transitionDelay = Math.min(idx % 6, 5) * 0.07 + 's';
-      io.observe(c);
+    /* Stagger among siblings, not across the page. A global counter
+       makes the twentieth element wait behind nineteen it never shared
+       a screen with; counting per parent means a row of three arrives
+       as a row of three, wherever it sits. */
+    var seen = {};
+    claimed.forEach(function (c) {
+      var p = c.el.parentNode;
+      var key = p ? (p.tagName + '|' + (p.className || '')) : 'root';
+      seen[key] = (seen[key] || 0) + 1;
+
+      c.el.classList.add(c.cls);
+      c.el.style.transitionDelay = (Math.min(seen[key] - 1, 5) * 0.06) + 's';
+      io.observe(c.el);
     });
 
-    // Failsafe: content must never be stranded at opacity 0.
+    /* Failsafe. Content must never be stranded at opacity 0, whatever
+       becomes of the observer. */
     setTimeout(function () {
-      claimed.forEach(function (c) { c.classList.add('lx-in'); });
+      claimed.forEach(function (c) { c.el.classList.add('lx-in'); });
     }, 4000);
   }
 
@@ -889,6 +1005,60 @@
         io.observe(el);
       }
     });
+  }
+
+  /* ==========================================================
+     6c. THE MEASURE
+     Line length is the quietest thing that decides whether a page
+     gets read. Past roughly ninety characters the eye starts
+     losing its place on the return sweep, and the reader stops —
+     not because the writing failed, but because the column did.
+
+     The audit found twenty-four over-wide paragraphs, the worst
+     running 1376px, about a hundred and eighty characters a line.
+
+     A blanket `p { max-width }` in CSS would fix those and break
+     everything else: a centred paragraph given a max-width keeps
+     its text centred inside a box that has quietly moved left.
+     So this measures first, caps only what is genuinely too wide,
+     and preserves whatever alignment the page already chose.
+     ========================================================== */
+
+  function capMeasure() {
+    var CAP_CH = 78;      // comfortable for this typeface at these sizes
+    var TRIGGER_CH = 92;  // leave anything already reasonable alone
+
+    var ps = document.querySelectorAll('p, .provenance, .form-section-desc');
+
+    for (var i = 0; i < ps.length; i++) {
+      var el = ps[i];
+      if (el.dataset && el.dataset.lxMeasured) continue;
+
+      var own = el.textContent ? el.textContent.trim() : '';
+      if (own.length < 110) continue;              // short lines cannot run long
+
+      var cs = getComputedStyle(el);
+      if (cs.display === 'none') continue;
+      if (el.closest('.lx-scroll-x, table, code, pre')) continue;
+
+      var fs = parseFloat(cs.fontSize) || 16;
+      var w = el.getBoundingClientRect().width;
+      if (!w) continue;
+
+      // 0.5em is a serviceable average glyph width for both faces here.
+      var ch = w / (fs * 0.5);
+      if (ch <= TRIGGER_CH) continue;
+
+      el.style.maxWidth = (CAP_CH * fs * 0.5) + 'px';
+
+      /* Keep the alignment the page asked for. Centred text keeps its
+         box centred; everything else stays exactly where it started. */
+      if (cs.textAlign === 'center') {
+        el.style.marginLeft = 'auto';
+        el.style.marginRight = 'auto';
+      }
+      if (el.dataset) el.dataset.lxMeasured = '1';
+    }
   }
 
   /* ==========================================================
@@ -989,13 +1159,16 @@
     // measurement, so it has to run once the page has stopped moving.
     window.addEventListener('load', function () {
       safe('wide-tables', containWideTables);
+      safe('measure', capMeasure);
       safe('rescue-reveals', rescueReveals);
     });
 
     // A rotation changes both the viewport height and the section
-    // heights, so an element can cross the cutoff either way.
+    // heights, so an element can cross the cutoff either way. The
+    // measure is a width reading, and widths change here too.
     window.addEventListener('resize', debounce(function () {
       safe('wide-tables', containWideTables);
+      safe('measure', capMeasure);
       safe('rescue-reveals', rescueReveals);
     }, 250), { passive: true });
   }

@@ -16,7 +16,7 @@
   .header{text-align:center;}
   .society{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.55);}
   .tagline{font-size:10px;letter-spacing:2px;color:rgba(196,164,107,0.3);margin-top:6px;}
-  .hint{font-size:16px;color:rgba(226,196,122,0.9);letter-spacing:0.06em;text-align:center;font-style:italic;}
+  .hint{font-size:16px;font-weight:400;color:rgba(226,196,122,0.9);letter-spacing:0.06em;text-align:center;font-style:italic;}
   .video-frame{width:100%;border:1px solid rgba(196,164,107,0.5);box-shadow:0 0 60px rgba(196,164,107,0.15);}
   video{width:100%;display:block;background:#000;}
   .cta-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
@@ -219,7 +219,12 @@
     <p class="society">Lunara Society</p>
     <p class="tagline">Per Scientiam · Per Ordinem · Per Legatum</p>
   </div>
-  <p class="hint">Rosario has a message for you</p>
+  <!-- This line is the page's heading in every sense except the one
+       that counts: thirty pages link here and the document carried no
+       h1 at all, only h4s. Promoted. The .hint class holds the entire
+       appearance and the reset zeroes heading margins, so nothing on
+       screen moves. -->
+  <h1 class="hint">Rosario has a message for you</h1>
   <div class="video-frame">
     <div style="position:relative;width:100%;max-width:420px;margin:0 auto;aspect-ratio:9/16;border:1px solid rgba(196,164,107,0.5);border-radius:4px;overflow:hidden;background:#000;">
   <video

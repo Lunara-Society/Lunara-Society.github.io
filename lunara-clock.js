@@ -35,6 +35,19 @@
    rather than trusting us. If you cannot cite the article, the entry
    does not go in. A short table that is right beats a long one that
    is mostly right.
+
+   And check for amendments, not just for the founding text. This table
+   shipped with Annex III high-risk shown as in force from 2 August
+   2026, which is what Regulation (EU) 2024/1689 said when it was
+   written. It was wrong by the time it went live: the Digital Omnibus
+   on AI, Regulation (EU) 2026/1744, entered into force on 27 July 2026
+   and deferred Annex III to 2 December 2027 and the Annex I products to
+   2 August 2028, while deliberately leaving Article 50 exactly where it
+   was. Reading the original regulation was not enough, and being right
+   about four dates does not survive being wrong about the fifth.
+   Overstating what is in force is the worst direction to be wrong in:
+   it is the error a knowledgeable prospect catches first, and it
+   discredits every accurate row beside it.
    ═══════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -78,12 +91,16 @@
     },
     {
       id: 'eu-annex3',
-      date: '2026-08-02',
+      /* Was 2 August 2026 under the original Act. The Digital Omnibus on
+         AI deferred it by sixteen months, five days before it would have
+         bitten. Article 50 was deliberately left where it was, so the
+         two must never be quoted as one date again. */
+      date: '2027-12-02',
       jurisdiction: 'European Union',
       name: 'High-risk obligations, Annex III',
-      instrument: 'EU AI Act, Regulation (EU) 2024/1689',
-      article: 'Art. 113 — general application',
-      summary: 'Risk management, data governance, logging, human oversight and conformity assessment for listed high-risk uses.',
+      instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
+      article: 'Art. 113, as amended — deferred from 2 August 2026',
+      summary: 'Risk management, data governance, logging, human oversight and conformity assessment for listed high-risk uses. Deferred, not cancelled.',
       weight: 3
     },
     {
@@ -97,12 +114,23 @@
       weight: 2
     },
     {
+      id: 'eu-art50-legacy',
+      date: '2027-02-02',
+      jurisdiction: 'European Union',
+      name: 'Article 50(2) for systems already on the market',
+      instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
+      article: 'Art. 50(2), transitional',
+      summary: 'Generative systems placed on the market before 2 August 2026 lose their transitional relief and must mark synthetic output machine-readably.',
+      weight: 3
+    },
+    {
       id: 'eu-annex1',
-      date: '2027-08-02',
+      /* Deferred from 2 August 2027 by the same instrument. */
+      date: '2028-08-02',
       jurisdiction: 'European Union',
       name: 'High-risk obligations, Annex I products',
-      instrument: 'EU AI Act, Regulation (EU) 2024/1689',
-      article: 'Art. 113(c) — Art. 6(1)',
+      instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
+      article: 'Art. 6(1), as amended — deferred from 2 August 2027',
       summary: 'AI acting as a safety component of a regulated product falls under the full high-risk regime.',
       weight: 3
     },

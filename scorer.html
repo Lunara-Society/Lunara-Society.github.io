@@ -1015,7 +1015,13 @@ document.getElementById('gapLocked').innerHTML = `
 // Regulatory requirements
 const regList = document.getElementById('regList');
 let regs = [];
-if (riskCat === 'high') regs.push({ reg: 'EU AI Act Articles 8-15 (Annex III)', req: 'Full conformity assessment, risk management system, data governance, technical documentation, transparency, human oversight, logging, accuracy, robustness', deadline: 'Enforcement: August 2, 2026' });
+// The Digital Omnibus on AI (Regulation (EU) 2026/1744, in force 27 July
+// 2026) deferred Annex III application to 2 December 2027. The
+// classification did not change, so the work is the same work and the
+// preparation window is the point. Article 50 immediately below was
+// deliberately left where it was; the two must never be quoted as one
+// deadline again.
+if (riskCat === 'high') regs.push({ reg: 'EU AI Act Articles 8-15 (Annex III)', req: 'Full conformity assessment, risk management system, data governance, technical documentation, transparency, human oversight, logging, accuracy, robustness', deadline: 'Applies December 2, 2027 (deferred by Reg. (EU) 2026/1744)' });
 if (riskCat === 'limited' || riskCat === 'high') regs.push({ reg: 'EU AI Act Article 50', req: 'Transparency obligations: inform users they are interacting with AI, label synthetic content. Enforcement from August 2, 2026', deadline: 'Enforcement: August 2, 2026' });
 if (phi === 'yes') regs.push({ reg: 'HIPAA Security Rule 164.308-312', req: 'Administrative, physical, and technical safeguards for PHI processed by AI systems', deadline: 'Ongoing compliance' });
 if (phi === 'yes') regs.push({ reg: 'HIPAA Breach Notification Rule', req: 'Notification procedures for AI related PHI exposure. HHS notification within 60 days', deadline: 'Incident-triggered' });

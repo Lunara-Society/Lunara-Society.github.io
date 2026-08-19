@@ -2067,3 +2067,252 @@ a.back,
   .lxq-form { flex-wrap: wrap; }
   .lxq-go { padding: 0 0 12px; width: 100%; text-align: left; }
 }
+
+/* ══ 18. FIGURES ═════════════════════════════════════════════
+   Every figure on this site is drawn, not photographed, and
+   drawn to explain rather than to fill space. Three rules hold
+   throughout:
+
+   1. Text inside a figure is real HTML text, never paths and
+      never baked into an image. An SVG label scaled to fit a
+      390px screen becomes 5px tall and unreadable, and no
+      amount of art direction recovers it. Linework is SVG;
+      words are markup.
+   2. A figure must survive its own stylesheet failing to load.
+      Each one degrades to a legible list or table.
+   3. Nothing moves that does not mean something. Motion is
+      reserved for the one relationship the figure exists to
+      show.                                                     */
+
+.lxf {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.lxf-cap {
+  margin-top: 20px;
+  font-size: 11px;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: rgba(196,164,107,0.42);
+}
+.lxf-cap b {
+  font-weight: 400;
+  color: rgba(240,224,176,0.72);
+}
+
+/* ── 18.1 THE INTERPRETATION LAYER ───────────────────────────
+   Three strata. The argument is entirely in the gap: tooling
+   fills the bottom two and stops, and the band above them is
+   where the obligation actually gets decided. Drawing it as
+   sediment rather than as boxes-and-arrows is deliberate —
+   layers imply that the ones underneath cannot reach up.      */
+
+.lxf-strata {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(196,164,107,0.16);
+}
+
+.lxf-stratum {
+  padding: 26px 28px;
+  border-bottom: 1px solid rgba(196,164,107,0.12);
+  position: relative;
+}
+.lxf-stratum:last-child { border-bottom: none; }
+
+.lxf-stratum-label {
+  font-size: 9.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.45);
+  margin-bottom: 9px;
+}
+
+.lxf-stratum h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: rgba(240,224,176,0.62);
+  margin: 0 0 8px;
+}
+
+.lxf-stratum p {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: rgba(220,200,160,0.42);
+  margin: 0;
+  max-width: 62ch;
+}
+
+/* The claimed band. Brighter, and the only one with a solid
+   edge, because the whole figure exists to point at it. */
+.lxf-stratum.lxf-ours {
+  background:
+    linear-gradient(90deg, rgba(196,164,107,0.055), rgba(196,164,107,0.012));
+  border-left: 2px solid #C4A46B;
+  padding-left: 26px;
+}
+.lxf-ours .lxf-stratum-label { color: #E2C47A; }
+.lxf-ours h4 { color: #f0e0b0; font-size: 22px; }
+.lxf-ours p  { color: rgba(220,200,160,0.62); }
+
+/* The boundary line. This is the one moving element in the
+   figure and it marks the single thing being asserted: the
+   height at which the tooling below runs out. */
+.lxf-boundary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  height: 0;
+  position: relative;
+  z-index: 2;
+}
+.lxf-boundary span {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.75);
+  background: #000;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+.lxf-boundary::before,
+.lxf-boundary::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg,
+    rgba(196,164,107,0), rgba(196,164,107,0.5), rgba(196,164,107,0));
+}
+
+/* ── 18.2 OBLIGATION MAPPING ─────────────────────────────────
+   Four regimes land on one deployment at once. Prose cannot
+   hold four simultaneous things; a grid can, because the eye
+   reads down the column and sees the convergence without
+   being told about it.                                       */
+
+.lxf-map { border-top: 1px solid rgba(196,164,107,0.16); }
+
+.lxf-maprow {
+  display: grid;
+  grid-template-columns: 190px 1fr 200px;
+  gap: 22px;
+  align-items: baseline;
+  padding: 20px 6px;
+  border-bottom: 1px solid rgba(196,164,107,0.09);
+}
+
+.lxf-regime {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.3;
+  color: #f0e0b0;
+}
+.lxf-regime small {
+  display: block;
+  margin-top: 4px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.42);
+}
+
+.lxf-demand {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: rgba(220,200,160,0.5);
+}
+
+/* The answering pillar. Set as a mark rather than a sentence,
+   so the right-hand column reads as a column of answers. */
+.lxf-answer {
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: rgba(196,164,107,0.75);
+  text-align: right;
+}
+.lxf-answer b {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: #E2C47A;
+  margin-bottom: 3px;
+}
+
+.lxf-maphead {
+  display: grid;
+  grid-template-columns: 190px 1fr 200px;
+  gap: 22px;
+  padding: 0 6px 10px;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.4);
+}
+.lxf-maphead span:last-child { text-align: right; }
+
+/* ── 18.3 THE SEAL ───────────────────────────────────────────
+   Seven columns under one lintel, drawn as an elevation. It
+   carries no information the list beside it does not already
+   carry, and that is fine: its job is to make the section feel
+   like a building rather than a paragraph. Pure linework, so
+   it stays crisp at any size and costs about two kilobytes. */
+
+.lxf-seal { display: block; width: 100%; max-width: 260px; margin: 0 auto 34px; height: auto; }
+.lxf-seal .lxs-rule   { stroke: rgba(196,164,107,0.55); stroke-width: 1; fill: none; }
+.lxf-seal .lxs-col    { stroke: rgba(196,164,107,0.34); stroke-width: 1; fill: none; }
+.lxf-seal .lxs-fill   { fill: rgba(196,164,107,0.05); }
+.lxf-seal .lxs-num    { fill: rgba(196,164,107,0.5); font-size: 7px; letter-spacing: 0.1em; }
+
+/* The columns draw themselves in, once, on reveal. A building
+   being erected rather than a logo animating. */
+@media (prefers-reduced-motion: no-preference) {
+  .lxf-seal .lxs-col, .lxf-seal .lxs-rule {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: lxs-draw 1.5s cubic-bezier(0.2,0.7,0.2,1) forwards;
+  }
+  .lxf-seal .lxs-col:nth-of-type(1) { animation-delay: 0.05s }
+  .lxf-seal .lxs-col:nth-of-type(2) { animation-delay: 0.11s }
+  .lxf-seal .lxs-col:nth-of-type(3) { animation-delay: 0.17s }
+  .lxf-seal .lxs-col:nth-of-type(4) { animation-delay: 0.23s }
+  .lxf-seal .lxs-col:nth-of-type(5) { animation-delay: 0.29s }
+  .lxf-seal .lxs-col:nth-of-type(6) { animation-delay: 0.35s }
+  .lxf-seal .lxs-col:nth-of-type(7) { animation-delay: 0.41s }
+  @keyframes lxs-draw { to { stroke-dashoffset: 0 } }
+}
+
+@media (max-width: 760px) {
+  /* Three columns become two stacked pairs. The regime keeps the
+     top line because it is the thing being looked up. */
+  .lxf-maphead { display: none; }
+  .lxf-maprow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 18px 2px;
+  }
+  .lxf-answer {
+    text-align: left;
+    padding-top: 4px;
+    border-top: 1px solid rgba(196,164,107,0.1);
+  }
+  .lxf-answer b { display: inline; margin-right: 8px; }
+  .lxf-stratum { padding: 22px 20px; }
+  .lxf-stratum.lxf-ours { padding-left: 18px; }
+  .lxf-boundary { padding: 0 14px; }
+  .lxf-boundary span { font-size: 8.5px; letter-spacing: 0.18em; }
+}
+
+@media print {
+  .lxf-seal .lxs-col, .lxf-seal .lxs-rule { animation: none; stroke-dashoffset: 0; }
+  .lxf-maprow, .lxf-stratum { break-inside: avoid; }
+}

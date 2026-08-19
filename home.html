@@ -1572,6 +1572,47 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <section id="constitution-section">
   <div class="const-inner">
     <div class="const-pillars reveal">
+      <!-- Seven columns under one lintel. An elevation, not a logo:
+           the section argues that the Constitution is a structure you
+           can stand something on, and a drawn structure says that
+           faster than the sentence does. -->
+      <svg class="lxf-seal" viewBox="0 0 200 132" role="img" aria-labelledby="lxs-t lxs-d">
+        <title id="lxs-t">The seven constitutional pillars</title>
+        <desc id="lxs-d">An architectural elevation: a shallow pediment resting on a lintel, carried by seven numbered columns above a stepped base, one column for each pillar of the Lunara Constitution.</desc>
+
+        <!-- Shallow pediment. The pitch is deliberately low: a steep
+             one reads as a bank logo, a shallow one reads as a building. -->
+        <path class="lxs-rule" d="M12 30 L100 9 L188 30"/>
+        <path class="lxs-rule" d="M20 30 L100 15 L180 30"/>
+
+        <!-- lintel -->
+        <path class="lxs-rule" d="M8 34 H192"/>
+        <path class="lxs-rule" d="M12 41 H188"/>
+
+        <!-- Seven columns. Each carries a capital and a base wider than
+             its shaft, which is what separates a column from a stripe. -->
+        <path class="lxs-col" d="M19 45 h18 M21 49 h14 M23 49 v46 M33 49 v46 M21 95 h14 M19 99 h18"/>
+        <path class="lxs-col" d="M43 45 h18 M45 49 h14 M47 49 v46 M57 49 v46 M45 95 h14 M43 99 h18"/>
+        <path class="lxs-col" d="M67 45 h18 M69 49 h14 M71 49 v46 M81 49 v46 M69 95 h14 M67 99 h18"/>
+        <path class="lxs-col" d="M91 45 h18 M93 49 h14 M95 49 v46 M105 49 v46 M93 95 h14 M91 99 h18"/>
+        <path class="lxs-col" d="M115 45 h18 M117 49 h14 M119 49 v46 M129 49 v46 M117 95 h14 M115 99 h18"/>
+        <path class="lxs-col" d="M139 45 h18 M141 49 h14 M143 49 v46 M153 49 v46 M141 95 h14 M139 99 h18"/>
+        <path class="lxs-col" d="M163 45 h18 M165 49 h14 M167 49 v46 M177 49 v46 M165 95 h14 M163 99 h18"/>
+
+        <!-- stepped base -->
+        <path class="lxs-rule" d="M8 103 H192"/>
+        <path class="lxs-rule" d="M2 110 H198"/>
+
+        <g class="lxs-num" text-anchor="middle" font-family="Inter, system-ui, sans-serif">
+          <text x="28"  y="124">I</text>
+          <text x="52"  y="124">II</text>
+          <text x="76"  y="124">III</text>
+          <text x="100" y="124">IV</text>
+          <text x="124" y="124">V</text>
+          <text x="148" y="124">VI</text>
+          <text x="172" y="124">VII</text>
+        </g>
+      </svg>
       <div class="pillar-row"><span class="pillar-num">I</span><span class="pillar-name">Verified Identity</span></div>
       <div class="pillar-row"><span class="pillar-num">II</span><span class="pillar-name">Declared Governance Framework</span></div>
       <div class="pillar-row"><span class="pillar-num">III</span><span class="pillar-name">Transparency of Contact</span></div>
@@ -1590,6 +1631,44 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   </div>
 </section>
 
+
+<!-- ─── FIGURE: THE INTERPRETATION LAYER ───
+     The strongest claim on this site is a claim about a gap, and a
+     gap is the one thing prose is worst at holding. Three strata,
+     and the argument sits in the line between the second and the
+     third: the tooling below it is real, well funded and stops
+     there. -->
+<section style="padding:90px 24px;border-top:1px solid rgba(196,164,107,0.08)">
+  <div class="lxf reveal">
+    <p style="font-size:10px;letter-spacing:0.45em;text-transform:uppercase;color:rgba(196,164,107,0.8);margin-bottom:18px;font-family:'Inter',sans-serif;text-align:center">Where We Operate</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.6vw,38px);font-weight:300;color:#f0e0b0;text-align:center;margin-bottom:14px;line-height:1.25">A control that passed is not<br><em style="font-style:italic;color:#E2C47A">an obligation that holds.</em></h2>
+    <p style="font-size:14px;line-height:1.8;color:rgba(220,200,160,0.5);text-align:center;max-width:60ch;margin:0 auto 44px">The agent governance market is consolidating fast, and it is consolidating underneath the question executives are actually asked.</p>
+
+    <div class="lxf-strata">
+      <div class="lxf-stratum lxf-ours">
+        <div class="lxf-stratum-label">Layer 03 &middot; Governance interpretation</div>
+        <h4>Which obligation applies, who owns it, and what evidence exists</h4>
+        <p>Mapping a deployment to the specific articles that bind it, naming the accountable party, and producing the record a regulator or a procurement team would ask to see. This is the layer Lunara operates.</p>
+      </div>
+
+      <div class="lxf-boundary"><span>Where the tooling stops</span></div>
+
+      <div class="lxf-stratum">
+        <div class="lxf-stratum-label">Layer 02 &middot; Runtime security</div>
+        <h4>Permissions, monitoring, enforcement</h4>
+        <p>Watching what an agent does and stopping what it should not. Well funded, rapidly maturing, and correct about the actions it governs.</p>
+      </div>
+
+      <div class="lxf-stratum">
+        <div class="lxf-stratum-label">Layer 01 &middot; Infrastructure</div>
+        <h4>Identity, credentials, lifecycle</h4>
+        <p>Issuing agents an identity and managing it over time. Consolidating quickly through acquisition, and largely solved.</p>
+      </div>
+    </div>
+
+    <p class="lxf-cap">The layers below answer <b>what did this agent do</b>. Neither of them answers <b>which rule bound it, who is accountable, and what would be produced if a regulator asked</b>.</p>
+  </div>
+</section>
 
 <!-- ─── SEMANTIC AUTHORITY CONTENT ─── -->
 <section id="authority-content" style="padding:80px 24px;background:#080808;border-top:1px solid rgba(196,164,107,0.08);border-bottom:1px solid rgba(196,164,107,0.08)">

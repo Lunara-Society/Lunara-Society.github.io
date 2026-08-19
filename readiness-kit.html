@@ -354,8 +354,8 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </div>
 
 <div class="countdown">
-<div class="countdown-num" id="countdown">—</div>
-<div class="countdown-label">Days Until Enforcement</div>
+<div class="countdown-num" data-lx-days="eu-art50">&mdash;</div>
+<div class="countdown-label">Days Article 50 Has Been In Force</div>
 </div>
 
 <div class="contents">
@@ -481,22 +481,8 @@ onApprove: function(data, actions) {
 
 </div>
 
-<script>
-// Live countdown to August 2, 2026
-const target = new Date('2026-08-02T00:00:00').getTime();
-function updateCountdown() {
-const now = new Date().getTime();
-const diff = target - now;
-if (diff <= 0) {
-document.getElementById('countdown').textContent = '0';
-return;
-}
-const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-document.getElementById('countdown').textContent = days;
-}
-updateCountdown();
-setInterval(updateCountdown, 3600000);
-</script>
+<!-- Countdown removed: it hardcoded 2 August 2026 and read zero from
+     the day enforcement began. The shared clock now supplies the figure. -->
 
 <!-- ─── FOOTER ─── -->
 <footer id="site-footer">
@@ -546,6 +532,7 @@ setInterval(updateCountdown, 3600000);
     </div>
   </div>
 </footer>
+<script src="lunara-clock.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

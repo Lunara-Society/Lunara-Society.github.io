@@ -1711,3 +1711,359 @@ a.back,
   .lx-chapter { height: auto; }
   .lx-chapter-inner { position: static; height: auto; }
 }
+
+/* ══ 16. THE REGULATORY CLOCK ════════════════════════════════
+   An instrument, not a banner. It should read like something
+   mounted on a wall in a room where decisions get made: dense,
+   tabular where numbers live, and utterly unexcited.
+
+   The restraint is deliberate and it is the point. Everything
+   around it on the homepage is selling. This one block only
+   reports, and it earns its authority by refusing to raise its
+   voice while doing so.                                       */
+
+#lx-clock, [data-lx-clock] { max-width: 940px; margin: 0 auto; }
+
+.lxc-head { text-align: center; margin-bottom: 42px; }
+
+.lxc-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.55);
+  margin-bottom: 18px;
+}
+/* The one live element. A slow pulse reads as "running", where a
+   fast one would read as "alarm" — and this is not an alarm. */
+.lxc-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  margin-left: 9px;
+  border-radius: 50%;
+  background: #C4A46B;
+  vertical-align: middle;
+  animation: lxc-pulse 3.4s ease-in-out infinite;
+}
+@keyframes lxc-pulse { 0%,100% { opacity: 0.25 } 50% { opacity: 1 } }
+
+.lxc-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 300;
+  line-height: 1.22;
+  color: #f0e0b0;
+  margin: 0 0 12px;
+}
+
+.lxc-lede {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(220,200,160,0.55);
+  margin: 0;
+}
+
+.lxc-group { margin-bottom: 34px; }
+
+.lxc-glabel {
+  font-size: 9.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.42);
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(196,164,107,0.14);
+}
+
+.lxc-row {
+  display: grid;
+  grid-template-columns: 108px 1fr auto;
+  gap: 26px;
+  align-items: start;
+  padding: 22px 4px;
+  border-bottom: 1px solid rgba(196,164,107,0.09);
+  /* The band this sits in centres its text. A ledger that is centred
+     reads as a brochure, so the rows assert their own alignment
+     rather than inheriting the sales voice around them. */
+  text-align: left;
+}
+.lxc-row:last-child { border-bottom: none; }
+
+.lxc-mark { text-align: center; position: relative; }
+
+.lxc-dot {
+  display: block;
+  width: 6px; height: 6px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(196,164,107,0.4);
+}
+.lxc-live .lxc-dot { background: #C4A46B; border-color: #C4A46B; }
+
+/* Tabular figures so the column of numbers stays a column and does
+   not shimmer as the counts tick over. */
+.lxc-count {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1;
+  color: rgba(196,164,107,0.55);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+.lxc-live .lxc-count { color: #E2C47A; }
+
+.lxc-unit {
+  display: block;
+  margin-top: 7px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.4);
+}
+
+.lxc-jur {
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.5);
+  margin-bottom: 7px;
+}
+
+.lxc-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #f0e0b0;
+  margin: 0 0 8px;
+}
+
+.lxc-sum {
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(220,200,160,0.5);
+  margin: 0 0 10px;
+  max-width: 58ch;
+}
+
+/* The citation is the difference between an assertion and a claim
+   someone can check. It stays quiet but it never gets dropped. */
+.lxc-cite {
+  font-size: 10.5px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: rgba(196,164,107,0.36);
+}
+
+.lxc-when { text-align: right; white-space: nowrap; }
+
+.lxc-state {
+  display: block;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.45);
+  margin-bottom: 6px;
+}
+.lxc-live .lxc-state { color: #E2C47A; }
+
+.lxc-date {
+  display: block;
+  font-size: 12px;
+  color: rgba(220,200,160,0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+.lxc-foot {
+  font-size: 10.5px;
+  line-height: 1.7;
+  text-align: center;
+  color: rgba(196,164,107,0.34);
+  padding-top: 22px;
+  border-top: 1px solid rgba(196,164,107,0.1);
+  max-width: 60ch;
+  margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+  /* Three columns will not survive 390px. The number leads, the
+     status joins it underneath, and the prose runs full width —
+     same reading order, no horizontal scroll. */
+  .lxc-row {
+    grid-template-columns: 68px 1fr;
+    gap: 16px;
+    padding: 20px 2px;
+  }
+  .lxc-count { font-size: 26px; }
+  .lxc-body { grid-column: 2; }
+  .lxc-when {
+    grid-column: 1 / -1;
+    text-align: left;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding-left: 84px;
+  }
+  .lxc-state { margin-bottom: 0; }
+  .lxc-sum { font-size: 12.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lxc-eyebrow::after { animation: none; opacity: 1; }
+}
+
+@media print {
+  .lxc-eyebrow::after { animation: none; }
+  .lxc-row { break-inside: avoid; }
+}
+
+/* ══ 17. LIVE REGISTRY LOOKUP ════════════════════════════════
+   The homepage claimed you could "query any Shield-certified
+   entity in real time" and then offered nowhere to type. This
+   is that sentence, made true.
+
+   Most visitors will type their own domain and find nothing.
+   That empty result is the strongest thing on the page, so the
+   "no entry" state is written with more care than the hit: it
+   states plainly that the registry asserts nothing about them,
+   which is exactly the gap being sold.                        */
+
+#lx-lookup { max-width: 720px; margin: 0 auto; text-align: center; }
+
+.lxq-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.55);
+  margin-bottom: 16px;
+}
+
+.lxq-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 300;
+  line-height: 1.25;
+  color: #f0e0b0;
+  margin: 0 0 10px;
+}
+
+.lxq-lede {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: rgba(220,200,160,0.5);
+  margin: 0 0 30px;
+}
+
+.lxq-form {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  max-width: 520px;
+  margin: 0 auto;
+  border-bottom: 1px solid rgba(196,164,107,0.35);
+  transition: border-color 0.4s ease;
+}
+.lxq-form:focus-within { border-bottom-color: #C4A46B; }
+
+/* Scoped to beat the sitewide input[type="text"] rule (0,1,1), which
+   engraves a bordered field. That treatment is right everywhere else
+   and stays; this one field opts out because the rule underneath the
+   whole row already carries the line. 16px minimum, or iOS zooms the
+   page on focus. */
+.lxq-form .lxq-input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  color: #f0e0b0;
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  padding: 14px 4px;
+}
+.lxq-form .lxq-input::placeholder { color: rgba(196,164,107,0.35); }
+
+.lxq-go {
+  background: transparent;
+  border: none;
+  color: #C4A46B;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0 6px 0 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+.lxq-go:hover { color: #E2C47A; }
+.lxq-go[disabled] { opacity: 0.4; cursor: default; }
+
+.lxq-result {
+  margin-top: 26px;
+  min-height: 1px;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.lxq-result.lxq-in { opacity: 1; transform: none; }
+
+.lxq-card {
+  border: 1px solid rgba(196,164,107,0.2);
+  border-left-width: 2px;
+  padding: 20px 22px;
+  background: rgba(196,164,107,0.02);
+}
+.lxq-card.lxq-hit  { border-left-color: #E2C47A; }
+.lxq-card.lxq-miss { border-left-color: rgba(196,164,107,0.3); }
+
+.lxq-state {
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.5);
+  margin-bottom: 9px;
+}
+.lxq-hit .lxq-state { color: #E2C47A; }
+
+.lxq-subject {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  color: #f0e0b0;
+  margin: 0 0 8px;
+  /* Domains are user input and can be long; never let one push the
+     card wider than the page. */
+  overflow-wrap: anywhere;
+}
+
+.lxq-say {
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(220,200,160,0.55);
+  margin: 0;
+}
+
+.lxq-say a {
+  color: #C4A46B;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(196,164,107,0.3);
+}
+.lxq-say a:hover { color: #E2C47A; }
+
+.lxq-note {
+  margin-top: 18px;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: rgba(196,164,107,0.34);
+}
+
+@media (max-width: 560px) {
+  .lxq-form { flex-wrap: wrap; }
+  .lxq-go { padding: 0 0 12px; width: 100%; text-align: left; }
+}

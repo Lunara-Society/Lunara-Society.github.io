@@ -1448,8 +1448,8 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   </div>
   <div class="stat-sep"></div>
   <div class="stat reveal reveal-delay-2">
-    <span class="stat-val" id="countdown-days">—</span>
-    <span class="stat-label">Days to Article 50</span>
+    <span class="stat-val" data-lx-days="eu-art50">—</span>
+    <span class="stat-label">Days Article 50 In Force</span>
   </div>
   <div class="stat-sep"></div>
   <div class="stat reveal reveal-delay-3">
@@ -1472,7 +1472,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       </div>
       <span class="card-tag">Trust Infrastructure</span>
       <h3>Shield Certification</h3>
-      <p>The first formal, publicly auditable trust registry for businesses and AI entities. Verified identity. Domain ownership proof. Human review. Public record.</p>
+      <p>A public record of who has been verified, what they declared, and whether it still stands. Domain ownership proved. Every entry revocable, and revocations are public too.</p>
       <span class="card-arrow">↗</span>
     </a>
     <a class="card reveal reveal-delay-1" href="constitution.html">
@@ -1490,7 +1490,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       </div>
       <span class="card-tag">Healthcare Vertical · MVP Building</span>
       <h3>Healthcare AI Governance Intelligence</h3>
-      <p>The first healthcare specific AI governance intelligence platform. Compliance risk scoring against all 7 pillars mapped to HIPAA, FDA, EU AI Act, and Joint Commission. Pilot program open.</p>
+      <p>Built for the sector carrying the heaviest burden: HIPAA, FDA, EU AI Act and Joint Commission at once. Each pillar mapped to the obligation it satisfies. Pilot program open.</p>
       <span class="card-arrow">↗</span>
     </a>
     <a class="card reveal reveal-delay-3" href="registry.html">
@@ -1522,16 +1522,51 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   </div>
 </div>
 
-<!-- ─── URGENCY BAND ─── -->
+<!-- ─── THE REGULATORY CLOCK ───
+     This band used to shout a countdown at a date that had already
+     passed. It now reports what is enforceable at the moment of
+     reading and what lands next. Nothing in it is typed by hand, so
+     it cannot go stale the way its predecessor did. -->
 <div id="urgency-band">
-  <div class="urgency-inner reveal">
-    <div class="urgency-badge">Article 50 · August 2, 2026</div>
-    <h2>The governance window closes in 4 days.</h2>
-    <p>Article 50 of the EU AI Act enters enforcement on August 2. Enterprises deploying AI agents must demonstrate governance frameworks that meet institutional standards. The Lunara Risk Scorer assesses your compliance posture in under 5 minutes. Score your AI systems now.</p>
-    <a href="scorer.html" style="border:1px solid rgba(196,164,107,0.5);padding:14px 36px;display:inline-block;color:#C4A46B;text-decoration:none;font-size:12px;letter-spacing:0.18em;text-transform:uppercase">Score Your AI Risk Now</a>
+  <div class="urgency-inner reveal" style="max-width:960px">
+    <div data-lx-clock>
+      <!-- Script-free fallback: if the script never runs, the reader
+           still gets something true rather than a hole in the page. -->
+      <div class="lxc-head">
+        <div class="lxc-eyebrow">Regulatory Clock</div>
+        <h3 class="lxc-title">Article 50 of the EU AI Act is in force.</h3>
+        <p class="lxc-lede">Transparency obligations have applied since 2 August 2026.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="scorer.html" style="border:1px solid rgba(196,164,107,0.5);padding:14px 36px;display:inline-block;color:#C4A46B;text-decoration:none;font-size:12px;letter-spacing:0.18em;text-transform:uppercase">Score Your AI Risk</a>
       <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="healthcare-intelligence.html">Healthcare Pilot Program ›</a>
+    </div>
   </div>
 </div>
+
+<!-- ─── LIVE REGISTRY LOOKUP ───
+     The clock states what the law requires. This asks the reader
+     whether anything is on record about them. For almost every
+     visitor the answer is no, and that silence is the argument. -->
+<section style="padding:96px 24px;border-top:1px solid rgba(196,164,107,0.1)">
+  <div id="lx-lookup" class="reveal">
+    <div class="lxq-eyebrow">The Trust Registry</div>
+    <h3 class="lxq-title">Ask the registry about any domain.</h3>
+    <p class="lxq-lede">The register is public and answers in real time. Try your own.</p>
+
+    <form class="lxq-form" id="lxq-form" autocomplete="off">
+      <label for="lxq-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Domain to look up in the trust registry</label>
+      <input class="lxq-input" id="lxq-input" type="text" placeholder="yourcompany.com"
+             spellcheck="false" autocapitalize="off" inputmode="url">
+      <button class="lxq-go" id="lxq-go" type="submit">Look up</button>
+    </form>
+
+    <div class="lxq-result" id="lxq-result" role="status" aria-live="polite"></div>
+
+    <p class="lxq-note">Queries run against the live Shield register. Nothing you type is stored.</p>
+  </div>
+</section>
 
 <!-- ─── CONSTITUTION SECTION ─── -->
 <section id="constitution-section">
@@ -1548,7 +1583,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <div class="const-text reveal reveal-delay-2">
       <p class="eyebrow">The Lunara Constitution</p>
       <h2>The standard that<br><em>governs them all.</em></h2>
-      <p>Published under CC BY 4.0. Model-agnostic. Verifiable. Revocable. The first constitutional governance framework for AI systems built on operational criteria, not aspirational principles.</p>
+      <p>Seven pillars, each written as something you either did or did not do. Published under CC BY 4.0, model-agnostic, and free to adopt without asking us. Principles you cannot fail are not principles.</p>
       <p>Submitted to CISA, NIST, and GSA as a reference architecture for federal agent governance. Open for adoption by any institution.</p>
       <a href="constitution.html">Read the Constitution ›</a>
     </div>
@@ -1607,7 +1642,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           <div class="footer-mark">L</div>
           <span class="footer-name">Lunara Society</span>
         </div>
-        <p class="footer-tagline">The first constitutional governance intelligence platform for autonomous AI systems. Established MMXXVI.</p>
+        <p class="footer-tagline">Constitutional governance for autonomous AI systems. An independent trust coordination institution. Established MMXXVI.</p>
         <div class="footer-contact-block">
           <div class="footer-contact-label">Contact</div>
           <a class="footer-contact-email" href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a>
@@ -1875,23 +1910,9 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 })();
 </script>
 
-<script>
-// ── LIVE COUNTDOWN TO AUG 2 ──
-(function(){
-  const target = new Date('2026-08-02T00:00:01Z').getTime();
-  const el = document.getElementById('countdown-days');
-  if(!el) return;
-  function update(){
-    const now = Date.now();
-    const diff = target - now;
-    if(diff <= 0){ el.textContent = '0'; return; }
-    const days = Math.ceil(diff / (1000*60*60*24));
-    el.textContent = days;
-  }
-  update();
-  setInterval(update, 60000);
-})();
-</script>
+<!-- The countdown that used to live here hardcoded 2 August 2026 and
+     sat at zero for seventeen days after enforcement began. Dates now
+     come from the shared clock, which computes tense at read time. -->
 
 <script>
 // ── STAT COUNTER ANIMATION ──
@@ -1951,6 +1972,127 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
   update();
 })();
 </script>
+<script>
+/* ── LIVE REGISTRY LOOKUP ──────────────────────────────────────────
+   The register is fetched once, on first use rather than on load, so
+   an instrument most visitors never touch costs them nothing. After
+   that every query is local and answers instantly.
+
+   The failure mode matters here more than the happy path: if the
+   register cannot be reached we say so and send the reader to the
+   registry page. We never render "no entry" from a failed request.
+   Asserting the absence of a certification we could not actually
+   check would be the precise error this site exists to catch. */
+(function () {
+  var form   = document.getElementById('lxq-form');
+  var input  = document.getElementById('lxq-input');
+  var button = document.getElementById('lxq-go');
+  var out    = document.getElementById('lxq-result');
+  if (!form || !input || !out) return;
+
+  var ENDPOINT = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList';
+  var cache = null;
+
+  function norm(v) {
+    return String(v || '')
+      .trim().toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/[\/?#].*$/, '')
+      .replace(/\.$/, '');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function show(html) {
+    out.innerHTML = html;
+    out.classList.remove('lxq-in');
+    void out.offsetWidth;   /* replay the transition on every answer */
+    out.classList.add('lxq-in');
+  }
+
+  function card(kind, state, subject, say) {
+    return '<div class="lxq-card ' + kind + '">' +
+             '<div class="lxq-state">' + state + '</div>' +
+             '<h4 class="lxq-subject">' + esc(subject) + '</h4>' +
+             '<p class="lxq-say">' + say + '</p>' +
+           '</div>';
+  }
+
+  function load() {
+    if (cache) return Promise.resolve(cache);
+    return fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    }).then(function (r) {
+      if (!r.ok) throw new Error('registry ' + r.status);
+      return r.json();
+    }).then(function (d) {
+      var rows = d.entries || d.results || d;
+      if (!Array.isArray(rows)) throw new Error('unexpected shape');
+      cache = rows;
+      return rows;
+    });
+  }
+
+  function find(rows, q) {
+    for (var i = 0; i < rows.length; i++) {
+      var e = rows[i];
+      if (norm(e.domain) === q || norm(e.website_url) === q) return e;
+    }
+    return null;
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var q = norm(input.value);
+
+    if (!q || q.indexOf('.') === -1) {
+      show(card('lxq-miss', 'Not a domain',
+        input.value.trim() || '—',
+        'Enter a domain, such as <span style="color:rgba(240,224,176,0.75)">yourcompany.com</span>.'));
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Checking';
+
+    load().then(function (rows) {
+      var hit = find(rows, q);
+
+      if (hit && (hit.status === 'approved' || hit.status === 'verified')) {
+        show(card('lxq-hit', 'On the register', hit.business_name || hit.entity_name || q,
+          'Shield certified. Identity verified, governance framework declared, ' +
+          'and the entry is revocable. <a href="registry.html">See the full record</a>.'));
+
+      } else if (hit) {
+        show(card('lxq-miss', 'Application pending', hit.business_name || hit.entity_name || q,
+          'An application exists for this domain and has not yet been granted. ' +
+          'Nothing is certified until it is.'));
+
+      } else {
+        /* The important one. Say precisely what is and is not true. */
+        show(card('lxq-miss', 'No entry', q,
+          'The registry holds no record for this domain. That is not a finding against it &mdash; ' +
+          'it means no identity has been verified, no governance framework has been declared, ' +
+          'and nothing about it can be checked by anyone who asks. ' +
+          '<a href="shield.html">Put it on the register</a>.'));
+      }
+    }).catch(function () {
+      show(card('lxq-miss', 'Registry unreachable', q,
+        'We could not reach the register just now, so we will not tell you what it says. ' +
+        '<a href="registry.html">Open the registry directly</a>.'));
+    }).then(function () {
+      button.disabled = false;
+      button.textContent = 'Look up';
+    });
+  });
+})();
+</script>
+<script src="lunara-clock.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

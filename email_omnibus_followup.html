@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunara Society</title>
+<style>
+  /* Clients that support media queries tighten the gutter on small
+     screens. Everything still works without this: the inline padding
+     is the fallback, not the enhancement. */
+  @media only screen and (max-width:600px){
+    .lx-pad{padding-left:22px !important;padding-right:22px !important;}
+    .lx-pad-top{padding-top:34px !important;}
+  }
+</style>
+<!--
+  FOLLOW-UP TEMPLATE. Not for a first touch.
+
+  A branded HTML email from a stranger reads as bulk marketing and is
+  filtered accordingly, which is why the first approach to these
+  recipients went as plain text. This one is different: by the time it
+  arrives the name is not new, and its whole job is to carry the reader
+  to the briefing page rather than to argue in the body. Short on
+  purpose.
+
+  Tables and inline styles throughout because Outlook renders neither
+  flex nor grid. Every colour is stated on the element rather than
+  inherited, because Gmail strips the head <style> on forwards.
+
+  Placeholders: {{GREETING}}, {{ORG}}, {{FIRST_TOUCH_WHEN}}
+-->
+</head>
+<body style="margin:0;padding:0;background-color:#F0EBE1;">
+
+<!-- preheader: shown in the inbox list, hidden in the body -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">
+  The high-risk deadline moved. Article 50 did not. A two-minute briefing with the sources.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F0EBE1;">
+<tr><td align="center" style="padding:28px 12px;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:620px;background-color:#F6F2EA;border-left:1px solid #E0D9CE;border-right:1px solid #E0D9CE;">
+
+  <!-- header -->
+  <tr><td align="center" class="lx-pad lx-pad-top" style="padding:52px 52px 30px;">
+    <img src="https://lunarasociety.com/lunara_logo_512.png" width="76" height="76" alt="Lunara Society" style="display:block;width:76px;height:76px;margin:0 auto 20px;">
+    <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.45em;color:#8A8176;text-transform:uppercase;">Lunara Society</div>
+    <div style="width:44px;height:1px;background-color:#C4A46B;margin:22px auto 0;"></div>
+  </td></tr>
+
+  <!-- the line that does the work -->
+  <tr><td class="lx-pad" style="padding:0 52px 30px;">
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:normal;font-style:italic;color:#1B2432;text-align:center;line-height:1.5;">
+      The deadline moved.<br>The obligation did not.
+    </div>
+  </td></tr>
+
+  <tr><td class="lx-pad" style="padding:0 52px 34px;">
+
+    <p style="margin:0 0 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;font-weight:normal;color:#4A4540;line-height:1.85;">
+      {{GREETING}},
+    </p>
+
+    <p style="margin:0 0 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;font-weight:normal;color:#4A4540;line-height:1.85;">
+      I wrote to {{ORG}} {{FIRST_TOUCH_WHEN}} about the EU AI Act. Rather than repeat myself, I have put the whole thing on one page with the sources attached, so you can check it in two minutes and decide for yourself whether it touches you.
+    </p>
+
+    <!-- the substance, compressed to three lines -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;background-color:#F0EBE1;border-left:2px solid #C4A46B;">
+      <tr><td style="padding:22px 24px;">
+        <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9px;font-weight:400;letter-spacing:0.42em;color:#C4A46B;text-transform:uppercase;margin-bottom:14px;">The short version</div>
+
+        <p style="margin:0 0 12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#4A4540;line-height:1.75;">
+          <strong style="color:#1B2432;font-weight:600;">Moved.</strong> The Digital Omnibus, Regulation (EU) 2026/1744, deferred the Annex&nbsp;III high-risk obligations to 2 December 2027. For AI in devices regulated under the MDR, to 2 August 2028.
+        </p>
+
+        <p style="margin:0 0 12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#4A4540;line-height:1.75;">
+          <strong style="color:#1B2432;font-weight:600;">Held.</strong> Article&nbsp;50 was deliberately left alone and has applied since 2 August. Systems that talk to people must say they are AI. Synthetic output must be machine-readably marked.
+        </p>
+
+        <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#4A4540;line-height:1.75;">
+          <strong style="color:#1B2432;font-weight:600;">Consequence.</strong> What most teams were preparing for has sixteen more months. What almost nobody reviewed is enforceable now.
+        </p>
+      </td></tr>
+    </table>
+
+    <!-- CTA. Bulletproof for Outlook via VML. -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:34px 0 8px;">
+      <tr><td align="center">
+        <!--[if mso]>
+        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+          href="https://lunarasociety.com/briefing.html" style="height:46px;v-text-anchor:middle;width:280px;" arcsize="0%" strokecolor="#1B2432" fillcolor="#1B2432">
+          <w:anchorlock/>
+          <center style="color:#F6F2EA;font-family:Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:2px;">READ THE BRIEFING</center>
+        </v:roundrect>
+        <![endif]-->
+        <!--[if !mso]><!-- -->
+        <a href="https://lunarasociety.com/briefing.html"
+           style="display:inline-block;padding:15px 38px;background-color:#1B2432;color:#F6F2EA;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.32em;text-transform:uppercase;text-decoration:none;">Read the briefing</a>
+        <!--<![endif]-->
+      </td></tr>
+    </table>
+
+    <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;color:#8A8176;line-height:1.8;text-align:center;letter-spacing:0.06em;">
+      Two minutes. Every claim linked to its source.
+    </p>
+
+    <p style="margin:30px 0 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;color:#4A4540;line-height:1.85;">
+      If it turns out none of this reaches you, that is a useful answer and I will say so plainly.
+    </p>
+
+    <!-- signature -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:38px;border-top:1px solid #E0D9CE;">
+      <tr><td style="padding-top:24px;">
+        <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;color:#4A4540;line-height:1.8;">Lunara Society</div>
+        <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10.5px;color:#B0A89E;line-height:1.8;">Independent AI governance and certification</div>
+      </td></tr>
+    </table>
+
+  </td></tr>
+
+  <!-- footer -->
+  <tr><td align="center" class="lx-pad" style="padding:30px 52px 46px;border-top:1px solid #E8E2D8;">
+    <img src="https://lunarasociety.com/lunara_logo_512.png" width="26" height="26" alt="" style="display:block;width:26px;height:26px;margin:0 auto 16px;opacity:0.2;">
+    <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#B0A89E;line-height:2;">
+      <a href="https://lunarasociety.com" style="color:#B0A89E;text-decoration:none;">lunarasociety.com</a><br>
+      This is a commercial approach. Reply with <strong style="color:#8A8176;font-weight:400;">remove</strong> and you will not hear from us again.
+    </div>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>

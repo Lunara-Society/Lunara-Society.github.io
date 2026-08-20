@@ -242,7 +242,10 @@
                '<div class="lxc-jur">' + esc(o.jurisdiction) + '</div>' +
                '<h4 class="lxc-name">' + esc(o.name) + '</h4>' +
                '<p class="lxc-sum">' + esc(o.summary) + '</p>' +
-               '<div class="lxc-cite">' + esc(o.instrument) + ' &middot; ' + esc(o.article) + '</div>' +
+               '<div class="lxc-cite" title="' + esc(o.instrument) + ' \u00b7 ' + esc(o.article) + '">' +
+                 '<span class="lxc-inst">' + esc(o.instrument) + ' &middot; </span>' +
+                 '<span class="lxc-art">' + esc(o.article) + '</span>' +
+               '</div>' +
              '</div>' +
              '<div class="lxc-when">' +
                '<span class="lxc-state">' + (r.active ? 'In force' : 'Pending') + '</span>' +

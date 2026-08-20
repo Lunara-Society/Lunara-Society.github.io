@@ -1153,6 +1153,7 @@
     safe('swarms', buildSwarms);
     safe('typers', buildTypers);
     safe('current-page', markCurrentPage);
+    safe('stow-return', stowReturnControl);
 
     // Widths settle after fonts and images land; re-check then.
     // Heights settle then too, and the rescue check is a height
@@ -1171,6 +1172,72 @@
       safe('measure', capMeasure);
       safe('rescue-reveals', rescueReveals);
     }, 250), { passive: true });
+  }
+
+
+  /* ── STOW THE FLOATING RETURN CONTROL ─────────────────────────
+     The control is position:fixed, so it does not live at the end of
+     the document; it lives in front of whatever you are reading. On a
+     phone that meant it landed across a card mid-page and across the
+     footer, which no amount of bottom padding can fix.
+
+     Reading is scrolling down, so it stows on the way down and comes
+     back the moment you scroll up, which is when someone is actually
+     hunting for a way out. It is always present near the top and
+     bottom of the document, where it is wanted and occludes nothing.
+
+     The threshold exists because a page settling after load, or an
+     address bar collapsing on iOS, produces small phantom deltas that
+     would otherwise make the control flicker. */
+  function stowReturnControl() {
+    var btn = document.getElementById('mob-back-btn');
+    if (!btn) return;
+
+    /* Only assume the horizontal centring the stylesheet applies if
+       the element is actually centred; otherwise stowing it would
+       shift it sideways. */
+    var tf = window.getComputedStyle(btn).transform;
+    if (tf && tf !== 'none' && tf.indexOf('matrix') === 0) {
+      /* a translateX(-50%) shows up as a non-zero e value */
+      var parts = tf.replace(/^matrix\(|\)$/g, '').split(',');
+      if (parts.length === 6 && Math.abs(parseFloat(parts[4])) < 1) {
+        btn.classList.add('lx-nocentre');
+      }
+    } else if (!tf || tf === 'none') {
+      btn.classList.add('lx-nocentre');
+    }
+
+    var last = window.pageYOffset || document.documentElement.scrollTop;
+    var THRESHOLD = 6;
+    var NEAR_END = 220;
+    var ticking = false;
+
+    function apply() {
+      ticking = false;
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+      var delta = y - last;
+      if (Math.abs(delta) < THRESHOLD) return;
+
+      var doc = document.documentElement;
+      var atTop = y < 120;
+      var atEnd = (y + window.innerHeight) >= (doc.scrollHeight - NEAR_END);
+
+      if (atTop || atEnd || delta < 0) {
+        btn.classList.remove('lx-stow');
+      } else {
+        btn.classList.add('lx-stow');
+      }
+      last = y;
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
   }
 
   if (document.readyState === 'loading') {

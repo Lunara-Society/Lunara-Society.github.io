@@ -2316,3 +2316,60 @@ a.back,
   .lxf-seal .lxs-col, .lxf-seal .lxs-rule { animation: none; stroke-dashoffset: 0; }
   .lxf-maprow, .lxf-stratum { break-inside: avoid; }
 }
+
+/* ══ 19. TWO PHONE FIXES ═════════════════════════════════════
+
+   19.1 THE CITATION ON A PHONE
+   The full citation is correct and it is also four lines long on a
+   390px screen, which is how a precise instrument turns into the
+   wall of text it was built to replace. The amending instrument is
+   what a lawyer needs and what a reader scanning on a train does
+   not, so the phone keeps the article and drops the rest. The whole
+   string survives in the title attribute, so nothing is lost and
+   the desktop is untouched.                                       */
+
+@media (max-width: 720px) {
+  .lxc-inst { display: none; }
+  .lxc-art::before {
+    content: 'Source: ';
+    opacity: 0.65;
+  }
+}
+
+/* 19.2 THE FLOATING RETURN CONTROL, CONTINUED
+   Clearing the bottom of the page was not enough. The control is
+   fixed, so it does not sit at the end of the document, it sits in
+   front of whatever you happen to be reading, and on a phone it was
+   landing across a card and across the footer.
+
+   Padding cannot solve that; only getting out of the way can. The
+   control now hides while you scroll down, which is when you are
+   reading and want the screen, and returns the moment you scroll up,
+   which is when you are looking for a way out. It is always present
+   at the top and bottom of the page where it is genuinely wanted.  */
+
+#mob-back-btn {
+  transition:
+    transform 0.42s cubic-bezier(0.22, 0.8, 0.24, 1),
+    opacity 0.32s ease;
+  will-change: transform;
+}
+
+#mob-back-btn.lx-stow {
+  /* 180% clears the control and its shadow completely, so no glow
+     edge remains hovering over the content. */
+  transform: translateY(180%) translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The button is centred with translateX(-50%) on many pages; when it
+   is not, the stow transform above must not introduce one. */
+#mob-back-btn.lx-nocentre.lx-stow {
+  transform: translateY(180%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mob-back-btn { transition: opacity 0.2s ease; }
+  #mob-back-btn.lx-stow { transform: none; opacity: 0; }
+}

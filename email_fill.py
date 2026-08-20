@@ -25,6 +25,22 @@ of the template:
 It refuses rather than sends something wrong: a missing placeholder, a
 leftover one, a relative image path, or an unfilled brace all stop the
 run with a message on stderr and a non-zero exit.
+
+THE ADDRESS RULE, which this script cannot enforce and which has now
+cost us three bounces:
+
+    Send only to an address whose domain is the company's own website
+    domain. Nothing else counts as verified.
+
+Every failure so far has been the same shape. info@unitedimaging.com
+reached a California photocopier dealer. neumedical@neusoft.com did not
+exist. asiakaspalvelu@klinik.fi did not exist either, and the tell was
+visible before sending: Klinik's site is klinikhealthcaresolutions.com,
+so klinik.fi was somebody else's domain.
+
+A search engine summarising a directory is not a source. The company's
+own page is. If the site cannot be opened to check, the address is not
+verified and the letter does not go.
 """
 
 import json

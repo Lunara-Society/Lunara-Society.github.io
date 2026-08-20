@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>Lunara Society</title>
+<style>
+  /* Clients that honour a media query tighten the gutter on a phone.
+     Everything below also carries the desktop value inline, so this is
+     an enhancement and never a dependency. */
+  @media only screen and (max-width:600px){
+    .lx-pad{padding-left:22px !important;padding-right:22px !important;}
+    .lx-pad-top{padding-top:34px !important;}
+    .lx-h1{font-size:26px !important;line-height:1.28 !important;}
+  }
+  /* Gmail and Outlook.com dark modes will otherwise try to lighten a
+     dark email and produce grey mud. Stating the scheme keeps our
+     black black. */
+  :root{color-scheme:dark;supported-color-schemes:dark;}
+</style>
+<!--
+  THE OUTREACH TEMPLATE — black and gold, matching the site.
+
+  This is the house email. It is not the cream one; that palette was
+  chosen when the concern was print and forwarding, and the answer to
+  "make it look like the website" is to make it look like the website.
+
+  What cannot survive the trip from site to inbox, and what replaces it:
+
+    · The metal gradient on headlines. background-clip:text is
+      unsupported in every major mail client, so headlines here are
+      solid #E2C892 with a hairline rule beneath doing the work the
+      specular did on the page.
+    · Web fonts. Cormorant Garamond will not load in most clients, so
+      the serif stack falls to Georgia, which is close enough in
+      colour and is present everywhere.
+    · Any script, animation or flex layout. Tables and inline styles
+      throughout, because Outlook renders neither flex nor grid.
+
+  Every colour is stated on the element rather than inherited, since
+  Gmail strips the head <style> when a message is forwarded.
+
+  Placeholders: {{PREHEADER}} {{GREETING}} {{OPENING}} {{BODY}}
+                {{PULL}} {{ASK}} {{CTA_LABEL}} {{CTA_URL}} {{OPTOUT}}
+-->
+</head>
+<body style="margin:0;padding:0;background-color:#050403;">
+
+<!-- Inbox preview line. Hidden in the body, and the only text most
+     recipients read before deciding. -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">
+  {{PREHEADER}}
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#050403;">
+<tr><td align="center" style="padding:28px 12px;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:620px;background-color:#0A0806;border:1px solid #2A2318;">
+
+  <!-- A gold hairline across the top: the one piece of the site's
+       engraved edge that survives an email client. -->
+  <tr><td style="background-color:#C4A46B;height:2px;line-height:2px;font-size:2px;">&nbsp;</td></tr>
+
+  <tr><td align="center" class="lx-pad lx-pad-top" style="padding:50px 52px 26px;">
+    <img src="https://lunarasociety.com/lunara_logo_512.png" width="72" height="72" alt="Lunara Society" style="display:block;width:72px;height:72px;margin:0 auto 20px;">
+    <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.42em;color:#8A7A5A;text-transform:uppercase;">Lunara Society</div>
+    <div style="width:44px;height:1px;background-color:#C4A46B;margin:20px auto 0;font-size:1px;line-height:1px;">&nbsp;</div>
+  </td></tr>
+
+  <!-- The line that does the work. Solid gold, not a gradient. -->
+  <tr><td class="lx-pad" style="padding:0 52px 28px;">
+    <div class="lx-h1" style="font-family:Georgia,'Times New Roman',serif;font-size:31px;font-weight:normal;color:#E2C892;text-align:center;line-height:1.32;">
+      {{OPENING}}
+    </div>
+  </td></tr>
+
+  <tr><td class="lx-pad" style="padding:0 52px 36px;">
+
+    <p style="margin:0 0 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14.5px;color:#C8B896;line-height:1.85;">
+      {{GREETING}},
+    </p>
+
+    <p style="margin:0 0 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14.5px;color:#C8B896;line-height:1.85;">
+      {{BODY}}
+    </p>
+
+    <!-- The pull quote, on the site's lit left edge. -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:30px 0;">
+      <tr>
+        <td width="2" style="background-color:#C4A46B;font-size:1px;line-height:1px;">&nbsp;</td>
+        <td style="padding:20px 24px;background-color:#120E08;">
+          <div style="font-family:Georgia,'Times New Roman',serif;font-size:17px;font-style:italic;color:#F4E5C4;line-height:1.62;">
+            {{PULL}}
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 26px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14.5px;color:#C8B896;line-height:1.85;">
+      {{ASK}}
+    </p>
+
+    <!-- CTA. VML so Outlook renders a real button rather than dropping
+         the background and leaving bare text. -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 8px;">
+      <tr><td align="center">
+        <!--[if mso]>
+        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+          href="{{CTA_URL}}" style="height:48px;v-text-anchor:middle;width:300px;" arcsize="0%" strokecolor="#C4A46B" fillcolor="#120E08">
+          <w:anchorlock/>
+          <center style="color:#E2C892;font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2px;">{{CTA_LABEL}}</center>
+        </v:roundrect>
+        <![endif]-->
+        <!--[if !mso]><!-- -->
+        <a href="{{CTA_URL}}"
+           style="display:inline-block;padding:16px 38px;background-color:#120E08;border:1px solid #C4A46B;color:#E2C892;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.24em;text-transform:uppercase;text-decoration:none;">{{CTA_LABEL}}</a>
+        <!--<![endif]-->
+      </td></tr>
+    </table>
+
+    <p style="margin:14px 0 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;color:#6E6045;line-height:1.75;text-align:center;letter-spacing:0.05em;">
+      Two minutes. Every claim linked to its source.
+    </p>
+
+    <!-- signature -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:40px;border-top:1px solid #2A2318;">
+      <tr><td style="padding-top:24px;">
+        <div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#E2C892;line-height:1.7;">Lunara Society</div>
+        <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;color:#6E6045;line-height:1.8;letter-spacing:0.06em;">Independent AI governance and certification</div>
+      </td></tr>
+    </table>
+
+  </td></tr>
+
+  <!-- footer -->
+  <tr><td align="center" class="lx-pad" style="padding:26px 52px 40px;border-top:1px solid #1C1811;background-color:#070605;">
+    <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10.5px;color:#5C5039;line-height:2;">
+      <a href="https://lunarasociety.com" style="color:#8A7A5A;text-decoration:none;">lunarasociety.com</a><br>
+      {{OPTOUT}}
+    </div>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>

@@ -541,7 +541,7 @@ footer .copyright {
           "name": "What is the Lunara Compliance Intelligence Report?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
           }
         },
         {
@@ -746,11 +746,11 @@ footer .copyright {
   <h2 class="section-title">Before you hire consultants,<br>run this <em>first.</em></h2>
 
   <div class="pricing-grid">
-    <!-- $299 -->
+    <!-- report -->
     <div class="price-card reveal">
       <p class="tier">Self-Service Report</p>
       <div class="badge">Instant Delivery</div>
-      <p class="price">$299</p>
+      <p class="price"><span data-lx-amount="cir">$390</span></p>
       <p class="desc">Interactive compliance risk assessment for AI Act Article 50 and California SB 942. Scoring, gap analysis, and remediation roadmap. Delivered instantly.</p>
       <ul class="features">
         <li>Full Article 50 risk score</li>
@@ -760,24 +760,24 @@ footer .copyright {
         <li>Regulatory source mapping</li>
         <li>Instant delivery</li>
       </ul>
-      <div class="paypal-wrap" id="paypal-299"></div>
+      <a class="lx-buy" data-lx-buy="cir" href="#"><span class="lx-buy-label">Order the report</span><span class="lx-buy-amt" data-lx-amount="cir"></span></a>
     </div>
 
-    <!-- $499 -->
+    <!-- report + session -->
     <div class="price-card featured reveal">
       <p class="tier">Report + Consultation</p>
       <div class="badge">Recommended</div>
-      <p class="price">$499</p>
+      <p class="price"><span data-lx-amount="cirplus">$740</span></p>
       <p class="desc">Full compliance risk assessment plus a 30 minute personalized walkthrough with Lunara's governance team. Includes scoring, gap analysis, remediation roadmap, and live Q&amp;A. Scheduled within 48 hours.</p>
       <ul class="features">
-        <li>Everything in the $299 report</li>
+        <li>Everything in the report</li>
         <li>30 minute personalized walkthrough</li>
         <li>Live Q&amp;A with governance team</li>
         <li>Custom deployment analysis</li>
         <li>Priority regulatory update access</li>
         <li>Scheduled within 48 hours</li>
       </ul>
-      <div class="paypal-wrap" id="paypal-499"></div>
+      <a class="lx-buy" data-lx-buy="cirplus" href="#"><span class="lx-buy-label">Report and session</span><span class="lx-buy-amt" data-lx-amount="cirplus"></span></a>
     </div>
   </div>
 </section>
@@ -803,28 +803,8 @@ footer .copyright {
 </footer>
 
 <!-- PAYPAL SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
-<script>
-  // $299 button — Self-Service Report
-  paypal.HostedButtons({
-    hostedButtonId: "ZG7YHP2FWFH5C",
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(function(details) {
-        window.location.href = "compliance-report-access.html?t=" + details.id + "&p=299";
-      });
-    }
-  }).render("#paypal-299");
 
-  // $499 button — Report + Consultation
-  paypal.HostedButtons({
-    hostedButtonId: "9EW5UNV3ZNNNE",
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(function(details) {
-        window.location.href = "compliance-report-access.html?t=" + details.id + "&p=499";
-      });
-    }
-  }).render("#paypal-499");
-</script>
+<!-- Hosted buttons removed. Payments are ordinary links; see lunara-pricing.js -->
 
 <!-- SCROLL REVEAL -->
 <script>
@@ -856,6 +836,7 @@ fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraDash
 }).catch(function(){});
 </script>
 
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

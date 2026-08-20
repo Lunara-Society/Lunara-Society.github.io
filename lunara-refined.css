@@ -3755,3 +3755,69 @@ a.back,
   #lx-ros.lxr-here { transform: none; }
   #lx-ros.lxr-moving:not(.lxr-open) { transform: none; }
 }
+
+/* ══ 33. BUYING SOMETHING ════════════════════════════════════
+   The old checkout was PayPal's hosted button, which meant loading
+   a third-party SDK on every page that sold anything and accepting
+   whatever that script decided to render. It also carried no product
+   identity into the transaction, so a completed payment could not
+   tell you which of two products had been bought.
+
+   This is an anchor. No script, no SDK, no layout surprise, and the
+   product name and SKU travel with the payment. It is styled like
+   the rest of the site rather than like a payment widget, because a
+   buyer at this price point is not looking for reassurance that a
+   payment processor exists.                                       */
+
+.lx-buy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 15px 30px;
+  min-height: 48px;
+  border: 1px solid rgba(196,164,107,0.45);
+  background: linear-gradient(177deg, rgba(28,23,13,0.9), rgba(8,7,4,0.98));
+  color: #E2C892;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .35s ease, color .35s ease,
+              box-shadow .35s ease, transform .35s cubic-bezier(0.2,0.8,0.2,1);
+}
+.lx-buy:hover {
+  border-color: #C4A46B;
+  color: #FFF6DC;
+  transform: translateY(-2px);
+  box-shadow: 0 0 38px -12px rgba(196,164,107,0.5);
+}
+.lx-buy:focus-visible { outline: 2px solid #C4A46B; outline-offset: 3px; }
+
+.lx-buy-amt {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #F4E5C4;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sits under a buy control to say what the money actually buys.
+   Stating "renewed by invoice, never auto-charged" costs nothing and
+   removes the single most common reason someone abandons a term
+   purchase, which is not knowing whether they are subscribing. */
+.lx-buy-terms {
+  display: block;
+  margin-top: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10.5px;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: rgba(196,164,107,0.42);
+}
+
+@media (max-width: 560px) {
+  .lx-buy { width: 100%; justify-content: center; padding: 15px 20px; }
+}

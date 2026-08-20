@@ -403,7 +403,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 ::selection{background:rgba(196,164,107,0.25);color:#fff}
 
 </style>
-<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+
 <style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
 
 <script type="application/ld+json" id="lunara-schema">{
@@ -528,7 +528,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "What is the Lunara Compliance Intelligence Report?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
           }
         },
         {
@@ -856,7 +856,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Referral revenue sharing program</li>
           <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;font-family:'Inter',sans-serif">Priority partner support and onboarding</li>
         </ul>
-        <div id="paypal-container-LQZ6D2CGLUEDC" style="min-height:45px"></div>
+        <a class="lx-buy" data-lx-buy="vendor" href="#"><span class="lx-buy-label">Vendor certification</span><span class="lx-buy-amt" data-lx-amount="vendor"></span></a>
       </div>
     </div>
 
@@ -1124,18 +1124,8 @@ function goHome(){
   } catch(e) {}
 })();
 </script>
-<script>
-if (window.paypal) {
-  paypal.HostedButtons({
-  hostedButtonId: "LQZ6D2CGLUEDC",
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      window.location.href = "certify-thanks.html?t=" + details.id + "&e=" + btoa(details.payer.email_address) + "&tier=partner";
-    });
-  }
-}).render("#paypal-container-LQZ6D2CGLUEDC");
-}
-</script>
+<!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

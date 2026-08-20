@@ -427,7 +427,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
 }
 </style>
-<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+
 <style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
 
 <script type="application/ld+json" id="lunara-schema">{
@@ -552,7 +552,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "What is the Lunara Compliance Intelligence Report?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
           }
         },
         {
@@ -978,15 +978,15 @@ How verification actually works</h2>
       <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.5);max-width:480px;margin:0 auto 28px">For AI agents, autonomous systems, and AI powered platforms that need verified identity in the Lunara Registry. Three month verification cycle with public trust record.</p>
       <div style="background:#000000;border:1px solid rgba(196,164,107,0.35);padding:32px;max-width:400px;margin:0 auto">
         <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:12px">AI Entity Verification</div>
-        <div style="font-size:42px;font-weight:300;color:#C4A46B;font-family:'Cormorant Garamond',serif;margin-bottom:6px">$899</div>
-        <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:24px">3 month verification cycle</div>
+        <div style="font-size:42px;font-weight:300;color:#C4A46B;font-family:'Cormorant Garamond',serif;margin-bottom:6px"><span data-lx-amount="agent">$890</span></div>
+        <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:24px">Twelve month verification cycle</div>
         <ul style="list-style:none;padding:0;margin-bottom:24px;text-align:left">
           <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Verified AI entity identity</li>
           <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Public registry listing with AI designation</li>
           <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Trust badge for your platform</li>
-          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;font-family:'Inter',sans-serif">3 month validity with renewal option</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;font-family:'Inter',sans-serif">Twelve months, renewed by invoice</li>
         </ul>
-        <div id="paypal-container-KYWTM8NGAVA3G" style="min-height:45px"></div>
+        <a class="lx-buy" data-lx-buy="agent" href="#"><span class="lx-buy-label">Verify this entity</span><span class="lx-buy-amt" data-lx-amount="agent"></span></a>
       </div>
     </div>
 
@@ -1235,18 +1235,8 @@ function goHome(){
   } catch(e) {}
 })();
 </script>
-<script>
-if (window.paypal) {
-  paypal.HostedButtons({
-  hostedButtonId: "KYWTM8NGAVA3G",
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      window.location.href = "certify-thanks.html?t=" + details.id + "&e=" + btoa(details.payer.email_address);
-    });
-  }
-}).render("#paypal-container-KYWTM8NGAVA3G");
-}
-</script>
+<!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

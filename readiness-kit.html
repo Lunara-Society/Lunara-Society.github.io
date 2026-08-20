@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.70);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.72);--bg:#000000;--card:#000000}
@@ -256,7 +256,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "What is the Lunara Compliance Intelligence Report?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
           }
         },
         {
@@ -448,23 +448,12 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <div class="kit-box">
 <h2>Compliance Readiness Kit</h2>
-<div class="price">$80</div>
-<div class="price-sub">One time payment</div>
+<div class="price"><span data-lx-amount="kit">$95</span></div>
+<div class="price-sub"><span data-lx-terms="kit">Immediate download</span></div>
 <div class="paypal-wrap">
-<div id="paypal-container-L954695SE2ZDG" style="min-height:45px"></div>
+<a class="lx-buy" data-lx-buy="kit" href="#"><span class="lx-buy-label">Get the kit</span><span class="lx-buy-amt" data-lx-amount="kit"></span></a>
       <p style="font-size:11px;color:rgba(196,164,107,0.5);margin-top:8px">Already purchased? <a href="kit-access.html" style="color:rgba(196,164,107,0.6);text-decoration:underline">Access your kit here</a></p>
-<script>
-if (window.paypal) {
-paypal.HostedButtons({
-hostedButtonId: "L954695SE2ZDG",
-onApprove: function(data, actions) {
-  return actions.order.capture().then(function(details) {
-    window.location.href = "kit-access.html?t=" + details.id + "&e=" + btoa(details.payer.email_address);
-  });
-}
-}).render("#paypal-container-L954695SE2ZDG");
-}
-</script>
+<!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
 </div>
 <div class="instant">Instant access after payment</div>
 </div>
@@ -533,6 +522,7 @@ onApprove: function(data, actions) {
   </div>
 </footer>
 <script src="lunara-clock.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

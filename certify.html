@@ -196,7 +196,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
 }
 </style>
-<script src="https://www.paypal.com/sdk/js?client-id=BAAQEkuekq5353s_SOHZEQZ_hwTQbG6CtDXCemgFTO25tRCgUjZ3T6Gl5kFrk1Zbth7aLBd-QW5FkvZB74&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+
 <style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
 
 <script type="application/ld+json" id="lunara-schema">{
@@ -322,7 +322,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "What is the Lunara Compliance Intelligence Report?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $299 for self-service or $499 with consultation."
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
           }
         },
         {
@@ -578,7 +578,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <div class="tier">
       <span class="tier-badge">Tier I</span>
       <div class="tier-name">Constitutional Audit</div>
-      <div class="tier-price">$75K</div>
+      <div class="tier-price">By arrangement</div>
       <div class="tier-cycle">Recurring annually</div>
       <p class="tier-desc">A formal assessment of your AI governance posture against the seven pillars of the Lunara Constitution, mapped to your selected track. Produces an audit report suitable for regulatory submission and enterprise procurement.</p>
       <ul class="tier-list">
@@ -611,7 +611,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <div class="tier">
       <span class="tier-badge">Tier III</span>
       <div class="tier-name">Constitutional Implementation</div>
-      <div class="tier-price">$150K+</div>
+      <div class="tier-price">By arrangement</div>
       <div class="tier-cycle">Scope dependent</div>
       <p class="tier-desc">End to end constitutional governance design and implementation for enterprise agent fleets. Includes audit, certification, and ongoing institutional advisory tailored to your track.</p>
       <ul class="tier-list">
@@ -683,43 +683,21 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <div style="display:flex;align-items:center;gap:40px;margin-top:40px;flex-wrap:wrap">
     <div style="background:#000000;border:1px solid rgba(196,164,107,0.35);padding:40px 48px;text-align:center;max-width:360px">
       <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:16px">Shield Certification</div>
-      <div style="font-size:48px;font-weight:300;color:rgba(196,164,107,1);font-family:'Cormorant Garamond',serif;margin-bottom:8px">$80</div>
-      <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:28px">One time. Permanent registry entry.</div>
+      <div style="font-size:48px;font-weight:300;color:rgba(196,164,107,1);font-family:'Cormorant Garamond',serif;margin-bottom:8px" data-lx-amount="shield">$120</div>
+      <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:28px">Twelve months. Revocable, and revocations are public.</div>
       <ul style="list-style:none;padding:0;margin-bottom:32px;text-align:left">
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Verified business identity</li>
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Domain ownership verification</li>
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Public Shield Registry listing</li>
         <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Trust badge for your website</li>
-        <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;font-family:'Inter',sans-serif">Annual renewal $149 (optional)</li>
+        <li style="font-size:13px;color:rgba(196,164,107,0.5);padding:8px 0;font-family:'Inter',sans-serif">Renewed by invoice, never auto-charged</li>
       </ul>
-      <div id="paypal-container-L954695SE2ZDG" style="min-height:45px"></div>
-      <script>
-        if (window.paypal) {
-          paypal.HostedButtons({
-            hostedButtonId: "L954695SE2ZDG",
-            onApprove: function(data, actions) {
-              return actions.order.capture().then(function(details) {
-                window.location.href = "certify-thanks.html?t=" + details.id + "&e=" + btoa(details.payer.email_address);
-              });
-            }
-          }).render("#paypal-container-L954695SE2ZDG");
-        }
-      </script>
+      <a class="lx-buy" data-lx-buy="shield" href="#"><span class="lx-buy-label">Verify my business</span><span class="lx-buy-amt" data-lx-amount="shield"></span></a>
+      <!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
       <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(196,164,107,0.12)">
         <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;margin-bottom:12px;text-align:center">Optional Annual Renewal</div>
-        <div id="paypal-container-GKLWWU6UVZJFQ" style="min-height:45px"></div>
-        <script>
-          if (window.paypal) {
-            paypal.HostedButtons({
-              hostedButtonId: "GKLWWU6UVZJFQ",
-              onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                  window.location.href = "certify-thanks.html?t=" + details.id + "&e=" + btoa(details.payer.email_address) + "&tier=entity";
-                });
-              }
-            }).render("#paypal-container-GKLWWU6UVZJFQ");
-          }
-        </script>
+        
+        <!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
       </div>
     </div>
     <div style="flex:1;min-width:280px">
@@ -752,9 +730,9 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       <div class="form-group"><label>Programme Tier</label>
         <select name="tier" required>
           <option value="">Select tier</option>
-          <option value="audit">Tier I — Constitutional Audit ($75K)</option>
+          <option value="audit">Tier I — Constitutional Audit (by arrangement)</option>
           <option value="certification">Tier II — Constitutional Certification</option>
-          <option value="implementation">Tier III — Constitutional Implementation ($150K+)</option>
+          <option value="implementation">Tier III — Constitutional Implementation (by arrangement)</option>
           <option value="pilot">Founding Pilot Seat (July 29)</option>
         </select>
       </div>
@@ -845,6 +823,7 @@ function handleSubmit(e){
 }
 </script>
 <script src="lunara-clock.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

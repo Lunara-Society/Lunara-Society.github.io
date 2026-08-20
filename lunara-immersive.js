@@ -1154,6 +1154,9 @@
     safe('typers', buildTypers);
     safe('current-page', markCurrentPage);
     safe('stow-return', stowReturnControl);
+    safe('reactive-edges', buildReactiveEdges);
+    safe('ambient-life', buildAmbientLife);
+    safe('emblem', buildEmblem);
 
     // Widths settle after fonts and images land; re-check then.
     // Heights settle then too, and the rescue check is a height
@@ -1238,6 +1241,247 @@
 
     window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('scroll', onScroll, { passive: true, capture: true });
+  }
+
+
+  /* ── THE REACTIVE EDGE ────────────────────────────────────────
+     One pointer listener for the whole document rather than one per
+     card. With thirty surfaces on a page, per-card listeners mean
+     thirty handlers firing on every mouse move; this is one, and it
+     only measures the cards near the cursor.
+
+     Positions are written as CSS custom properties and the paint is
+     left entirely to the compositor, which is what keeps this smooth
+     while a page is scrolling. */
+  function buildReactiveEdges() {
+    if (!window.matchMedia || !window.matchMedia('(hover: hover)').matches) return;
+    if (!CSS || !CSS.supports || !CSS.supports('mask-composite', 'exclude')) {
+      if (!CSS.supports('-webkit-mask-composite', 'xor')) return;
+    }
+
+    var SEL = '.card, .pillar, .tier, .price-tier, .layer, .lxq-card,' +
+              '.split-col, .lxf-stratum';
+    var cards = [].slice.call(document.querySelectorAll(SEL));
+    if (!cards.length) return;
+    cards.forEach(function (c) { c.classList.add('lx-edge'); });
+
+    var REACH = 150;      /* px beyond the card before it lights */
+    var boxes = [];
+    var ticking = false;
+    var lastX = 0, lastY = 0;
+
+    function measure() {
+      boxes = cards.map(function (c) {
+        var r = c.getBoundingClientRect();
+        return { el: c, top: r.top + window.pageYOffset, left: r.left + window.pageXOffset,
+                 w: r.width, h: r.height };
+      });
+    }
+
+    function apply() {
+      ticking = false;
+      var px = lastX + window.pageXOffset;
+      var py = lastY + window.pageYOffset;
+
+      for (var i = 0; i < boxes.length; i++) {
+        var b = boxes[i];
+        if (!b.w) continue;
+        var near = px > b.left - REACH && px < b.left + b.w + REACH &&
+                   py > b.top  - REACH && py < b.top  + b.h + REACH;
+        if (near) {
+          b.el.style.setProperty('--lx-mx', ((px - b.left) / b.w * 100).toFixed(1) + '%');
+          b.el.style.setProperty('--lx-my', ((py - b.top) / b.h * 100).toFixed(1) + '%');
+          if (!b.el.classList.contains('lx-near')) b.el.classList.add('lx-near');
+        } else if (b.el.classList.contains('lx-near')) {
+          b.el.classList.remove('lx-near');
+        }
+      }
+    }
+
+    function onMove(e) {
+      lastX = e.clientX; lastY = e.clientY;
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }
+
+    measure();
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }, { passive: true });
+    window.addEventListener('resize', debounce(measure, 200), { passive: true });
+    window.addEventListener('load', measure);
+  }
+
+  /* ── AMBIENT LIFE ─────────────────────────────────────────────
+     A page that only moves when you touch it is a machine. A page
+     that moves on a fixed timer is a metronome, and by the third
+     repeat the eye has learned the interval and starts bracing for
+     it. Neither is a city.
+
+     So: a pool of small events on a randomised interval, never the
+     same one twice running, always at the edge of attention rather
+     than the centre. Nothing here asks for anything. They exist to
+     say the building is occupied.                                */
+  function buildAmbientLife() {
+    if (!window.matchMedia || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var MIN = 18000, MAX = 40000;
+    var last = -1;
+    var timer = null;
+
+    function sweep() {
+      /* A light crossing a section, like headlights past a window. */
+      var targets = document.querySelectorAll('#urgency-band, #constitution-section, .lxf-strata, #cards-section');
+      if (!targets.length) return false;
+      var host = targets[Math.floor(Math.random() * targets.length)];
+      if (!isOnScreen(host)) return false;
+
+      var bar = document.createElement('div');
+      bar.className = 'lx-sweep';
+      var cs = window.getComputedStyle(host);
+      if (cs.position === 'static') host.style.position = 'relative';
+      if (cs.overflow === 'visible') host.style.overflow = 'hidden';
+      host.appendChild(bar);
+      setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 3200);
+      return true;
+    }
+
+    function rake() {
+      /* The emblem catches a rake of light and settles. */
+      var em = document.querySelector('.hero-emblem, .hero-seal, #hero-emblem, .lx-emblem');
+      if (!em || !isOnScreen(em)) return false;
+      em.classList.remove('lx-rake-once');
+      void em.offsetWidth;
+      em.classList.add('lx-rake-once');
+      return true;
+    }
+
+    function ledger() {
+      /* A single registry or clock row briefly illuminates, as though
+         somebody just queried it. */
+      var rows = document.querySelectorAll('.lxc-row, .reg-entry, .pillar-row');
+      var vis = [].filter.call(rows, isOnScreen);
+      if (!vis.length) return false;
+      var row = vis[Math.floor(Math.random() * vis.length)];
+      row.classList.remove('lx-ping');
+      void row.offsetWidth;
+      row.classList.add('lx-ping');
+      setTimeout(function () { row.classList.remove('lx-ping'); }, 2600);
+      return true;
+    }
+
+    function isOnScreen(el) {
+      var r = el.getBoundingClientRect();
+      return r.bottom > 60 && r.top < window.innerHeight - 60 && r.width > 0;
+    }
+
+    var pool = [sweep, rake, ledger];
+
+    function fire() {
+      if (!document.hidden) {
+        /* Try a different event from last time; if it cannot run
+           because its target is off screen, fall through to another
+           rather than wasting the slot. */
+        var order = [];
+        for (var i = 0; i < pool.length; i++) if (i !== last) order.push(i);
+        order.sort(function () { return Math.random() - 0.5; });
+        for (var j = 0; j < order.length; j++) {
+          if (pool[order[j]]()) { last = order[j]; break; }
+        }
+      }
+      schedule();
+    }
+
+    function schedule() {
+      clearTimeout(timer);
+      timer = setTimeout(fire, MIN + Math.random() * (MAX - MIN));
+    }
+
+    /* A tab in the background should not queue up a backlog of
+       events to all fire at once when it returns. */
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) clearTimeout(timer); else schedule();
+    });
+
+    schedule();
+  }
+
+
+  /* ── THE DIMENSIONAL EMBLEM ───────────────────────────────────
+     Tracks the pointer across the whole viewport rather than only
+     over the emblem itself. Tying it to hover would mean the object
+     only came alive once you were already touching it, and the
+     effect worth having is the one you notice from across the page:
+     it turns to follow you before you arrive.
+
+     The highlight moves against the tilt. The metal turns, the light
+     does not, and getting that backwards is what makes cheap 3D look
+     like a sticker. */
+  function buildEmblem() {
+    var host = document.querySelector('.hero-medallion');
+    if (!host) return;
+    if (!window.matchMedia || !window.matchMedia('(hover: hover)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var MAX_TILT = 11;      /* degrees; beyond this it reads as a gimmick */
+    var ticking = false;
+    var px = 0, py = 0;
+    var inRange = false;
+
+    function apply() {
+      ticking = false;
+      var r = host.getBoundingClientRect();
+      if (!r.width) return;
+
+      var cx = r.left + r.width / 2;
+      var cy = r.top + r.height / 2;
+
+      /* Normalised against a generous radius so the emblem responds
+         to the pointer well before it reaches it. */
+      var reach = Math.max(window.innerWidth, window.innerHeight) * 0.42;
+      var dx = Math.max(-1, Math.min(1, (px - cx) / reach));
+      var dy = Math.max(-1, Math.min(1, (py - cy) / reach));
+
+      host.style.setProperty('--lx-ry', (dx * MAX_TILT).toFixed(2) + 'deg');
+      host.style.setProperty('--lx-rx', (-dy * MAX_TILT).toFixed(2) + 'deg');
+
+      /* Opposite sign, and a shorter throw, so the highlight slides
+         across the face rather than sticking to it. */
+      host.style.setProperty('--lx-sx', (50 - dx * 26).toFixed(1) + '%');
+      host.style.setProperty('--lx-sy', (34 - dy * 18).toFixed(1) + '%');
+
+      if (!inRange) { host.classList.add('lx-tracking'); inRange = true; }
+    }
+
+    function onMove(e) {
+      px = e.clientX; py = e.clientY;
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }
+
+    function rest() {
+      host.classList.remove('lx-tracking');
+      inRange = false;
+      host.style.setProperty('--lx-rx', '0deg');
+      host.style.setProperty('--lx-ry', '0deg');
+      host.style.setProperty('--lx-sx', '50%');
+      host.style.setProperty('--lx-sy', '34%');
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseleave', rest);
+    window.addEventListener('blur', rest);
+    window.addEventListener('scroll', function () {
+      /* Once the emblem is off screen there is nothing to track and
+         no reason to keep measuring it. */
+      var r = host.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) rest();
+    }, { passive: true });
   }
 
   if (document.readyState === 'loading') {

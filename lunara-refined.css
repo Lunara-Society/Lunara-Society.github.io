@@ -126,7 +126,7 @@ body.lx-has-banner .lx-fixed-header {
     transparent 20%,
     rgba(244,229,196,0.13) 48%,
     transparent 72%);
-  background-size: 220% 100%;
+  background-size: 138% 100%;
   animation: lx-banner-shine 9s var(--lx-ease) infinite;
 }
 
@@ -2372,4 +2372,565 @@ a.back,
 @media (prefers-reduced-motion: reduce) {
   #mob-back-btn { transition: opacity 0.2s ease; }
   #mob-back-btn.lx-stow { transform: none; opacity: 0; }
+}
+
+/* ══ 20. THE SPECULAR SCALE ══════════════════════════════════
+   Gold that looked flat, and why.
+
+   The palette had one working gold at #C4A46B and used it almost
+   everywhere at between 0.36 and 0.72 opacity. Nothing was ever at
+   full strength and nothing was ever truly dim. That is what made
+   the site read as desert: a uniform mid-brightness across every
+   surface, so nothing recedes, nothing blazes, and the eye finds no
+   landmark to travel toward.
+
+   A night city is darker on average than a desert. The life is in
+   the range, not the mean. So the supporting text goes down and the
+   headlines go up, and a true specular highlight is introduced that
+   did not exist anywhere before.
+
+   The second problem is that no single hex can look like metal. Gold
+   in the world is a gradient across a specular range: bronze where
+   it turns away from the light, saturated amber through the midtone,
+   and near-white at the point the light hits square on. One flat
+   colour is paint. Five stops is metal.                           */
+
+:root {
+  /* the ramp, darkest to brightest */
+  --lx-m-ember:  #4A3819;
+  --lx-m-shadow: #7A5D2E;
+  --lx-m-base:   #C4A46B;
+  --lx-m-lit:    #E2C892;
+  --lx-m-pale:   #F4E5C4;
+  /* The highlight the site never had. Nothing else goes this bright,
+     which is exactly why it reads as a light source rather than a
+     lighter tan. */
+  --lx-m-spark:  #FFF6DC;
+
+  /* Text at rest sits lower than it used to. Dimmer surroundings are
+     what let the headline gradient register as illuminated. */
+  --lx-t-faint:  rgba(196,164,107,0.30);
+  --lx-t-quiet:  rgba(214,190,146,0.44);
+  --lx-t-body:   rgba(226,205,166,0.62);
+  --lx-t-strong: rgba(244,229,196,0.86);
+
+  /* The raking angle. Kept in one place so every metal surface on the
+     site is lit from the same direction; inconsistent light is the
+     fastest way to make a set of materials look fake. */
+  --lx-light-angle: 168deg;
+}
+
+/* ── 20.1 METAL TYPE ─────────────────────────────────────────
+   The gradient runs across the letterforms rather than down them.
+   Down reads as a cheap chrome effect from 2003; across reads as a
+   raking light, because that is how a light actually crosses a
+   surface at a shallow angle.
+
+   Guarded by @supports and by an explicit colour set first, so a
+   browser that cannot clip a background to text keeps solid gold
+   instead of rendering nothing at all. Invisible headlines are a
+   far worse failure than flat ones.                            */
+
+.lx-metal-type {
+  color: var(--lx-m-lit);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .lx-metal-type {
+    background-image: linear-gradient(
+      var(--lx-light-angle),
+      var(--lx-m-ember)  0%,
+      var(--lx-m-shadow) 14%,
+      var(--lx-m-base)   30%,
+      var(--lx-m-pale)   45%,
+      var(--lx-m-spark)  53%,
+      var(--lx-m-pale)   62%,
+      var(--lx-m-base)   78%,
+      var(--lx-m-shadow) 92%,
+      var(--lx-m-ember)  100%
+    );
+    background-size: 138% 100%;
+    background-position: 50% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    /* A faint warm bloom under the glyphs. Real metal throws a little
+       light onto what it sits on. */
+    filter: drop-shadow(0 0 18px rgba(196,164,107,0.18));
+  }
+}
+
+/* The headline set. These were already the loudest gold on the site,
+   so they are the ones that become metal; everything else stays flat
+   and quiet on purpose. Promoting all gold text would recreate the
+   uniformity this section exists to break. */
+.hero-title,
+.const-text h2,
+.cards-header h2,
+.lxc-title,
+.lxq-title,
+.lxf-seal-title,
+#authority-content h2,
+.urgency-inner h2 {
+  color: var(--lx-m-lit);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-title,
+  .const-text h2,
+  .cards-header h2,
+  .lxc-title,
+  .lxq-title,
+  #authority-content h2,
+  .urgency-inner h2 {
+    background-image: linear-gradient(
+      var(--lx-light-angle),
+      var(--lx-m-ember)  0%,
+      var(--lx-m-shadow) 14%,
+      var(--lx-m-base)   30%,
+      var(--lx-m-pale)   45%,
+      var(--lx-m-spark)  53%,
+      var(--lx-m-pale)   62%,
+      var(--lx-m-base)   78%,
+      var(--lx-m-shadow) 92%,
+      var(--lx-m-ember)  100%
+    );
+    background-size: 138% 100%;
+    background-position: 50% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 0 20px rgba(196,164,107,0.16));
+  }
+
+  /* An italic <em> inside a metal headline would otherwise inherit
+     transparent fill with no background of its own and vanish. */
+  .hero-title em,
+  .const-text h2 em,
+  .cards-header h2 em,
+  #authority-content h2 em,
+  .urgency-inner h2 em {
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
+/* The light travels when the headline arrives, once, and stops. A
+   permanently sweeping highlight is jewellery-shop signage; a single
+   pass reads as the light finding the object. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .lx-in .hero-title,
+    .lx-in .const-text h2,
+    .lx-in .lxc-title,
+    .reveal.lx-in .lxq-title {
+      animation: lx-rake 1.9s cubic-bezier(0.3, 0.7, 0.2, 1) 0.15s both;
+    }
+  }
+}
+@keyframes lx-rake {
+  from { background-position: 96% 0; }
+  to   { background-position: 50% 0; }
+}
+
+/* ── 20.2 DIMMING THE SURROUND ───────────────────────────────
+   Half of making something bright is making its neighbours darker.
+   These are the supporting roles: eyebrows, captions, citations and
+   micro-labels, all pulled down so the headline set has somewhere to
+   be bright against.                                            */
+
+.lxc-jur, .lxc-unit, .lxc-glabel, .lxc-cite,
+.lxf-stratum-label, .lxf-cap, .lxq-note,
+.lxc-foot, .split-label {
+  color: var(--lx-t-faint);
+}
+
+.lxc-sum, .lxf-demand, .lxf-stratum p, .lxq-lede {
+  color: var(--lx-t-quiet);
+}
+
+/* ── 20.3 THE SPARK ──────────────────────────────────────────
+   One class, used sparingly, for the few glyphs that should read as
+   the brightest thing on the page. */
+.lx-spark { color: var(--lx-m-spark) !important; }
+
+/* ══ 21. BLACK METAL ═════════════════════════════════════════
+   Cards were flat black rectangles with a hairline border. Flat is
+   the problem: a real surface tells you where the light is, and a
+   uniform fill tells you nothing, so a page of them reads as paper
+   rather than as objects in a room.
+
+   Three layers do the work, and they are stacked in the order a
+   physical surface would have them.
+
+   1. A base that is not uniform. Slightly lifted at the top edge,
+      falling to near-black at the bottom, which implies a light
+      source above and gives the card a top and a bottom.
+   2. A machined bevel. One hairline at the very top edge, brighter
+      than the rest of the border. This single line is what separates
+      "black rectangle" from "milled metal", because it is the only
+      part of a bevel a camera would actually catch.
+   3. A shadow that drifts. Cast opposite the light and moving a few
+      pixels over twelve seconds, so the card sits in a room where
+      something is moving rather than in a vacuum.               */
+
+.card, .pillar, .tier, .price-tier, .layer,
+.lxq-card, .split-col, .lxf-stratum,
+.dash-section > div[style*="border"] {
+  position: relative;
+  background-image: linear-gradient(
+    177deg,
+    rgba(28,23,13,0.92) 0%,
+    rgba(14,12,7,0.96) 38%,
+    rgba(6,5,3,0.99) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(244,229,196,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.6),
+    0 22px 48px -30px rgba(0,0,0,1);
+  transition:
+    box-shadow 0.55s cubic-bezier(0.2,0.7,0.2,1),
+    border-color 0.55s ease,
+    transform 0.55s cubic-bezier(0.2,0.7,0.2,1);
+}
+
+/* The drifting shadow. Applied only to the larger surfaces, because
+   twenty cards each running their own animation is a battery bill,
+   not an atmosphere. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+  .card, .lxf-stratum, .split-col {
+    animation: lx-drift 13s ease-in-out infinite alternate;
+  }
+  .card:nth-child(2n)  { animation-delay: -3.2s; }
+  .card:nth-child(3n)  { animation-delay: -6.7s; }
+  .lxf-stratum:nth-child(2n) { animation-delay: -4.5s; }
+}
+
+@keyframes lx-drift {
+  from {
+    box-shadow:
+      inset 0 1px 0 rgba(244,229,196,0.10),
+      inset 0 -1px 0 rgba(0,0,0,0.6),
+      -4px 20px 46px -30px rgba(0,0,0,1);
+  }
+  to {
+    box-shadow:
+      inset 0 1px 0 rgba(244,229,196,0.14),
+      inset 0 -1px 0 rgba(0,0,0,0.6),
+      5px 26px 52px -30px rgba(0,0,0,1);
+  }
+}
+
+/* ── 21.1 THE REACTIVE EDGE ──────────────────────────────────
+   The border lights at the point nearest the pointer and follows it.
+   This is the piece that makes a surface feel alive, because it is
+   the card responding to you specifically rather than performing a
+   loop at everyone.
+
+   Drawn as a masked overlay rather than as a real border, so the
+   glow can be a radial gradient positioned anywhere along the frame.
+   --lx-mx and --lx-my are written by the pointer handler; when they
+   are absent the overlay is simply invisible and the card is exactly
+   what it was before.                                            */
+
+.lx-edge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    240px circle at var(--lx-mx, 50%) var(--lx-my, 0%),
+    rgba(255,246,220,0.85) 0%,
+    rgba(226,200,146,0.42) 26%,
+    rgba(196,164,107,0) 62%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lx-edge.lx-near::after { opacity: 1; }
+
+/* A warmer surface under the pointer as well as a lit edge; light
+   falling on a frame falls on the face too. */
+.lx-edge.lx-near {
+  border-color: rgba(196,164,107,0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(244,229,196,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.6),
+    0 26px 56px -28px rgba(0,0,0,1),
+    0 0 44px -14px rgba(196,164,107,0.30);
+}
+
+/* Touch devices have no pointer to track, so the edge would never
+   light. They get a single quiet pass on reveal instead. */
+@media (hover: none) {
+  .lx-edge::after { display: none; }
+}
+
+/* ══ 22. AMBIENT LIFE ════════════════════════════════════════
+   The visual half of the event pool. Each of these runs once and
+   removes itself; none of them loops. A loop is a metronome, and
+   the point of the whole system is that the page has weather rather
+   than a pulse.                                                  */
+
+/* A light crossing a section. Steeply raked and narrow, so it reads
+   as something passing outside rather than as a scanning effect. */
+.lx-sweep {
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 26%;
+  height: 180%;
+  pointer-events: none;
+  z-index: 1;
+  transform: rotate(14deg);
+  background: linear-gradient(
+    90deg,
+    rgba(196,164,107,0) 0%,
+    rgba(226,200,146,0.075) 45%,
+    rgba(255,246,220,0.11) 50%,
+    rgba(226,200,146,0.075) 55%,
+    rgba(196,164,107,0) 100%
+  );
+  animation: lx-sweep-pass 3.1s cubic-bezier(0.4, 0, 0.5, 1) forwards;
+}
+@keyframes lx-sweep-pass {
+  from { left: -30%; opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  to   { left: 118%; opacity: 0; }
+}
+
+/* A row briefly illuminating, as though it had just been read. */
+.lx-ping {
+  animation: lx-ping-glow 2.5s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+}
+@keyframes lx-ping-glow {
+  0%   { background-color: rgba(196,164,107,0); }
+  18%  { background-color: rgba(196,164,107,0.055); }
+  100% { background-color: rgba(196,164,107,0); }
+}
+.lx-ping .lxc-count,
+.lx-ping .pillar-name,
+.lx-ping .reg-name {
+  animation: lx-ping-text 2.5s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+}
+@keyframes lx-ping-text {
+  0%   { color: inherit; }
+  18%  { color: #FFF6DC; }
+  100% { color: inherit; }
+}
+
+/* The emblem catching a rake of light. */
+.lx-rake-once { animation: lx-emblem-rake 2.4s cubic-bezier(0.3,0.7,0.2,1) forwards; }
+@keyframes lx-emblem-rake {
+  0%   { filter: none; }
+  30%  { filter: brightness(1.22) drop-shadow(0 0 26px rgba(255,246,220,0.34)); }
+  100% { filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-sweep, .lx-ping, .lx-rake-once { animation: none !important; }
+  .lx-sweep { display: none; }
+}
+
+/* ══ 23. THE REGISTRY, AS A CITY AT NIGHT ════════════════════
+   The metaphor and the product are the same thing here, which is
+   why this is the one piece of imagery on the site that is not
+   decoration. A lit window is an entity whose identity has been
+   verified and whose governance framework is on the public record.
+   A dark window is a company that exists and cannot be checked.
+   The ratio is the pitch: most of the city is dark.
+
+   Drawn rather than photographed, so it is sixteen kilobytes, it is
+   exactly the right gold, it is crisp on any display, and the
+   windows can actually light up. A photograph could do none of that.  */
+
+.lxsky-band {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(196,164,107,0.10);
+  background: #000;
+}
+
+.lxsky {
+  display: block;
+  width: 100%;
+  height: clamp(230px, 30vw, 400px);
+}
+
+/* Windows breathe rather than blink. A blink reads as a fault; a
+   slow swell reads as occupancy. Each carries its own delay and
+   duration from the markup so no two are ever in step, which is what
+   stops a grid of squares looking like a loading spinner. */
+.lxsky-lit {
+  fill: #FFF6DC;
+  opacity: 0.5;
+  animation: lxsky-breathe var(--t, 5s) ease-in-out var(--d, 0s) infinite alternate;
+}
+@keyframes lxsky-breathe {
+  from { opacity: 0.28; }
+  to   { opacity: 0.92; }
+}
+
+/* The ground haze: light pooling above the city, which is what makes
+   a skyline feel like it has air in front of it. */
+.lxsky-band::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 52%;
+  pointer-events: none;
+  /* Doubles as the ground haze and as the scrim the caption sits on.
+     The first attempt used a 42% wash and the caption was unreadable
+     across the lit windows behind it; deepening the base and holding
+     it opaque for the first third gives the type a floor to stand on
+     while still reading as light pooling over the city. */
+  background: linear-gradient(0deg,
+    rgba(0,0,0,0.97) 0%,
+    rgba(0,0,0,0.88) 32%,
+    rgba(0,0,0,0.45) 66%,
+    rgba(0,0,0,0) 100%);
+}
+
+.lxsky-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 22px;
+  z-index: 2;
+  text-align: center;
+  padding: 0 22px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11.5px;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+  color: rgba(214,190,146,0.72);
+  text-shadow: 0 1px 12px rgba(0,0,0,0.95), 0 0 3px rgba(0,0,0,0.9);
+}
+.lxsky-caption b { font-weight: 400; color: #FFF6DC; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lxsky-lit { animation: none; opacity: 0.62; }
+}
+@media print {
+  .lxsky-lit { animation: none; opacity: 0.8; }
+}
+
+/* ══ 24. THE DIMENSIONAL EMBLEM ══════════════════════════════
+   The emblem is the most valuable object on the site and it was a
+   flat PNG with a CSS glow behind it. It should behave like struck
+   metal: tilt toward you, catch a highlight that moves against the
+   tilt, and settle when you leave it alone.
+
+   Built with real perspective transforms rather than WebGL, and the
+   reasoning is worth recording because it will be questioned. A
+   Three.js build of this is roughly six hundred kilobytes before a
+   single pixel of the emblem arrives, on a site whose readers sit
+   behind hospital and corporate proxies, frequently on a phone. It
+   would also fail to a blank rectangle wherever WebGL is refused.
+   This is about two kilobytes, uses genuine 3D transforms with a
+   real light model, degrades to precisely the PNG that is there
+   today, and cannot fail to nothing. If we ever need to orbit a
+   complex model, that is the moment for WebGL. One disc is not.  */
+
+.hero-medallion {
+  perspective: 620px;
+  perspective-origin: 50% 45%;
+  position: relative;
+  display: inline-block;
+  /* Rewritten by the pointer handler; these defaults are what the
+     emblem rests at when nothing is tracking it. */
+  --lx-rx: 0deg;
+  --lx-ry: 0deg;
+  --lx-sx: 50%;
+  --lx-sy: 34%;
+}
+
+.hero-medallion .hero-logo-img {
+  display: block;
+  transform:
+    rotateX(var(--lx-rx))
+    rotateY(var(--lx-ry))
+    translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.16, 0.8, 0.24, 1);
+  will-change: transform;
+}
+
+/* Tracking is live, so the long settle transition must not fight it.
+   The class is removed on pointer leave and the emblem eases home. */
+.hero-medallion.lx-tracking .hero-logo-img {
+  transition: transform 0.11s linear;
+}
+
+/* The specular. A tight highlight riding above the artwork, moving
+   against the tilt because that is what a highlight does: the metal
+   turns, the light does not. Screen blending keeps it as light
+   falling on the surface rather than paint sitting on top of it. */
+.hero-medallion::after {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    38% 30% at var(--lx-sx) var(--lx-sy),
+    rgba(255,246,220,0.42) 0%,
+    rgba(226,200,146,0.16) 34%,
+    rgba(196,164,107,0) 68%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  transition: background-position 0.3s ease;
+}
+
+/* A rim that brightens on the side turning toward the light, which
+   is what sells the edge as having thickness. */
+.hero-medallion::before {
+  content: '';
+  position: absolute;
+  inset: -3%;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 2px rgba(255,246,220,0.30),
+    inset 0 -2px 5px rgba(0,0,0,0.7);
+  opacity: 0.9;
+}
+
+/* Without a pointer there is nothing to track, so the emblem drifts
+   on its own instead: a very slow, shallow turn, as though it were
+   hanging. Nothing on a phone should ever look frozen. */
+@media (hover: none) {
+  .hero-medallion .hero-logo-img {
+    animation: lx-emblem-hang 14s ease-in-out infinite alternate;
+  }
+  .hero-medallion::after {
+    animation: lx-emblem-spec 14s ease-in-out infinite alternate;
+  }
+}
+@keyframes lx-emblem-hang {
+  from { transform: rotateX(3.5deg) rotateY(-5deg); }
+  to   { transform: rotateX(-3deg) rotateY(5.5deg); }
+}
+@keyframes lx-emblem-spec {
+  from { background-position: 62% 26%; }
+  to   { background-position: 38% 42%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-medallion .hero-logo-img { animation: none; transition: none; transform: none; }
+  .hero-medallion::after { animation: none; }
 }

@@ -3671,3 +3671,87 @@ a.back,
 @media (prefers-reduced-motion: reduce) {
   .lxr-says { transition-delay: 0s; transform: none; }
 }
+
+/* ══ 32. DISCRETION ══════════════════════════════════════════
+   Three complaints, all fair, all the same complaint underneath:
+   she was present when nobody had asked for her.
+
+   She was on every page, which turned a discovery into furniture.
+   She was there on arrival, competing with the headline someone had
+   just landed to read. And she stayed put while the page moved,
+   which on a phone meant sitting over the copy during exactly the
+   moments somebody was trying to read past her.
+
+   So she is home only, offered rather than presented, and she
+   withdraws whenever the page is in motion. The resting state is
+   also quieter: this should read as something noticed at the edge
+   of vision, never as something waiting to be dealt with.       */
+
+/* Absent until offered. Not display:none, because she must be able
+   to fade in rather than appear. */
+#lx-ros {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .9s ease, transform .9s cubic-bezier(0.2,0.8,0.2,1);
+}
+#lx-ros.lxr-here {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+/* Out of the way while the page is moving. Quick to leave and
+   unhurried to return, so she never flickers during a scroll and
+   never races the reader back onto the screen. */
+#lx-ros.lxr-moving:not(.lxr-open) {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px);
+  transition: opacity .22s ease, transform .22s ease;
+}
+
+/* Quieter at rest. The previous mark carried a lit border and a
+   full-strength core; at that weight it read as a notification
+   badge, which is the one thing it must never be. */
+.lxr-orb {
+  border-color: rgba(196,164,107,0.22);
+  background: radial-gradient(circle at 50% 38%,
+              rgba(18,15,9,0.88), rgba(5,4,2,0.92));
+  box-shadow: inset 0 1px 0 rgba(244,229,196,0.06),
+              0 8px 20px -14px rgba(0,0,0,1);
+  opacity: 0.72;
+  transition: border-color .4s ease, box-shadow .4s ease,
+              transform .4s cubic-bezier(0.2,0.8,0.2,1), opacity .4s ease;
+}
+.lxr-orb:hover { opacity: 1; }
+
+.lxr-core {
+  width: 6px; height: 6px;
+  background: #C4A46B;
+  box-shadow: 0 0 8px rgba(196,164,107,0.7);
+}
+
+/* Shallower breath and a fainter ring: still alive, no longer
+   asking. */
+@keyframes lxr-breathe {
+  0%,100% { opacity: .28; transform: scale(.8); }
+  50%     { opacity: .82; transform: scale(1.02); }
+}
+@keyframes lxr-ring {
+  0%   { transform: scale(1);   opacity: .28; }
+  70%  { transform: scale(1.55); opacity: 0; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+@media (max-width: 720px) {
+  /* Further out of the way on the screen where she was in it. */
+  #lx-ros { right: 12px; bottom: 12px; }
+  .lxr-orb { width: 42px; height: 42px; opacity: 0.62; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lx-ros { transition: opacity .3s ease; transform: none; }
+  #lx-ros.lxr-here { transform: none; }
+  #lx-ros.lxr-moving:not(.lxr-open) { transform: none; }
+}

@@ -1711,8 +1711,22 @@
      footer, so nothing here is the only route to anything. */
   function buildRosario() {
     if (document.getElementById('lx-ros')) return;
-    /* The splash and activation pages are their own thing. */
-    if (/\/(index|activation)\.html?$/.test(location.pathname)) return;
+
+    /* Home only. She was on every page, which made a character that
+       is meant to be a discovery into furniture, and on a phone she
+       was competing with the copy on pages people arrive at to read
+       one specific thing. A visitor who wants her can find her where
+       the site begins; everywhere else the page is the point. */
+    var here = (location.pathname.split('/').pop() || 'home').replace(/\.html?$/, '');
+    if (here !== 'home') return;
+
+    /* Once dismissed she stays gone for the rest of the session.
+       Re-offering something somebody has already declined is the
+       precise behaviour that makes these things resented. */
+    try {
+      if (window.sessionStorage &&
+          sessionStorage.getItem('lx-ros-dismissed') === '1') return;
+    } catch (e) {}
 
     var CMDS = [
       { g: '☷', t: 'Menu',            act: 'menu' },
@@ -1836,7 +1850,13 @@
     });
     var close = el('button', 'lxr-close', 'Dismiss');
     close.type = 'button';
-    close.addEventListener('click', function () { setOpen(false); });
+    close.addEventListener('click', function () {
+      setOpen(false);
+      /* An explicit dismissal is an answer, not a pause. */
+      root.classList.remove('lxr-here');
+      offered = true;
+      try { if (window.sessionStorage) sessionStorage.setItem('lx-ros-dismissed', '1'); } catch (e) {}
+    });
     cmds.appendChild(close);
     stage.appendChild(cmds);
 
@@ -1949,6 +1969,53 @@
     }
 
     orb.addEventListener('click', function () { setOpen(true); });
+
+    /* ── WHEN SHE IS OFFERED AT ALL ────────────────────────────
+       Not on arrival. A visitor landing on the homepage is reading
+       the headline, and something appearing in the corner at that
+       moment is an interruption rather than an offer.
+
+       She waits until the reader has settled: far enough down to
+       have chosen to stay, and still for a moment. Failing that she
+       surfaces on a slow timer, so a reader who never scrolls is not
+       excluded from finding her.
+
+       And she withdraws while the page is moving. That is what fixes
+       the real complaint: on a phone she sat over the copy during
+       exactly the moments somebody was trying to read past her. */
+    var SETTLE = 900;         /* ms of stillness before she is offered */
+    var DEPTH  = 0.14;        /* proportion of the page scrolled */
+    var PATIENCE = 26000;     /* ms before offering regardless */
+    var offered = false, stillTimer = null, scrollTimer = null;
+
+    function offer() {
+      if (offered) return;
+      offered = true;
+      root.classList.add('lxr-here');
+    }
+
+    function onScrollOffer() {
+      /* While she is open the reader is using her; withdrawing then
+         would be the site fighting the person operating it. */
+      if (!root.classList.contains('lxr-open')) {
+        root.classList.add('lxr-moving');
+      }
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () {
+        root.classList.remove('lxr-moving');
+      }, 420);
+
+      if (offered) return;
+      var doc = document.documentElement;
+      var max = Math.max(1, doc.scrollHeight - window.innerHeight);
+      var depth = (window.pageYOffset || doc.scrollTop) / max;
+      clearTimeout(stillTimer);
+      if (depth >= DEPTH) stillTimer = setTimeout(offer, SETTLE);
+    }
+
+    window.addEventListener('scroll', onScrollOffer, { passive: true });
+    document.addEventListener('scroll', onScrollOffer, { passive: true, capture: true });
+    setTimeout(offer, PATIENCE);
 
     /* Re-checked rather than measured once. The scorer's panel fades
        in, so at load it is still transparent, the opacity guard skips

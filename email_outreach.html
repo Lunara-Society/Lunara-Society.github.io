@@ -42,8 +42,20 @@
   Every colour is stated on the element rather than inherited, since
   Gmail strips the head <style> when a message is forwarded.
 
-  Placeholders: {{PREHEADER}} {{GREETING}} {{OPENING}} {{BODY}}
-                {{PULL}} {{ASK}} {{CTA_LABEL}} {{CTA_URL}} {{OPTOUT}}
+  Placeholders, named without their braces so that a find-and-replace
+  cannot splice the letter into this comment:
+
+    PREHEADER  the inbox preview line, and the only text most
+               recipients read before deciding
+    GREETING   "Dear Dr Vogel" — no trailing comma, the markup has one
+    OPENING    the headline. One sentence. It is set at 31px, so it
+               wants to be short
+    BODY       the paragraph that earns the pull quote
+    PULL       the single claim worth remembering
+    ASK        what you want them to do, and why it costs them nothing
+    CTA_LABEL  three or four words, rendered in caps by the styling
+    CTA_URL    absolute, https
+    OPTOUT     required on cold outreach. Say it plainly
 -->
 </head>
 <body style="margin:0;padding:0;background-color:#050403;">

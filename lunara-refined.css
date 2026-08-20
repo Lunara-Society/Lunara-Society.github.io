@@ -2934,3 +2934,157 @@ a.back,
   .hero-medallion .hero-logo-img { animation: none; transition: none; transform: none; }
   .hero-medallion::after { animation: none; }
 }
+
+/* ══ 25. THIRTY SECONDS ══════════════════════════════════════
+   The homepage asked people to read. This asks them a question.
+
+   The scorer's own opening question is "what is your EU AI Act risk
+   category", which is a reasonable thing to ask someone who has
+   committed to a five-section assessment and a terrible thing to ask
+   a stranger, because the classification is precisely what they
+   arrived not knowing. A hook cannot require the answer it promises.
+
+   These three can be answered by anyone in a second without looking
+   anything up, and each one returns a real finding rather than a
+   score. The last panel tells a visitor plainly when nothing binds
+   them, which costs a lead and buys the only thing this institution
+   actually sells.                                                 */
+
+.lx30 { max-width: 720px; margin: 0 auto; text-align: center; }
+
+.lx30-eyebrow {
+  font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(196,164,107,0.55); margin-bottom: 16px;
+}
+.lx30-eyebrow::after {
+  content: ''; display: inline-block; width: 5px; height: 5px;
+  margin-left: 9px; border-radius: 50%; background: #C4A46B;
+  vertical-align: middle; animation: lxc-pulse 3.4s ease-in-out infinite;
+}
+
+.lx30-stage { position: relative; min-height: 250px; }
+
+.lx30-step {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-start;
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2,0.8,0.2,1);
+  pointer-events: none;
+}
+.lx30-step.lx30-on { opacity: 1; transform: none; pointer-events: auto; }
+
+.lx30-q {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(25px, 3.6vw, 38px);
+  font-weight: 300; line-height: 1.24; color: #f0e0b0;
+  margin: 0 0 12px;
+}
+.lx30-hint {
+  font-size: 13px; line-height: 1.75; color: rgba(220,200,160,0.45);
+  margin: 0 auto 30px; max-width: 52ch;
+}
+
+.lx30-opts { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Deliberately large. This is the first thing on the page a visitor
+   can act on, and a small target says the site does not expect to be
+   used. Comfortably past the 24px minimum on every axis. */
+.lx30-opt {
+  background: linear-gradient(177deg, rgba(28,23,13,0.9), rgba(8,7,4,0.98));
+  border: 1px solid rgba(196,164,107,0.28);
+  color: #E2C892;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px; letter-spacing: 0.1em;
+  padding: 16px 30px; min-height: 52px;
+  cursor: pointer;
+  transition: border-color .3s, background .3s, color .3s, transform .3s;
+}
+.lx30-opt:hover {
+  border-color: rgba(196,164,107,0.7);
+  color: #FFF6DC;
+  transform: translateY(-2px);
+  box-shadow: 0 0 34px -12px rgba(196,164,107,0.42);
+}
+.lx30-opt:focus-visible { outline: 2px solid #C4A46B; outline-offset: 3px; }
+
+.lx30-prog {
+  display: flex; gap: 7px; justify-content: center; margin-top: 34px;
+}
+.lx30-dot {
+  width: 22px; height: 2px; background: rgba(196,164,107,0.18);
+  transition: background .4s ease;
+}
+.lx30-dot.on { background: #C4A46B; }
+
+/* ── the verdict ── */
+.lx30-verdict { text-align: left; }
+.lx30-vhead {
+  font-size: 9.5px; letter-spacing: 0.26em; text-transform: uppercase;
+  margin-bottom: 10px; color: #E2C47A;
+}
+.lx30-verdict.lx30-clear .lx30-vhead { color: rgba(196,164,107,0.55); }
+
+.lx30-vtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(22px, 3vw, 31px); font-weight: 300; line-height: 1.28;
+  color: #f0e0b0; margin: 0 0 14px;
+}
+.lx30-vbody {
+  font-size: 14px; line-height: 1.85; color: rgba(220,200,160,0.6);
+  margin: 0 0 8px;
+}
+.lx30-vlist { list-style: none; margin: 16px 0 20px; }
+.lx30-vlist li {
+  font-size: 13px; line-height: 1.8; color: rgba(220,200,160,0.55);
+  padding-left: 18px; position: relative; margin-bottom: 7px;
+}
+.lx30-vlist li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 6px; height: 1px; background: #C4A46B;
+}
+.lx30-vlist b { font-weight: 400; color: #F4E5C4; }
+
+.lx30-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
+.lx30-cta {
+  display: inline-block; border: 1px solid rgba(196,164,107,0.5);
+  padding: 14px 32px; color: #C4A46B; text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  transition: background .3s, border-color .3s, color .3s;
+}
+.lx30-cta:hover { background: rgba(196,164,107,0.1); border-color: #C4A46B; color: #FFF6DC; }
+.lx30-again {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(196,164,107,0.5); padding: 8px 4px; min-height: 32px;
+}
+.lx30-again:hover { color: #E2C892; }
+
+@media (max-width: 620px) {
+  .lx30-opts { flex-direction: column; }
+  .lx30-opt { width: 100%; }
+  .lx30-stage { min-height: 340px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lx30-step { transition: opacity 0.2s ease; transform: none; }
+  .lx30-step.lx30-on { transform: none; }
+  .lx30-eyebrow::after { animation: none; }
+}
+
+/* ══ 26. PARALLAX ════════════════════════════════════════════
+   Depth is the one thing a flat page cannot fake with colour. The
+   skyline moves in two planes: distant towers drift slowly, the
+   near ones track faster, and the gap between them is what the eye
+   reads as distance.
+
+   Driven by a transform on a wrapper rather than by background
+   position, so the whole thing stays on the compositor and never
+   touches layout while scrolling.                               */
+
+.lx-par { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-par { transform: none !important; }
+}

@@ -1157,6 +1157,8 @@
     safe('reactive-edges', buildReactiveEdges);
     safe('ambient-life', buildAmbientLife);
     safe('emblem', buildEmblem);
+    safe('thirty-seconds', buildThirtySeconds);
+    safe('parallax', buildParallax);
 
     // Widths settle after fonts and images land; re-check then.
     // Heights settle then too, and the rescue check is a height
@@ -1482,6 +1484,168 @@
       var r = host.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) rest();
     }, { passive: true });
+  }
+
+
+  /* ── THIRTY SECONDS ───────────────────────────────────────────
+     Three answers, then a verdict that is allowed to say nothing
+     binds you. That last part is the whole reason this is worth
+     building: a qualifier that only ever escalates is a sales
+     funnel, and this institution's entire product is being right
+     rather than being alarming. A visitor told plainly that they
+     are outside scope is a visitor who believes the next thing we
+     say. */
+  function buildThirtySeconds() {
+    var root = document.getElementById('lx30');
+    if (!root) return;
+    var steps = [].slice.call(root.querySelectorAll('.lx30-step'));
+    var dots  = [].slice.call(root.querySelectorAll('.lx30-dot'));
+    var out   = document.getElementById('lx30-verdict');
+    if (!steps.length || !out) return;
+
+    var answers = [];
+
+    function show(i) {
+      steps.forEach(function (s, n) { s.classList.toggle('lx30-on', n === i); });
+      dots.forEach(function (d, n) { d.classList.toggle('on', n <= Math.min(i, dots.length - 1)); });
+      var live = steps[i].querySelector('.lx30-opt');
+      if (live && i > 0) live.focus({ preventScroll: true });
+    }
+
+    function esc(t) {
+      return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    }
+
+    function verdict() {
+      var talks = answers[0], makes = answers[1], eu = answers[2];
+      var unsure = answers.indexOf('unsure') > -1;
+      var engages = talks === 'yes' || makes === 'yes';
+
+      var head, title, body, items = [], clear = false;
+
+      if (eu === 'no' && !engages) {
+        clear = true;
+        head = 'Nothing here binds you';
+        title = 'On these three answers, Article 50 does not reach your system.';
+        body = 'A system that neither converses nor generates, and whose output no one in the EU uses, sits outside the transparency obligations entirely. That is a real answer and we would rather give it than manufacture a concern.';
+        items = ['Worth revisiting if you open an EU market or add a generative feature, because either one changes this.'];
+
+      } else if (eu === 'no' && engages) {
+        head = 'Not yet, on these answers';
+        title = 'Article 50 follows your output, so today this turns on where that output goes.';
+        body = 'Your system does the things the Article governs. What it does not currently do is reach the European Union, and the Act binds on output rather than on establishment.';
+        items = [
+          '<b>The day an EU user reads a generated reply, this changes</b>, with no grace period attached.',
+          'Other regimes may still apply. California SB 942 is operative, and sector rules like HIPAA are unaffected by any of this.'
+        ];
+
+      } else if (!engages && eu !== 'no') {
+        clear = true;
+        head = 'Likely outside Article 50';
+        title = 'A system that neither converses nor generates is not what these obligations were written for.';
+        body = 'Article 50 governs disclosure to people and the marking of synthetic output. If your system does neither, the transparency duties are not the ones to worry about.';
+        items = ['High-risk classification is a separate question with a separate date, now 2 December 2027 for Annex III systems.'];
+
+      } else {
+        head = 'In force against you today';
+        title = 'Article 50 applies to this system, and it has since 2 August 2026.';
+        body = 'Enforcement is live. Penalties reach EUR 15,000,000 or 3% of worldwide annual turnover.';
+        if (talks === 'yes') {
+          items.push('<b>Disclosure.</b> A person interacting with the system must be told it is AI, unless that is obvious from the context.');
+        }
+        if (makes === 'yes') {
+          items.push('<b>Marking.</b> Generated output must be machine-readably marked so it is detectable downstream as artificial.');
+          items.push('<b>2 February 2027.</b> If the system was on the market before 2 August 2026, its transitional relief under Article 50(2) ends then. That is the nearest binding deadline in the entire Act.');
+        }
+        if (eu === 'unsure') {
+          items.push('You were unsure about EU reach. It is worth resolving, because it is the switch that decides all of the above.');
+        }
+      }
+
+      if (unsure && !clear) {
+        items.push('Two of these can be answered definitively in an afternoon by whoever owns the deployment. Guessing is the expensive option.');
+      }
+
+      out.className = 'lx30-verdict' + (clear ? ' lx30-clear' : '');
+      out.innerHTML =
+        '<div class="lx30-vhead">' + esc(head) + '</div>' +
+        '<h2 class="lx30-vtitle">' + esc(title) + '</h2>' +
+        '<p class="lx30-vbody">' + esc(body) + '</p>' +
+        (items.length ? '<ul class="lx30-vlist"><li>' + items.join('</li><li>') + '</li></ul>' : '') +
+        '<div class="lx30-actions">' +
+          '<a class="lx30-cta" href="scorer.html">' +
+            (clear ? 'Run the full assessment anyway' : 'See what else applies') +
+          '</a>' +
+          '<button class="lx30-again" type="button" id="lx30-restart">Start again</button>' +
+        '</div>';
+
+      var again = document.getElementById('lx30-restart');
+      if (again) again.addEventListener('click', function () {
+        answers = [];
+        dots.forEach(function (d, n) { d.classList.toggle('on', n === 0); });
+        show(0);
+      });
+    }
+
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.lx30-opt') : null;
+      if (!btn || !root.contains(btn)) return;
+      var step = btn.closest('.lx30-step');
+      var idx = steps.indexOf(step);
+      if (idx < 0) return;
+      answers[idx] = btn.getAttribute('data-a');
+      if (idx < 2) {
+        show(idx + 1);
+      } else {
+        verdict();
+        show(3);
+      }
+    });
+  }
+
+  /* ── PARALLAX ─────────────────────────────────────────────────
+     Only what carries data-par moves, and only by a fraction of the
+     scroll distance. The transform is written on a wrapper so the
+     compositor owns it; animating background-position instead would
+     put paint work on the main thread on every frame.
+
+     Clamped to the band's own travel so a long page cannot drift the
+     layer far enough to expose an edge.                          */
+  function buildParallax() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var layers = [].slice.call(document.querySelectorAll('[data-par]'));
+    if (!layers.length) return;
+
+    var ticking = false;
+
+    function apply() {
+      ticking = false;
+      var vh = window.innerHeight;
+      for (var i = 0; i < layers.length; i++) {
+        var el = layers[i];
+        var host = el.parentElement || el;
+        var r = host.getBoundingClientRect();
+        if (r.bottom < -80 || r.top > vh + 80) continue;
+        var rate = parseFloat(el.getAttribute('data-par')) || 0.12;
+        /* -1 when the band is entering from below, +1 when leaving
+           above, so the layer's travel is centred on the moment the
+           band is in the middle of the screen. */
+        var progress = ((vh - r.top) / (vh + r.height)) * 2 - 1;
+        var shift = (-progress * rate * r.height).toFixed(1);
+        el.style.transform = 'translate3d(0,' + shift + 'px,0)';
+      }
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }
+
+    apply();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', debounce(apply, 150), { passive: true });
+    window.addEventListener('load', apply);
   }
 
   if (document.readyState === 'loading') {

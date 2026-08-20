@@ -1731,6 +1731,60 @@
                   ['Whitepaper','whitepaper.html'], ['Membership','join.html'], ['Contact','contact.html']]]
     ];
 
+
+    /* What she says, by page. Dry and specific: the value of a line
+       is that it tells you something you did not already know from
+       the heading you are looking at. Where there is nothing worth
+       adding she says the one thing that is always true here, which
+       is also the most useful sentence on the site. */
+    var SAYS = {
+      'home':                     null,   /* filled from the live clock below */
+      'briefing':                 'Most of what was written about 2 August is wrong. This page is the correction.',
+      'registry':                 'Give me a domain and I will tell you what the register holds. For most domains that is <b>nothing</b>, which is rather the point.',
+      'scorer':                   'Five sections. The first two decide most of your result.',
+      'healthcare-intelligence':  'If your system is a device under the MDR, its high-risk date is <b>August 2028</b>, not December 2027. That one catches people.',
+      'certify':                  'Four stages in, one path out. The way out is what makes the entry worth holding.',
+      'certify-healthcare':       'Four regimes land on the same clinical deployment at once. Satisfying one does not evidence the others.',
+      'certify-fintech':          'Credit scoring and insurance pricing are classified high-risk. The classification did not move; only the date did.',
+      'certify-government':       'Mapped to NIST AI RMF, FedRAMP and FISMA. The mapping is the work.',
+      'constitution':             'Seven pillars, each written as something you either did or did not do. <b>Principles you cannot fail are not principles.</b>',
+      'verification-matrix':      'Evidence tiers: what counts, and what merely looks like it counts.',
+      'whitepaper':               'Long. Worth it if you are the one who has to defend the decision afterwards.',
+      'intelligence':             'Competitive intelligence with sources attached. Where we could not source a claim, we say so.',
+      'member':                   'Every briefing carries its provenance, including the ones we have not independently verified.',
+      'readiness-kit':            'A checklist you can hand to somebody else and expect back completed.',
+      'contact':                  'A person reads these.',
+      'join':                     'Membership terms in plain language, which is rarer than it should be.',
+      'watch':                    'That is me, at greater length.',
+      'architecture':             'How the pieces fit. Useful if you are deciding whether to depend on them.',
+      'doctrine':                 'Why the standard is shaped the way it is.'
+    };
+
+    var FALLBACK = 'I am a declared AI agent. That is not a disclaimer, it is the product.';
+
+    function pageKey() {
+      var f = (location.pathname.split('/').pop() || 'home').replace(/\.html?$/, '');
+      return f === '' || f === 'index' ? 'home' : f;
+    }
+
+    function line() {
+      var key = pageKey();
+      if (key === 'home') {
+        /* She reads the live clock rather than repeating a number
+           somebody typed, so she cannot be wrong about it later. */
+        try {
+          var live = window.LunaraClock && window.LunaraClock.obligations
+                     ? window.LunaraClock.obligations.filter(function (o) { return o.active; }).length
+                     : 0;
+          if (live) {
+            return '<b>' + live + ' obligations</b> are enforceable today. Whether any of them reach you takes about thirty seconds to find out.';
+          }
+        } catch (e) {}
+        return FALLBACK;
+      }
+      return SAYS[key] || FALLBACK;
+    }
+
     function el(tag, cls, html) {
       var n = document.createElement(tag);
       if (cls) n.className = cls;
@@ -1763,6 +1817,11 @@
     stage.appendChild(tag);
 
     var cmds = el('div', 'lxr-cmds');
+
+    var says = el('div', 'lxr-says', line());
+    says.style.position = 'relative';
+    cmds.appendChild(says);
+
     CMDS.forEach(function (c) {
       var n;
       if (c.href) {
@@ -1817,6 +1876,51 @@
          .addEventListener('click', closePanel);
     panel.addEventListener('click', function (e) { if (e.target === panel) closePanel(); });
 
+
+    /* ── STAY OUT OF THE WAY ────────────────────────────────────
+       The scorer carries a fixed live-preview panel pinned to the
+       same corner, at z-index 9000, and it made the orb literally
+       unclickable. Raising her above it would only reverse the
+       problem, so she moves instead.
+
+       Measured against whatever is actually on the page rather than
+       special-cased per file, because the next page to pin something
+       bottom-right will not think to tell us. */
+    function avoidCollisions() {
+      var orb = root.querySelector('.lxr-orb');
+      if (!orb) return;
+      root.style.bottom = '';
+      var mine = orb.getBoundingClientRect();
+      var lift = 0;
+
+      var all = document.body.querySelectorAll('*');
+      for (var i = 0; i < all.length; i++) {
+        var e = all[i];
+        if (e === root || root.contains(e) || e.classList.contains('lxr-scrim')) continue;
+        var cs = window.getComputedStyle(e);
+        if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+        if (parseFloat(cs.opacity) < 0.05) continue;
+        /* A backdrop is not an obstruction. The grain overlay is
+           fixed and covers the whole viewport, and the first version
+           of this treated it as something to climb over, which shoved
+           the orb off the top of every page on the site. Anything that
+           cannot receive a click, or that covers most of the screen,
+           is scenery. */
+        if (cs.pointerEvents === 'none') continue;
+        var r = e.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        if (r.width > window.innerWidth * 0.72 &&
+            r.height > window.innerHeight * 0.72) continue;
+        /* overlap, with a small margin so they never sit flush */
+        if (r.right > mine.left - 12 && r.left < mine.right + 12 &&
+            r.bottom > mine.top - 12 && r.top < mine.bottom + 12) {
+          lift = Math.max(lift, (mine.bottom - r.top) + 16);
+        }
+      }
+
+      if (lift > 0) root.style.bottom = (26 + lift) + 'px';
+    }
+
     var lastFocus = null;
 
     function openPanel() {
@@ -1845,6 +1949,19 @@
     }
 
     orb.addEventListener('click', function () { setOpen(true); });
+
+    /* Re-checked rather than measured once. The scorer's panel fades
+       in, so at load it is still transparent, the opacity guard skips
+       it, and a single measurement concludes the corner is free. It
+       is not. Anything that appears in response to the reader has to
+       be measured after the reader has done something. */
+    avoidCollisions();
+    window.addEventListener('load', avoidCollisions);
+    window.addEventListener('resize', debounce(avoidCollisions, 200), { passive: true });
+    [700, 1800, 3600].forEach(function (t) { setTimeout(avoidCollisions, t); });
+    ['input', 'change', 'click'].forEach(function (ev) {
+      document.addEventListener(ev, debounce(avoidCollisions, 320), { passive: true, capture: true });
+    });
 
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;

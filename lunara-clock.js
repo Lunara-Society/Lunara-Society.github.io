@@ -105,12 +105,35 @@
     },
     {
       id: 'ca-sb942',
+      /* 2 August 2026 verified 20 August 2026. SB 942 was signed on
+         19 September 2024 to take effect 1 January 2026; AB 853, signed
+         13 October 2025, moved it to 2 August to sit alongside the EU
+         provenance dates.
+
+         The threshold belongs in the summary. Without it the row reads
+         as though it binds every generative system in California, when
+         it binds those above a million monthly users — which is almost
+         none of the organisations we write to. Overstating reach is the
+         same error as overstating a date, and it is caught just as
+         quickly. */
       date: '2026-08-02',
       jurisdiction: 'California',
       name: 'AI Transparency Act',
       instrument: 'California SB 942, as amended by AB 853',
       article: 'Bus. & Prof. Code § 22757',
-      summary: 'Covered providers must offer free AI-detection tooling and embed latent disclosure in generated content.',
+      summary: 'Generative systems with over one million monthly users must embed latent disclosure in what they generate, offer a manifest disclosure, and publish a free detection tool.',
+      weight: 2
+    },
+    {
+      id: 'ca-platforms',
+      /* The second wave of AB 853. Relevant to anyone hosting or
+         distributing a model rather than only shipping one. */
+      date: '2027-01-01',
+      jurisdiction: 'California',
+      name: 'Hosting platforms and large online platforms',
+      instrument: 'California SB 942, as amended by AB 853',
+      article: 'Bus. & Prof. Code § 22757, second wave',
+      summary: 'Platforms hosting generative systems, and large online platforms distributing their output, take on their own disclosure and provenance duties.',
       weight: 2
     },
     {

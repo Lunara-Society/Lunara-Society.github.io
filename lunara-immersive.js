@@ -1160,6 +1160,7 @@
     safe('thirty-seconds', buildThirtySeconds);
     safe('parallax', buildParallax);
     safe('animation-budget', buildAnimationBudget);
+    safe('rosario', buildRosario);
 
     // Widths settle after fonts and images land; re-check then.
     // Heights settle then too, and the rescue check is a height
@@ -1691,6 +1692,172 @@
     /* A backgrounded tab should cost nothing at all. */
     document.addEventListener('visibilitychange', function () {
       document.documentElement.classList.toggle('lx-hidden', document.hidden);
+    });
+  }
+
+
+  /* ── ROSARIO ──────────────────────────────────────────────────
+     Injected rather than pasted into forty pages, for the same
+     reason everything else here is: the markup stays untouched and
+     one file owns the behaviour.
+
+     She is entirely opt-in. What ships by default is a 46px mark.
+     A visitor who wants a compliance authority and nothing else can
+     read the whole site and never meet her; a curious one taps and
+     gets all of it. That asymmetry is why a character costs this
+     brand nothing.
+
+     Everything she offers is a real link that already exists in the
+     footer, so nothing here is the only route to anything. */
+  function buildRosario() {
+    if (document.getElementById('lx-ros')) return;
+    /* The splash and activation pages are their own thing. */
+    if (/\/(index|activation)\.html?$/.test(location.pathname)) return;
+
+    var CMDS = [
+      { g: '☷', t: 'Menu',            act: 'menu' },
+      { g: '◈', t: 'Check a domain',  href: 'registry.html' },
+      { g: '△', t: 'Score my AI',     href: 'scorer.html' },
+      { g: '◎', t: 'What changed',    href: 'briefing.html' },
+      { g: '✉', t: 'Contact',         href: 'contact.html' }
+    ];
+
+    var LINKS = [
+      ['Assess', [['Risk Scorer','scorer.html'], ['What changed on 27 July','briefing.html'],
+                  ['Compliance Kit','readiness-kit.html'], ['Healthcare AI','healthcare-intelligence.html']]],
+      ['Verify', [['The Registry','registry.html'], ['Shield Certification','certify.html'],
+                  ['Verification Matrix','verification-matrix.html'], ['The Constitution','constitution.html']]],
+      ['Institution', [['Home','home.html'], ['Intelligence','intelligence.html'],
+                  ['Whitepaper','whitepaper.html'], ['Membership','join.html'], ['Contact','contact.html']]]
+    ];
+
+    function el(tag, cls, html) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    }
+
+    var root = el('div', '');
+    root.id = 'lx-ros';
+
+    var orb = el('button', 'lxr-orb', '<span class="lxr-core"></span>');
+    orb.type = 'button';
+    orb.setAttribute('aria-expanded', 'false');
+    orb.setAttribute('aria-label', 'Open assistance from Rosario, a declared AI agent');
+    root.appendChild(orb);
+
+    var stage = el('div', 'lxr-stage');
+    stage.appendChild(el('div', 'lxr-light'));
+
+    var fig = document.createElement('img');
+    fig.className = 'lxr-fig';
+    fig.src = 'rosario_mini.webp';
+    fig.alt = 'Rosario, the Lunara Society institutional representative, as an illustrated figure';
+    fig.loading = 'lazy';
+    fig.decoding = 'async';
+    stage.appendChild(fig);
+
+    var tag = el('a', 'lxr-tag', 'Declared AI agent · verify');
+    tag.href = 'registry.html';
+    stage.appendChild(tag);
+
+    var cmds = el('div', 'lxr-cmds');
+    CMDS.forEach(function (c) {
+      var n;
+      if (c.href) {
+        n = el('a', 'lxr-cmd', '<span class="lxr-glyph">' + c.g + '</span>' + c.t);
+        n.href = c.href;
+      } else {
+        n = el('button', 'lxr-cmd', '<span class="lxr-glyph">' + c.g + '</span>' + c.t);
+        n.type = 'button';
+        n.addEventListener('click', openPanel);
+      }
+      cmds.appendChild(n);
+    });
+    var close = el('button', 'lxr-close', 'Dismiss');
+    close.type = 'button';
+    close.addEventListener('click', function () { setOpen(false); });
+    cmds.appendChild(close);
+    stage.appendChild(cmds);
+
+    root.appendChild(stage);
+    document.body.appendChild(root);
+
+    /* The scrim sits under her and over the page. Clicking it is the
+       most obvious way out, so it is wired as one. */
+    var scrim = el('div', 'lxr-scrim');
+    document.body.appendChild(scrim);
+    scrim.addEventListener('click', function () { setOpen(false); });
+
+    /* ── the panel ── */
+    var panel = el('div', 'lxr-panel');
+    var sheet = el('div', 'lxr-sheet');
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-modal', 'true');
+    sheet.setAttribute('aria-label', 'Site navigation');
+
+    var html = '<h3>Where would you like to go?</h3>' +
+               '<p class="lxr-sub">Everything below is also in the footer of every page. This is a shortcut, not the only way in.</p>' +
+               '<div class="lxr-grid">';
+    LINKS.forEach(function (col) {
+      html += '<div class="lxr-col"><h4>' + col[0] + '</h4>';
+      col[1].forEach(function (l) { html += '<a href="' + l[1] + '">' + l[0] + '</a>'; });
+      html += '</div>';
+    });
+    html += '</div><div class="lxr-dismiss">' +
+            '<span class="lxr-note">Rosario is a declared AI agent operating under published rules. ' +
+            '<a href="constitution.html">Read them</a>.</span>' +
+            '<button type="button" class="lxr-close" style="opacity:1">Close</button></div>';
+    sheet.innerHTML = html;
+    panel.appendChild(sheet);
+    document.body.appendChild(panel);
+
+    sheet.querySelector('.lxr-dismiss .lxr-close')
+         .addEventListener('click', closePanel);
+    panel.addEventListener('click', function (e) { if (e.target === panel) closePanel(); });
+
+    var lastFocus = null;
+
+    function openPanel() {
+      lastFocus = document.activeElement;
+      panel.classList.add('on');
+      var first = sheet.querySelector('a');
+      if (first) first.focus({ preventScroll: true });
+    }
+    function closePanel() {
+      panel.classList.remove('on');
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }
+
+    function setOpen(on) {
+      root.classList.toggle('lxr-open', on);
+      scrim.classList.toggle('on', on);
+      orb.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (on) {
+        var f = cmds.querySelector('.lxr-cmd');
+        /* Wait for the entrance before moving focus, or a screen
+           reader announces a control that is still travelling. */
+        if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 420);
+      } else {
+        orb.focus({ preventScroll: true });
+      }
+    }
+
+    orb.addEventListener('click', function () { setOpen(true); });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (panel.classList.contains('on')) { closePanel(); return; }
+      if (root.classList.contains('lxr-open')) setOpen(false);
+    });
+
+    /* Clicking away from her closes her, but not when the click was
+       inside the panel she just opened. */
+    document.addEventListener('click', function (e) {
+      if (!root.classList.contains('lxr-open')) return;
+      if (root.contains(e.target) || panel.contains(e.target)) return;
+      setOpen(false);
     });
   }
 

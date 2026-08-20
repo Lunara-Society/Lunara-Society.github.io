@@ -3283,3 +3283,336 @@ a.back,
     transform: none !important;
   }
 }
+
+/* ══ 30. ROSARIO ═════════════════════════════════════════════
+   A character on a compliance authority's site is a real brand
+   risk. The person most likely to be put off by a cartoon is
+   precisely the hospital compliance officer we need to convince.
+
+   So she is opt-in and nothing else. What sits on the page by
+   default is a mark the size of a full stop, pulsing slowly enough
+   to be noticed and never enough to nag. A serious visitor can read
+   the entire site and never meet her. A curious one taps and gets
+   all of it. That asymmetry is the whole design, and it is why this
+   costs no trust.
+
+   She arrives as light gathering rather than as smoke, because the
+   visual language of this site is light in darkness throughout: the
+   lit windows, the raking gold, the specular. Smoke belongs to a
+   different brand.
+
+   Nothing here replaces navigation. The character is a second path
+   to the same links, never the only one: a character-only menu is
+   invisible to a screen reader, unusable from a keyboard and
+   uncrawlable, and an institution selling EU compliance cannot ship
+   a site that fails the Accessibility Act.                        */
+
+#lx-ros {
+  position: fixed;
+  right: 26px; bottom: 26px;
+  z-index: 90;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* The page dims while she is present. Light on desktop, where she
+   occupies a corner; heavier on a phone, where she occupies a third
+   of the screen and the commands would otherwise sit across the copy
+   somebody came to read. Clicking it dismisses her. */
+.lxr-scrim {
+  position: fixed; inset: 0;
+  z-index: 88;
+  background: rgba(0,0,0,0.45);
+  opacity: 0; pointer-events: none;
+  transition: opacity .55s ease;
+}
+.lxr-scrim.on { opacity: 1; pointer-events: auto; }
+@media (max-width: 720px) {
+  .lxr-scrim { background: rgba(0,0,0,0.78); }
+}
+
+/* ── 30.1 THE MARK ─────────────────────────────────────────── */
+.lxr-orb {
+  position: relative;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(196,164,107,0.4);
+  background: radial-gradient(circle at 50% 38%,
+              rgba(28,23,13,0.96), rgba(6,5,3,0.98));
+  box-shadow: inset 0 1px 0 rgba(244,229,196,0.12),
+              0 10px 26px -14px rgba(0,0,0,1);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: border-color .4s ease, box-shadow .4s ease, transform .4s cubic-bezier(0.2,0.8,0.2,1);
+}
+.lxr-orb:hover {
+  border-color: rgba(196,164,107,0.85);
+  box-shadow: inset 0 1px 0 rgba(244,229,196,0.2),
+              0 0 34px -8px rgba(196,164,107,0.5);
+  transform: translateY(-2px);
+}
+.lxr-orb:focus-visible { outline: 2px solid #C4A46B; outline-offset: 4px; }
+
+/* The core. Small, warm, and breathing on a long cycle: fast enough
+   to register as alive, slow enough that it never demands anything. */
+.lxr-core {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #E2C47A;
+  box-shadow: 0 0 12px rgba(226,196,122,0.9);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lxr-core { animation: lxr-breathe 4.2s ease-in-out infinite; }
+}
+@keyframes lxr-breathe {
+  0%,100% { opacity: .38; transform: scale(.82); }
+  50%     { opacity: 1;   transform: scale(1.06); }
+}
+
+/* One slow ring outward, so the mark is discoverable in peripheral
+   vision without ever moving anything on the page. */
+.lxr-orb::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(196,164,107,0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lxr-orb::after { animation: lxr-ring 4.2s ease-out infinite; }
+}
+@keyframes lxr-ring {
+  0%   { transform: scale(1);   opacity: .5; }
+  70%  { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+#lx-ros.lxr-open .lxr-orb { opacity: 0; pointer-events: none; transform: scale(.6); }
+
+/* ── 30.2 HER ARRIVAL ──────────────────────────────────────── */
+.lxr-stage {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 176px; height: 376px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+#lx-ros.lxr-open .lxr-stage { opacity: 1; pointer-events: auto; }
+
+.lxr-fig {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 176px;
+  height: auto;
+  display: block;
+  transform: translateY(26px) scale(.9);
+  opacity: 0;
+  filter: drop-shadow(0 22px 30px rgba(0,0,0,0.85));
+}
+#lx-ros.lxr-open .lxr-fig {
+  animation: lxr-enter 1.05s cubic-bezier(0.16,0.86,0.24,1) .12s forwards;
+}
+@keyframes lxr-enter {
+  from { transform: translateY(26px) scale(.9); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* The light she gathers out of. A pool beneath, brightening as she
+   resolves, then settling to a faint standing glow. */
+.lxr-light {
+  position: absolute;
+  right: 8px; bottom: -14px;
+  width: 190px; height: 96px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(closest-side,
+    rgba(255,246,220,0.34), rgba(226,196,122,0.14) 46%, rgba(196,164,107,0) 78%);
+  opacity: 0;
+}
+#lx-ros.lxr-open .lxr-light {
+  animation: lxr-pool 1.5s cubic-bezier(0.2,0.8,0.2,1) forwards;
+}
+@keyframes lxr-pool {
+  0%   { opacity: 0;   transform: scale(.3); }
+  38%  { opacity: 1;   transform: scale(1.08); }
+  100% { opacity: .42; transform: scale(1); }
+}
+
+/* ── 30.3 THE DISCLOSURE ───────────────────────────────────
+   The point of the whole thing. Article 50 requires an AI system to
+   disclose that it is one; this site sells that obligation. So she
+   carries the disclosure permanently and links to her own registry
+   entry, and the site demonstrates its own product rather than
+   describing it. */
+.lxr-tag {
+  position: absolute;
+  right: 0; bottom: -20px;
+  white-space: nowrap;
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(196,164,107,0.62);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(196,164,107,0.2);
+  padding-bottom: 2px;
+  opacity: 0;
+  transition: opacity .5s ease .8s, color .3s ease;
+}
+.lxr-tag:hover { color: #E2C47A; }
+#lx-ros.lxr-open .lxr-tag { opacity: 1; }
+
+/* ── 30.4 THE COMMANDS ─────────────────────────────────────
+   An arc up and to the left of her, since she stands bottom right.
+   Each is a real button or link with a real label, so the arc is
+   decoration over working navigation rather than instead of it. */
+.lxr-cmds {
+  position: absolute;
+  /* Clear of her full width plus a gutter. The first attempt used
+     150px against a 176px figure and the buttons sat on her chest. */
+  right: 196px; bottom: 52px;
+  display: flex; flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+  pointer-events: none;
+}
+#lx-ros.lxr-open .lxr-cmds { pointer-events: auto; }
+
+.lxr-cmd {
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(177deg, rgba(28,23,13,0.96), rgba(8,7,4,0.98));
+  border: 1px solid rgba(196,164,107,0.26);
+  color: #E2C892;
+  font-size: 11px; letter-spacing: 0.1em;
+  padding: 10px 15px;
+  min-height: 38px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(14px);
+  transition: opacity .4s ease, transform .4s cubic-bezier(0.2,0.8,0.2,1),
+              border-color .3s ease, color .3s ease;
+}
+#lx-ros.lxr-open .lxr-cmd { opacity: 1; transform: none; }
+#lx-ros.lxr-open .lxr-cmd:nth-child(1) { transition-delay: .34s; }
+#lx-ros.lxr-open .lxr-cmd:nth-child(2) { transition-delay: .40s; }
+#lx-ros.lxr-open .lxr-cmd:nth-child(3) { transition-delay: .46s; }
+#lx-ros.lxr-open .lxr-cmd:nth-child(4) { transition-delay: .52s; }
+#lx-ros.lxr-open .lxr-cmd:nth-child(5) { transition-delay: .58s; }
+.lxr-cmd:hover { border-color: rgba(196,164,107,0.8); color: #FFF6DC; }
+.lxr-cmd:focus-visible { outline: 2px solid #C4A46B; outline-offset: 3px; }
+.lxr-glyph { color: rgba(196,164,107,0.75); font-size: 12px; line-height: 1; }
+
+.lxr-close {
+  background: none; border: none; cursor: pointer;
+  color: rgba(196,164,107,0.5);
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 8px 6px; min-height: 32px;
+  opacity: 0; transition: opacity .4s ease .64s, color .3s ease;
+}
+#lx-ros.lxr-open .lxr-close { opacity: 1; }
+.lxr-close:hover { color: #E2C892; }
+
+/* ── 30.5 THE PANEL ────────────────────────────────────────
+   Scales up from her position rather than sliding in from an edge,
+   so it reads as something she opened rather than as a drawer the
+   browser produced. */
+.lxr-panel {
+  position: fixed; inset: 0;
+  z-index: 95;
+  display: none;
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+.lxr-panel.on { display: block; }
+
+.lxr-sheet {
+  position: absolute;
+  right: 26px; bottom: 26px;
+  width: min(660px, calc(100vw - 52px));
+  max-height: calc(100vh - 52px);
+  overflow-y: auto;
+  background: linear-gradient(177deg, rgba(20,17,10,0.99), rgba(5,4,2,1));
+  border: 1px solid rgba(196,164,107,0.3);
+  box-shadow: inset 0 1px 0 rgba(244,229,196,0.12), 0 40px 90px -30px rgba(0,0,0,1);
+  padding: 34px 34px 30px;
+  transform-origin: 100% 100%;
+  animation: lxr-unfold .52s cubic-bezier(0.16,0.86,0.24,1) both;
+}
+@keyframes lxr-unfold {
+  from { transform: scale(.28) translate(40px, 60px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.lxr-sheet h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 25px; font-weight: 300; color: #f0e0b0; margin: 0 0 6px;
+}
+.lxr-sheet .lxr-sub {
+  font-size: 12.5px; line-height: 1.7; color: rgba(220,200,160,0.45);
+  margin: 0 0 26px;
+}
+
+.lxr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 26px;
+}
+.lxr-col h4 {
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(196,164,107,0.45);
+  padding-bottom: 8px; margin-bottom: 10px;
+  border-bottom: 1px solid rgba(196,164,107,0.14);
+}
+.lxr-col a {
+  display: block;
+  font-size: 13px; line-height: 1.5;
+  color: rgba(226,205,166,0.72);
+  text-decoration: none;
+  padding: 8px 0; min-height: 34px;
+  transition: color .25s ease, padding-left .25s ease;
+}
+.lxr-col a:hover { color: #FFF6DC; padding-left: 5px; }
+.lxr-col a:focus-visible { outline: 2px solid #C4A46B; outline-offset: 2px; }
+
+.lxr-dismiss {
+  margin-top: 26px; padding-top: 18px;
+  border-top: 1px solid rgba(196,164,107,0.12);
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+}
+.lxr-note { font-size: 10.5px; line-height: 1.7; color: rgba(196,164,107,0.38); }
+.lxr-note a { color: rgba(226,196,122,0.7); text-decoration: none; border-bottom: 1px solid rgba(196,164,107,0.25); }
+
+/* ── 30.6 SMALL SCREENS ────────────────────────────────────
+   She is charming on a desktop and a squatter on a phone, where 176
+   pixels of character sits on top of the content someone came to
+   read. So she shrinks, the commands move beneath her rather than
+   beside her, and the panel becomes a full sheet.               */
+@media (max-width: 720px) {
+  #lx-ros { right: 16px; bottom: 16px; }
+  .lxr-stage { width: 96px; height: 206px; }
+  .lxr-fig { width: 96px; }
+  .lxr-light { width: 108px; height: 56px; right: 4px; }
+  .lxr-cmds { right: 118px; bottom: 28px; gap: 7px; }
+  .lxr-cmd { font-size: 10.5px; padding: 9px 12px; min-height: 36px; }
+  .lxr-tag { font-size: 8px; bottom: -16px; }
+  .lxr-sheet {
+    right: 0; bottom: 0; left: 0;
+    width: 100%; max-height: 88vh;
+    padding: 26px 20px 24px;
+    border-left: none; border-right: none; border-bottom: none;
+    transform-origin: 50% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lxr-core, .lxr-orb::after { animation: none; opacity: 1; }
+  #lx-ros.lxr-open .lxr-fig { animation: none; opacity: 1; transform: none; }
+  #lx-ros.lxr-open .lxr-light { animation: none; opacity: .4; }
+  .lxr-sheet { animation: none; }
+  .lxr-cmd { transition-delay: 0s !important; }
+}
+
+@media print { #lx-ros, .lxr-panel { display: none !important; } }

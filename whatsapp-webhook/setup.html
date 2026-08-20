@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>WhatsApp Webhook Runbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  /* One committed world: the house black and gold. This is read on a
+     phone with a Cloudflare tab open beside it, so every colour is
+     painted rather than inherited. */
+  :root {
+    --ground:#050403; --card:#0A0806; --sunk:#120E08;
+    --edge:#241E14;   --edge-lit:#3A3020;
+    --gold:#C4A46B;   --lit:#E2C892; --pale:#F4E5C4;
+    --body:#C8B896;   --muted:#8A7A5A;
+    --done:#6FA368;   --warn:#D9A441;
+    --display:"Cormorant Garamond",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin:0; background:var(--ground); color:var(--body);
+    font-family:var(--sans); font-size:16px; line-height:1.7;
+    -webkit-text-size-adjust:100%;
+  }
+
+  .wrap { max-width:680px; margin:0 auto; padding:40px 20px 96px; }
+
+  header { border-top:2px solid var(--gold); padding-top:28px; }
+  .eyebrow { font-size:10px; letter-spacing:.4em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; }
+  h1 {
+    font-family:var(--display); font-weight:400;
+    font-size:clamp(30px,7vw,42px); line-height:1.15;
+    color:var(--lit); margin:0 0 14px; text-wrap:balance;
+  }
+  .standfirst { margin:0; color:var(--muted); max-width:60ch; }
+
+  .why { margin:34px 0 0; padding:20px 22px; background:var(--sunk); border-left:2px solid var(--gold); }
+  .why p { margin:0; font-size:15px; }
+  .why p + p { margin-top:12px; }
+
+  ol.steps { list-style:none; margin:44px 0 0; padding:0; display:flex; flex-direction:column; gap:14px; }
+
+  li.step {
+    background:var(--card); border:1px solid var(--edge);
+    padding:20px 22px; display:grid;
+    /* minmax(0,1fr), not 1fr: a 1fr track still refuses to shrink below
+       its content, so one long unbreakable token drags the whole page
+       sideways on a phone. */
+    grid-template-columns:auto minmax(0,1fr);
+    gap:0 16px; align-items:start;
+  }
+  li.step > * { min-width:0; }
+  li.step.is-done { border-color:var(--edge-lit); }
+
+  /* The numbering is a real dependency chain, not decoration: the
+     secrets cannot exist before the Worker does, and they do not reach
+     the running code until the deploy after they are set. */
+  .num {
+    grid-row:1 / span 2; width:34px; height:34px;
+    border:1px solid var(--gold); color:var(--gold);
+    font-family:var(--mono); font-size:13px;
+    display:grid; place-items:center;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  li.step.is-done .num { background:var(--done); border-color:var(--done); color:var(--ground); }
+  li.step.is-done .num::after { content:"✓"; }
+  li.step.is-done .num span { display:none; }
+
+  .step h2 { font-family:var(--display); font-weight:500; font-size:21px; color:var(--pale); margin:3px 0 8px; line-height:1.3; }
+  .step .detail { grid-column:2; margin:0; font-size:15px; }
+  .step .detail + .detail { margin-top:10px; }
+  .step em.hi { color:var(--pale); font-style:normal; font-weight:600; }
+
+  /* Allowed to wrap on purpose. Several are multi-word UI labels, and
+     holding them on one line is what pushed the layout past the phone. */
+  .path {
+    font-family:var(--mono); font-size:13px; color:var(--lit);
+    background:var(--sunk); padding:1px 6px; overflow-wrap:anywhere;
+  }
+
+  .tick {
+    grid-column:2; margin-top:16px;
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); cursor:pointer; user-select:none;
+    background:none; border:0; padding:0; font-family:var(--sans);
+  }
+  .tick input { width:16px; height:16px; accent-color:var(--done); cursor:pointer; margin:0; }
+  .tick:hover { color:var(--body); }
+
+  .copy-block { grid-column:2; margin-top:14px; }
+  .label { font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:7px; }
+
+  .value { display:flex; align-items:stretch; border:1px solid var(--edge-lit); background:var(--sunk); }
+  .value code {
+    font-family:var(--mono); font-size:13px; color:var(--pale);
+    padding:12px 14px; flex:1; min-width:0;
+    overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch;
+  }
+
+  button.copy {
+    flex:none; background:var(--gold); color:#14100A;
+    border:0; border-left:1px solid var(--edge-lit);
+    font-family:var(--sans); font-size:11px; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase;
+    padding:0 18px; cursor:pointer; min-width:92px;
+    transition:background .18s ease;
+  }
+  button.copy:hover { background:var(--lit); }
+  button.copy.ok { background:var(--done); color:#0B140A; }
+  button.copy.warn-state { background:var(--warn); }
+  button.copy:focus-visible, .tick:focus-visible, .reset:focus-visible, .regen:focus-visible {
+    outline:2px solid var(--lit); outline-offset:2px;
+  }
+
+  .regen {
+    background:none; border:0; color:var(--muted);
+    font-family:var(--sans); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; padding:8px 0 0; cursor:pointer;
+  }
+  .regen:hover { color:var(--body); }
+
+  .vars { grid-column:2; margin-top:16px; border:1px solid var(--edge); }
+  .var-row { border-bottom:1px solid var(--edge); padding:13px 15px; }
+  .var-row:last-child { border-bottom:0; }
+  .var-name { font-family:var(--mono); font-size:12.5px; color:var(--lit); overflow-wrap:anywhere; }
+  .var-what { font-size:13.5px; color:var(--muted); margin-top:4px; }
+
+  .gotchas { margin-top:52px; }
+  h3 { font-family:var(--display); font-weight:500; font-size:25px; color:var(--lit); margin:0 0 6px; }
+  .gotcha { border-left:2px solid var(--warn); background:var(--sunk); padding:18px 20px; margin-top:16px; }
+  .gotcha strong { color:var(--pale); font-weight:600; display:block; margin-bottom:6px; font-size:15px; }
+  .gotcha p { margin:0; font-size:14.5px; }
+
+  footer { margin-top:56px; padding-top:22px; border-top:1px solid var(--edge); font-size:13px; color:var(--muted); }
+  .reset {
+    background:none; border:1px solid var(--edge-lit); color:var(--muted);
+    font-family:var(--sans); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; padding:8px 14px; cursor:pointer; margin-top:16px;
+  }
+  .reset:hover { color:var(--body); border-color:var(--gold); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
+  @media (max-width:460px) {
+    li.step { padding:17px 15px; gap:0 12px; }
+    button.copy { min-width:74px; padding:0 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Lunara Society</p>
+  <h1>Getting WhatsApp talking to us</h1>
+  <p class="standfirst">Meta wants a Callback URL and a Verify token. Here is where they come from, in the order they have to happen.</p>
+</header>
+
+<div class="why">
+  <p>Our site can't answer this one. Meta verifies a webhook by sending a request carrying a <span class="path">hub.challenge</span> value and demanding that exact value back. GitHub Pages hands out files — it cannot read a request and compose a reply, so no address on lunarasociety.com will ever pass.</p>
+  <p>A Cloudflare Worker can. That is all the code below is: a small program that answers Meta's question correctly, then listens for messages.</p>
+</div>
+
+<ol class="steps" id="steps">
+
+  <li class="step" data-step="1">
+    <div class="num"><span>1</span></div>
+    <h2>Create the Worker</h2>
+    <p class="detail">In Cloudflare: <span class="path">Compute (Workers)</span> → <span class="path">Create</span> → <span class="path">Start with Hello World</span> → <span class="path">Deploy</span>. Name it <span class="path">lunara-whatsapp</span>.</p>
+    <p class="detail">Cloudflare gives you an address ending in <span class="path">.workers.dev</span>. <em class="hi">That address is the Callback URL</em> — keep the tab open.</p>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+  <li class="step" data-step="2">
+    <div class="num"><span>2</span></div>
+    <h2>Paste in the code</h2>
+    <p class="detail">Open <span class="path">Edit code</span>, select everything already in the editor and delete it, then paste this and press <span class="path">Deploy</span>.</p>
+    <div class="copy-block">
+      <span class="label">The Worker — <span id="worker-lines">…</span> lines</span>
+      <div class="value">
+        <code id="worker-preview">loading…</code>
+        <button class="copy" type="button" data-copy="worker">Copy</button>
+      </div>
+    </div>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+  <li class="step" data-step="3">
+    <div class="num"><span>3</span></div>
+    <h2>Add the two secrets</h2>
+    <p class="detail">In the Worker's <span class="path">Settings</span> → <span class="path">Variables and Secrets</span>, add both as type <em>Secret</em>.</p>
+    <div class="vars">
+      <div class="var-row">
+        <span class="var-name">WHATSAPP_VERIFY_TOKEN</span>
+        <div class="var-what">The token below. The very same text also goes into Meta's Verify token box.</div>
+      </div>
+      <div class="var-row">
+        <span class="var-name">WHATSAPP_APP_SECRET</span>
+        <div class="var-what">From Meta: App settings → Basic → App secret. This is what stops strangers sending us fake messages.</div>
+      </div>
+    </div>
+    <div class="copy-block">
+      <span class="label">Your verify token</span>
+      <div class="value">
+        <code id="token">generating…</code>
+        <button class="copy" type="button" data-copy="token">Copy</button>
+      </div>
+      <button class="regen" type="button" id="regen">Generate a different one</button>
+    </div>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+  <li class="step" data-step="4">
+    <div class="num"><span>4</span></div>
+    <h2>Deploy a second time</h2>
+    <p class="detail">Press <span class="path">Deploy</span> again now that the secrets exist. Skipping this is the commonest reason the next step fails — secrets only reach the running code on the deploy <em>after</em> you add them.</p>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+  <li class="step" data-step="5">
+    <div class="num"><span>5</span></div>
+    <h2>Fill in Meta's two boxes</h2>
+    <p class="detail">Back on the Facebook developers screen: the <span class="path">.workers.dev</span> address into <em class="hi">Callback URL</em>, the token into <em class="hi">Verify token</em>, then <span class="path">Verify and save</span>.</p>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+  <li class="step" data-step="6">
+    <div class="num"><span>6</span></div>
+    <h2>Subscribe to messages</h2>
+    <p class="detail">Still in Meta, under <span class="path">Webhook fields</span>, subscribe to <span class="path">messages</span>. Verifying and actually receiving are two separate switches — without this you get a green tick and total silence.</p>
+    <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
+  </li>
+
+</ol>
+
+<section class="gotchas">
+  <h3>If something goes wrong</h3>
+
+  <div class="gotcha">
+    <strong>“The callback URL or verify token couldn't be validated.”</strong>
+    <p>Nearly always one of two things: the token in Cloudflare doesn't match the token typed into Meta, or step 4 was skipped. Open the Worker's <span class="path">Logs</span> tab and press Verify again — a mismatch writes <span class="path">Verification rejected</span>, a missing secret writes <span class="path">WHATSAPP_VERIFY_TOKEN is not set</span>.</p>
+  </div>
+
+  <div class="gotcha">
+    <strong>It verified, but no messages arrive.</strong>
+    <p>Either step 6 was missed, or the app is still unpublished. That orange warning on Meta's page is real: until you publish, it sends only test events from the dashboard button — no live messages, not even from your own number.</p>
+  </div>
+
+  <div class="gotcha">
+    <strong>Until the app secret is set, the endpoint trusts anyone.</strong>
+    <p>The Worker checks Meta's signature on every message once <span class="path">WHATSAPP_APP_SECRET</span> exists, and writes a warning on every single request while it doesn't. Don't leave it half-done.</p>
+  </div>
+</section>
+
+<footer>
+  <p>The token is generated in your browser and kept only there — it is never sent anywhere and is not stored in the repository. The Worker's source and its 16 tests live beside this page in <span class="path">whatsapp-webhook/</span>.</p>
+  <button class="reset" type="button" id="reset">Clear my progress and token</button>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'lunara-whatsapp-setup-v1';
+
+  /* ── state ────────────────────────────────────────────────────
+     Everything is guarded: private windows and blocked site data make
+     the storage accessor itself throw in some browsers, and the page
+     has to work anyway. */
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function save(s) {
+    try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* fine */ }
+  }
+  var state = load();
+
+  /* ── the verify token ─────────────────────────────────────────
+     Generated here rather than baked into the file, so that no secret
+     is ever committed to a public repository. It has to stay stable
+     between visits: the same string must end up in Cloudflare and in
+     Meta, and regenerating it halfway would break a setup already in
+     progress. */
+  function mint() {
+    var bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    var out = '';
+    for (var i = 0; i < bytes.length; i++) {
+      out += String.fromCharCode(bytes[i]);
+    }
+    return btoa(out).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  if (!state.token) {
+    state.token = mint();
+    save(state);
+  }
+  document.getElementById('token').textContent = state.token;
+
+  document.getElementById('regen').addEventListener('click', function () {
+    if (!confirm('Replace the token? If you have already put the current one into Cloudflare or Meta, you will have to update both.')) return;
+    state.token = mint();
+    save(state);
+    document.getElementById('token').textContent = state.token;
+  });
+
+  /* ── the worker source ────────────────────────────────────────
+     Fetched from the file next door rather than duplicated here, so
+     the page cannot drift out of step with what actually deploys. */
+  var workerSource = null;
+
+  fetch('worker.js')
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(function (text) {
+      workerSource = text;
+      document.getElementById('worker-lines').textContent = text.split('\n').length;
+      // Show a real line of code, not the header comment, so what the
+      // page shows and what the button copies visibly agree.
+      var first = text
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .split('\n')
+        .map(function (l) { return l.trim(); })
+        .filter(function (l) { return l && l.indexOf('//') !== 0; })[0];
+      document.getElementById('worker-preview').textContent = first ? first + ' …' : 'worker.js';
+    })
+    .catch(function (err) {
+      document.getElementById('worker-preview').textContent = 'Open worker.js directly';
+      document.getElementById('worker-lines').textContent = '194';
+      var btn = document.querySelector('button.copy[data-copy="worker"]');
+      btn.textContent = 'Open';
+      btn.dataset.copy = 'open';
+      console.error('Could not load worker.js: ' + err.message);
+    });
+
+  /* ── copying ──────────────────────────────────────────────────
+     The async clipboard API is unavailable in some embedded contexts.
+     Falling back to a selection means the worst case is "press copy
+     yourself" rather than a button that quietly does nothing. */
+  function flash(btn, text, cls) {
+    var original = btn.dataset.original || btn.textContent;
+    btn.dataset.original = original;
+    btn.textContent = text;
+    btn.classList.add(cls);
+    setTimeout(function () {
+      btn.textContent = original;
+      btn.classList.remove(cls);
+    }, 1900);
+  }
+
+  function fallback(btn, text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    flash(btn, ok ? 'Copied' : 'Copy manually', ok ? 'ok' : 'warn-state');
+  }
+
+  document.querySelectorAll('button.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (btn.dataset.copy === 'open') { window.open('worker.js', '_blank'); return; }
+
+      var text = btn.dataset.copy === 'worker' ? workerSource : state.token;
+      if (!text) { flash(btn, 'Still loading', 'warn-state'); return; }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { flash(btn, 'Copied', 'ok'); },
+          function () { fallback(btn, text); }
+        );
+      } else {
+        fallback(btn, text);
+      }
+    });
+  });
+
+  /* ── progress ─────────────────────────────────────────────────── */
+  var steps = Array.prototype.slice.call(document.querySelectorAll('li.step'));
+
+  function paint(li, on) {
+    li.classList.toggle('is-done', on);
+    li.querySelector('.tick input').checked = on;
+    li.querySelector('.tick span').textContent = on ? 'Done' : 'Mark done';
+    li.querySelector('.tick').setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  steps.forEach(function (li) {
+    var id = li.dataset.step;
+    paint(li, !!state[id]);
+    li.querySelector('.tick').addEventListener('click', function () {
+      state[id] = !state[id];
+      paint(li, state[id]);
+      save(state);
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    if (!confirm('Clear the checklist and generate a new token?')) return;
+    state = { token: mint() };
+    save(state);
+    document.getElementById('token').textContent = state.token;
+    steps.forEach(function (li) { paint(li, false); });
+  });
+})();
+</script>
+</body>
+</html>

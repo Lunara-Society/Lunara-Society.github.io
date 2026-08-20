@@ -1850,11 +1850,11 @@
     });
     var close = el('button', 'lxr-close', 'Dismiss');
     close.type = 'button';
-    close.addEventListener('click', function () {
-      setOpen(false);
+    close.addEventListener('click', function (e) {
+      setOpen(false, fromKeyboard(e));
       /* An explicit dismissal is an answer, not a pause. */
       root.classList.remove('lxr-here');
-      offered = true;
+      clearTimeout(stillTimer);
       try { if (window.sessionStorage) sessionStorage.setItem('lx-ros-dismissed', '1'); } catch (e) {}
     });
     cmds.appendChild(close);
@@ -1867,7 +1867,7 @@
        most obvious way out, so it is wired as one. */
     var scrim = el('div', 'lxr-scrim');
     document.body.appendChild(scrim);
-    scrim.addEventListener('click', function () { setOpen(false); });
+    scrim.addEventListener('click', function (e) { setOpen(false, fromKeyboard(e)); });
 
     /* ── the panel ── */
     var panel = el('div', 'lxr-panel');
@@ -1954,10 +1954,20 @@
       if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
     }
 
-    function setOpen(on) {
+    function setOpen(on, byKeyboard) {
       root.classList.toggle('lxr-open', on);
       scrim.classList.toggle('on', on);
       orb.setAttribute('aria-expanded', on ? 'true' : 'false');
+
+      /* Focus is moved only when the interaction came from a
+         keyboard. Older iOS Safari ignores preventScroll, so calling
+         focus() on a control inside a fixed container throws the
+         document back to the top, which is exactly the reported
+         symptom: the page jumps and the reader has to start again.
+         A pointer or a thumb needs no focus moved on their behalf;
+         a keyboard does, and a keyboard is not the case that
+         breaks. */
+      if (!byKeyboard) return;
       if (on) {
         var f = cmds.querySelector('.lxr-cmd');
         /* Wait for the entrance before moving focus, or a screen
@@ -1968,7 +1978,11 @@
       }
     }
 
-    orb.addEventListener('click', function () { setOpen(true); });
+    /* A click synthesised by Enter or Space reports detail 0; a real
+       pointer or tap reports 1 or more. */
+    function fromKeyboard(e) { return !e || !e.detail; }
+
+    orb.addEventListener('click', function (e) { setOpen(true, fromKeyboard(e)); });
 
     /* ── WHEN SHE IS OFFERED AT ALL ────────────────────────────
        Not on arrival. A visitor landing on the homepage is reading
@@ -1983,39 +1997,42 @@
        And she withdraws while the page is moving. That is what fixes
        the real complaint: on a phone she sat over the copy during
        exactly the moments somebody was trying to read past her. */
-    var SETTLE = 900;         /* ms of stillness before she is offered */
-    var DEPTH  = 0.14;        /* proportion of the page scrolled */
-    var PATIENCE = 26000;     /* ms before offering regardless */
-    var offered = false, stillTimer = null, scrollTimer = null;
+    /* ── WHEN SHE IS VISIBLE ───────────────────────────────────
+       One rule, and it is the whole rule: she is visible when the
+       page has been still for two seconds, and gone the instant it
+       moves again.
 
-    function offer() {
-      if (offered) return;
-      offered = true;
+       The previous version gated her behind a scroll-depth
+       threshold as well, which meant she could not be summoned near
+       the top of the page and a reader who wanted her had to earn
+       her first. That is backwards. Scrolling is the only thing that
+       hides her now; stopping is the only thing that brings her
+       back, anywhere on the page.
+
+       She holds position while open, because then the reader is
+       using her and withdrawing would be the site fighting the
+       person operating it. */
+    var STILL = 2000;
+    var stillTimer = null;
+
+    function settle() {
+      root.classList.remove('lxr-moving');
       root.classList.add('lxr-here');
     }
 
     function onScrollOffer() {
-      /* While she is open the reader is using her; withdrawing then
-         would be the site fighting the person operating it. */
-      if (!root.classList.contains('lxr-open')) {
-        root.classList.add('lxr-moving');
-      }
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(function () {
-        root.classList.remove('lxr-moving');
-      }, 420);
-
-      if (offered) return;
-      var doc = document.documentElement;
-      var max = Math.max(1, doc.scrollHeight - window.innerHeight);
-      var depth = (window.pageYOffset || doc.scrollTop) / max;
+      if (root.classList.contains('lxr-open')) return;
+      root.classList.add('lxr-moving');
       clearTimeout(stillTimer);
-      if (depth >= DEPTH) stillTimer = setTimeout(offer, SETTLE);
+      stillTimer = setTimeout(settle, STILL);
     }
 
     window.addEventListener('scroll', onScrollOffer, { passive: true });
     document.addEventListener('scroll', onScrollOffer, { passive: true, capture: true });
-    setTimeout(offer, PATIENCE);
+
+    /* Arrival counts as stillness, so a reader who never scrolls is
+       not excluded. */
+    stillTimer = setTimeout(settle, STILL);
 
     /* Re-checked rather than measured once. The scorer's panel fades
        in, so at load it is still transparent, the opacity guard skips
@@ -2033,7 +2050,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       if (panel.classList.contains('on')) { closePanel(); return; }
-      if (root.classList.contains('lxr-open')) setOpen(false);
+      if (root.classList.contains('lxr-open')) setOpen(false, true);
     });
 
     /* Clicking away from her closes her, but not when the click was
@@ -2041,7 +2058,7 @@
     document.addEventListener('click', function (e) {
       if (!root.classList.contains('lxr-open')) return;
       if (root.contains(e.target) || panel.contains(e.target)) return;
-      setOpen(false);
+      setOpen(false, false);
     });
   }
 

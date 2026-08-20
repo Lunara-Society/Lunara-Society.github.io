@@ -42,6 +42,21 @@
    has not is a dispute waiting to happen.
 
    ───────────────────────────────────────────────────────────────────
+   ON TERM LENGTHS
+
+   Verification runs six months rather than twelve, and that is a
+   feature rather than a billing trick. A verification nobody has
+   rechecked in a year is not much of a verification, and the whole
+   claim this institution makes is that its register is current.
+
+   Vendor Certification is the deliberate exception at twelve months.
+   It exists to be handed to a procurement panel, and European tender
+   evaluations routinely run six months or longer. A certificate that
+   expires in the middle of one is worse than useless to the customer
+   holding it, so this term is set by the buyer's calendar and not by
+   ours.
+
+   ───────────────────────────────────────────────────────────────────
    ON CHANGING A PRICE
 
    Change it here, and only here. If a page shows a figure this table
@@ -53,9 +68,15 @@
 
   var LINK = 'https://www.paypal.com/ncp/payment/';
 
-  /* Ordered by price, because that is the order the ladder is meant to
-     be read in. tier marks who the product is for, so a page can pull
-     just the ones relevant to its reader. */
+  /* Grouped roughly by who the product is for rather than strictly by
+     price, since tier is what pages actually filter on. Do not trust
+     array order for anything: sort on price at the point of display if
+     a page needs a ladder.
+
+     invitational marks a product that must never be given a public
+     buy button. Its link exists so it can be sent to someone who has
+     been accepted, and publishing it would destroy the only thing
+     that makes it worth having. */
   var PRODUCTS = [
     {
       id: 'disclose',
@@ -88,11 +109,11 @@
     {
       id: 'shield',
       name: 'Shield Verification',
-      price: 120,
-      link: 'PLB-QK4AP629MJCQ',
+      price: 75,
+      link: 'PLB-2JHHAZAFM8MB',
       tier: 'business',
       lede: 'Be checkable by anyone who asks, including a machine.',
-      terms: 'Twelve months. Renewed by invoice, not auto-charged.',
+      terms: 'Six months. Renewed by invoice, never auto-charged.',
       points: [
         'Identity and domain ownership verified by human review',
         'Public register entry anyone can query without an account',
@@ -115,6 +136,35 @@
       ]
     },
     {
+      id: 'member6',
+      name: 'Lunara Society Membership',
+      price: 150,
+      link: 'PLB-PWN3EKP7WB75',
+      tier: 'society',
+      invitational: true,
+      lede: 'Membership of the Society, not a certification of your business.',
+      terms: 'Six months, at the equivalent of $25 a month. By invitation.',
+      points: [
+        'Intelligence briefings with provenance marked on every claim',
+        'Competitive sweeps as they are written, not months later',
+        'First sight of standards work before it is published'
+      ]
+    },
+    {
+      id: 'member12',
+      name: 'Lunara Society Membership, twelve months',
+      price: 270,
+      link: 'PLB-R859WBPH6XBA',
+      tier: 'society',
+      invitational: true,
+      lede: 'Twelve months, which is two months less than paying six at a time.',
+      terms: 'Twelve months. By invitation.',
+      points: [
+        'Everything in the six month term',
+        'Two months lighter than renewing twice'
+      ]
+    },
+    {
       id: 'cir',
       name: 'Compliance Intelligence Report',
       price: 390,
@@ -132,11 +182,11 @@
     {
       id: 'watch',
       name: 'Regulatory Watch',
-      price: 490,
-      link: 'PLB-R5U9JRTFTF79',
+      price: 290,
+      link: 'PLB-496LK32RZPMW',
       tier: 'org',
       lede: 'We tell you when something that binds you changes, and only then.',
-      terms: 'Twelve months. Renewed by invoice, not auto-charged.',
+      terms: 'Six months. Renewed by invoice, never auto-charged.',
       points: [
         'Monitoring across the EU AI Act, SB 942 and your sector rules',
         'A written note whenever a date moves or an obligation lands',
@@ -160,11 +210,11 @@
     {
       id: 'agent',
       name: 'AI Entity Verification',
-      price: 890,
-      link: 'PLB-HSBLP4UY9H7K',
+      price: 540,
+      link: 'PLB-HUGJW52C2Q4Q',
       tier: 'vendor',
       lede: 'An identity for your agent that a third party can check.',
-      terms: 'Twelve months. Renewed by invoice, not auto-charged.',
+      terms: 'Six months. Renewed by invoice, never auto-charged.',
       points: [
         'Agent verified and its operator named',
         'Declared governance framework recorded',
@@ -209,7 +259,7 @@
       link: 'PLB-6UQ48PDCWXEY',
       tier: 'vendor',
       lede: 'Evidence a buyer can verify without taking your word.',
-      terms: 'Up to three systems. Twelve months. Renewed by invoice.',
+      terms: 'Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed by invoice.',
       points: [
         'Certified against the seven constitutional pillars',
         'Public register entry a procurement panel can query directly',

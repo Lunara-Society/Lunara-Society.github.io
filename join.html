@@ -576,19 +576,31 @@ p,li,span{
     <div class="price-grid">
       <div class="price-tier">
         <div class="tier-label">Protection Small Business</div>
-        <div class="tier-price" id="sb-price" data-lx-amount="shield">$120</div>
-        <div class="tier-desc" id="sb-desc">Founding rate · One-time · <span id="sb-spots">Loading availability…</span></div>
+        <div class="tier-price" id="sb-price" data-lx-amount="shield">$75</div>
+        <div class="tier-desc" id="sb-desc">Six months · Renewed by invoice, never auto-charged · <span id="sb-spots">Loading availability…</span></div>
         <a href="https://checkout.revolut.com/pay/d097f3d0-cbe3-4103-9921-2299b5467557" target="_blank" rel="noopener" class="cta-btn" id="sb-cta-btn" style="display:inline-flex;margin-top:14px;font-size:13px;">Reserve your spot →</a>
       </div>
       <div class="price-tier">
         <div class="tier-label">Verification AI Entity</div>
-        <div class="tier-price"><span data-lx-amount="agent">$890</span> <span style="font-size:16px;">/ 12mo</span></div>
-        <div class="tier-desc">Badge + Verification · Billed every 3 months · AI systems change fast, so verification is re-checked every cycle</div>
+        <div class="tier-price"><span data-lx-amount="agent">$540</span> <span style="font-size:16px;">/ 6mo</span></div>
+        <div class="tier-desc">Badge and verification · Six months · AI systems change fast, so the entry is re-checked every cycle rather than assumed to still hold</div>
       </div>
       <div class="price-tier">
         <div class="tier-label">Registry Partner</div>
         <div class="tier-price" data-lx-amount="vendor">$7,400</div>
-        <div class="tier-desc">One-time setup · Not a badge, not a shield · Live API access + referral revenue</div>
+        <div class="tier-desc">Twelve months, up to three systems · Set to the buyer&rsquo;s calendar so it cannot lapse mid-tender · Live API access and referral revenue</div>
+      </div>
+      <!-- ─── THE SOCIETY ───
+           Deliberately not a buy button. Membership is invitational,
+           and a public checkout would remove the only thing that makes
+           it worth holding. The payment link exists so it can be sent
+           to somebody who has been accepted. -->
+      <div class="price-tier" style="border-color:rgba(226,196,122,0.4)">
+        <div class="tier-label">The Society</div>
+        <div class="tier-price"><span data-lx-amount="member6">$150</span> <span style="font-size:16px;">/ 6mo</span></div>
+        <div class="tier-desc">By invitation · Membership of the Society itself, not a certification of your business · Intelligence briefings with provenance marked on every claim, competitive sweeps as they are written rather than months later, and first sight of standards work before publication. Twelve months is <span data-lx-amount="member12">$270</span>, two months lighter than renewing twice.</div>
+        <a class="lx-buy" href="contact.html" style="margin-top:16px"><span class="lx-buy-label">Request an invitation</span></a>
+        <span class="lx-buy-terms">Read by a person. Accepted members are sent a private link; there is no public checkout for this one.</span>
       </div>
     </div>
     <script>

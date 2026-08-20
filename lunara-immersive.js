@@ -1159,6 +1159,7 @@
     safe('emblem', buildEmblem);
     safe('thirty-seconds', buildThirtySeconds);
     safe('parallax', buildParallax);
+    safe('animation-budget', buildAnimationBudget);
 
     // Widths settle after fonts and images land; re-check then.
     // Heights settle then too, and the rescue check is a height
@@ -1646,6 +1647,51 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', debounce(apply, 150), { passive: true });
     window.addEventListener('load', apply);
+  }
+
+
+  /* ── PAUSE WHAT IS NOT ON SCREEN ──────────────────────────────
+     A measurement, not a hunch: the homepage was running 137 infinite
+     animations at once, 127 of them skyline windows, and every one of
+     them kept running while the skyline sat two screens away. Opacity
+     is cheap per element and 127 of anything is not, least of all on
+     a phone deciding whether to throttle the tab.
+
+     So each animating band is watched, and its animations are paused
+     the moment it leaves the viewport. The state is a class on the
+     container rather than per-element inline style, which keeps this
+     to one mutation regardless of how many windows are inside.
+
+     Deliberately generous margins: resuming slightly before the band
+     arrives means nothing is ever caught mid-fade on entry.       */
+  function buildAnimationBudget() {
+    if (!('IntersectionObserver' in window)) return;
+
+    var hosts = document.querySelectorAll(
+      '.lxsky-band, #cards-section, .lxf-strata, #constitution-section, .split'
+    );
+    if (!hosts.length) return;
+
+    var io = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        entries[i].target.classList.toggle('lx-idle', !entries[i].isIntersecting);
+      }
+    }, { rootMargin: '260px 0px 260px 0px' });
+
+    for (var i = 0; i < hosts.length; i++) {
+      /* Start idle: nothing below the fold should be animating before
+         the reader has ever seen it. */
+      var r = hosts[i].getBoundingClientRect();
+      if (r.top > window.innerHeight + 260 || r.bottom < -260) {
+        hosts[i].classList.add('lx-idle');
+      }
+      io.observe(hosts[i]);
+    }
+
+    /* A backgrounded tab should cost nothing at all. */
+    document.addEventListener('visibilitychange', function () {
+      document.documentElement.classList.toggle('lx-hidden', document.hidden);
+    });
   }
 
   if (document.readyState === 'loading') {

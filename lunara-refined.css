@@ -3088,3 +3088,198 @@ a.back,
 @media (prefers-reduced-motion: reduce) {
   .lx-par { transform: none !important; }
 }
+
+/* ══ 27. THE ANIMATION BUDGET ════════════════════════════════
+   The homepage was measured running 137 infinite animations at once,
+   127 of them skyline windows, all of them continuing while the
+   skyline sat two screens away. Each is individually cheap and the
+   sum is not, particularly on a phone deciding whether to throttle
+   the tab.
+
+   Pausing rather than stopping matters: a paused animation holds its
+   current frame, so a band that has been scrolled past and returned
+   to picks up where it was instead of snapping back to the start. */
+
+.lx-idle .lxsky-lit,
+.lx-idle .card,
+.lx-idle .lxf-stratum,
+.lx-idle .split-col,
+.lx-idle .lxc-eyebrow::after {
+  animation-play-state: paused;
+}
+
+/* A backgrounded tab should cost nothing whatsoever. */
+.lx-hidden .lxsky-lit,
+.lx-hidden .card,
+.lx-hidden .lxf-stratum,
+.lx-hidden .split-col,
+.lx-hidden .lxc-eyebrow::after,
+.lx-hidden #lx-grain,
+.lx-hidden .lx30-eyebrow::after {
+  animation-play-state: paused !important;
+}
+
+/* ══ 28. THE LIFECYCLE ═══════════════════════════════════════
+   Most certifications are a one-way door: assessed once, issued, and
+   thereafter permanent whatever the holder subsequently does. This
+   one is not, and revocability is the whole reason an entry in the
+   register means anything.
+
+   Drawn as a line with a branch leaving it, because that is the
+   claim. A row of four boxes would say "we have a process"; a path
+   that visibly exits says "this can be taken away from you", which
+   is the harder and more valuable statement.                     */
+
+.lxlc { max-width: 900px; margin: 0 auto; }
+
+.lxlc-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+/* The spine the stages sit on. */
+.lxlc-track::before {
+  content: '';
+  position: absolute;
+  left: 6%; right: 6%; top: 13px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(196,164,107,0.12),
+    rgba(196,164,107,0.5) 22%,
+    rgba(196,164,107,0.5) 78%,
+    rgba(196,164,107,0.12));
+}
+
+.lxlc-stage { position: relative; padding: 0 12px; text-align: center; }
+
+.lxlc-node {
+  width: 9px; height: 9px;
+  margin: 9px auto 20px;
+  border-radius: 50%;
+  background: #0a0906;
+  border: 1px solid rgba(196,164,107,0.6);
+  position: relative;
+  z-index: 2;
+}
+.lxlc-stage:last-child .lxlc-node {
+  background: #E2C47A;
+  border-color: #E2C47A;
+  box-shadow: 0 0 14px rgba(226,196,122,0.55);
+}
+
+.lxlc-n {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(196,164,107,0.4); margin-bottom: 7px;
+}
+.lxlc-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px; line-height: 1.3; color: #f0e0b0; margin-bottom: 8px;
+}
+.lxlc-what {
+  font-size: 12px; line-height: 1.72;
+  color: rgba(220,200,160,0.44);
+  max-width: 24ch; margin: 0 auto;
+}
+
+/* The exit. Sits under the track, offset right, joined by a line
+   that leaves the spine rather than continuing it. */
+.lxlc-exit {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 26px;
+  align-items: center;
+  padding: 22px 24px;
+  border: 1px solid rgba(196,164,107,0.2);
+  border-left: 2px solid rgba(226,196,122,0.75);
+  background: linear-gradient(90deg, rgba(196,164,107,0.045), rgba(196,164,107,0.008));
+  position: relative;
+}
+.lxlc-exit::before {
+  content: '';
+  position: absolute;
+  left: 78%; top: -34px;
+  width: 1px; height: 34px;
+  background: linear-gradient(180deg, rgba(196,164,107,0), rgba(226,196,122,0.7));
+}
+.lxlc-exit h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px; font-weight: 400; color: #f0e0b0; margin: 0 0 7px;
+}
+.lxlc-exit p {
+  font-size: 13px; line-height: 1.78; color: rgba(220,200,160,0.55); margin: 0;
+}
+.lxlc-stamp {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: #E2C47A; white-space: nowrap; text-align: right;
+}
+
+@media (max-width: 780px) {
+  /* The spine turns vertical rather than compressing four columns
+     into unreadable slivers. */
+  .lxlc-track { grid-template-columns: 1fr; }
+  .lxlc-track::before {
+    left: 4px; right: auto; top: 8px; bottom: 8px;
+    width: 1px; height: auto;
+    background: linear-gradient(180deg,
+      rgba(196,164,107,0.12), rgba(196,164,107,0.5) 14%,
+      rgba(196,164,107,0.5) 86%, rgba(196,164,107,0.12));
+  }
+  .lxlc-stage {
+    text-align: left;
+    padding: 0 0 26px 26px;
+  }
+  .lxlc-node { position: absolute; left: 0; top: 3px; margin: 0; }
+  .lxlc-what { max-width: none; margin: 0; }
+  .lxlc-exit { grid-template-columns: 1fr; gap: 12px; margin-top: 10px; }
+  .lxlc-exit::before { left: 24px; top: -20px; height: 20px; }
+  .lxlc-stamp { text-align: left; }
+}
+
+/* ══ 29. WEIGHT ══════════════════════════════════════════════
+   Everything on the site entered identically: same distance, same
+   duration, same curve. Uniform motion is the same mistake as
+   uniform brightness, one axis over. A page where a seal and a
+   caption arrive with the same physics is a page where nothing has
+   mass, and mass is most of what "crafted" actually means.
+
+   So: heavy things travel further and settle slower, light things
+   arrive quickly and stop. Nothing here changes what animates, only
+   how much each thing appears to weigh.                          */
+
+/* Heavy. Seals, emblems, the skyline: objects with implied mass. */
+.lxsky-band.reveal,
+.lxf-seal,
+.hero-medallion.reveal {
+  transition-duration: 1.35s !important;
+  transition-timing-function: cubic-bezier(0.16, 0.9, 0.2, 1) !important;
+}
+.lxsky-band.reveal:not(.lx-in) { transform: translateY(34px); }
+
+/* Structural. Cards and figure panels: substantial, but not stone. */
+.card.reveal, .lxf-stratum, .split-col, .lxlc-track {
+  transition-duration: 0.95s !important;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.24, 1) !important;
+}
+
+/* Light. Labels, eyebrows, captions: these should already be there
+   by the time the eye arrives, not still travelling. */
+.lxc-glabel, .lxf-cap, .lxq-note, .lxlc-n, .lx30-eyebrow,
+.lxsky-caption, .lxc-foot {
+  transition-duration: 0.5s !important;
+  transition-timing-function: cubic-bezier(0.3, 0.9, 0.3, 1) !important;
+}
+.lxc-glabel:not(.lx-in), .lxlc-n:not(.lx-in) { transform: translateY(6px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lxsky-band.reveal, .lxf-seal, .hero-medallion.reveal,
+  .card.reveal, .lxf-stratum, .split-col, .lxlc-track {
+    transition-duration: 0.01s !important;
+    transform: none !important;
+  }
+}

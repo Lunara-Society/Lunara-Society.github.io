@@ -36,6 +36,10 @@ TEMPLATE = "email_outreach.html"
 REQUIRED = [
     "PREHEADER", "GREETING", "OPENING", "BODY",
     "PULL", "ASK", "CTA_LABEL", "CTA_URL", "OPTOUT",
+    # We write to people in their own language. A Spanish letter that
+    # signs off in English reads as a mail merge, which is the one thing
+    # it must not look like, so the fixed lines are placeholders too.
+    "CAPTION", "TAGLINE",
 ]
 
 # Conditional comments are instructions to Outlook, not notes to

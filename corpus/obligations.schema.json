@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lunarasociety.com/corpus/obligations.schema.json",
+  "title": "Lunara regulatory obligation corpus",
+  "description": "The machine-readable form of the obligation table Lunara Society publishes. Emitted from a single source table; see tools/build-corpus.mjs. Tense is deliberately absent — an obligation is in force relative to a moment, and a static document does not know when it is being read.",
+  "type": "object",
+  "required": ["corpus", "version", "authority", "obligations"],
+  "properties": {
+    "corpus": { "const": "lunara-regulatory-obligations" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "authority": { "type": "string", "format": "uri" },
+    "evidence_standard": {
+      "type": "string",
+      "format": "uri",
+      "description": "The classification and correction policy every entry here is held to."
+    },
+    "count": { "type": "integer", "minimum": 0 },
+    "obligations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/obligation" }
+    }
+  },
+  "$defs": {
+    "obligation": {
+      "type": "object",
+      "required": ["id", "jurisdiction", "name", "applies_from", "instrument", "article", "summary", "source", "classification"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "jurisdiction": { "type": "string" },
+        "name": { "type": "string" },
+        "applies_from": {
+          "type": "string",
+          "format": "date",
+          "description": "Legal application date, UTC midnight. The date the obligation begins to bind — not a filing deadline."
+        },
+        "instrument": { "type": "string", "description": "The act that creates the obligation, naming any amending act." },
+        "article": { "type": "string", "description": "The article that sets the date. An entry without one does not go in the table." },
+        "summary": {
+          "type": "string",
+          "description": "What the obligation requires AND who it reaches. A summary that states the requirement without the applicability threshold is incomplete — that omission is a published correction on this site."
+        },
+        "penalty": { "type": ["string", "null"] },
+        "source": { "type": "string", "format": "uri", "description": "Primary law. Not commentary." },
+        "amended_by": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "The instrument that moved this date, where one did. Required whenever the instrument string says 'as amended by'."
+        },
+        "classification": {
+          "enum": ["verified", "reported", "interpretation", "hypothesis"],
+          "description": "The four marks of the Lunara evidence standard. Where a mark is ambiguous, the lower one is taken."
+        },
+        "verified": { "type": "string", "format": "date" },
+        "significance": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "primary": { "type": "boolean" }
+      }
+    }
+  }
+}

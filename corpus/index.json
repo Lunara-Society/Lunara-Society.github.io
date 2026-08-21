@@ -1,0 +1,46 @@
+{
+  "corpus": "lunara-intelligence",
+  "version": "1.0.0",
+  "authority": "https://lunarasociety.com",
+  "description": "Lunara Intelligence — the regulatory record this institution publishes, in the form a machine can read. Free, unauthenticated, no key, no account, no rate limit worth mentioning. Reading is open because a claim nobody can check is worth nothing.",
+
+  "documents": {
+    "obligations": {
+      "url": "https://lunarasociety.com/corpus/obligations.json",
+      "schema": "https://lunarasociety.com/corpus/obligations.schema.json",
+      "description": "Every regulatory obligation this institution tracks, with the instrument, the article that sets the date, the primary source, and any amending act. No tense is stored — compute it against applies_from at the moment of reading."
+    },
+    "applicability": {
+      "url": "https://lunarasociety.com/corpus/applicability.json",
+      "description": "An ordered decision model for which of those obligations reach a given deployment. Marked interpretation. Three of its outcomes conclude that nothing binds the asker."
+    }
+  },
+
+  "interfaces": {
+    "mcp": {
+      "description": "Model Context Protocol server. The doorway for Claude, Codex and any MCP client.",
+      "install": "npx @lunara/mcp",
+      "documentation": "https://lunarasociety.com/mcp.html"
+    },
+    "http": {
+      "description": "Fetch the JSON documents above directly. They are static, cacheable and versioned.",
+      "openapi": "https://lunarasociety.com/openapi.yaml"
+    },
+    "registry": {
+      "description": "Entity verification, separate from the obligation corpus.",
+      "lookup": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup"
+    },
+    "human": {
+      "description": "The same record, rendered.",
+      "url": "https://lunarasociety.com/intelligence.html"
+    }
+  },
+
+  "how_to_cite": "Lunara Society, Regulatory Obligation Corpus v1.0.0, https://lunarasociety.com/corpus/obligations.json — citing the primary source we link rather than citing us is better practice, and it is why we link it.",
+
+  "if_we_are_wrong": {
+    "policy": "https://lunarasociety.com/evidence.html",
+    "contact": "rosario@lunarasociety.com",
+    "note": "Three corrections are published on the evidence page, including one found by an outside reader. If an entry here does not follow from the source it cites, that is a defect and we would rather be told than found out."
+  }
+}

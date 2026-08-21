@@ -65,6 +65,9 @@
       instrument: 'EU AI Act, Regulation (EU) 2024/1689',
       article: 'Art. 113(a) — Chapters I and II',
       summary: 'Unacceptable-risk systems banned outright. Staff operating AI must be demonstrably competent to do so.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 2
     },
     {
@@ -75,6 +78,9 @@
       instrument: 'EU AI Act, Regulation (EU) 2024/1689',
       article: 'Art. 113(b) — Chapters V, VII, XII',
       summary: 'Model documentation, training-data summaries and copyright policy. The penalty regime becomes enforceable.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 2
     },
     {
@@ -86,6 +92,9 @@
       article: 'Art. 113 — general application',
       summary: 'AI systems must disclose that they are AI. Synthetic content must be marked machine-readable.',
       penalty: 'Up to EUR 15,000,000 or 3% of worldwide annual turnover',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 3,
       primary: true
     },
@@ -101,6 +110,10 @@
       instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
       article: 'Art. 113, as amended — deferred from 2 August 2026',
       summary: 'Risk management, data governance, logging, human oversight and conformity assessment for listed high-risk uses. Deferred, not cancelled.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      amended_by: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 3
     },
     {
@@ -122,6 +135,10 @@
       instrument: 'California SB 942, as amended by AB 853',
       article: 'Bus. & Prof. Code § 22757',
       summary: 'Generative systems with over one million monthly users must embed latent disclosure in what they generate, offer a manifest disclosure, and publish a free detection tool.',
+      source: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB942',
+      amended_by: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 2
     },
     {
@@ -134,6 +151,10 @@
       instrument: 'California SB 942, as amended by AB 853',
       article: 'Bus. & Prof. Code § 22757, second wave',
       summary: 'Platforms hosting generative systems, and large online platforms distributing their output, take on their own disclosure and provenance duties.',
+      source: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB942',
+      amended_by: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 2
     },
     {
@@ -144,6 +165,10 @@
       instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
       article: 'Art. 50(2), transitional',
       summary: 'Generative systems placed on the market before 2 August 2026 lose their transitional relief and must mark synthetic output machine-readably.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      amended_by: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 3
     },
     {
@@ -155,6 +180,10 @@
       instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
       article: 'Art. 6(1), as amended — deferred from 2 August 2027',
       summary: 'AI acting as a safety component of a regulated product falls under the full high-risk regime.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      amended_by: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 3
     },
     {
@@ -165,6 +194,9 @@
       instrument: 'EU AI Act, Regulation (EU) 2024/1689',
       article: 'Art. 111(3)',
       summary: 'Models already on the market before August 2025 lose their grace period and must comply in full.',
+      source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+      classification: 'verified',
+      verified: '2026-08-21',
       weight: 2
     }
   ];

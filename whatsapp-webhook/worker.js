@@ -229,20 +229,31 @@ async function answer(from, text, env) {
   await send(from, reply, env);
 }
 
+/* The Phone number ID for Lunara's WhatsApp business number,
+   +505 5836 5522. This is a public object identifier, not a
+   credential, so it carries a default and one less thing has to be
+   typed into a dashboard on a phone. Override it in the environment
+   if the number ever changes.
+
+   It is NOT the phone number. Meta shows both side by side on the API
+   Setup screen and putting the phone number here fails with an
+   unhelpful error. */
+const DEFAULT_PHONE_NUMBER_ID = '1299096859948214';
+
+const phoneNumberId = (env) => env.WHATSAPP_PHONE_NUMBER_ID || DEFAULT_PHONE_NUMBER_ID;
+
 async function send(to, body, env) {
-  if (!env.WHATSAPP_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID) {
+  if (!env.WHATSAPP_TOKEN) {
     console.error(
-      'Cannot send: ' +
-      (!env.WHATSAPP_TOKEN ? 'WHATSAPP_TOKEN ' : '') +
-      (!env.WHATSAPP_PHONE_NUMBER_ID ? 'WHATSAPP_PHONE_NUMBER_ID ' : '') +
-      'not set. The message was received and nothing was sent back.'
+      'Cannot send: WHATSAPP_TOKEN not set. ' +
+      'The message was received and nothing was sent back.'
     );
     return;
   }
 
   const version = env.GRAPH_VERSION || 'v22.0';
   const url = 'https://graph.facebook.com/' + version + '/' +
-              env.WHATSAPP_PHONE_NUMBER_ID + '/messages';
+              phoneNumberId(env) + '/messages';
 
   // WhatsApp rejects bodies over 4096 characters outright, so a long
   // answer would be lost entirely rather than trimmed.

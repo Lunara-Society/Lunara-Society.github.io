@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Lunara Intelligence MCP server. Regulatory obligations for AI systems, with the article that sets each date and a link to primary law. Free, no key, four tools.">
+<title>The MCP Server — Lunara Society</title>
+<meta property="og:title" content="Lunara Intelligence — the MCP server">
+<meta property="og:description" content="Your model's training data is probably wrong about these dates. Four tools so it can look them up instead of recalling them.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lunarasociety.com/mcp.html">
+<meta property="og:image" content="https://lunarasociety.com/lunara_logo_512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lunarasociety.com/mcp.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;overflow-x:clip}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.55);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+
+.wrap{max-width:840px;margin:0 auto;padding:150px 28px 40px}
+.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
+h1{font-size:clamp(34px,6vw,60px);font-weight:300;line-height:1.14;color:#f0e0b0;letter-spacing:-0.015em;margin-bottom:26px}
+h1 em{font-style:italic;color:var(--gold-b)}
+.standfirst{font-size:clamp(17px,2.2vw,21px);line-height:1.7;color:rgba(220,200,160,0.62);max-width:60ch;font-weight:300}
+h2{font-size:clamp(24px,3.4vw,34px);font-weight:300;color:#f0e0b0;line-height:1.25;margin:74px 0 20px}
+h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--gold-b);margin:34px 0 10px}
+p{font-size:16px;line-height:1.92;color:var(--text);margin-bottom:18px;max-width:66ch;font-family:'Inter',sans-serif;font-weight:300}
+p strong{font-weight:500;color:#f0e0b0}
+a.inline{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3)}
+a.inline:hover{color:var(--gold-b)}
+
+pre{background:rgba(196,164,107,0.045);border:1px solid rgba(196,164,107,0.18);border-left:2px solid var(--gold);padding:20px 22px;margin:22px 0;overflow-x:auto;border-radius:2px}
+code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.75;color:rgba(226,200,146,0.92);white-space:pre}
+p code,li code{background:rgba(196,164,107,0.1);padding:2px 6px;font-size:13px;border-radius:2px;white-space:normal}
+
+.callout{border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(196,164,107,0.05),rgba(196,164,107,0.01));padding:24px 26px;margin:34px 0}
+.callout p{margin-bottom:0;color:rgba(220,200,160,0.72);font-size:15px}
+
+.tools{margin:34px 0;border-top:1px solid rgba(196,164,107,0.16)}
+.tool{display:grid;grid-template-columns:210px 1fr;gap:26px;padding:24px 4px;border-bottom:1px solid rgba(196,164,107,0.09);align-items:start}
+.tool-name{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--gold-b);letter-spacing:0.02em}
+.tool-body p{margin:0 0 6px;font-size:14px;line-height:1.8;color:rgba(220,200,160,0.68)}
+.tool-body .ask{font-size:12.5px;color:rgba(196,164,107,0.55);font-style:italic}
+
+.spec{margin:30px 0;border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px}
+.spec-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:16px}
+.spec pre{background:none;border:none;border-left:none;padding:0;margin:0}
+.spec code{font-size:12.5px;color:rgba(226,206,160,0.82)}
+
+.wont{border:1px solid rgba(226,196,122,0.32);border-left-width:2px;background:linear-gradient(177deg,rgba(24,20,12,0.9),rgba(7,6,3,0.98));padding:28px 30px;margin:34px 0}
+.wont h3{margin-top:0}
+.wont h3:not(:first-child){margin-top:26px}
+.wont p{font-size:14.5px;line-height:1.85;color:rgba(220,200,160,0.66)}
+
+footer{border-top:1px solid var(--gold-faint);padding:44px 28px 60px;text-align:center}
+footer p{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.1em;color:rgba(196,164,107,0.35);margin:0 auto 6px;max-width:60ch}
+footer a{color:rgba(196,164,107,0.55);text-decoration:none}
+
+@media(max-width:760px){
+  nav{padding:14px 18px}.nav-links{gap:14px}
+  .wrap{padding:120px 20px 30px}
+  .tool{grid-template-columns:1fr;gap:10px}
+  code{font-size:12px}
+}
+</style>
+<link rel="stylesheet" href="lunara-refined.css">
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand">Lunara Society</a>
+  <div class="nav-links">
+    <a href="intelligence.html">Intelligence</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="registry.html">Registry</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="eyebrow">For AI systems</div>
+  <h1>Your model knows some<br>of these dates <em>wrong.</em></h1>
+  <p class="standfirst">Not because it is a bad model. Because the law moved after it was trained, and it moved in a way designed to be missed.</p>
+
+  <p>On 27 July 2026 the Digital Omnibus on AI, <strong>Regulation (EU) 2026/1744</strong>, entered into force. It deferred the EU AI Act's Annex III high-risk obligations from 2 August 2026 to 2 December 2027 — five days before they would have applied — and it deliberately left Article 50 transparency exactly where it was.</p>
+
+  <p>Those two dates were the same date for two years. They are quoted together in nearly every summary written before that week. A model that answers correctly about Article 50 will very often answer confidently and wrongly about Annex III in the same breath, because until recently that was the right answer.</p>
+
+  <div class="callout">
+    <p>We know how easy this is to miss because we missed it. This site published the superseded Annex III date and sold it to paying users, and the <a class="inline" href="evidence.html">correction is on our evidence page</a> along with two others. The server below exists so the answer is looked up rather than remembered.</p>
+  </div>
+
+  <h2>Install</h2>
+
+  <p>Add this to <code>.mcp.json</code> in a project, or to <code>claude_desktop_config.json</code>:</p>
+
+  <pre><code>{
+  "mcpServers": {
+    "lunara": {
+      "command": "npx",
+      "args": ["-y", "@lunara/mcp"]
+    }
+  }
+}</code></pre>
+
+  <p>Node 18 or later. No dependencies, no API key, no account, nothing to sign up for. Reading is free and always will be: a claim nobody can check is worth nothing, so checking must never cost anything.</p>
+
+  <h2>Four tools</h2>
+
+  <div class="tools">
+    <div class="tool">
+      <div class="tool-name">lunara_obligations</div>
+      <div class="tool-body">
+        <p>Every obligation we track, with tense computed at the moment of the call rather than stored anywhere.</p>
+        <p class="ask">“What AI transparency rules are in force in the EU today?”</p>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="tool-name">lunara_applicability</div>
+      <div class="tool-body">
+        <p>Which of them reach a particular deployment, and which do not. Every input accepts <code>unsure</code>, and an unsure is never resolved in the direction that manufactures an obligation.</p>
+        <p class="ask">“We run a support chatbot for EU customers. What actually binds us?”</p>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="tool-name">lunara_cite</div>
+      <div class="tool-body">
+        <p>The citation block for one obligation: status, effective date, instrument, article, penalty, primary source, amending act, evidence classification.</p>
+        <p class="ask">For when you are about to state a date to someone and it should carry its source.</p>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="tool-name">lunara_verify</div>
+      <div class="tool-body">
+        <p>Whether a business carries Shield certification. Returns verified, not_registered or revoked.</p>
+        <p class="ask">“Is this supplier in the Lunara registry?”</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>What an answer looks like</h2>
+
+  <p>Nothing below is prose we wrote for this example. Every field is either read from the corpus or computed at the moment of the call.</p>
+
+  <div class="spec">
+    <div class="spec-head">lunara_cite &nbsp;·&nbsp; id: eu-art50-legacy</div>
+<pre><code>OBLIGATION       Article 50(2) for systems already on the market
+JURISDICTION     European Union
+STATUS           PENDING — applies from 2 February 2027
+EFFECTIVE        2 February 2027
+INSTRUMENT       EU AI Act 2024/1689, as amended by the Digital
+                 Omnibus on AI, Regulation (EU) 2026/1744
+ARTICLE          Art. 50(2), transitional
+REQUIRES         Generative systems placed on the market before
+                 2 August 2026 lose their transitional relief and
+                 must mark synthetic output machine-readably.
+SOURCE           https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
+AMENDED BY       https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng
+CLASSIFICATION   verified (Lunara evidence standard)
+LAST VERIFIED    21 August 2026
+COMPUTED         2026-08-21T05:49:27.457Z</code></pre>
+  </div>
+
+  <p>That last obligation is the one most commonly missed entirely. For a generative system that was already on the market before Article 50 applied, the expiry of its transitional relief is the nearest binding deadline in the whole Act — and it does not appear in most summaries, because most summaries were written before the Omnibus put it there.</p>
+
+  <h2>What it will not do</h2>
+
+  <div class="wont">
+    <h3>It does not answer when it cannot reach us.</h3>
+    <p>There is no bundled copy of the corpus. That is a real cost — the server does not work offline — and it is the correct trade. A cached table is precisely how a system keeps confidently serving a date that was amended months ago. If lunarasociety.com is unreachable you get an error saying so, not a remembered answer. An oracle that guesses is worse than an oracle that is down, because you cannot tell which one you got.</p>
+
+    <h3>It will tell you nothing applies.</h3>
+    <p>Three outcomes of the applicability model conclude that no obligation in the corpus reaches the asker, including the one most organisations hit: the California AI Transparency Act reaches generative systems above one million monthly users, and below that line it imposes nothing at all. A qualifier that only ever escalates is a sales funnel, and it would make every other answer we give worth less.</p>
+
+    <h3>It is not legal advice.</h3>
+    <p>Obligations are marked <strong>verified</strong> — checked against primary law, with that source linked so you can reach the same conclusion without trusting us. The applicability model is marked <strong>interpretation</strong>, because which obligation catches you is our reading. You are free to take the facts and leave the reading.</p>
+  </div>
+
+  <h2>Where the answers come from</h2>
+
+  <p>A single obligation table, emitted twice. The site reads it as JavaScript and computes tense in the browser; the corpus at <a class="inline" href="/corpus/obligations.json">/corpus/obligations.json</a> is generated from that same table, and the deploy fails while the two disagree. Nothing is typed in two places, so a correction is one edit.</p>
+
+  <p>The build also refuses any entry that has no link to primary law, or that says “as amended by” without linking the amending act — which is exactly the omission that let a superseded date sit on this site for weeks.</p>
+
+  <ul style="list-style:none;margin:22px 0;font-family:'Inter',sans-serif;font-size:14px;line-height:2.1;color:rgba(220,200,160,0.7)">
+    <li><a class="inline" href="/corpus/index.json">/corpus/index.json</a> — what is published, and how to read it</li>
+    <li><a class="inline" href="/corpus/obligations.json">/corpus/obligations.json</a> — the obligations</li>
+    <li><a class="inline" href="/corpus/obligations.schema.json">/corpus/obligations.schema.json</a> — the schema they are held to</li>
+    <li><a class="inline" href="/corpus/applicability.json">/corpus/applicability.json</a> — the decision model</li>
+    <li><a class="inline" href="/llms.txt">/llms.txt</a> — the full context file</li>
+  </ul>
+
+  <div class="callout">
+    <p><strong>If an entry does not follow from the source it cites, that is a defect.</strong> Tell us at <a class="inline" href="mailto:rosario@lunarasociety.com">rosario@lunarasociety.com</a>. Two of our three published corrections were things our own review did not catch, and one was found by an outside reader. We would rather be told than found out.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>Lunara Society &nbsp;·&nbsp; Independent constitutional governance for autonomous AI systems</p>
+  <p><a href="evidence.html">Evidence standard</a> &nbsp;·&nbsp; <a href="intelligence.html">Intelligence</a> &nbsp;·&nbsp; <a href="registry.html">Registry</a> &nbsp;·&nbsp; <a href="/llms.txt">llms.txt</a></p>
+</footer>
+
+</body>
+</html>

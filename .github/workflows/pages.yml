@@ -39,6 +39,14 @@ jobs:
       - name: Verify the regulatory corpus
         run: node tools/verify-corpus.mjs
 
+      # Every figure on a page must come from the pricing table. This caught
+      # a $99 Shield next to a button charging $75, a "$2,599 initial" card
+      # above a button charging $7,400, and thirty-three files advertising a
+      # catalogue that had been superseded — none of which anything was
+      # looking for, because nothing was.
+      - name: Verify prices
+        run: node tools/verify-prices.mjs
+
       # The MCP server is the doorway AI systems come through, so it is
       # exercised against this commit's corpus rather than against the
       # deployed one — otherwise a corpus change and the server that reads

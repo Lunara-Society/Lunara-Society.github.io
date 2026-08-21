@@ -292,7 +292,7 @@ p,li,span{
           "name": "Article 50 Disclosure Pack",
           "price": "75",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/article50.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -313,14 +313,14 @@ p,li,span{
           "name": "Second Opinion",
           "price": "240",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
           "name": "Regulatory Watch",
           "price": "290",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/watch.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -546,14 +546,19 @@ p,li,span{
       <button class="form-btn" onclick="doRegister()">Create Account</button>
       <p class="form-error" id="register-error"></p>
       <div class="pricing-note" style="margin-top:24px">
-        <div class="pricing-row" style="font-size:15px;color:var(--gold)"><span>Member Subscription</span><span>$15 per month</span></div>
+        <div class="pricing-row" style="font-size:15px;color:var(--gold)"><span><span data-lx-name="member6">Lunara Society Membership</span></span><span><span data-lx-amount="member6">$150</span></span></div>
         <div class="pricing-row"><span>Full Certification Methodology</span><span>Included</span></div>
         <div class="pricing-row"><span>Audit Templates and Checklists</span><span>Included</span></div>
         <div class="pricing-row"><span>Regulatory Mapping Details</span><span>Included</span></div>
         <div class="pricing-row"><span>Market Intelligence Briefings</span><span>Included</span></div>
         <div class="pricing-row"><span>Vendor Transition Governance Guide</span><span>Included</span></div>
         <div class="pricing-row"><span>Member Area Access</span><span>Included</span></div>
-        <a href="https://www.paypal.com/ncp/payment/DQ5C7B9T249ZY" class="pricing-cta" target="_blank">Subscribe for $15 per month</a>
+        <!-- This charged $15 a month for a membership the pricing table prices at
+     $150 for six months and marks invitational — a product that must never
+     carry a public buy button. The link also bypassed the table, so the
+     payment record could not say what had been bought. Membership is now
+     described rather than sold here. -->
+        <p class="pricing-cta-note" style="font-size:13px;line-height:1.7;opacity:0.75">Membership is by invitation. <span data-lx-terms="member6">Six months, at the equivalent of $25 a month. By invitation.</span> If you have been invited, use the link in your invitation. Otherwise write to <a href="mailto:maya@lunarasociety.com">maya@lunarasociety.com</a>.</p>
       </div>
       <p class="form-link" style="margin-top:20px">Already have an account? <a onclick="switchTab('login')">Sign in →</a></p>
     </div>
@@ -619,7 +624,7 @@ p,li,span{
         <div class="card">
           <p class="card-label">Lunara ID</p>
           <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-BUS-2026-00001284</p>
-          <p class="card-sub">Permanent identifier · Lifetime record</p>
+          <p class="card-sub">Permanent identifier · Revocable status</p>
         </div>
         <div class="card" id="card-ai-score-wrap">
           <p class="card-label">Machine-Readable Status</p>
@@ -1268,7 +1273,7 @@ async function loadRealShieldStatus(){
       document.getElementById('card-comms-status').textContent = 'Declared';
       document.getElementById('card-comms-sub').textContent = 'Active · Machine-readable';
       document.getElementById('card-shield-id').textContent = data.public_id || '—';
-      document.getElementById('card-shield-id-sub').textContent = 'Permanent · Non-transferable';
+      document.getElementById('card-shield-id-sub').textContent = 'Permanent identifier \u00b7 Revocable status \u00b7 Non-transferable';
       document.getElementById('card-prot-level').textContent = 'Certified';
       document.getElementById('card-prot-level-sub').textContent = data.business_name || '';
       document.getElementById('card-shield-active').textContent = 'Active ✓';
@@ -1484,6 +1489,7 @@ function goHome(){
     </div>
   </div>
 </footer>
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

@@ -449,7 +449,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "Article 50 Disclosure Pack",
           "price": "75",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/article50.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -470,14 +470,14 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "Second Opinion",
           "price": "240",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
           "name": "Regulatory Watch",
           "price": "290",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/watch.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -861,7 +861,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 }</div>
     <div class="gold-rule"></div>
     <h2 class="page-title" style="font-size:clamp(20px,2.8vw,36px);">Founding Participant Program</h2>
-    <p class="page-sub">The first 10 participants shape the standard. Founding status is permanent recognized in the Registry indefinitely. The businesses that establish the standard first carry a different weight than those that join after it exists.</p>
+    <p class="page-sub">The founding cohort shapes the standard. Founding status is recorded in the register and does not expire on its own &mdash; but no entry here is permanent, because certification is revocable and revocations are published as openly as certifications. A register whose entries could never be withdrawn would not be worth querying. The businesses that establish a standard first carry a different weight than those who join after it exists.</p>
     <div class="card-grid">
       <div class="card"><div class="card-num">Lunara ID</div><div class="card-title">Permanent Identity</div><div class="card-text">A permanent verified identity assigned to the participant. Format: LUN-BUS-000XXX</div></div>
       <div class="card"><div class="card-num">Entity Identity</div><div class="card-title">Machine-Readable</div><div class="card-text">Business name, domain, and industry classification indexed and AI-queryable.</div></div>
@@ -871,18 +871,26 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">Obtain the Shield →</span>
   </div>
     <div style="max-width:600px;margin:48px auto;text-align:center">
-      <p style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;margin-bottom:16px">Strategic Registry Partner</p>
-      <h3 style="font-size:clamp(24px,4vw,36px);font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;line-height:1.3;margin-bottom:16px">Become a Registry Partner</h3>
-      <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.5);max-width:480px;margin:0 auto 28px">Embed Lunara trust verification directly into your platform. API access, co-branded registry lookups, and referral revenue sharing for qualifying partners.</p>
+      <!-- This card advertised a "Strategic Registry Partner" at $2,599 above a
+         button already wired to charge $7,400 for Vendor Certification. The
+         partner product is not in the catalogue; the button was migrated and
+         the card around it was not. A price shown next to a button that
+         charges three times more is the worst thing on a page that sells
+         anything, so the card now describes the product the button buys, and
+         every figure in it comes from lunara-pricing.js. -->
+    <p style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;margin-bottom:16px"><span data-lx-name="vendor">Vendor Certification</span></p>
+      <h3 style="font-size:clamp(24px,4vw,36px);font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;line-height:1.3;margin-bottom:16px"><span data-lx-lede="vendor">Evidence a buyer can verify without taking your word.</span></h3>
+      <p style="font-size:15px;line-height:1.9;color:rgba(220,200,160,0.5);max-width:480px;margin:0 auto 28px">For companies whose customers ask them to prove it. A procurement panel can query the register directly rather than reading a claim in a PDF you wrote.</p>
       <div style="background:#000000;border:1px solid rgba(196,164,107,0.35);padding:32px;max-width:400px;margin:0 auto">
-        <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:12px">Strategic Registry Partner</div>
-        <div style="font-size:42px;font-weight:300;color:#C4A46B;font-family:'Cormorant Garamond',serif;margin-bottom:6px">$2,599</div>
-        <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:24px">One time setup</div>
+        <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:12px"><span data-lx-name="vendor">Vendor Certification</span></div>
+        <div style="font-size:42px;font-weight:300;color:#C4A46B;font-family:'Cormorant Garamond',serif;margin-bottom:6px"><span data-lx-amount="vendor">$7,400</span></div>
+        <div style="font-size:12px;color:rgba(196,164,107,0.5);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:24px"><span data-lx-terms="vendor">Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed by invoice.</span></div>
         <ul style="list-style:none;padding:0;margin-bottom:24px;text-align:left">
-          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">API key for embedded registry lookups</li>
-          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Co-branded trust badge for your domain</li>
-          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Referral revenue sharing program</li>
-          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;font-family:'Inter',sans-serif">Priority partner support and onboarding</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Certified against the seven constitutional pillars</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Public register entry a procurement panel can query directly</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Tender evidence dossier</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Re-assessment on material change</li>
+          <li style="font-size:13px;color:rgba(220,200,160,0.5);padding:8px 0;font-family:'Inter',sans-serif">Revocable, and revocations are published as openly as certifications</li>
         </ul>
         <a class="lx-buy" data-lx-buy="vendor" href="#"><span class="lx-buy-label">Vendor certification</span><span class="lx-buy-amt" data-lx-amount="vendor"></span></a>
       </div>

@@ -62,6 +62,22 @@ blockquote cite{display:block;margin-top:12px;font-style:normal;font-family:'Int
 .verdict.clear{border-left:2px solid rgba(140,190,140,0.5);padding-left:20px}
 .again{background:none;border:none;color:var(--gold-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-top:20px;padding:8px 0;text-decoration:underline}
 
+/* The three products that answer this page. All figures come from
+   lunara-pricing.js; nothing here is typed. */
+.offers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:34px 0}
+.offer{border:1px solid rgba(196,164,107,0.24);background:linear-gradient(177deg,rgba(18,15,9,0.7),rgba(5,4,2,0.95));padding:26px 24px;display:flex;flex-direction:column}
+.offer.lead{border-color:rgba(226,196,122,0.55)}
+.offer-tag{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:rgba(196,164,107,0.55);margin-bottom:12px}
+.offer.lead .offer-tag{color:#E2C47A}
+.offer-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:#f0e0b0;line-height:1.25;margin-bottom:6px}
+.offer-lede{font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.75;color:rgba(220,200,160,0.62);margin-bottom:16px}
+.offer-amt{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:6px}
+.offer-terms{font-family:'Inter',sans-serif;font-size:11.5px;color:rgba(196,164,107,0.5);margin-bottom:18px;line-height:1.6}
+.offer ul{list-style:none;margin:0 0 22px;padding:0}
+.offer li{font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.7;color:rgba(220,200,160,0.66);padding:7px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
+.offer li:last-child{border-bottom:none}
+.offer .lx-buy,.offer a.buy{margin-top:auto;display:inline-flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(196,164,107,0.5);padding:12px 18px;color:var(--gold);text-decoration:none;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;min-height:44px}
+.offer .lx-buy:hover,.offer a.buy:hover{background:rgba(196,164,107,0.12);border-color:var(--gold)}
 .srcs{margin-top:18px;list-style:none}
 .srcs li{font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.9;color:rgba(196,164,107,0.5)}
 .srcs a{color:rgba(240,224,176,0.72);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.25)}
@@ -160,6 +176,54 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
 
   <p>We scanned the public pages of twenty European generative-AI companies in August 2026 — homepage, pricing, legal, privacy, terms, trust and security. <strong>None of them published any mention of C2PA, Content Credentials or content provenance on those pages.</strong> That is a statement about what is documented publicly, not about what is implemented: several of them may well have it in the pipeline and simply not written about it. But a buyer or a regulator reading those pages cannot tell, and increasingly both will look.</p>
 
+  <h2>If this reaches you</h2>
+
+  <p>Three things, depending on where you actually are. Prices and terms below come from one table and are not typed into this page &mdash; the last figure this site typed by hand was wrong for two days.</p>
+
+  <div class="offers">
+    <div class="offer lead">
+      <div class="offer-tag">Start here</div>
+      <div class="offer-name"><span data-lx-name="disclose">Article 50 Disclosure Pack</span></div>
+      <div class="offer-lede"><span data-lx-lede="disclose">The obligation that is in force today, solved.</span></div>
+      <div class="offer-amt"><span data-lx-amount="disclose">$75</span></div>
+      <div class="offer-terms"><span data-lx-terms="disclose">Delivered within 24 hours</span></div>
+      <ul>
+      <li>Disclosure wording drafted for your specific system</li>
+      <li>Machine-readable marking specification for generated output</li>
+      <li>A one page record of what you did and when</li>
+      </ul>
+      <a class="buy" data-lx-buy="disclose" href="#"><span>Buy</span><span data-lx-amount="disclose">$75</span></a>
+    </div>
+    <div class="offer">
+      <div class="offer-tag">If you were already advised</div>
+      <div class="offer-name"><span data-lx-name="second">Second Opinion</span></div>
+      <div class="offer-lede"><span data-lx-lede="second">You were probably told the AI Act was postponed.</span></div>
+      <div class="offer-amt"><span data-lx-amount="second">$240</span></div>
+      <div class="offer-terms"><span data-lx-terms="second">Returned within 48 hours</span></div>
+      <ul>
+      <li>Send us the advice you were given</li>
+      <li>We tell you in writing which parts still hold</li>
+      <li>Every correction cited to the article that governs it</li>
+      </ul>
+      <a class="buy" data-lx-buy="second" href="#"><span>Buy</span><span data-lx-amount="second">$240</span></a>
+    </div>
+    <div class="offer">
+      <div class="offer-tag">Afterwards</div>
+      <div class="offer-name"><span data-lx-name="watch">Regulatory Watch</span></div>
+      <div class="offer-lede"><span data-lx-lede="watch">We tell you when something that binds you changes, and only then.</span></div>
+      <div class="offer-amt"><span data-lx-amount="watch">$290</span></div>
+      <div class="offer-terms"><span data-lx-terms="watch">Six months. Renewed by invoice, never auto-charged.</span></div>
+      <ul>
+      <li>Monitoring across the EU AI Act, SB 942 and your sector rules</li>
+      <li>A written note whenever a date moves or an obligation lands</li>
+      <li>No newsletter, no digest, nothing you did not ask for</li>
+      </ul>
+      <a class="buy" data-lx-buy="watch" href="#"><span>Buy</span><span data-lx-amount="watch">$290</span></a>
+    </div>
+  </div>
+
+  <p>Something was postponed and something was not, and the two get quoted as one thing constantly. The Omnibus deferred the high-risk regimes by sixteen months and left Article 50 exactly where it was. If the advice you were given said the Act was pushed back, it was describing a different part of it. That is what the Second Opinion is for, and we would rather tell you the advice was right than sell you a correction you do not need.</p>
+
   <h2>Sources</h2>
   <ul class="srcs">
     <li><a href="https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng" target="_blank" rel="noopener">Regulation (EU) 2026/1744</a> — the Digital Omnibus on AI. Recital 38 sets the four-month period.</li>
@@ -182,6 +246,7 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
 </footer>
 
 <script src="lunara-clock.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
 <script>
 /* The marking check. Three questions, and it is allowed to conclude that
    nothing here reaches you — which two of its five outcomes do. Dates come

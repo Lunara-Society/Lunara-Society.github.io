@@ -893,15 +893,20 @@ function renderResults(data, payload) {
   // CTA
   html += `<div class="result-card" style="text-align:center;padding:40px 24px">
     <h3 style="margin-bottom:12px">Next Steps</h3>
-    <p style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:20px">This assessment identifies your Article 50 readiness gaps. Lunara Society can help you build the evidence trail through our Compliance Readiness Kit or a full Article 50 Assessment with consultation.</p>
+    <p style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:20px">This assessment identifies your Article 50 readiness gaps. The two products built for this article are below. The marking duty in Article 50(2) has its own date, and most published summaries have it wrong by two months &mdash; <a href="/marking.html" style="color:var(--gold-b)">the date, with the source</a>.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-      <a href="/readiness-kit.html" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-70);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s">Compliance Readiness Kit ($80)</a>
-      <a href="/certify.html" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-30);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s">Shield Certification</a>
+      <a class="lx-buy" data-lx-buy="disclose" href="#" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-70);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s"><span data-lx-name="disclose">Article 50 Disclosure Pack</span> (<span data-lx-amount="disclose">$75</span>)</a>
+      <a class="lx-buy" data-lx-buy="evidence" href="#" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-30);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s"><span data-lx-name="evidence">Article 50 Evidence Pack</span> (<span data-lx-amount="evidence">$2,450</span>)</a>
+      <a href="/readiness-kit.html" style="display:inline-block;font-family:var(--serif);font-size:15px;color:var(--gold-b);border:1px solid var(--gold-30);padding:12px 28px;text-decoration:none;border-radius:3px;transition:all 0.3s"><span data-lx-name="kit">Compliance Kit</span> (<span data-lx-amount="kit">$95</span>)</a>
     </div>
     <p style="font-size:11px;color:var(--text-dim);margin-top:16px">Assessment ID: ${data.assessmentId}</p>
   </div>`;
 
   results.innerHTML = html;
+  /* The price slots above were written into the DOM after lunara-pricing
+     had already run, so they would render with their fallback text and
+     the buy links would have no href. */
+  if (window.LunaraPricing) window.LunaraPricing.refresh();
   results.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -957,6 +962,7 @@ async function downloadPDF() {
 
 </script>
 
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

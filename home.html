@@ -1073,7 +1073,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "Article 50 Disclosure Pack",
           "price": "75",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/article50.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -1094,14 +1094,14 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "Second Opinion",
           "price": "240",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
           "name": "Regulatory Watch",
           "price": "290",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/watch.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -1467,8 +1467,11 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <!-- ─── STATS ─── -->
 <div id="stats-bar">
   <div class="stat reveal">
-    <span class="stat-val" id="founding-count">10</span>
-    <span class="stat-label">Founding Spots Open</span>
+    <!-- 80 is the cap, and the count below is fetched live. This read 10
+         for as long as it has existed, which is neither the cap nor the
+         remaining figure the API has ever returned. -->
+    <span class="stat-val" id="founding-count">80</span>
+    <span class="stat-label">Founding Places Open</span>
   </div>
   <div class="stat-sep"></div>
   <div class="stat reveal reveal-delay-1">
@@ -1939,7 +1942,13 @@ fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoun
   .then(r=>r.json()).then(d=>{
     const el = document.getElementById('founding-count');
     if(el && d && typeof d.remaining==='number') el.textContent = d.remaining;
-  }).catch(()=>{});
+  }).catch(()=>{
+    /* A number nobody could verify is worse than an honest label. */
+    const el = document.getElementById('founding-count');
+    const lb = el && el.parentElement && el.parentElement.querySelector('.stat-label');
+    if(el) el.textContent = '\u2014';
+    if(lb) lb.textContent = 'Founding Places';
+  });
 
 // ── MOBILE DRAWER ──
 function openDrawer(){ document.getElementById('mob-drawer').classList.add('open'); document.body.style.overflow='hidden'; }
@@ -2041,7 +2050,7 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
         const placeholders = [
           {name:'Founding Period Open', domain:'lunarasociety.com', date:'2026'},
           {name:'Applications Being Reviewed', domain:'shield.lunarasociety.com', date:'2026'},
-          {name:'10 Founding Spots Available', domain:'Apply Now', date:'2026'},
+          {name:'Founding Places Available', domain:'Apply Now', date:'2026'},
         ];
         renderTicker(inner, placeholders, true);
         return;

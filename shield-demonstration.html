@@ -235,7 +235,7 @@ input,textarea{
           "name": "Article 50 Disclosure Pack",
           "price": "75",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/article50.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -256,14 +256,14 @@ input,textarea{
           "name": "Second Opinion",
           "price": "240",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
           "name": "Regulatory Watch",
           "price": "290",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/watch.html"
+          "url": "https://lunarasociety.com/marking.html"
         },
         {
           "@type": "Offer",
@@ -428,7 +428,7 @@ input,textarea{
     <li><a href="/registry.html">Registry</a></li>
     <li><a href="/member.html">Member Area</a></li>
   </ul>
-  <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="nav-cta">Obtain the Shield</a>
+  <a class="nav-cta" data-lx-buy="shield" href="#">Obtain the Shield</a>
 </nav>
 
 <div class="security-bar">
@@ -621,9 +621,17 @@ by Lunara Society participation standards.</pre></div>
 <section class="cta-section">
   <h2 class="cta-title">Ready to begin?</h2>
   <p class="cta-sub">The Shield is the entry point. Everything you saw above begins the moment you participate.</p>
-  <p class="cta-price">$99</p>
-  <p class="cta-price-note">ONE-TIME &nbsp;·&nbsp; FOUNDING PARTICIPANT RATE &nbsp;·&nbsp; PERMANENT RECORD</p>
-  <a href="https://checkout.revolut.com/pay/ce6fa08c-cd0a-4d9d-a80e-efeb4c191597" class="cta-btn">Obtain the Shield</a>
+  <!-- This block was wrong in four ways at once. $99 is not a price in the
+       catalogue. "ONE-TIME" describes a term that is six months, renewed by
+       invoice. "PERMANENT RECORD" is the exact claim the rest of this site
+       exists to contradict: certification is revocable, and revocations are
+       published as openly as certifications, so a permanent entry would make
+       the register worthless. And the Revolut link bypassed the pricing table,
+       so a completed payment could not say which product had been bought.
+       All four now come from lunara-pricing.js. -->
+  <p class="cta-price"><span data-lx-amount="shield">$75</span></p>
+  <p class="cta-price-note"><span data-lx-terms="shield">Six months. Renewed by invoice, never auto-charged.</span> &nbsp;·&nbsp; Revocable, and revocations are published</p>
+  <a class="cta-btn" data-lx-buy="shield" href="#">Obtain the Shield</a>
   <p class="cta-alt">Already a member? <a href="/member.html">Access your Member Area →</a></p>
 </section>
 
@@ -696,6 +704,7 @@ document.addEventListener('keydown',e=>{
   } catch(e) {}
 })();
 </script>
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

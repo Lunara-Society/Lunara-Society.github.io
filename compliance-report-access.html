@@ -202,11 +202,19 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196,164,107,0.4)}
   <p>© 2026 Lunara Society. Constitutional Governance Authority.</p>
 </footer>
 
+<script src="lunara-pricing.js" defer></script>
 <script>
-(function(){
+/* priceTier used to be declared inside the IIFE below and then read by
+   generateReport(), which is a different scope — so that read threw a
+   ReferenceError and the consultation prompt never appeared for anyone.
+   It is shared deliberately now. */
+var LX_TIER = null;
+var LX_UPGRADED = false;
+
+document.addEventListener('DOMContentLoaded', function () {
   var params = new URLSearchParams(window.location.search);
   var token = params.get('t');
-  var priceTier = params.get('p');
+  LX_TIER = params.get('p');
 
   if (!token) {
     document.getElementById('access-content').style.display = 'none';
@@ -216,14 +224,25 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196,164,107,0.4)}
 
   document.getElementById('txn-id').textContent = token.substring(0, 12) + '...';
 
-  if (priceTier === '499') {
-    document.getElementById('amount-paid').textContent = '$499';
-    document.getElementById('tier-label').textContent = 'Compliance Intelligence Report with Consultation';
-    document.getElementById('product-name').textContent = 'Compliance Intelligence Report + Consultation';
-  } else {
-    document.getElementById('amount-paid').textContent = '$299';
+  /* The two tiers were hardcoded as 499 and 299. Those stopped being the
+     prices some time ago, and a receipt stating an amount the buyer did
+     not pay is worse than one stating none. Old links carrying ?p=499 or
+     ?p=299 still resolve correctly — someone may still have that URL in
+     an email from when those were the prices. */
+  var P = window.LunaraPricing;
+  var base = P && P.get('cir');
+  var plus = P && P.get('cirplus');
+  if (!base || !plus) return;
+
+  LX_UPGRADED = (LX_TIER === String(plus.price) || LX_TIER === '499' || LX_TIER === 'cirplus');
+  var prod = LX_UPGRADED ? plus : base;
+
+  document.getElementById('amount-paid').textContent = P.money(prod.price);
+  if (LX_UPGRADED) {
+    document.getElementById('tier-label').textContent = prod.name;
+    document.getElementById('product-name').textContent = prod.name;
   }
-})();
+});
 
 function generateReport() {
   var orgName = document.getElementById('org-name').value.trim();
@@ -256,7 +275,10 @@ function generateReport() {
   });
   document.getElementById('gaps-list').innerHTML = gapsHtml;
 
-  if (priceTier === '299' && score < 70) {
+  /* Offer the session to someone who bought the base report and scored
+     badly. Reading LX_UPGRADED rather than a price string means this
+     keeps working when the price changes again. */
+  if (!LX_UPGRADED && score < 70) {
     document.getElementById('consult-cta').style.display = 'block';
   }
 

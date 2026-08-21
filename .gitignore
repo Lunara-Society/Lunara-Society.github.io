@@ -1,0 +1,11 @@
+# Working notes. These were tracked once, and therefore served: a draft
+# Wikipedia article about ourselves, a directory-spend plan naming a third
+# party, and Search Console steps were all readable at lunarasociety.com/tmp/.
+# An institution whose product is evidentiary rigor cannot host its own
+# notability drafts on its own origin.
+tmp/
+scratch/
+
+# Only six stray Playwright report templates were ever committed here, and
+# they were being served from our origin as though they were ours.
+node_modules/

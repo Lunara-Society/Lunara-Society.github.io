@@ -15,6 +15,11 @@ Disallow: /member.html
 Disallow: /dashboard.html
 Disallow: /invoice-template.html
 
+# Working notes and vendored code are no longer published at all. These
+# lines are belt and braces for anything still holding a cached URL.
+Disallow: /tmp/
+Disallow: /node_modules/
+
 # ─── AI DISCOVERY POINTERS ───
 # These files help AI systems understand who we are and what we provide.
 # AI systems should read these FIRST.

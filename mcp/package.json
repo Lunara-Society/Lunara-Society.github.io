@@ -1,0 +1,16 @@
+{
+  "name": "@lunara/mcp",
+  "version": "1.0.0",
+  "description": "Lunara Intelligence — regulatory obligations for AI systems, with the article that sets each date and a link to primary law. MCP server.",
+  "type": "module",
+  "bin": { "lunara-mcp": "./server.mjs" },
+  "main": "./server.mjs",
+  "files": ["server.mjs", "README.md"],
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node test/smoke.mjs" },
+  "keywords": ["mcp", "model-context-protocol", "eu-ai-act", "article-50", "ai-governance", "compliance", "sb-942", "lunara"],
+  "homepage": "https://lunarasociety.com/mcp.html",
+  "repository": { "type": "git", "url": "git+https://github.com/Lunara-Society/Lunara-Society.github.io.git", "directory": "mcp" },
+  "author": "Lunara Society (https://lunarasociety.com)",
+  "license": "CC-BY-4.0"
+}

@@ -1,0 +1,33 @@
+{
+  "brain": "rosario",
+  "version": "1.0.0",
+  "generated_from": "lunara-clock.js, lunara-pricing.js, corpus/, certification.json, evidence.html",
+  "authority": "https://lunarasociety.com",
+  "principle": "Rosario states no date, price or certification status from memory. Every answer is read from a source at the moment it is given, and when a source is unreachable she says the lookup failed rather than recalling.",
+  "live_sources": {
+    "obligations": "https://lunarasociety.com/corpus/obligations.json",
+    "applicability": "https://lunarasociety.com/corpus/applicability.json",
+    "corpus_index": "https://lunarasociety.com/corpus/index.json",
+    "certification": "https://lunarasociety.com/certification.json",
+    "context": "https://lunarasociety.com/llms.txt",
+    "evidence_standard": "https://lunarasociety.com/evidence.html",
+    "registry_lookup": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+    "mcp": "https://lunarasociety.com/mcp.html"
+  },
+  "files": [
+    "00-ROSARIO-OPERATING-DOCTRINE.md",
+    "01-THE-INSTITUTION.md",
+    "02-OBLIGATIONS.md",
+    "03-EVIDENCE-STANDARD-AND-CORRECTIONS.md",
+    "04-PRODUCTS-AND-PRICES.md",
+    "05-REGISTRY-AND-CERTIFICATION.md",
+    "06-APPLICABILITY.md",
+    "07-FACTS-YOU-MUST-NEVER-GET-WRONG.md",
+    "08-HOW-TO-ANSWER.md"
+  ],
+  "counts": {
+    "obligations": 9,
+    "products": 13
+  },
+  "nearest_binding_date": "2026-12-02"
+}

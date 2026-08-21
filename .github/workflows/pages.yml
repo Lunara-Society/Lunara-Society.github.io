@@ -47,6 +47,13 @@ jobs:
       - name: Verify prices
         run: node tools/verify-prices.mjs
 
+      # Rosario is the address published in llms.txt. If the corpus corrects a
+      # date and her briefing still carries the old one, the institution has
+      # two answers and the one a prospect hears is the stale one — the failure
+      # behind all four published corrections, pointed at a person this time.
+      - name: Verify Rosario's brain
+        run: node tools/verify-rosario-brain.mjs
+
       # The MCP server is the doorway AI systems come through, so it is
       # exercised against this commit's corpus rather than against the
       # deployed one — otherwise a corpus change and the server that reads

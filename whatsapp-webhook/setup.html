@@ -246,7 +246,7 @@
     <h2>Give her a voice</h2>
     <p class="detail">Everything above makes her <em class="hi">hear</em>. None of it makes her speak — the first version of this Worker received messages and never sent one, which from a phone is indistinguishable from a broken endpoint. Back in <span class="path">Settings → Variables and Secrets</span>, add:</p>
     <p class="detail"><span class="path">WHATSAPP_TOKEN</span> — the access token on Meta's <span class="path">API Setup</span> screen. The temporary one dies in 24 hours; a System User token does not.</p>
-    <p class="detail"><span class="path">ROSARIO_ENDPOINT</span> — her webhook. Takes <span class="path">{sender, text}</span>, returns <span class="path">{reply}</span>.</p>
+    <p class="detail"><span class="path">ANTHROPIC_API_KEY</span> — from console.anthropic.com. Rosario runs <em class="hi">inside</em> this Worker; there is no separate agent service to keep alive.</p>
     <p class="detail">The Phone number ID for +505 5836 5522 is already built in, so you do not need to add it. Deploy once more afterwards — secrets only reach the running code on the next deploy.</p>
     <button class="tick" type="button" aria-pressed="false"><input type="checkbox" tabindex="-1" aria-hidden="true"><span>Mark done</span></button>
   </li>

@@ -98,24 +98,58 @@ console.log('\nPOST — payload handling');
 
 /* ─── Replying ──────────────────────────────────────────────────────
    The first version of this Worker received messages and never sent
-   one. It verified, it logged, and to anyone holding a phone it was
-   indistinguishable from a broken endpoint. These cover the half that
-   was missing. */
-console.log('\nPOST — replying');
+   one. Rosario now runs inside it, so these cover both halves: that she
+   is asked correctly, and that every failure still produces a message
+   rather than silence. */
+console.log('\nPOST — Rosario replying');
 {
   const realFetch = globalThis.fetch;
   const calls = [];
-  const mock = (rosarioReply, sendOk = true) => {
+
+  const CORPUS = {
+    version: '1.0.0',
+    obligations: [
+      { id: 'eu-art50', name: 'Article 50 transparency obligations',
+        jurisdiction: 'European Union', applies_from: '2026-08-02',
+        instrument: 'EU AI Act, Regulation (EU) 2024/1689',
+        article: 'Art. 113 — general application',
+        summary: 'AI systems must disclose that they are AI.',
+        penalty: 'Up to EUR 15,000,000 or 3% of worldwide annual turnover',
+        source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng', amended_by: null },
+      { id: 'eu-art50-legacy', name: 'Article 50(2) marking for systems already on the market',
+        jurisdiction: 'European Union', applies_from: '2026-12-02',
+        instrument: 'EU AI Act 2024/1689, as amended by Regulation (EU) 2026/1744',
+        article: 'Art. 50(2), four-month transitional period',
+        summary: 'Relief expires and marking becomes mandatory.', penalty: null,
+        source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
+        amended_by: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng' }
+    ]
+  };
+
+  const mock = ({ corpusOk = true, claude = 'Marking falls due 2 December 2026.',
+                  claudeStatus = 200, sendOk = true, stopReason = 'end_turn' } = {}) => {
     globalThis.fetch = async (url, init) => {
       const u = String(url);
-      calls.push({ url: u, body: init?.body ? JSON.parse(init.body) : null });
+      calls.push({ url: u, init, body: init?.body ? JSON.parse(init.body) : null });
+      if (u.includes('/corpus/obligations.json')) {
+        return corpusOk
+          ? new Response(JSON.stringify(CORPUS), { status: 200 })
+          : new Response('nope', { status: 503 });
+      }
+      if (u.includes('api.anthropic.com')) {
+        if (claudeStatus !== 200) return new Response('{"error":{"message":"bad"}}', { status: claudeStatus });
+        return new Response(JSON.stringify({
+          stop_reason: stopReason,
+          stop_details: stopReason === 'refusal' ? { category: 'cyber' } : null,
+          content: stopReason === 'refusal' ? [] : [{ type: 'text', text: claude }]
+        }), { status: 200 });
+      }
       if (u.includes('graph.facebook.com')) {
         return sendOk
           ? new Response('{"messages":[{"id":"wamid.OUT"}]}', { status: 200 })
           : new Response('{"error":{"message":"Re-engagement message outside 24 hour window"}}', { status: 400 });
       }
-      if (rosarioReply === null) throw new Error('connection refused');
-      return new Response(JSON.stringify({ reply: rosarioReply }), { status: 200 });
+      throw new Error('unexpected fetch: ' + u);
     };
   };
 
@@ -126,65 +160,102 @@ console.log('\nPOST — replying');
     }] } }] }]
   });
 
-  const env = {
-    ROSARIO_ENDPOINT: 'https://rosario.example/whatsapp',
-    WHATSAPP_TOKEN: 'tok',
-    WHATSAPP_PHONE_NUMBER_ID: '999',
-    GRAPH_VERSION: 'v22.0'
-  };
+  const env = { ANTHROPIC_API_KEY: 'sk-test', WHATSAPP_TOKEN: 'tok', GRAPH_VERSION: 'v22.0' };
+  const sent = () => calls.filter(c => c.url.includes('graph.facebook.com')).pop();
+  const asked = () => calls.filter(c => c.url.includes('api.anthropic.com')).pop();
 
   // happy path
-  calls.length = 0; mock('Marking falls due 2 December 2026.');
-  await worker.fetch(P(inbound('when is the deadline?')), env, ctx); await settle();
-  const asked = calls.find(c => c.url.includes('rosario.example'));
-  const sent  = calls.find(c => c.url.includes('graph.facebook.com'));
-  check('asks Rosario with sender and text',
-    asked?.body?.sender === '50577659187' && asked?.body?.text === 'when is the deadline?',
-    JSON.stringify(asked?.body));
-  check('sends her answer back to the sender',
-    sent?.body?.to === '50577659187' && sent?.body?.text?.body === 'Marking falls due 2 December 2026.',
-    JSON.stringify(sent?.body));
-  check('uses the configured graph version',
-    sent?.url.includes('/v22.0/999/messages'), sent?.url);
+  calls.length = 0; mock();
+  await worker.fetch(P(inbound('when is the marking deadline?')), env, ctx); await settle();
+  check('fetches the corpus before answering',
+    calls.some(c => c.url.includes('/corpus/obligations.json')));
+  check('sends her answer to the sender',
+    sent()?.body?.to === '50577659187' &&
+    sent()?.body?.text?.body === 'Marking falls due 2 December 2026.',
+    JSON.stringify(sent()?.body));
+  check('uses the phone number ID for +505 5836 5522',
+    sent()?.url.includes('/1299096859948214/messages'), sent()?.url);
 
-  // Rosario unreachable — must still say something, and that something
-  // must be that the lookup failed. Silence would let the sender assume
-  // the last thing they were told still stands.
-  calls.length = 0; mock(null);
-  await worker.fetch(P(inbound('is Article 50 in force?')), env, ctx); await settle();
-  const fallback = calls.find(c => c.url.includes('graph.facebook.com'));
-  check('unreachable Rosario still gets a reply out', Boolean(fallback));
-  check('and that reply refuses to answer from memory',
-    /could not reach|not answer a regulatory question from memory/i.test(fallback?.body?.text?.body ?? ''),
-    fallback?.body?.text?.body);
+  // request shape — the things that 400 on Opus 5 if got wrong
+  const req = asked();
+  check('calls Claude with the api key header', req?.init?.headers?.['x-api-key'] === 'sk-test');
+  check('sends anthropic-version', Boolean(req?.init?.headers?.['anthropic-version']));
+  check('model defaults to claude-opus-5', req?.body?.model === 'claude-opus-5', req?.body?.model);
+  check('does NOT send temperature or top_p — both are rejected on Opus 5',
+    !('temperature' in (req?.body ?? {})) && !('top_p' in (req?.body ?? {})));
+  check('does NOT send budget_tokens — removed on Opus 5',
+    !JSON.stringify(req?.body?.thinking ?? {}).includes('budget_tokens'));
+  check('passes the user text through', req?.body?.messages?.at(-1)?.content === 'when is the marking deadline?');
+
+  // the system prompt has to carry the live corpus and the traps
+  const sys = req?.body?.system ?? '';
+  check('system prompt carries the live corpus dates', /2 December 2026/.test(sys));
+  check('system prompt computes tense', /IN FORCE since|PENDING/.test(sys));
+  check('system prompt warns off February 2027', /not February 2027/.test(sys));
+  check('system prompt forbids claiming infallibility', /never make mistakes/i.test(sys));
+  check('system prompt states the California threshold', /ONE MILLION monthly/.test(sys));
+  check('system prompt requires disclosing she is an AI', /Never claim to be human/.test(sys));
+
+  // corpus down — must refuse rather than answer from memory
+  calls.length = 0; mock({ corpusOk: false });
+  await worker.fetch(P(inbound('what binds us?')), env, ctx); await settle();
+  check('corpus down still sends a message', Boolean(sent()));
+  check('and that message refuses to answer from memory',
+    /not answer from memory|could not reach the obligation corpus/i.test(sent()?.body?.text?.body ?? ''),
+    sent()?.body?.text?.body);
+  check('corpus down never reaches Claude', !calls.some(c => c.url.includes('api.anthropic.com')));
+
+  // Claude erroring — still a message, never silence
+  calls.length = 0; mock({ claudeStatus: 500 });
+  await worker.fetch(P(inbound('hello')), env, ctx); await settle();
+  check('a failed model call still sends something', Boolean(sent()));
+  check('and says so rather than guessing',
+    /went wrong|rather say that/i.test(sent()?.body?.text?.body ?? ''), sent()?.body?.text?.body);
+
+  // refusal is a 200, not an exception
+  calls.length = 0; mock({ stopReason: 'refusal' });
+  await worker.fetch(P(inbound('something disallowed')), env, ctx); await settle();
+  check('a refusal is handled as a normal reply',
+    /not able to answer that one/i.test(sent()?.body?.text?.body ?? ''), sent()?.body?.text?.body);
+
+  // no key
+  calls.length = 0; mock();
+  await worker.fetch(P(inbound('hello')), { WHATSAPP_TOKEN: 'tok' }, ctx); await settle();
+  check('without a key she says she cannot think, not nothing',
+    /not yet able to think/i.test(sent()?.body?.text?.body ?? ''), sent()?.body?.text?.body);
 
   // non-text
-  calls.length = 0; mock('unused');
+  calls.length = 0; mock();
   await worker.fetch(P(inbound(null, 'image')), env, ctx); await settle();
-  const img = calls.find(c => c.url.includes('graph.facebook.com'));
-  check('an image gets told text only, not silence',
-    /only read text/i.test(img?.body?.text?.body ?? ''), img?.body?.text?.body);
-  check('an image does not wake Rosario', !calls.some(c => c.url.includes('rosario.example')));
+  check('an image gets told text only', /only read text/i.test(sent()?.body?.text?.body ?? ''));
+  check('an image never reaches Claude', !calls.some(c => c.url.includes('api.anthropic.com')));
 
-  // over WhatsApp's 4096 limit — a body that long is rejected outright,
-  // so an untrimmed long answer is lost entirely rather than cut short.
-  calls.length = 0; mock('x'.repeat(9000));
-  await worker.fetch(P(inbound('tell me everything')), env, ctx); await settle();
-  const long = calls.find(c => c.url.includes('graph.facebook.com'));
-  check('a long answer is trimmed below the 4096 limit',
-    (long?.body?.text?.body?.length ?? 0) <= 4096, 'len=' + long?.body?.text?.body?.length);
+  // long answers
+  calls.length = 0; mock({ claude: 'x'.repeat(9000) });
+  await worker.fetch(P(inbound('everything')), env, ctx); await settle();
+  check('a long answer is trimmed below WhatsApp\'s 4096 limit',
+    (sent()?.body?.text?.body?.length ?? 0) <= 4096, 'len=' + sent()?.body?.text?.body?.length);
 
-  // send refused — must not throw, must log
-  calls.length = 0; mock('anything', false);
+  // send refused
+  calls.length = 0; mock({ sendOk: false });
   let threw = false;
-  try { await worker.fetch(P(inbound('hello')), env, ctx); await settle(); } catch { threw = true; }
+  try { await worker.fetch(P(inbound('hi')), env, ctx); await settle(); } catch { threw = true; }
   check('a refused send does not take the Worker down', !threw);
 
-  // no credentials — receives, cannot send, says so
-  calls.length = 0; mock('hi');
-  await worker.fetch(P(inbound('hello')), { ROSARIO_ENDPOINT: env.ROSARIO_ENDPOINT }, ctx); await settle();
-  check('without a token nothing is sent to Meta',
-    !calls.some(c => c.url.includes('graph.facebook.com')));
+  // conversation memory when KV is bound
+  const store = new Map();
+  const kvEnv = { ...env, MESSAGES: {
+    get: async (k) => store.get(k) ?? null,
+    put: async (k, v) => { store.set(k, v); }
+  } };
+  calls.length = 0; mock({ claude: 'First answer.' });
+  await worker.fetch(P(inbound('first question')), kvEnv, ctx); await settle();
+  mock({ claude: 'Second answer.' });
+  await worker.fetch(P(inbound('and the follow up?')), kvEnv, ctx); await settle();
+  const second = asked();
+  check('remembers the earlier turn when KV is bound',
+    (second?.body?.messages?.length ?? 0) >= 3,
+    'turns=' + (second?.body?.messages?.length ?? 0));
 
   globalThis.fetch = realFetch;
 }

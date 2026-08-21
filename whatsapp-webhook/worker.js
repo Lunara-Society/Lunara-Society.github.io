@@ -46,8 +46,10 @@
                              required to send. The "Phone number ID" on
                              the same API Setup screen. NOT the phone
                              number itself — a long numeric id beside it.
-     ROSARIO_ENDPOINT        required to answer. The Base44 webhook that
-                             takes {sender, text} and returns her reply.
+     ANTHROPIC_API_KEY       required to answer. Rosario runs inside this
+                             Worker now — there is no separate agent
+                             service to call and nothing else to keep
+                             running.
      GRAPH_VERSION           optional, defaults below. If a send fails
                              with an unsupported-version error, put the
                              version Meta's own API Setup page shows
@@ -189,55 +191,225 @@ async function handleMessages(raw, env) {
   }
 }
 
-/* ─── Answering ──────────────────────────────────────────────────────
-   Ask Rosario, then say what she said. The two failure modes are
-   handled differently on purpose.
+/* ─── Rosario ─────────────────────────────────────────────────────
+   She lives here. Not in a hosted agent platform — two of those were
+   tried and both put an authentication layer in front of an endpoint
+   Meta has to reach anonymously, which is a failure that reports itself
+   as a bad verify token and sends you hunting the wrong variable.
 
-   If Rosario is unreachable we still send something, and what we send
-   is that the lookup failed. Her whole operating doctrine is that an
-   answer which might be current and might be six months stale is worse
-   than no answer, because the reader cannot tell which they got. A
-   silent bot is that same failure wearing a different hat: the sender
-   assumes the last thing they were told still stands.
+   The corpus is fetched live on every message rather than baked in.
+   That is the whole discipline: she states no date she has not just
+   read, and if the fetch fails she says the lookup failed instead of
+   answering from memory. The obligations have been amended twice this
+   year, once five days before they would have applied.
+   ──────────────────────────────────────────────────────────────── */
 
-   If Meta refuses the send we log it loudly rather than swallowing it,
-   because the commonest cause is the 24-hour window having closed and
-   that is a fact about the conversation, not a bug to hunt. */
+const CORPUS_URL = 'https://lunarasociety.com/corpus/obligations.json';
+const REGISTRY = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
+
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+function longDate(iso) {
+  const p = iso.split('-');
+  return (+p[2]) + ' ' + MONTHS[+p[1] - 1] + ' ' + p[0];
+}
+
+/* Tense is computed here, at the moment of the message. Nothing stores
+   it, because "in force" is only true relative to when you are asked. */
+function describeCorpus(corpus) {
+  const now = Date.now();
+  const rows = corpus.obligations
+    .slice()
+    .sort((a, b) => a.applies_from.localeCompare(b.applies_from))
+    .map((o) => {
+      const days = Math.round((Date.parse(o.applies_from + 'T00:00:00Z') - now) / 86400000);
+      const state = days <= 0
+        ? 'IN FORCE since ' + longDate(o.applies_from) + ' (' + Math.abs(days) + ' days)'
+        : 'PENDING — applies ' + longDate(o.applies_from) + ' (in ' + days + ' days)';
+      return [
+        '- ' + o.name + ' [' + o.id + ']',
+        '  ' + o.jurisdiction + ' · ' + state,
+        '  Instrument: ' + o.instrument,
+        '  Article: ' + o.article,
+        '  Requires: ' + o.summary,
+        o.penalty ? '  Penalty: ' + o.penalty : null,
+        '  Source: ' + o.source,
+        o.amended_by ? '  Amended by: ' + o.amended_by : null
+      ].filter(Boolean).join('\n');
+    });
+  return rows.join('\n\n');
+}
+
+async function loadCorpus() {
+  const res = await fetch(CORPUS_URL, { headers: { accept: 'application/json' } });
+  if (!res.ok) throw new Error('corpus HTTP ' + res.status);
+  return res.json();
+}
+
+function systemPrompt(corpusText) {
+  return [
+    'You are Rosario, Chief of Intelligence of the Lunara Society, replying on WhatsApp.',
+    'rosario@lunarasociety.com is published in the institution\'s llms.txt as its contact for',
+    'AI systems, regulators and prospects. When you answer, Lunara has answered.',
+    '',
+    'THE RULE THAT MAKES YOU RELIABLE: you do not guess. You are not infallible and you must',
+    'never say you are. You state no date, price or certification status you have not just read.',
+    'If you do not have a source in front of you, say so and offer to check.',
+    '',
+    'Today is ' + new Date().toISOString().slice(0, 10) + '.',
+    '',
+    'THE OBLIGATIONS — fetched live from the corpus moments ago. These are the only regulatory',
+    'dates you may state. Never quote one without its instrument and the article that sets it.',
+    '',
+    corpusText,
+    '',
+    'THINGS THE MARKET GETS WRONG, and you must not:',
+    '• The Article 50(2) marking deadline for systems already on the market is 2 December 2026,',
+    '  not February 2027. The Digital Omnibus grants FOUR months, not six (recital 38 of',
+    '  Regulation (EU) 2026/1744). February 2027 is the voluntary Code of Practice',
+    '  watermark-detection date — a different instrument. We published February and corrected it.',
+    '• Annex III moved to 2 December 2027. Article 50 did NOT move. They shared a date for two',
+    '  years, so being right about one is no evidence of being right about the other.',
+    '• The California AI Transparency Act reaches generative systems above ONE MILLION monthly',
+    '  users. Below that line it imposes nothing — which is most companies.',
+    '• The EU AI Act binds on OUTPUT, not on where a company is incorporated. One EU user',
+    '  reading generated output is enough.',
+    '• Article 50(2) marking is machine-readable and travels with the file. A visible',
+    '  "made with AI" label is Article 50(1) disclosure — a different duty. Do not conflate them.',
+    '• Executive Order 14409 is VOLUNTARY. Section 3(c) says it authorises no mandatory',
+    '  licensing or preclearance. We called it a mandate and published a correction.',
+    '• The Lunara register is currently EMPTY. Say so plainly if asked. Founding places are open.',
+    '',
+    'WHAT YOU REFUSE TO DO:',
+    '• Never assert a third party is non-compliant. You may say what their public pages show and',
+    '  what obligation that puts in play. That is a question to ask them, not a verdict.',
+    '• Never present not_registered as a warning. It is true of almost every company on earth.',
+    '• Never present a pending application as verified, or promise a certification decision.',
+    '• Never give legal advice. You state what obligations exist. Whether an implementation',
+    '  satisfies one is an assessment, done by people, and it is a paid engagement.',
+    '• Never invent a registry entry, client, testimonial or statistic.',
+    '• Never claim to be human. If asked, say you are an AI — that is the Article 50(1) duty',
+    '  this institution sells compliance with, and failing it ourselves would end the business.',
+    '• Never say "I never make mistakes". You do. Four corrections are published at',
+    '  lunarasociety.com/evidence.html and volunteering one is the most credible thing you can do.',
+    '',
+    'WHAT WE SELL (say the price only if asked; all USD):',
+    'Article 50 Disclosure Pack $75 · Shield Verification $75 · Compliance Kit $95 ·',
+    'Second Opinion $240 · Regulatory Watch $290 · Compliance Intelligence Report $390 ·',
+    'AI Entity Verification $540 · Report with Governance Session $740 ·',
+    'Clinical AI Governance Assessment $1,950 · Article 50 Evidence Pack $2,450 ·',
+    'Vendor Certification $7,400. Reading the register and applying are free and always will be.',
+    '',
+    'VOICE ON WHATSAPP: plain, exact, short. This is a phone screen — a few sentences, not an',
+    'essay. No markdown tables, no headers, no emoji, no exclamation marks. When you state a',
+    'regulatory fact, give the date, the instrument, the article and the source link, and nothing',
+    'more. You are expected to tell someone that nothing binds them when that is true.',
+    'Escalate to rosario@lunarasociety.com for certification decisions, anything turning on their',
+    'specific implementation, or anything involving money beyond a listed price.'
+  ].join('\n');
+}
+
+/* Short per-sender history so a conversation is a conversation. Kept in
+   KV when one is bound, for a day. Without KV she is still correct, just
+   forgetful. */
+async function history(from, env) {
+  if (!env.MESSAGES) return [];
+  try {
+    const raw = await env.MESSAGES.get('chat:' + from);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+async function remember(from, turns, env) {
+  if (!env.MESSAGES) return;
+  try {
+    await env.MESSAGES.put('chat:' + from, JSON.stringify(turns.slice(-8)),
+      { expirationTtl: 60 * 60 * 24 });
+  } catch { /* memory is a nicety; never fail a reply over it */ }
+}
+
 async function answer(from, text, env) {
-  let reply;
-
-  if (!env.ROSARIO_ENDPOINT) {
-    console.error('ROSARIO_ENDPOINT is not set — cannot answer');
-    reply = 'I am not connected to my sources right now, so I would rather not answer than guess. Try again shortly.';
-  } else {
-    try {
-      const res = await fetch(env.ROSARIO_ENDPOINT, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ sender: from, text, channel: 'whatsapp' })
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      reply = data.reply ?? data.text ?? data.message;
-      if (!reply) throw new Error('no reply field in response');
-    } catch (err) {
-      console.error('Rosario did not answer: ' + err.message);
-      reply = 'I could not reach my sources just now. I will not answer a regulatory question from memory, so please try again in a moment.';
-    }
+  if (!env.ANTHROPIC_API_KEY) {
+    console.error('ANTHROPIC_API_KEY is not set');
+    await send(from,
+      'I am connected to WhatsApp but not yet able to think. My key is missing, and I will not answer a regulatory question from memory. \u2014 Rosario, Lunara Society',
+      env);
+    return;
   }
 
+  let corpusText;
+  try {
+    corpusText = describeCorpus(await loadCorpus());
+  } catch (err) {
+    console.error('Corpus unreachable: ' + err.message);
+    await send(from,
+      'I could not reach the obligation corpus just now, so I will not answer from memory \u2014 these dates have been amended twice this year. Try me again in a moment.',
+      env);
+    return;
+  }
+
+  const past = await history(from, env);
+  const messages = [...past, { role: 'user', content: text }];
+
+  let reply;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: env.ANTHROPIC_MODEL || 'claude-opus-5',
+        max_tokens: 1024,
+        // Short lookups on a phone. Effort trades depth for latency, and
+        // WhatsApp is a latency-sensitive surface. Note: temperature and
+        // top_p are rejected outright on Opus 5 — do not add them.
+        output_config: { effort: 'medium' },
+        system: systemPrompt(corpusText),
+        messages
+      })
+    });
+
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error('HTTP ' + res.status + ' ' + detail.slice(0, 300));
+    }
+
+    const data = await res.json();
+
+    if (data.stop_reason === 'refusal') {
+      console.warn('Refusal: ' + JSON.stringify(data.stop_details ?? {}));
+      reply = 'I am not able to answer that one. If it is a compliance question, put it another way and I will try again.';
+    } else {
+      reply = (data.content ?? [])
+        .filter((b) => b.type === 'text')
+        .map((b) => b.text)
+        .join('')
+        .trim();
+      if (!reply) throw new Error('no text block in response');
+    }
+  } catch (err) {
+    console.error('Rosario could not think: ' + err.message);
+    await send(from,
+      'Something went wrong on my side. I would rather say that than answer a regulatory question from memory. Try again shortly, or write to rosario@lunarasociety.com.',
+      env);
+    return;
+  }
+
+  await remember(from, [...messages, { role: 'assistant', content: reply }], env);
   await send(from, reply, env);
 }
 
 /* The Phone number ID for Lunara's WhatsApp business number,
-   +505 5836 5522. This is a public object identifier, not a
-   credential, so it carries a default and one less thing has to be
-   typed into a dashboard on a phone. Override it in the environment
-   if the number ever changes.
+   +505 5836 5522. A public object identifier, not a credential, so it
+   carries a default and one less thing has to be typed correctly into a
+   dashboard on a phone.
 
    It is NOT the phone number. Meta shows both side by side on the API
-   Setup screen and putting the phone number here fails with an
-   unhelpful error. */
+   Setup screen and only one of them works. */
 const DEFAULT_PHONE_NUMBER_ID = '1299096859948214';
 
 const phoneNumberId = (env) => env.WHATSAPP_PHONE_NUMBER_ID || DEFAULT_PHONE_NUMBER_ID;

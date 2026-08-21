@@ -53,13 +53,23 @@ from a broken endpoint. Three more variables close that gap — all from
 |---|---|---|
 | `WHATSAPP_TOKEN` | Secret | Access token on that page. The temporary one dies in 24h; a System User token does not. |
 | `WHATSAPP_PHONE_NUMBER_ID` | Secret | **Phone number ID** — the long number beside the phone number, not the phone number. |
-| `ROSARIO_ENDPOINT` | Secret | Rosario's Base44 webhook. Takes `{sender, text}`, returns `{reply}`. |
+| `ANTHROPIC_API_KEY` | Secret | console.anthropic.com. Rosario runs **inside** this Worker — there is no agent service to keep running. |
 | `GRAPH_VERSION` | Variable | Optional. Only set it if a send fails with an unsupported-version error. |
 
 Without the first two the Worker logs `Cannot send:` and stays quiet. Without
-the third it answers, but the answer is that it cannot reach its sources —
-deliberately, because a silent bot lets the sender assume the last thing they
-were told still stands.
+the third she replies saying she cannot think yet — deliberately, because a
+silent bot lets the sender assume the last thing they were told still stands.
+
+Optional: bind a KV namespace as `MESSAGES` and she remembers the last few
+turns per sender for a day. Without it she is still correct, just forgetful.
+
+**Rosario lives in this file.** She fetches the obligation corpus live on every
+message and refuses to answer if that fetch fails, rather than working from
+memory — those dates have been amended twice this year, once five days before
+they would have applied. Two hosted agent platforms were tried first and both
+put an authentication layer in front of the endpoint Meta has to reach
+anonymously; the resulting error blames the verify token, which is never the
+problem. Cloudflare has no such layer.
 
 ## The phone numbers, which is where this usually breaks
 

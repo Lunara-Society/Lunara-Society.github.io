@@ -42,6 +42,58 @@ No CLI needed. In the Cloudflare dashboard:
    this the endpoint verifies and then receives nothing, which looks
    identical to a broken endpoint.
 
+## Making it actually reply
+
+The first version of this Worker received messages and never sent one. It
+verified, it logged, and to anyone holding a phone it was indistinguishable
+from a broken endpoint. Three more variables close that gap — all from
+**Meta → WhatsApp → API Setup**:
+
+| Name | Type | Where it comes from |
+|---|---|---|
+| `WHATSAPP_TOKEN` | Secret | Access token on that page. The temporary one dies in 24h; a System User token does not. |
+| `WHATSAPP_PHONE_NUMBER_ID` | Secret | **Phone number ID** — the long number beside the phone number, not the phone number. |
+| `ROSARIO_ENDPOINT` | Secret | Rosario's Base44 webhook. Takes `{sender, text}`, returns `{reply}`. |
+| `GRAPH_VERSION` | Variable | Optional. Only set it if a send fails with an unsupported-version error. |
+
+Without the first two the Worker logs `Cannot send:` and stays quiet. Without
+the third it answers, but the answer is that it cannot reach its sources —
+deliberately, because a silent bot lets the sender assume the last thing they
+were told still stands.
+
+## The phone numbers, which is where this usually breaks
+
+There are **two** numbers and confusing them wastes an evening.
+
+**The sender** is Meta's free test number, shown on the API Setup page. You do
+not supply it and you should not try to use your own — a number registered to
+the Cloud API can never be used in the WhatsApp app again, and Meta refuses a
+number that already has a WhatsApp account on it.
+
+**The recipient** is your own phone, added under *To → Manage phone number
+list*. Format is country code + number, digits only: **no `+`, no spaces, no
+dashes, no leading zero.** `+505 7765 9187` goes in as `50577659187`. Get this
+wrong and Meta reports the number as not a WhatsApp user, which is the single
+most misleading error in the whole product.
+
+Up to five test recipients. Everyone else is silently rejected.
+
+## Who has to message first
+
+A business may send free-form text only **within 24 hours of the last inbound
+message**. Outside that window only a pre-approved template goes through.
+
+So "the user scans a QR and messages Rosario" is the *easy* direction, and
+"Rosario messages the user first" is the hard one — the opposite of what most
+people assume. Generate the QR with:
+
+```
+python3 tools/wa-qr.py <sender number, digits only> --text "Hello Rosario"
+```
+
+It decodes its own output before writing the file and refuses to emit a QR it
+could not read back.
+
 ## The two things that will go wrong
 
 **"The callback URL or verify token couldn't be validated."** Almost

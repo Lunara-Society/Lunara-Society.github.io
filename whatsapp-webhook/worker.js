@@ -33,6 +33,25 @@
                              messages are kept for a week so you can
                              read them; leave it unbound and they are
                              only logged.
+
+   To REPLY — without these three the Worker receives and stays silent,
+   which is what it did for its first version and is indistinguishable
+   from a broken endpoint:
+
+     WHATSAPP_TOKEN          required to send. Meta → WhatsApp → API
+                             Setup → temporary or permanent access
+                             token. The temporary one expires in 24
+                             hours; a System User token does not.
+     WHATSAPP_PHONE_NUMBER_ID
+                             required to send. The "Phone number ID" on
+                             the same API Setup screen. NOT the phone
+                             number itself — a long numeric id beside it.
+     ROSARIO_ENDPOINT        required to answer. The Base44 webhook that
+                             takes {sender, text} and returns her reply.
+     GRAPH_VERSION           optional, defaults below. If a send fails
+                             with an unsupported-version error, put the
+                             version Meta's own API Setup page shows
+                             here rather than editing this file.
    ═══════════════════════════════════════════════════════════════════ */
 
 const WEEK = 60 * 60 * 24 * 7;
@@ -113,12 +132,12 @@ async function handleEvent(request, env, ctx) {
   // Acknowledge before doing anything else. Meta retries on slow or
   // failed responses, and a retry storm is harder to debug than a
   // dropped log line.
-  ctx.waitUntil(record(raw, env));
+  ctx.waitUntil(handleMessages(raw, env));
 
   return new Response('EVENT_RECEIVED', { status: 200 });
 }
 
-async function record(raw, env) {
+async function handleMessages(raw, env) {
   let payload;
   try {
     payload = JSON.parse(new TextDecoder().decode(raw));
@@ -147,6 +166,17 @@ async function record(raw, env) {
             { expirationTtl: WEEK }
           );
         }
+
+        // Only text gets an answer. An image or a voice note would
+        // otherwise be answered as though it were empty, which reads
+        // to the sender as Rosario ignoring them.
+        if (message.type === 'text' && note.text) {
+          await answer(note.from, note.text, env);
+        } else if (message.type !== 'text') {
+          await send(note.from,
+            'I can only read text at the moment. Send it as a message and I will answer.',
+            env);
+        }
       }
 
       for (const status of value.statuses ?? []) {
@@ -156,6 +186,99 @@ async function record(raw, env) {
         );
       }
     }
+  }
+}
+
+/* ─── Answering ──────────────────────────────────────────────────────
+   Ask Rosario, then say what she said. The two failure modes are
+   handled differently on purpose.
+
+   If Rosario is unreachable we still send something, and what we send
+   is that the lookup failed. Her whole operating doctrine is that an
+   answer which might be current and might be six months stale is worse
+   than no answer, because the reader cannot tell which they got. A
+   silent bot is that same failure wearing a different hat: the sender
+   assumes the last thing they were told still stands.
+
+   If Meta refuses the send we log it loudly rather than swallowing it,
+   because the commonest cause is the 24-hour window having closed and
+   that is a fact about the conversation, not a bug to hunt. */
+async function answer(from, text, env) {
+  let reply;
+
+  if (!env.ROSARIO_ENDPOINT) {
+    console.error('ROSARIO_ENDPOINT is not set — cannot answer');
+    reply = 'I am not connected to my sources right now, so I would rather not answer than guess. Try again shortly.';
+  } else {
+    try {
+      const res = await fetch(env.ROSARIO_ENDPOINT, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ sender: from, text, channel: 'whatsapp' })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      reply = data.reply ?? data.text ?? data.message;
+      if (!reply) throw new Error('no reply field in response');
+    } catch (err) {
+      console.error('Rosario did not answer: ' + err.message);
+      reply = 'I could not reach my sources just now. I will not answer a regulatory question from memory, so please try again in a moment.';
+    }
+  }
+
+  await send(from, reply, env);
+}
+
+async function send(to, body, env) {
+  if (!env.WHATSAPP_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID) {
+    console.error(
+      'Cannot send: ' +
+      (!env.WHATSAPP_TOKEN ? 'WHATSAPP_TOKEN ' : '') +
+      (!env.WHATSAPP_PHONE_NUMBER_ID ? 'WHATSAPP_PHONE_NUMBER_ID ' : '') +
+      'not set. The message was received and nothing was sent back.'
+    );
+    return;
+  }
+
+  const version = env.GRAPH_VERSION || 'v22.0';
+  const url = 'https://graph.facebook.com/' + version + '/' +
+              env.WHATSAPP_PHONE_NUMBER_ID + '/messages';
+
+  // WhatsApp rejects bodies over 4096 characters outright, so a long
+  // answer would be lost entirely rather than trimmed.
+  const text = body.length > 4000 ? body.slice(0, 3990) + '\u2026' : body;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + env.WHATSAPP_TOKEN,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to,
+        type: 'text',
+        text: { preview_url: false, body: text }
+      })
+    });
+
+    if (!res.ok) {
+      const detail = await res.text();
+      console.error('Send failed ' + res.status + ': ' + detail);
+      if (/re-?engagement|24 hour|outside/i.test(detail)) {
+        console.error(
+          'That is the 24-hour window, not a bug. A business may only send ' +
+          'free-form text within 24 hours of the last inbound message. ' +
+          'Outside it, only an approved template goes through.'
+        );
+      }
+      return;
+    }
+    console.log('Replied to ' + to);
+  } catch (err) {
+    console.error('Send threw: ' + err.message);
   }
 }
 

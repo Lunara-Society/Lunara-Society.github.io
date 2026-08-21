@@ -17,16 +17,16 @@
     "type": "Independent Trust Coordination Institution",
     "industry": "AI Governance, Compliance, Trust Verification",
     "jurisdictions_served": "Worldwide",
-    "languages": ["English"],
+    "languages": [
+      "English"
+    ],
     "license": "CC BY 4.0 (Constitution)",
     "standards": [
-      "EU AI Act Article 50 compliance",
-      "California SB 942 AI Transparency Act",
-      "NIST AI Risk Management Framework",
-      "FedRAMP",
-      "FISMA",
-      "Executive Order 14409"
-    ]
+      "EU AI Act, Regulation (EU) 2024/1689 \u2014 Article 50 transparency obligations, as amended by Regulation (EU) 2026/1744",
+      "California AI Transparency Act \u2014 SB 942 as amended by AB 853",
+      "NIST AI Risk Management Framework (AI RMF 1.0)"
+    ],
+    "standards_note": "These are the instruments Lunara assesses against, published in machine-readable form at https://lunarasociety.com/corpus/obligations.json. Executive Order 14409 was previously listed here and has been removed: its frontier-model framework is voluntary, and the order states at Section 3(c) that nothing in it authorises a mandatory licensing, preclearance or permitting requirement. Listing it as a standard implied an obligation that does not exist. See https://lunarasociety.com/evidence.html."
   },
   "products": [
     {

@@ -63,6 +63,34 @@ for (const o of expected.obligations) {
   check(ISO.test(o.verified || ''), `${at}: no verification date`);
 }
 
+// Every JSON surface a machine is told to read must parse, and the issuer's
+// own verification file must not claim a credential it does not hold. That
+// file carried SHIELD-2026-0000 for months while the registry returned
+// not_registered for it — the one contradiction guaranteed to be found by
+// an agent following our own published protocol.
+const SURFACES = [
+  'ai.json', 'identity.json', 'agent-manifest.json', 'certification.json', 'schema-ld.json',
+  'corpus/index.json', 'corpus/applicability.json', 'corpus/obligations.schema.json',
+  '.well-known/ai.json', '.well-known/ai-plugin.json',
+  '.well-known/lunara-verify.json', '.well-known/lunara-verify.schema.json'
+];
+
+for (const rel of SURFACES) {
+  let doc;
+  try {
+    doc = JSON.parse(readFileSync(join(ROOT, rel), 'utf8'));
+  } catch (e) {
+    fail.push(`${rel}: does not parse as JSON (${e.message})`);
+    continue;
+  }
+  if (rel === '.well-known/lunara-verify.json') {
+    check(doc.record_type === 'issuing_authority',
+      `${rel}: must declare record_type "issuing_authority" — this is the issuer's own file`);
+    check(!('shield_id' in doc),
+      `${rel}: claims a shield_id. The issuer holds no credential from itself, and an id that resolves to nothing is worse than none.`);
+  }
+}
+
 // The site's rule is that no page states a date. These are the files that
 // are allowed to, plus prose that quotes a correction rather than asserting
 // a live deadline.

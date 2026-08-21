@@ -1,14 +1,20 @@
 {
   "$schema": "https://lunarasociety.com/.well-known/lunara-verify.schema.json",
+  "record_type": "issuing_authority",
   "issuer": "https://lunarasociety.com",
-  "shield_id": "SHIELD-2026-0000",
   "domain": "lunarasociety.com",
-  "status_endpoint": "https://lunarasociety.com/registry.html",
+  "certified": false,
+  "why_there_is_no_shield_id": "This file used to carry SHIELD-2026-0000. That identifier resolved to nothing: our own registry returned not_registered for it and for this domain. Our badge page tells applicants that an identifier that was never issued displays as unrecognised, and an agent following our own published protocol \u2014 read the file, check it against the registry \u2014 got a contradiction on our own domain. The identifier has been withdrawn rather than fabricated into existence.",
+  "why_we_do_not_certify_ourselves": "Shield Certification is a human review in which a named reviewer signs a decision about a third party. An issuer that grants itself the credential it sells has certified nothing, and the registry would be recording an assertion rather than a review. The registry contains certified third parties only. If this institution is ever to hold a verified identity credential, it will have to come from someone who is not us.",
+  "registry": "https://lunarasociety.com/registry.html",
+  "registry_lookup": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
   "constitution": "https://lunarasociety.com/constitution.html",
+  "evidence_standard": "https://lunarasociety.com/evidence.html",
+  "corpus": "https://lunarasociety.com/corpus/index.json",
   "contact_policy": {
     "automated_contact": "requires_disclosure",
     "preferred_channel": "https://lunarasociety.com/contact.html",
     "bulk_solicitation": "declined"
   },
-  "note": "This is the issuing authority's own file, and doubles as the reference example for certified institutions. Template and guidance: https://lunarasociety.com/badge.html"
+  "reference_example": "https://lunarasociety.com/badge.html \u2014 the template a certified institution publishes, which does carry a shield_id, because theirs was issued."
 }

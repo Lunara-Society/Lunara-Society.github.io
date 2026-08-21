@@ -200,6 +200,32 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
     </dl>
   </div>
 
+  <div class="correction">
+    <div class="correction-head">Correction &middot; issued 21 August 2026</div>
+    <h3>We called a voluntary framework a mandate, and gave it a date it never had.</h3>
+
+    <p>Our AI context file, our identity graph and our compliance timeline all carried <strong>Executive Order 14409</strong> as a &ldquo;30-day cybersecurity testing mandate for frontier models&rdquo; and a &ldquo;federal agency compliance requirement,&rdquo; active from <em>24 July 2026</em>. Our identity file listed the order among the standards this institution assesses against.</p>
+
+    <p>The order was signed <strong>2 June 2026</strong> and published in the Federal Register on 5 June. Its frontier-model framework is <strong>voluntary</strong>: a developer <em>may</em> offer a covered model to federal agencies for up to thirty days of pre-release evaluation. Section 3(c) says in terms that nothing in it authorises &ldquo;a mandatory governmental licensing, preclearance, or permitting requirement for the development, publication, release, or distribution of new AI models, including frontier models.&rdquo; The binding thirty-day clocks are in Section 2 and they run against federal agencies hardening their own systems &mdash; not against anyone building a model.</p>
+
+    <dl>
+      <dt>What we got wrong</dt>
+      <dd>Three things in one entry. We converted a voluntary programme into a mandate, we attached the thirty-day agency deadlines from Section 2 to the developer framework in Section 3, and we published a date that corresponds to nothing in the order&rsquo;s history. This is the third time we have overstated what binds, and the first time we did it about an instrument that binds nobody in our audience at all.</dd>
+
+      <dt>Why</dt>
+      <dd>The entry was never checked against the order. It was written from secondary coverage, carried forward across three files, and then read back to us by our own structured data as though that were confirmation. Our two previous corrections were both caught by going to primary law; this row had never been there.</dd>
+
+      <dt>How it was found</dt>
+      <dd>While auditing every regulatory claim on this site before publishing the corpus in machine-readable form. It was not caught by our own review either, which now makes two of three.</dd>
+
+      <dt>Corrected</dt>
+      <dd>The claim is corrected in <a class="inline" href="/llms.txt">llms.txt</a>, in our identity graph, and on the compliance timeline, each now linking the Federal Register text so a reader can check the wording of Section 3(c) without trusting us. The order has been removed from the list of standards we assess against, because it is not one. <strong>FedRAMP and FISMA were removed from that same list</strong> in the same pass: both are United States federal programmes, we hold no authorisation under either, and listing them implied a status we do not have.</dd>
+
+      <dt>What changed so it cannot recur</dt>
+      <dd>Obligations now live in one generated corpus with a link to primary law on every entry, and the build refuses to publish an entry that has no source or that claims an amendment it does not link. The deeper rule is the one this error broke: <strong>an instrument that binds nobody does not go in the table at all.</strong> EO 14409 is now described where readers ask about it and is deliberately absent from the corpus, because a short table that is right beats a long one that is mostly right.</dd>
+    </dl>
+  </div>
+
   <p>We publish these because the alternative is worse. A compliance authority that has never issued a correction is either very lucky or not looking, and a prospect who finds an uncorrected error learns more about us than any accurate page would have taught them.</p>
 
   <h2>What this means if you buy from us</h2>
@@ -213,6 +239,8 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
     <li><a href="https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/" target="_blank" rel="noopener">Gibson Dunn</a> and <a href="https://www.whitecase.com/insight-alert/eu-ai-omnibus-enters-force-amending-ai-act" target="_blank" rel="noopener">White &amp; Case</a> — independent legal analyses</li>
     <li><a href="https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853" target="_blank" rel="noopener">California AB 853</a> — the bill text amending the AI Transparency Act, signed 13 October 2025</li>
     <li><a href="https://www.morganlewis.com/pubs/2026/08/new-california-ai-disclosure-rules-become-operative" target="_blank" rel="noopener">Morgan Lewis</a> and <a href="https://www.mayerbrown.com/en/insights/publications/2025/10/new-obligations-under-the-california-ai-transparency-act-and-companion-chatbot-law-add-to-the-compliance-list" target="_blank" rel="noopener">Mayer Brown</a> — on the operative date, the million-user threshold and the 2027 and 2028 waves</li>
+    <li><a href="https://www.federalregister.gov/documents/full_text/text/2026/06/05/2026-11415.txt" target="_blank" rel="noopener">Executive Order 14409</a> — the order&rsquo;s own text, for the voluntary framework at Section 3(b) and the words of Section 3(c). Signed 2 June 2026, published 5 June.</li>
+    <li><a href="https://www.congress.gov/crs-product/IF13268" target="_blank" rel="noopener">Congressional Research Service, IF13268</a> — independent summary of what EO 14409 does and does not require</li>
   </ul>
 
   <div class="cta">

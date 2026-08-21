@@ -2,15 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://lunarasociety.com/.well-known/lunara-verify.schema.json",
   "title": "Lunara Shield verification file",
-  "description": "Published by a certified institution at /.well-known/lunara-verify.json on its own domain. An AI system or agent reads this before evaluating or contacting the business.",
+  "description": "Published at /.well-known/lunara-verify.json on a domain. An AI system or agent reads this before evaluating or contacting the business. Two record types exist: a certified entity, which carries a shield_id resolvable in the public registry, and the issuing authority's own file, which does not \u2014 Lunara does not certify itself, and a shield_id that resolves to nothing is worse than none at all.",
   "type": "object",
-  "required": ["issuer", "shield_id", "domain"],
+  "required": [
+    "issuer",
+    "domain"
+  ],
   "properties": {
     "issuer": {
       "type": "string",
       "format": "uri",
-      "const": "https://lunarasociety.com",
-      "description": "The authority that issued this credential."
+      "description": "The authority that issued this credential. https://lunarasociety.com"
     },
     "shield_id": {
       "type": "string",
@@ -37,12 +39,65 @@
       "properties": {
         "automated_contact": {
           "type": "string",
-          "enum": ["permitted", "requires_disclosure", "declined"],
-          "description": "requires_disclosure means an AI system must identify itself as such before making contact — the Article 50 transparency obligation expressed in machine-readable form."
+          "enum": [
+            "permitted",
+            "requires_disclosure",
+            "declined"
+          ],
+          "description": "requires_disclosure means an AI system must identify itself as such before making contact \u2014 the Article 50 transparency obligation expressed in machine-readable form."
         },
-        "preferred_channel": { "type": "string", "format": "uri" },
-        "bulk_solicitation": { "type": "string", "enum": ["permitted", "declined"] }
+        "preferred_channel": {
+          "type": "string",
+          "format": "uri"
+        },
+        "bulk_solicitation": {
+          "type": "string",
+          "enum": [
+            "permitted",
+            "declined"
+          ]
+        }
+      }
+    },
+    "record_type": {
+      "enum": [
+        "certified_entity",
+        "issuing_authority"
+      ],
+      "default": "certified_entity",
+      "description": "certified_entity is the normal case. issuing_authority is Lunara's own file and must not claim a shield_id."
+    },
+    "certified": {
+      "type": "boolean",
+      "description": "False only on the issuing authority's own file."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "issuing_authority"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "shield_id"
+          ]
+        },
+        "description": "The issuer holds no credential from itself. A reviewer signs a decision about a third party; an issuer granting itself the credential it sells has reviewed nothing."
+      },
+      "else": {
+        "required": [
+          "shield_id"
+        ],
+        "description": "A certified entity must carry the identifier it was issued, and that identifier must resolve in the public registry. One that was never issued displays as unrecognised."
       }
     }
-  }
+  ]
 }

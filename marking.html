@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="The EU AI Act's machine-readable marking duty falls due on 2 December 2026 for generative systems that were already on the market. Four months, not six. What it requires, who it reaches, and the source.">
+<title>2 December 2026 — the marking deadline — Lunara Society</title>
+<meta property="og:title" content="The EU AI Act deadline most summaries get wrong">
+<meta property="og:description" content="Generative systems already on the market got four months of relief from machine-readable marking, not six. It expires 2 December 2026.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lunarasociety.com/marking.html">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lunarasociety.com/marking.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;overflow-x:clip}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.55);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+.wrap{max-width:840px;margin:0 auto;padding:150px 28px 40px}
+.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
+h1{font-size:clamp(34px,6vw,60px);font-weight:300;line-height:1.14;color:#f0e0b0;letter-spacing:-0.015em;margin-bottom:26px}
+h1 em{font-style:italic;color:var(--gold-b)}
+.standfirst{font-size:clamp(17px,2.2vw,21px);line-height:1.7;color:rgba(220,200,160,0.62);max-width:60ch;font-weight:300}
+h2{font-size:clamp(24px,3.4vw,34px);font-weight:300;color:#f0e0b0;line-height:1.25;margin:74px 0 20px}
+p{font-size:16px;line-height:1.92;color:var(--text);margin-bottom:18px;max-width:66ch;font-family:'Inter',sans-serif;font-weight:300}
+p strong{font-weight:500;color:#f0e0b0}
+a.inline{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3)}
+a.inline:hover{color:var(--gold-b)}
+
+.count{border:1px solid rgba(226,196,122,0.45);border-left-width:2px;background:linear-gradient(177deg,rgba(26,21,12,0.92),rgba(7,6,3,0.98));padding:34px 32px;margin:38px 0;text-align:center}
+.count-n{font-family:'Cormorant Garamond',serif;font-size:clamp(56px,12vw,96px);line-height:1;color:#f4e5c4;font-weight:300}
+.count-u{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold-dim);margin-top:12px}
+.count-d{font-family:'Inter',sans-serif;font-size:14px;color:rgba(220,200,160,0.7);margin-top:16px}
+
+blockquote{border-left:2px solid var(--gold);padding:18px 24px;margin:28px 0;background:linear-gradient(90deg,rgba(196,164,107,0.05),transparent)}
+blockquote p{margin:0;font-style:italic;color:rgba(226,206,160,0.86);font-family:'Cormorant Garamond',serif;font-size:19px;line-height:1.7}
+blockquote cite{display:block;margin-top:12px;font-style:normal;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.06em;color:var(--gold-dim)}
+
+.check{border:1px solid rgba(196,164,107,0.3);padding:32px 30px;margin:40px 0;background:linear-gradient(177deg,rgba(18,15,9,0.7),rgba(5,4,2,0.95))}
+.check-q{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#f0e0b0;margin-bottom:8px;line-height:1.3}
+.check-h{font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(220,200,160,0.55);margin-bottom:20px;line-height:1.7}
+.check-opts{display:flex;gap:10px;flex-wrap:wrap}
+.check-opt{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:12px 26px;background:none;border:1px solid rgba(196,164,107,0.35);color:var(--gold);cursor:pointer;transition:background .25s,border-color .25s;min-height:44px}
+.check-opt:hover,.check-opt:focus-visible{background:rgba(196,164,107,0.12);border-color:var(--gold)}
+.check-step{display:none}.check-step.on{display:block}
+.verdict-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:12px}
+.verdict-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#f0e0b0;margin-bottom:14px;line-height:1.3}
+.verdict ul{list-style:none;margin:18px 0}
+.verdict li{font-family:'Inter',sans-serif;font-size:14px;line-height:1.8;color:rgba(220,200,160,0.72);padding-left:18px;position:relative;margin-bottom:10px}
+.verdict li::before{content:'·';position:absolute;left:4px;color:var(--gold)}
+.verdict.clear{border-left:2px solid rgba(140,190,140,0.5);padding-left:20px}
+.again{background:none;border:none;color:var(--gold-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-top:20px;padding:8px 0;text-decoration:underline}
+
+.srcs{margin-top:18px;list-style:none}
+.srcs li{font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.9;color:rgba(196,164,107,0.5)}
+.srcs a{color:rgba(240,224,176,0.72);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.25)}
+.cta{margin:70px 0 30px;padding:44px 34px;border:1px solid rgba(196,164,107,0.25);text-align:center}
+.cta h3{font-family:'Cormorant Garamond',serif;margin:0 0 12px;font-size:26px;font-weight:300;color:#f0e0b0}
+.cta p{margin:0 auto 26px;color:rgba(220,200,160,0.55);font-size:15px;max-width:54ch}
+.cta a{display:inline-block;border:1px solid rgba(196,164,107,0.5);padding:14px 34px;color:var(--gold);text-decoration:none;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+.cta a:hover{background:rgba(196,164,107,0.1)}
+footer{border-top:1px solid var(--gold-faint);padding:44px 28px 60px;text-align:center}
+footer p{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.1em;color:rgba(196,164,107,0.35);margin:0 auto 6px;max-width:60ch}
+footer a{color:rgba(196,164,107,0.55);text-decoration:none}
+@media(max-width:760px){nav{padding:14px 18px}.nav-links{gap:14px}.wrap{padding:120px 20px 30px}}
+</style>
+<link rel="stylesheet" href="lunara-refined.css">
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand">Lunara Society</a>
+  <div class="nav-links">
+    <a href="evidence.html">Evidence</a>
+    <a href="mcp.html">For AI</a>
+    <a href="registry.html">Registry</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="eyebrow">EU AI Act &middot; Article 50(2)</div>
+  <h1>Most summaries give you<br>until <em>February.</em></h1>
+  <p class="standfirst">You have until 2 December 2026. The Omnibus grants a transitional period of four months, not six, and the difference is the entire margin most organisations think they have.</p>
+
+  <div class="count">
+    <div class="count-n" data-lx-days="eu-art50-legacy">—</div>
+    <div class="count-u">days until machine-readable marking falls due</div>
+    <div class="count-d"><span data-lx-phrase="eu-art50-legacy">2 December 2026</span> &middot; computed at the moment you loaded this page, not typed</div>
+  </div>
+
+  <h2>What actually happened</h2>
+
+  <p>Article 50 of the EU AI Act applied from 2 August 2026. Its disclosure duties — telling a person they are dealing with an AI — took effect that day with no relief of any kind.</p>
+
+  <p>The marking duty in Article 50(2) is different. Generative systems <strong>already on the market</strong> before 2 August were given a transitional period by the Digital Omnibus, Regulation (EU) 2026/1744. The regulation states the length of that period rather than a date:</p>
+
+  <blockquote>
+    <p>&ldquo;To allow sufficient time for providers of generative AI systems subject to the marking obligations laid down in Article 50(2) of Regulation (EU) 2024/1689 to adapt their practices within a reasonable time without disrupting the market, it is appropriate to introduce a transitional period of <strong>four months</strong> for providers who have already placed their systems on the market before the 2 August 2026.&rdquo;</p>
+    <cite>Regulation (EU) 2026/1744, recital 38</cite>
+  </blockquote>
+
+  <p>Four months from 2 August is 2 December. Not February.</p>
+
+  <p><strong>Why February is in circulation.</strong> There is a real 2 February 2027 date in this area: the Code of Practice sets it for watermark-detection interoperability. Different instrument, different obligation, and voluntary. The Commission's original proposal also floated six months before the co-legislators settled on four. Two nearby dates and a superseded draft is enough for the wrong one to spread.</p>
+
+  <p>We know, because <a class="inline" href="evidence.html">we published the wrong one ourselves</a> and had to correct it. That correction is on our evidence page with the other three.</p>
+
+  <h2>Does it reach you?</h2>
+
+  <div class="check" id="mk">
+    <div class="check-step on" data-step="0">
+      <div class="check-q">Does your system generate text, images, audio or video?</div>
+      <div class="check-h">Generated rather than retrieved. A drafted reply counts. A generated image counts. A synthetic voice counts.</div>
+      <div class="check-opts">
+        <button class="check-opt" data-a="yes">Yes</button>
+        <button class="check-opt" data-a="no">No</button>
+      </div>
+    </div>
+    <div class="check-step" data-step="1">
+      <div class="check-q">Does anyone in the EU use it, or see its output?</div>
+      <div class="check-h">The Act binds on output, not on where you are incorporated. One EU customer reading a generated reply is enough.</div>
+      <div class="check-opts">
+        <button class="check-opt" data-a="yes">Yes</button>
+        <button class="check-opt" data-a="no">No</button>
+        <button class="check-opt" data-a="unsure">Not sure</button>
+      </div>
+    </div>
+    <div class="check-step" data-step="2">
+      <div class="check-q">Was it available to customers before 2 August 2026?</div>
+      <div class="check-h">This is the question the whole date turns on, and the one nobody asks.</div>
+      <div class="check-opts">
+        <button class="check-opt" data-a="yes">Yes</button>
+        <button class="check-opt" data-a="no">No, launched after</button>
+        <button class="check-opt" data-a="unsure">Not sure</button>
+      </div>
+    </div>
+    <div class="check-step" data-step="3">
+      <div class="verdict" id="mk-verdict" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <h2>What marking actually means</h2>
+
+  <p>Article 50(2) requires that generated output be marked in a <strong>machine-readable</strong> form, so that a system downstream can detect it as artificial. A visible &ldquo;made with AI&rdquo; label in your interface is a disclosure, and it is a good thing, but it is not this. The obligation is about the artefact, not the interface.</p>
+
+  <p>In practice that means provenance metadata travelling with the file — C2PA Content Credentials being the standard most of the industry has converged on — and, for formats where metadata is easily stripped, an embedded signal in the content itself.</p>
+
+  <p>We scanned the public pages of twenty European generative-AI companies in August 2026 — homepage, pricing, legal, privacy, terms, trust and security. <strong>None of them published any mention of C2PA, Content Credentials or content provenance on those pages.</strong> That is a statement about what is documented publicly, not about what is implemented: several of them may well have it in the pipeline and simply not written about it. But a buyer or a regulator reading those pages cannot tell, and increasingly both will look.</p>
+
+  <h2>Sources</h2>
+  <ul class="srcs">
+    <li><a href="https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng" target="_blank" rel="noopener">Regulation (EU) 2026/1744</a> — the Digital Omnibus on AI. Recital 38 sets the four-month period.</li>
+    <li><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" target="_blank" rel="noopener">Regulation (EU) 2024/1689</a> — the AI Act. Article 50 sets the duties themselves.</li>
+    <li><a href="https://www.whitecase.com/insight-alert/eu-ai-omnibus-enters-force-amending-ai-act" target="_blank" rel="noopener">White &amp; Case</a> and <a href="https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/" target="_blank" rel="noopener">Gibson Dunn</a> — independent analyses, both giving 2 December 2026.</li>
+    <li><a href="/corpus/obligations.json">Our corpus</a> — this obligation and eight others, machine-readable, each citing primary law.</li>
+  </ul>
+
+  <div class="cta">
+    <h3>If we are wrong, tell us</h3>
+    <p>Four corrections are published on our evidence page, three of them found by something other than our own review. If an entry here does not follow from the source it cites, that is a defect and we would rather be told than found out.</p>
+    <a href="contact.html">Contact</a>
+  </div>
+
+</div>
+
+<footer>
+  <p>Lunara Society &nbsp;·&nbsp; Independent constitutional governance for autonomous AI systems</p>
+  <p><a href="evidence.html">Evidence standard</a> &nbsp;·&nbsp; <a href="mcp.html">For AI systems</a> &nbsp;·&nbsp; <a href="/corpus/obligations.json">Corpus</a></p>
+</footer>
+
+<script src="lunara-clock.js" defer></script>
+<script>
+/* The marking check. Three questions, and it is allowed to conclude that
+   nothing here reaches you — which two of its five outcomes do. Dates come
+   from the clock, never from this file: every date typed by hand on this
+   site has been wrong at least once, including this one. */
+(function () {
+  'use strict';
+  function boot() {
+    var root = document.getElementById('mk');
+    if (!root) return;
+    var steps = [].slice.call(root.querySelectorAll('.check-step'));
+    var out = document.getElementById('mk-verdict');
+    var answers = [];
+
+    function when(id, fallback) {
+      try {
+        var r = window.LunaraClock && window.LunaraClock.get(id);
+        if (r && r.longDate) return r.longDate;
+      } catch (e) {}
+      return fallback;
+    }
+    function daysLeft() {
+      try {
+        var r = window.LunaraClock && window.LunaraClock.get('eu-art50-legacy');
+        if (r) return r.active ? null : r.days;
+      } catch (e) {}
+      return null;
+    }
+    function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+    function show(i) { steps.forEach(function (s, n) { s.classList.toggle('on', n === i); }); }
+
+    function verdict() {
+      var gen = answers[0], eu = answers[1], before = answers[2];
+      var head, title, body, items = [], clear = false;
+      var d = daysLeft();
+      var soon = d === null ? 'It has already fallen due.' : 'That is ' + d + ' day' + (d === 1 ? '' : 's') + ' away.';
+
+      if (gen === 'no') {
+        clear = true;
+        head = 'This one does not reach you';
+        title = 'Article 50(2) governs generated output. A system that does not generate has nothing to mark.';
+        body = 'That is a real answer and we would rather give it than manufacture a concern.';
+        items = ['Article 50(1) disclosure may still apply if your system converses with people. It has applied since ' + when('eu-art50', '2 August 2026') + ' with no transitional relief.'];
+      } else if (eu === 'no') {
+        clear = true;
+        head = 'Not on these answers';
+        title = 'Your system generates, but the Act binds on output reaching the EU.';
+        body = 'On what you have told us, the marking duty does not currently reach you.';
+        items = ['The day an EU user sees generated output, this changes, and there is no grace period attached to that moment.',
+                 'California has its own regime, and it reaches generative systems above one million monthly users. Below that line it imposes nothing.'];
+      } else if (before === 'no') {
+        head = 'Already in force against you';
+        title = 'A system placed on the market on or after 2 August 2026 never had the transitional relief.';
+        body = 'The four-month period applies only to systems that were already on the market. Yours was not, so the marking duty applied from the day it launched.';
+        items = ['<b>The December date is not your deadline. It has already passed you.</b>',
+                 'Machine-readable marking on generated output, detectable downstream as artificial.',
+                 'Disclosure under Article 50(1) applies too, if the system converses with anyone.'];
+      } else {
+        head = before === 'unsure' ? 'Probably in force, and one question decides it' : 'In force on ' + when('eu-art50-legacy', '2 December 2026');
+        title = before === 'unsure'
+          ? 'Whether you have until December or are already late turns on when the system was first available.'
+          : 'Machine-readable marking falls due on ' + when('eu-art50-legacy', '2 December 2026') + '.';
+        body = before === 'unsure'
+          ? 'If it was on the market before 2 August 2026 you have until ' + when('eu-art50-legacy', '2 December 2026') + '. If it launched after, the duty applied from day one and the relief never existed. Whoever owns the deployment can answer this in an afternoon.'
+          : soon + ' Generated output must carry a machine-readable mark, detectable downstream as artificial.';
+        items = [
+          '<b>Machine-readable, not visible.</b> A “made with AI” label in your interface is a disclosure. This obligation is about the artefact and travels with the file.',
+          'Provenance metadata is the usual route — C2PA Content Credentials is where most of the industry has converged.',
+          'Article 50(1) disclosure is separate, applies since ' + when('eu-art50', '2 August 2026') + ', and never had any relief.',
+          'Penalties under the Act reach EUR 15,000,000 or 3% of worldwide annual turnover.'
+        ];
+      }
+
+      out.className = 'verdict' + (clear ? ' clear' : '');
+      out.innerHTML =
+        '<div class="verdict-head">' + esc(head) + '</div>' +
+        '<div class="verdict-title">' + esc(title) + '</div>' +
+        '<p>' + esc(body) + '</p>' +
+        (items.length ? '<ul><li>' + items.join('</li><li>') + '</li></ul>' : '') +
+        '<p style="font-size:13px;color:rgba(196,164,107,0.5);margin-top:18px">This is our reading of published law, marked <b>interpretation</b> under our <a class="inline" href="evidence.html">evidence standard</a> — the obligation itself is verified and <a class="inline" href="/corpus/obligations.json">cited</a>. It is not legal advice.</p>' +
+        '<button class="again" type="button" id="mk-again">Start again</button>';
+
+      var again = document.getElementById('mk-again');
+      if (again) again.addEventListener('click', function () { answers = []; show(0); });
+    }
+
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.check-opt') : null;
+      if (!btn) return;
+      var step = btn.closest('.check-step');
+      var n = parseInt(step.getAttribute('data-step'), 10);
+      answers[n] = btn.getAttribute('data-a');
+
+      // Short-circuit: if it does not generate, the remaining questions
+      // cannot change the answer, so we do not ask them.
+      if (n === 0 && answers[0] === 'no') { verdict(); return show(3); }
+      if (n === 1 && answers[1] === 'no') { verdict(); return show(3); }
+      if (n >= 2) { verdict(); return show(3); }
+      show(n + 1);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+
+</body>
+</html>

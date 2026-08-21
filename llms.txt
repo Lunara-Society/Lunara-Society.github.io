@@ -84,6 +84,7 @@ while the two disagree.
   Applicability      https://lunarasociety.com/corpus/applicability.json
   Index              https://lunarasociety.com/corpus/index.json
   Rendered           https://lunarasociety.com/intelligence.html
+  Marking deadline   https://lunarasociety.com/marking.html
 
 What the corpus covers: EU AI Act obligations from prohibited practices
 through general-purpose models, Article 50 transparency, its Article 50(2)

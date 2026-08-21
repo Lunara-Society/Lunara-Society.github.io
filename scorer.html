@@ -333,52 +333,80 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       "offers": [
         {
           "@type": "Offer",
-          "name": "Shield Certification",
-          "price": "80",
+          "name": "Article 50 Disclosure Pack",
+          "price": "75",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/article50.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Shield Verification",
+          "price": "75",
           "priceCurrency": "USD",
           "url": "https://lunarasociety.com/certify.html"
         },
         {
           "@type": "Offer",
-          "name": "AI Entity Verification",
-          "price": "899",
-          "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/certify.html"
-        },
-        {
-          "@type": "Offer",
-          "name": "Strategic Registry Partner",
-          "price": "2599",
-          "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/registry.html"
-        },
-        {
-          "@type": "Offer",
-          "name": "Compliance Intelligence Report",
-          "price": "299",
-          "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
-        },
-        {
-          "@type": "Offer",
-          "name": "Compliance Intelligence Report with Consultation",
-          "price": "499",
-          "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/compliance-intelligence.html"
-        },
-        {
-          "@type": "Offer",
-          "name": "EU AI Act Compliance Readiness Kit",
-          "price": "80",
+          "name": "Compliance Kit",
+          "price": "95",
           "priceCurrency": "USD",
           "url": "https://lunarasociety.com/readiness-kit.html"
         },
         {
           "@type": "Offer",
-          "name": "Membership",
-          "price": "15",
+          "name": "Second Opinion",
+          "price": "240",
           "priceCurrency": "USD",
-          "url": "https://lunarasociety.com/member.html"
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Regulatory Watch",
+          "price": "290",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/watch.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Compliance Intelligence Report",
+          "price": "390",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "AI Entity Verification",
+          "price": "540",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Report with Governance Session",
+          "price": "740",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Clinical AI Governance Assessment",
+          "price": "1950",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/healthcare-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Article 50 Evidence Pack",
+          "price": "2450",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/article50.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Vendor Certification",
+          "price": "7400",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
         }
       ]
     },
@@ -1007,8 +1035,8 @@ document.getElementById('gapLocked').innerHTML = `
 <li>A phased 30-day plan, sequenced so the critical items clear first</li>
 <li>Human review of your answers, not an automated score</li>
 </ul>
-<a href="/compliance-intelligence.html">Report · $299</a>
-<a href="/compliance-intelligence.html">With consultation · $499</a>
+<a href="/compliance-intelligence.html">Report · <span data-lx-amount="cir">the price on that page</span></a>
+<a href="/compliance-intelligence.html">With a governance session · <span data-lx-amount="cirplus">the price on that page</span></a>
 <p class="locked-note">Your score, your gaps and the regulations above are free, and stay free. Checking a business in the public registry is free too, and always will be.</p>
 `;
 
@@ -1043,7 +1071,7 @@ document.getElementById('regLocked').innerHTML = `
 <div class="locked-tag">Regulatory source mapping</div>
 <h4><span class="locked-count">${regs.length}</span> regimes reach your system. Knowing their names is not the same as knowing what they demand.</h4>
 <p>Every regime above is listed free, with its deadline. The report sets out what each one actually requires of you, clause by clause, mapped to the specific gaps it found in your assessment.</p>
-<a href="/compliance-intelligence.html">Get the mapping · $299</a>
+<a href="/compliance-intelligence.html">Get the mapping · <span data-lx-amount="cir">the price on that page</span></a>
 `;
 
 // 30 day remediation roadmap
@@ -1072,14 +1100,15 @@ document.getElementById('roadmapLocked').innerHTML = `
 <div class="locked-tag">The plan itself</div>
 <h4><span class="locked-count">${totalActions}</span> actions across <span class="locked-count">${activePhases.length}</span> phases, sequenced so the critical exposure clears first.</h4>
 <p>The shape of the work is above and free: how many actions, in which phase, and how urgent. The report is the work — each action written out, assigned to its gap and its regulation, in the order that reduces exposure fastest.</p>
-<a href="/compliance-intelligence.html">Get the roadmap · $299</a>
-<a href="/compliance-intelligence.html">Walk it through with us · $499</a>
+<a href="/compliance-intelligence.html">Get the roadmap · <span data-lx-amount="cir">the price on that page</span></a>
+<a href="/compliance-intelligence.html">Walk it through with us · <span data-lx-amount="cirplus">the price on that page</span></a>
 `;
 
 // Rec links
 // The report is the next step from an assessment, so it leads. The kit
 // and certification follow it rather than standing in for it.
-document.getElementById('recLinks').innerHTML = '<a href="/compliance-intelligence.html">Compliance Report $299</a><a href="/readiness-kit.html">Compliance Kit $80</a><a href="/certify.html">Get Certified</a>';
+document.getElementById('recLinks').innerHTML = '<a href="/compliance-intelligence.html">Compliance Report <span data-lx-amount="cir"></span></a><a href="/readiness-kit.html">Compliance Kit <span data-lx-amount="kit"></span></a><a href="/certify.html">Get Certified</a>';
+if (window.LunaraPricing) window.LunaraPricing.refresh();
 
 // Scroll to results
 document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
@@ -1275,6 +1304,7 @@ updateProgress();
   setTimeout(checkVisibility, 500);
 })();
 </script>
+<script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 </body>
 </html>

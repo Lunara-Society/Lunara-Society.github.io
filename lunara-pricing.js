@@ -322,7 +322,13 @@
       products: PRODUCTS,
       get: byId,
       money: money,
-      url: function (id) { var p = byId(id); return p ? LINK + p.link : null; }
+      url: function (id) { var p = byId(id); return p ? LINK + p.link : null; },
+      /* fill() runs once, at boot. A page that writes price slots into
+         the DOM afterwards — the scorer builds its recommendations from
+         the result — would otherwise render them empty, which is how a
+         page ends up quoting a price of nothing. Call this after any
+         innerHTML that contains a data-lx- slot. */
+      refresh: function () { try { fill(); } catch (e) {} }
     };
   }
 

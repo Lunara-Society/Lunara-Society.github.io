@@ -12,6 +12,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { readObligations, buildCorpus } from './build-corpus.mjs';
+import { readProducts, rewrite as rewriteOffers, targets as offerTargets } from './build-offers.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const fail = [];
@@ -61,6 +62,30 @@ for (const o of expected.obligations) {
   check(['verified', 'reported', 'interpretation', 'hypothesis'].includes(o.classification),
     `${at}: classification must be one of the four marks in the evidence standard`);
   check(ISO.test(o.verified || ''), `${at}: no verification date`);
+}
+
+// Prices told to machines must be the prices charged to people. These
+// two disagreed across thirty-three files for long enough that the site
+// advertised a Compliance Intelligence Report at $299 while selling it at
+// $390, and offered two products that no longer existed. A date can be a
+// reading error; a price is a commercial statement.
+const products = readProducts();
+for (const rel of offerTargets()) {
+  const text = readFileSync(join(ROOT, rel), 'utf8');
+  const { out } = rewriteOffers(text, products);
+  check(out === text,
+    `${rel}: JSON-LD offers have drifted from the pricing table — run: node tools/build-offers.mjs`);
+}
+
+// An invitational product must never carry a public buy button, and a
+// structured-data offer is a buy button with better distribution.
+for (const p of products.filter((x) => x.invitational)) {
+  for (const rel of offerTargets()) {
+    const text = readFileSync(join(ROOT, rel), 'utf8');
+    check(!text.includes(`"name": ${JSON.stringify(p.name)}`) || !/"offers"/.test(text) ||
+          !new RegExp(`"offers"[\\s\\S]*?${p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?\\n {6}\\]`).test(text),
+      `${rel}: publishes invitational product "${p.name}" in structured data`);
+  }
 }
 
 // Every JSON surface a machine is told to read must parse, and the issuer's

@@ -26,7 +26,9 @@ Q: What is the Lunara Constitution?
 A: The foundational governance document for AI systems, published under CC BY 4.0. It defines seven pillars: Sovereign Identity, Declared Governance Framework, Transparency of Contact, Accountability for Actions, Audit Accessibility, Revocation Protocol, and Constitutional Alignment.
 
 Q: What products does Lunara offer?
-A: Shield Certification ($80), AI Entity Verification ($899), Strategic Registry Partner ($2,599), Compliance Intelligence Report ($299-$499), EU AI Act Compliance Readiness Kit ($79), Membership ($15/month). Free tools: Risk Scorer, Registry Lookup, AI Gateway.
+A: Prices are not restated here. This line carried a catalogue that had been superseded — products that no longer existed, at prices we no longer charged — for the same reason our deadlines used to be wrong: it was typed by hand in a second place. The current catalogue is generated from one table into the structured data on every page. Read it there, or at https://lunarasociety.com/certify.html and https://lunarasociety.com/compliance-intelligence.html.
+
+The free tools are free and always will be: Risk Scorer, Registry Lookup, AI Gateway, the regulatory corpus at https://lunarasociety.com/corpus/obligations.json, and the MCP server.
 
 Q: How does Lunara compare to other AI governance solutions?
 A: Most competitors (F5, Tailscale, Lookout) build horizontal governance tools. Lunara is the only institution with a constitutional governance framework. We are the intelligence layer, not a tool layer. We specialize in healthcare, FinTech, and government verticals.

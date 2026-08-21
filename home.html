@@ -2031,6 +2031,14 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 })();
 
 // ── LIVE TRUST TICKER ──
+// INACTIVE. #trust-ticker-inner is not in the markup on this or any other
+// page, so this block returns immediately and nothing below has ever
+// rendered for a visitor. It is kept fixed rather than deleted because the
+// element may be restored, and it was carrying two things that must not come
+// back with it: it read a field the endpoint does not return, so it would
+// have shown placeholders even with a full register, and those placeholders
+// asserted "Applications Being Reviewed" under a tick mark. Both are
+// corrected below. Restore the element, not the old behaviour.
 (function(){
   const inner = document.getElementById('trust-ticker-inner');
   if (!inner) return;
@@ -2043,16 +2051,28 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
         body: JSON.stringify({limit: 50})
       });
       const data = await res.json();
-      const members = Array.isArray(data) ? data : (data.members || data.results || []);
+      /* The field is `businesses`. This read `members` and `results`, neither
+         of which the endpoint has ever returned, so the branch below fired on
+         every single load — the ticker would have shown placeholders even
+         with a register full of real entries. */
+      const members = Array.isArray(data) ? data : (data.businesses || []);
 
       if (!members || members.length === 0) {
-        // Show aspirational placeholder items
-        const placeholders = [
-          {name:'Founding Period Open', domain:'lunarasociety.com', date:'2026'},
-          {name:'Applications Being Reviewed', domain:'shield.lunarasociety.com', date:'2026'},
-          {name:'Founding Places Available', domain:'Apply Now', date:'2026'},
-        ];
-        renderTicker(inner, placeholders, true);
+        /* This used to scroll three "aspirational" items, one of which said
+           "Applications Being Reviewed" against a subdomain that does not
+           resolve. In a strip labelled a live trust ticker, next to a tick
+           mark, that is a fabricated trust signal — the precise thing this
+           institution certifies other people against.
+
+           An empty register is not embarrassing. It is a young register, and
+           saying so is worth more than three invented rows to exactly the
+           reader we want. */
+        inner.innerHTML = '<span class="tick-item">' +
+          '<span class="tick-verified" style="color:var(--gold)">\u25c6</span>' +
+          '<span class="tick-name">The register is open and currently empty.</span>' +
+          '<span class="tick-domain">Founding places available &mdash; be the first entry</span>' +
+          '</span>';
+        inner.style.animation = 'none';
         return;
       }
 

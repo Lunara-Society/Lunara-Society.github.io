@@ -159,12 +159,28 @@
     },
     {
       id: 'eu-art50-legacy',
-      date: '2027-02-02',
+      /* 2 December 2026, not 2 February 2027. This entry carried February
+         from the day it was added and it was wrong by four months in the
+         permissive direction, which is the one direction we had told
+         ourselves we would never be wrong in.
+
+         The Omnibus grants a transitional period of FOUR months, not six.
+         Recital 38: "it is appropriate to introduce a transitional period
+         of four months for providers who have already placed their systems
+         on the market before the 2 August 2026." Four months from 2 August
+         is 2 December.
+
+         February 2027 is a real date in this area, which is how it got in:
+         the Code of Practice sets 2 February 2027 for watermark-detection
+         interoperability. That is a different instrument, a different
+         obligation, and voluntary. Two nearby dates, and we took the wrong
+         one and called it the nearest binding deadline in the Act. */
+      date: '2026-12-02',
       jurisdiction: 'European Union',
-      name: 'Article 50(2) for systems already on the market',
+      name: 'Article 50(2) marking for systems already on the market',
       instrument: 'EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744',
-      article: 'Art. 50(2), transitional',
-      summary: 'Generative systems placed on the market before 2 August 2026 lose their transitional relief and must mark synthetic output machine-readably.',
+      article: 'Art. 50(2), four-month transitional period — Reg. 2026/1744 recital 38',
+      summary: 'Generative systems placed on the market before 2 August 2026 were given four months of relief from the machine-readable marking duty. That relief expires and marking becomes mandatory. Systems placed on the market on or after 2 August 2026 never had it.',
       source: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng',
       amended_by: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng',
       classification: 'verified',

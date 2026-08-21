@@ -1497,6 +1497,19 @@
      rather than being alarming. A visitor told plainly that they
      are outside scope is a visitor who believes the next thing we
      say. */
+  /* Dates come from the regulatory clock, never from this file. Every date
+     that was typed here has been wrong at least once: the Article 50(2)
+     transitional was carried as February 2027 when the Omnibus grants four
+     months from August, which is December 2026. If the clock has not
+     loaded we say so rather than inventing a day. */
+  function clockDate(id) {
+    try {
+      var r = window.LunaraClock && window.LunaraClock.get(id);
+      if (r && r.longDate) return r.longDate;
+    } catch (e) {}
+    return 'the date given in the regulatory clock below';
+  }
+
   function buildThirtySeconds() {
     var root = document.getElementById('lx30');
     if (!root) return;
@@ -1546,18 +1559,23 @@
         head = 'Likely outside Article 50';
         title = 'A system that neither converses nor generates is not what these obligations were written for.';
         body = 'Article 50 governs disclosure to people and the marking of synthetic output. If your system does neither, the transparency duties are not the ones to worry about.';
-        items = ['High-risk classification is a separate question with a separate date, now 2 December 2027 for Annex III systems.'];
+        items = ['High-risk classification is a separate question with a separate date, now ' + clockDate('eu-annex3') + ' for Annex III systems.'];
 
       } else {
         head = 'In force against you today';
-        title = 'Article 50 applies to this system, and it has since 2 August 2026.';
+        title = 'Article 50 applies to this system, and it has since ' + clockDate('eu-art50') + '.';
         body = 'Enforcement is live. Penalties reach EUR 15,000,000 or 3% of worldwide annual turnover.';
         if (talks === 'yes') {
           items.push('<b>Disclosure.</b> A person interacting with the system must be told it is AI, unless that is obvious from the context.');
         }
         if (makes === 'yes') {
           items.push('<b>Marking.</b> Generated output must be machine-readably marked so it is detectable downstream as artificial.');
-          items.push('<b>2 February 2027.</b> If the system was on the market before 2 August 2026, its transitional relief under Article 50(2) ends then. That is the nearest binding deadline in the entire Act.');
+          /* This line carried "2 February 2027" and was wrong by four
+             months in the permissive direction — it told visitors they had
+             longer than they do. The Omnibus grants four months, not six.
+             It is now read from the clock rather than typed here, which is
+             the rule this line was breaking when it was wrong. */
+          items.push('<b>' + clockDate('eu-art50-legacy') + '.</b> If the system was on the market before 2 August 2026, its transitional relief under Article 50(2) ends then. That is the nearest binding deadline in the entire Act.');
         }
         if (eu === 'unsure') {
           items.push('You were unsure about EU reach. It is worth resolving, because it is the switch that decides all of the above.');

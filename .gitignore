@@ -9,3 +9,14 @@ scratch/
 # Only six stray Playwright report templates were ever committed here, and
 # they were being served from our origin as though they were ours.
 node_modules/
+
+# Prospect letters and the scan behind them. Committing these would
+# publish them: everything in this repository is served, which is how
+# tmp/ ended up readable at lunarasociety.com/tmp/ above. A letter
+# assessing a named company's compliance posture, hosted on the domain
+# of the institution that wrote it, is the same mistake with a worse
+# subject. They live outside the repository; outreach/README.md says
+# where.
+outreach/letters/
+outreach/scan*.json
+outreach/prospects/

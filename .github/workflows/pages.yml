@@ -54,6 +54,15 @@ jobs:
       - name: Verify Rosario's brain
         run: node tools/verify-rosario-brain.mjs
 
+      # The site once gave three answers to "what does the registry
+      # return": the page said lunara_id, openapi.yaml said public_id, and
+      # the server said found. llms.txt points AI systems at that spec, so
+      # the mismatch was aimed at machines — a system reading it looked for
+      # a key that is never sent. One source now, every surface emitted
+      # from it, and every response carrying an evidence mark.
+      - name: Verify the registry protocol
+        run: node tools/verify-registry-protocol.mjs
+
       # The member area is the only place on this site where a person hands
       # over a credential, and the four functions behind it used to answer
       # 404 to every call — the form posted into nothing for as long as it

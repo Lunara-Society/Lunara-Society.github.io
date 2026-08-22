@@ -51,26 +51,58 @@ paths:
                 domain: "example.com"
       responses:
         '200':
-          description: Entity verification result
+          description: >
+            Entity verification result. success, found and status are
+            observed from the live endpoint and are always present. The
+            remaining fields are expected only when found is true; no
+            entity has been certified yet, so that response has never
+            been returned and the fields carrying it are unverified.
+            Do not build against them without checking.
+            Source of truth: registry-protocol.js, emitted to
+            /corpus/registry-protocol.json with an evidence mark on
+            every response.
           content:
             application/json:
               schema:
                 type: object
+                required: [success, status]
                 properties:
+                  success:
+                    type: boolean
+                    description: Verified. Always present.
+                  found:
+                    type: boolean
+                    description: Verified. Always present on a well-formed request.
                   status:
                     type: string
                     enum: [verified, not_registered, revoked]
+                    description: >
+                      Verified. Every lookup answers not_registered today,
+                      because the registry holds no entities.
+                  error:
+                    type: string
+                    description: >
+                      Verified. Returned instead of the above when neither
+                      domain nor public_id is supplied.
+                  lunara_id:
+                    type: string
+                    description: Unverified. Expected when found is true. Format LUNA-XXXX-XXXX.
                   business_name:
                     type: string
+                    description: Unverified. Expected when found is true.
                   domain:
                     type: string
-                  public_id:
-                    type: string
+                    description: Unverified. Expected when found is true.
                   verification_date:
                     type: string
                     format: date
+                    description: Unverified. Expected when found is true.
                   shield_status:
                     type: string
+                    description: Unverified. Expected when found is true.
+                  protocol_version:
+                    type: string
+                    description: Unverified. Expected when found is true. LUNA-PROTO-1.
 
   /shieldRegistryList:
     post:
@@ -79,26 +111,39 @@ paths:
       operationId: shieldRegistryList
       responses:
         '200':
-          description: List of certified entities
+          description: >
+            Every certified entity. Verified: the endpoint returns
+            success, count and businesses. businesses is empty today
+            and the shape of an element in it has therefore never been
+            observed; the properties below are unverified.
           content:
             application/json:
               schema:
                 type: object
+                required: [success, count, businesses]
                 properties:
                   success:
                     type: boolean
+                    description: Verified.
+                  count:
+                    type: integer
+                    description: Verified. Zero today.
                   businesses:
                     type: array
+                    description: Verified as an array. Empty today.
                     items:
                       type: object
+                      description: Unverified — never observed populated.
                       properties:
+                        lunara_id:
+                          type: string
                         business_name:
                           type: string
                         domain:
                           type: string
-                        public_id:
-                          type: string
                         status:
+                          type: string
+                        shield_status:
                           type: string
                         verification_date:
                           type: string
@@ -267,14 +312,50 @@ paths:
   /shieldVerifyDomain:
     post:
       summary: Verify domain ownership
-      description: Verify domain ownership using DNS token verification.
+      description: >
+        Verify domain ownership using DNS token verification. public_id
+        is required; omitting it returns {"error": "public_id is
+        required"}. The success response has not been observed.
       operationId: shieldVerifyDomain
+      responses:
+        '200':
+          description: Verified only for the missing-public_id case, observed 2026-08-22.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  success:
+                    type: boolean
 
   /shieldFoundingCount:
     post:
       summary: Get founding member count
-      description: Returns the current count of founding Shield-certified entities.
+      description: Returns how much of the founding cohort remains.
       operationId: shieldFoundingCount
+      responses:
+        '200':
+          description: Verified, observed 2026-08-22.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, cap, used, remaining, sold_out, current_price]
+                properties:
+                  success:
+                    type: boolean
+                  cap:
+                    type: integer
+                  used:
+                    type: integer
+                  remaining:
+                    type: integer
+                  sold_out:
+                    type: boolean
+                  current_price:
+                    type: number
 
   /shieldPartnerApply:
     post:

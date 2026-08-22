@@ -1,0 +1,165 @@
+{
+  "protocol_version": "LUNA-PROTO-1",
+  "api_base": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions",
+  "generated_from": "registry-protocol.js",
+  "evidence_standard": {
+    "verified": "Observed from the live endpoint on the date given.",
+    "unverified": "Expected, never observed. Do not build against it."
+  },
+  "authentication": "none",
+  "endpoints": [
+    {
+      "name": "shieldRegistryLookup",
+      "method": "POST",
+      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+      "summary": "Look up one entity by domain or by public id.",
+      "request": {
+        "required": "one of domain or public_id",
+        "fields": {
+          "domain": "Business domain, e.g. \"example.com\"",
+          "public_id": "Lunara public id, e.g. \"SHIELD-2026-0001\""
+        }
+      },
+      "responses": [
+        {
+          "when": "the entity is not in the registry",
+          "status": 200,
+          "evidence": "verified",
+          "observed": "2026-08-22",
+          "body": {
+            "success": true,
+            "found": false,
+            "status": "not_registered"
+          }
+        },
+        {
+          "when": "neither domain nor public_id is given",
+          "status": 200,
+          "evidence": "verified",
+          "observed": "2026-08-22",
+          "body": {
+            "error": "public_id or domain is required"
+          }
+        },
+        {
+          "when": "the entity is certified",
+          "evidence": "unverified",
+          "note": "No entity has been certified, so this response has never been returned by the live endpoint and has not been observed. The fields below are what the implementation is expected to add alongside success, found and status. Do not build against them without checking.",
+          "body": {
+            "success": true,
+            "found": true,
+            "status": "verified",
+            "lunara_id": "LUNA-XXXX-XXXX",
+            "business_name": "Your Business",
+            "domain": "yourdomain.com",
+            "shield_status": "active",
+            "verification_date": "2026-XX-XX",
+            "protocol_version": "LUNA-PROTO-1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "shieldRegistryList",
+      "method": "POST",
+      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList",
+      "summary": "Every certified entity. Free, and no authentication.",
+      "request": {
+        "required": "nothing",
+        "fields": {}
+      },
+      "responses": [
+        {
+          "when": "always, today",
+          "status": 200,
+          "evidence": "verified",
+          "observed": "2026-08-22",
+          "body": {
+            "success": true,
+            "count": 0,
+            "businesses": []
+          }
+        },
+        {
+          "when": "once an entity is certified",
+          "evidence": "unverified",
+          "note": "businesses has never been observed with anything in it, so the shape of an element is expected rather than known.",
+          "body": {
+            "success": true,
+            "count": 1,
+            "businesses": [
+              {
+                "lunara_id": "LUNA-XXXX-XXXX",
+                "business_name": "Your Business",
+                "domain": "yourdomain.com",
+                "status": "verified",
+                "shield_status": "active",
+                "verification_date": "2026-XX-XX"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shieldFoundingCount",
+      "method": "POST",
+      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoundingCount",
+      "summary": "How much of the founding cohort remains.",
+      "request": {
+        "required": "nothing",
+        "fields": {}
+      },
+      "responses": [
+        {
+          "when": "always",
+          "status": 200,
+          "evidence": "verified",
+          "observed": "2026-08-22",
+          "body": {
+            "success": true,
+            "cap": 80,
+            "used": 0,
+            "remaining": 80,
+            "sold_out": false,
+            "current_price": 80
+          }
+        }
+      ]
+    },
+    {
+      "name": "shieldVerifyDomain",
+      "method": "POST",
+      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldVerifyDomain",
+      "summary": "Confirm a domain against a public id.",
+      "request": {
+        "required": "public_id",
+        "fields": {
+          "public_id": "Lunara public id",
+          "domain": "Domain to confirm"
+        }
+      },
+      "responses": [
+        {
+          "when": "public_id is missing",
+          "status": 200,
+          "evidence": "verified",
+          "observed": "2026-08-22",
+          "body": {
+            "error": "public_id is required"
+          }
+        },
+        {
+          "when": "the domain is confirmed",
+          "evidence": "unverified",
+          "note": "Requires a certified entity to call it against, and there are none. Never observed.",
+          "body": {
+            "success": true,
+            "verified": true,
+            "domain": "yourdomain.com"
+          }
+        }
+      ]
+    }
+  ]
+}

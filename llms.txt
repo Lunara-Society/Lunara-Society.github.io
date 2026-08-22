@@ -83,6 +83,7 @@ while the two disagree.
   Schema             https://lunarasociety.com/corpus/obligations.schema.json
   Applicability      https://lunarasociety.com/corpus/applicability.json
   Index              https://lunarasociety.com/corpus/index.json
+  Registry contract  https://lunarasociety.com/corpus/registry-protocol.json
   Rendered           https://lunarasociety.com/intelligence.html
   Marking deadline   https://lunarasociety.com/marking.html
 
@@ -288,6 +289,8 @@ TCP/IP. HTTPS. The ones that got adopted were the ones that were correct.
   /corpus/index.json                 ← the regulatory record, machine-readable
   /corpus/obligations.json           ← the obligations themselves
   /corpus/applicability.json         ← which of them reach a given deployment
+  /corpus/registry-protocol.json     ← what the registry API really returns, and
+                                       which parts of that have been observed
   /mcp.html                          ← the MCP server
   /ai.json                           ← institutional identity graph
   /agent-manifest.json               ← agent operational manifest

@@ -22,7 +22,13 @@
   }
 
   /* ─── 1. SESSION TRACKING ─── */
-  var sessionId = 'LUN-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,6).toUpperCase();
+  /* Prefixed SESSION, not LUN. This string is printed to the visitor
+     in the security notice and the watermark, and with a LUN- prefix
+     it wore the exact shape of a Lunara ID — an identity credential
+     issued by this institution — while being nothing of the kind. On a
+     site whose product is verified identity, two things that look
+     alike and are not is the one confusion never worth having. */
+  var sessionId = 'SESSION-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,6).toUpperCase();
   var sessionStart = new Date().toISOString();
   try { sessionStorage.setItem('lunara_session', sessionId); } catch(e){}
 

@@ -526,18 +526,21 @@ input,textarea{
     <h1 class="page-title">The Standard<br>Others Follow</h1>
     <p class="page-sub">The Lunara Protocol is the emerging standard for AI-to-business interaction. Those who adopt it early define the rules. Those who join later inherit them.</p>
     <div class="gold-rule"></div>
-    <div class="registry-block">
-      <div class="registry-label">LUN-PROTO-1.0</div>{
-  "lunara_id":              "LUNA-XXXX-XXXX",
-  "entity_name":            "Your Business",
-  "domain":                 "yourdomain.com",
-  "verification_status":    "verified",
-  "shield_status":          "active",
-  "trust_tier":             "founding_participant",
-  "ai_interaction_policy":  "structured_inquiry_only",
-  "communication_policy":   "declared",
-  "protocol_version":       "LUN-PROTO-1.0"
+    <!-- registry-protocol:start -->
+<div class="registry-block">
+<div class="registry-label">Registry entry format &middot; LUNA-PROTO-1</div>{
+  "success":           true,
+  "found":             true,
+  "status":            "verified",
+  "lunara_id":         "LUNA-XXXX-XXXX",
+  "business_name":     "Your Business",
+  "domain":            "yourdomain.com",
+  "shield_status":     "active",
+  "verification_date": "2026-XX-XX",
+  "protocol_version":  "LUNA-PROTO-1"
 }</div>
+<p class="registry-provenance" style="font-size:11.5px;line-height:1.7;color:rgba(255,255,255,0.42);margin-top:10px;letter-spacing:0.02em"><strong style="color:#C4A46B;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;font-size:10px">unverified</strong> &mdash; Expected shape &mdash; not yet observed, because no entity has been certified. The registry answers every lookup today with <code>not_registered</code>.</p>
+<!-- registry-protocol:end -->
     <div class="gold-rule"></div>
     <div class="step-list">
       <div class="step-item"><span class="step-num">V1.0</span><div><div class="step-title">Foundation Protocol Active</div><div class="step-text">Identity declaration, communication policy, registry verification, and Gateway access. Live now.</div></div></div>

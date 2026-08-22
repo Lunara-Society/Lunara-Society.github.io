@@ -13,6 +13,10 @@
     "applicability": {
       "url": "https://lunarasociety.com/corpus/applicability.json",
       "description": "An ordered decision model for which of those obligations reach a given deployment. Marked interpretation. Three of its outcomes conclude that nothing binds the asker."
+    },
+    "registry_protocol": {
+      "url": "https://lunarasociety.com/corpus/registry-protocol.json",
+      "description": "What the registry API actually returns, endpoint by endpoint, with an evidence mark on every response: verified means observed from the live endpoint on the date given, unverified means expected and never observed. The registry holds no entities, so the shape of a certified entry is unverified — it is published as unverified rather than guessed at quietly."
     }
   },
 
@@ -27,7 +31,9 @@
       "openapi": "https://lunarasociety.com/openapi.yaml"
     },
     "registry": {
-      "description": "Entity verification, separate from the obligation corpus.",
+      "description": "Entity verification, separate from the obligation corpus. Read registry-protocol.json before building against it: some of what the OpenAPI spec describes has never been observed, and it says which.",
+      "protocol_version": "LUNA-PROTO-1",
+      "contract": "https://lunarasociety.com/corpus/registry-protocol.json",
       "lookup": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup"
     },
     "human": {

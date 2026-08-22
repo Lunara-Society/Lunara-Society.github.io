@@ -260,7 +260,7 @@ export async function hashPassword(password, saltHex) {
 const normalise = (email) => String(email || '').trim().toLowerCase();
 
 /* ── The Lunara ID ──────────────────────────────────────────────────
-   LUN-7K2M-94RT
+   LUNA-7K2M-94RT
 
    It used to be LUN-BUS-2026-00001284, and that was wrong three ways.
 
@@ -291,12 +291,17 @@ const normalise = (email) => String(email || '').trim().toLowerCase();
 
 const ID_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 
-/* Accepted at sign-in: the current form, and the LUN-BUS / LUN-MEM
-   forms that were advertised before it. Nothing was ever issued under
-   those — the table was empty when this changed — but anyone who
-   wrote one down from a screenshot should still get in rather than
-   meet a validation error. */
-const LUNARA_ID = /^LUN-(?:[0-9A-Z]{4}-[0-9A-Z]{4}|(?:BUS|MEM)-[0-9-]{4,16})$/i;
+/* Accepted at sign-in: the current form, and every form that was
+   advertised before it — LUN-XXXX-XXXX, LUN-BUS-… and LUN-MEM-….
+   Nothing was ever issued under any of them; the table was empty each
+   time the format changed. They are accepted so that anyone who wrote
+   one down off an old screen meets a sign-in failure rather than a
+   validation error, which is a different and more confusing thing.
+
+   The branches cannot collide: LUNA-7K2M-94RT has a letter where the
+   LUN- branch requires its first separator. */
+const LUNARA_ID =
+  /^(?:LUNA-[0-9A-Z]{4}-[0-9A-Z]{4}|LUN-(?:[0-9A-Z]{4}-[0-9A-Z]{4}|(?:BUS|MEM)-[0-9-]{4,16}))$/i;
 
 function idGroup() {
   const bytes = crypto.getRandomValues(new Uint8Array(4));
@@ -312,7 +317,7 @@ function mintId() {
   // wear the same shape.
   while (!/\d/.test(a)) a = idGroup();
   while (!/\d/.test(b)) b = idGroup();
-  return 'LUN-' + a + '-' + b;
+  return 'LUNA-' + a + '-' + b;
 }
 
 /* Minting without looking would eventually hand two members the same

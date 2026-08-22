@@ -637,7 +637,7 @@ p,li,span{
       <p class="auth-sub">Enter your credentials to access the member area with full methodology, intelligence briefings, and governance guides.</p>
       <div class="form-group">
         <label class="form-label">Lunara ID</label>
-        <input type="text" class="form-input" id="login-id" placeholder="LUN-7K2M-94RT">
+        <input type="text" class="form-input" id="login-id" placeholder="LUNA-7K2M-94RT">
       </div>
       <div class="form-group">
         <label class="form-label">Passphrase</label>
@@ -696,7 +696,7 @@ p,li,span{
 <div id="view-dashboard">
   <div class="dash-sidebar">
     <div class="dash-user">
-      <div class="dash-user-id" id="dash-id">LUN-7K2M-94RT</div>
+      <div class="dash-user-id" id="dash-id">LUNA-7K2M-94RT</div>
       <div class="dash-user-name" id="dash-name">Member</div>
       <div class="dash-user-status">Active · Protected</div>
     </div>
@@ -750,7 +750,7 @@ p,li,span{
         </div>
         <div class="card">
           <p class="card-label">Lunara ID</p>
-          <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-7K2M-94RT</p>
+          <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUNA-7K2M-94RT</p>
           <p class="card-sub">Permanent identifier · Revocable status</p>
         </div>
         <div class="card" id="card-ai-score-wrap">
@@ -783,7 +783,7 @@ p,li,span{
       <div class="card" style="font-family:monospace;font-size:12px;color:rgba(196,164,107,0.8);line-height:2;padding:32px;overflow-x:auto">
         <p style="color:var(--gold);letter-spacing:2px;font-size:10px;text-transform:uppercase;margin-bottom:16px">LIVE REGISTRY ENTRY lunarasociety.com/registry</p>
         <pre id="registry-record">{
-  "lunara_id": "LUN-7K2M-94RT",
+  "lunara_id": "LUNA-7K2M-94RT",
   "entity_name": "Your Business",
   "domain": "yourdomain.com",
   "industry": "Your Industry",
@@ -1549,7 +1549,7 @@ function showDashboard(id, name){
   document.getElementById('card-id').textContent=id;
   document.getElementById('nav-status').textContent='MEMBER: '+id;
   const rec = document.getElementById('registry-record');
-  if(rec) rec.textContent = rec.textContent.replace('LUN-7K2M-94RT', id);
+  if(rec) rec.textContent = rec.textContent.replace('LUNA-7K2M-94RT', id);
   loadRealShieldStatus();
 }
 

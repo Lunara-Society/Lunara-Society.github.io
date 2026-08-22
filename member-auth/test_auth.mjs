@@ -176,7 +176,7 @@ console.log('\nSignup and login with a passphrase');
   check('signup succeeds', r.status === 200 && out.success === true, JSON.stringify(out));
   check('signup returns a session token',
     typeof out.session_token === 'string' && out.session_token.includes('.'));
-  check('signup mints a Lunara id', /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''),
+  check('signup mints a Lunara id', /^LUNA-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''),
     out.lunara_id);
   check('the address is folded to lower case', store._rows.has('mem@example.org'),
     [...store._rows.keys()].join(','));
@@ -242,20 +242,22 @@ console.log('\nSigning in with a Lunara ID');
   r = await call('login', { identifier: reg.lunara_id, password: 'the wrong one' }, cfg);
   check('a Lunara ID with the wrong passphrase is still 401', r.status === 401, 'status=' + r.status);
 
-  r = await call('login', { identifier: 'LUN-ZZZZ-9999', password: 'a long enough password' }, cfg);
+  r = await call('login', { identifier: 'LUNA-ZZZZ-9999', password: 'a long enough password' }, cfg);
   check('an unissued Lunara ID is 401', r.status === 401, 'status=' + r.status);
 
   /* Anyone who wrote down one of the shapes the site used to advertise
      should meet a sign-in failure, not a validation error. */
-  r = await call('login', { identifier: 'LUN-BUS-2026-00001284', password: 'x' }, cfg);
-  check('a legacy LUN-BUS id is looked up rather than rejected outright',
-    r.status === 401, 'status=' + r.status);
+  for (const legacy of ['LUN-BUS-2026-00001284', 'LUN-MEM-000123', 'LUN-7K2M-94RT']) {
+    r = await call('login', { identifier: legacy, password: 'x' }, cfg);
+    check('a legacy id (' + legacy + ') is looked up, not refused as malformed',
+      r.status === 401, 'status=' + r.status);
+  }
 
   /* Minting must never hand two members the same id. Crowd the space
      so only one value is free and check that it finds it. */
   const crowded = memStore();
   let handed = 0;
-  const free = 'LUN-A1B2-C3D4';
+  const free = 'LUNA-A1B2-C3D4';
   crowded.getById = async (id) => (id === free ? null : { lunara_id: id });
   const realRandom = crypto.getRandomValues.bind(crypto);
   const bytesFor = (g) => Uint8Array.from([...g].map((c) => '0123456789ABCDEFGHJKMNPQRSTVWXYZ'.indexOf(c)));
@@ -284,13 +286,13 @@ console.log('\nThe shape of a Lunara ID');
       { email: 'shape' + i + '@example.org', password: 'a long enough password' }, cfg)).json()).lunara_id);
   }
 
-  check('every id matches LUN-XXXX-XXXX',
-    ids.every((id) => /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(id)), ids[0]);
+  check('every id matches LUNA-XXXX-XXXX',
+    ids.every((id) => /^LUNA-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(id)), ids[0]);
 
   /* I and L cannot be misread as 1, O cannot be misread as 0, and
      without U the groups cannot spell anything unfortunate. */
-  check('no id contains I, L, O or U', !ids.some((id) => /[ILOU]/.test(id.slice(4))),
-    ids.find((id) => /[ILOU]/.test(id.slice(4))));
+  check('no id contains I, L, O or U', !ids.some((id) => /[ILOU]/.test(id.slice(5))),
+    ids.find((id) => /[ILOU]/.test(id.slice(5))));
 
   check('every group carries at least one digit',
     ids.every((id) => id.split('-').slice(1).every((g) => /\d/.test(g))),
@@ -412,7 +414,7 @@ console.log('\nGoogle sign-in');
   check('a properly signed token signs in', r.status === 200 && out.success === true,
     JSON.stringify(out));
   check('Google sign-in mints a Lunara id',
-    /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''), out.lunara_id);
+    /^LUNA-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''), out.lunara_id);
   check('the name from the token is kept', out.full_name === 'A Founder', out.full_name);
   const firstId = out.lunara_id;
 

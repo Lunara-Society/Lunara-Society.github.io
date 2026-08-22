@@ -43,7 +43,7 @@ there is a test that fails if any of them start appearing.
 
 ## The Lunara ID
 
-    LUN-7K2M-94RT
+    LUNA-7K2M-94RT
 
 It was `LUN-BUS-2026-00001284`, and that was wrong three ways.
 
@@ -71,10 +71,16 @@ vanishingly unlikely, which is exactly why it would never be caught by
 testing and exactly why it would be catastrophic — the symptom is one
 member signing in as another.
 
-`LUN-BUS-…` and `LUN-MEM-…` are still accepted at sign-in. Nothing was
-ever issued under either; the table was empty when the format changed.
-They are accepted so that anyone who wrote one down from an old screen
-meets a sign-in failure rather than a validation error.
+The prefix is `LUNA`, the institution's name rather than an
+abbreviation of it.
+
+`LUN-XXXX-XXXX`, `LUN-BUS-…` and `LUN-MEM-…` are all still accepted at
+sign-in. Nothing was ever issued under any of them; the table was empty
+at each change. They are accepted so that anyone who wrote one down off
+an old screen meets a sign-in failure rather than a validation error,
+which is a different and more confusing thing. The branches cannot
+collide — `LUNA-7K2M-94RT` has a letter where the `LUN-` branch
+requires its first separator.
 
 ## The files
 
@@ -82,7 +88,7 @@ meets a sign-in failure rather than a validation error.
 |---|---|
 | `auth-core.mjs` | All of the logic. Plain JavaScript over Web Crypto and `fetch`, with storage injected. |
 | `index.ts` | The Deno entry point. Only two things: where members are kept, and where the signing key comes from. |
-| `test_auth.mjs` | 82 tests. `node member-auth/test_auth.mjs`. Runs in CI on every deploy. |
+| `test_auth.mjs` | 84 tests. `node member-auth/test_auth.mjs`. Runs in CI on every deploy. |
 
 The split exists so that the code the tests run is the code that
 serves the site. The deployed function hands `auth-core.mjs` a

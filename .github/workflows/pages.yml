@@ -54,6 +54,24 @@ jobs:
       - name: Verify Rosario's brain
         run: node tools/verify-rosario-brain.mjs
 
+      # The member area is the only place on this site where a person hands
+      # over a credential, and the four functions behind it used to answer
+      # 404 to every call — the form posted into nothing for as long as it
+      # was up. The suite signs real tokens against a generated keypair, so
+      # a regression in the signature check fails here rather than letting
+      # anyone sign in as anyone.
+      - name: Verify member authentication
+        run: node member-auth/test_auth.mjs
+
+      # The WhatsApp Worker has no deploy gate of its own — it is pasted
+      # into Cloudflare by hand — so this is the only thing standing between
+      # a bad edit and a webhook Meta silently drops.
+      - name: Exercise the WhatsApp Worker
+        run: |
+          cp whatsapp-webhook/worker.js whatsapp-webhook/worker.mjs
+          node whatsapp-webhook/test_worker.mjs
+          rm -f whatsapp-webhook/worker.mjs
+
       # The MCP server is the doorway AI systems come through, so it is
       # exercised against this commit's corpus rather than against the
       # deployed one — otherwise a corpus change and the server that reads

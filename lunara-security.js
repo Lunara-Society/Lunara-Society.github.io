@@ -6,24 +6,44 @@
 (function(){
   'use strict';
 
+  /* Anything a person types into. None of the protections below may
+     apply inside one of these: a member who cannot select, correct or
+     paste into the passphrase box cannot sign in, and a protection
+     that stops people using the site is not protecting anything. */
+  function inField(target){
+    var el = target;
+    while(el && el.nodeType === 1){
+      var tag = el.tagName;
+      if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if(el.isContentEditable) return true;
+      el = el.parentElement;
+    }
+    return false;
+  }
+
   /* ─── 1. SESSION TRACKING ─── */
   var sessionId = 'LUN-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,6).toUpperCase();
   var sessionStart = new Date().toISOString();
   try { sessionStorage.setItem('lunara_session', sessionId); } catch(e){}
 
   /* ─── 2. DISABLE TEXT SELECTION ─── */
-  document.addEventListener('selectstart', function(e){ e.preventDefault(); });
-  document.addEventListener('mousedown', function(e){ if(e.detail > 1) e.preventDefault(); });
+  document.addEventListener('selectstart', function(e){ if(!inField(e.target)) e.preventDefault(); });
+  document.addEventListener('mousedown', function(e){ if(e.detail > 1 && !inField(e.target)) e.preventDefault(); });
 
   /* ─── 3. DISABLE RIGHT CLICK ─── */
-  document.addEventListener('contextmenu', function(e){ e.preventDefault(); showSecurityNotice(); });
+  document.addEventListener('contextmenu', function(e){
+    if(inField(e.target)) return;    // paste lives in this menu
+    e.preventDefault(); showSecurityNotice();
+  });
 
   /* ─── 4. DISABLE COPY SHORTCUTS ─── */
   document.addEventListener('keydown', function(e){
     var key = e.key ? e.key.toLowerCase() : '';
     var ctrl = e.ctrlKey || e.metaKey;
-    // Block copy, select all, save, print, view source, find
-    if(ctrl && ['c','a','s','p','u','f','g'].indexOf(key) > -1){ e.preventDefault(); }
+    // Block copy, select all, save, print, view source, find — but
+    // never while the caret is in a field. Ctrl+A in the passphrase
+    // box is someone fixing a typo, not someone taking the page.
+    if(ctrl && ['c','a','s','p','u','f','g'].indexOf(key) > -1 && !inField(e.target)){ e.preventDefault(); }
     // Block F12 devtools
     if(e.key === 'F12'){ e.preventDefault(); showSecurityNotice(); }
     // Block Shift+F10 context
@@ -42,20 +62,19 @@
     if(e.target.tagName === 'IMG'){ e.preventDefault(); return false; }
   });
 
-  /* ─── 7. DEVTOOLS DETECTION (Tab focus anomaly method) ─── */
-  var devtoolsOpen = false;
-  var threshold = 160;
-  setInterval(function(){
-    if(window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold){
-      if(!devtoolsOpen){
-        devtoolsOpen = true;
-        document.body.innerHTML = '<div style="background:#000;color:#C4A46B;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:40px;"><div><p style="font-size:14px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px">LUNARA SOCIETY</p><p style="font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:1px;">Institutional access only.<br>This session has been logged.<br>Session: ' + sessionId + '</p></div></div>';
-      }
-    } else {
-      devtoolsOpen = false;
-    }
-  }, 1000);
+  /* ─── 7. DEVTOOLS DETECTION — removed ───
+     This used to compare outerWidth to innerWidth every second and, on
+     a gap over 160px, replace document.body.innerHTML with a notice.
 
+     That gap is produced by an ordinary browser sidebar, by a zoom
+     level other than 100%, and by several window managers. It fired on
+     people who were simply reading, and what it did to them was delete
+     the page they were on — including, on this member area, a sign-in
+     form they were halfway through. Anyone actually opening devtools
+     can undo it in one line, so it stopped no one and cost real
+     visitors their session. It is gone rather than tuned: there is no
+     threshold that separates a docked inspector from a docked
+     bookmarks bar. */
   /* ─── 8. SECURITY NOTICE OVERLAY ─── */
   function showSecurityNotice(){
     var existing = document.getElementById('lunara-security-notice');

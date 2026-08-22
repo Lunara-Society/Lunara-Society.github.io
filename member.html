@@ -536,7 +536,7 @@ p,li,span{
       </div>
       <div class="form-group">
         <label class="form-label">Passphrase</label>
-        <input type="password" class="form-input" id="reg-pass" placeholder="Minimum 8 characters">
+        <input type="password" class="form-input" id="reg-pass" placeholder="Minimum 10 characters">
       </div>
       <div class="form-group" style="margin-bottom:16px">
         <label style="font-size:12px;color:var(--gold-50);margin-bottom:6px;display:block;letter-spacing:0.08em">PayPal Transaction ID (from your subscription confirmation email)</label>
@@ -1077,8 +1077,31 @@ p,li,span{
 </div>
 
 <script>
-// LIVE AUTH — backed by Lunara member database
+/* Member auth.
+ *
+ * These four calls used to go to Base44 functions named
+ * lunaraGoogleAuth, lunaraLogin, lunaraSignup and lunaraVerifySession.
+ * Every one of them answered 404, not deployed — so this form had been
+ * posting into nothing and nobody could sign in or register. They now
+ * go to a Supabase edge function that exists, whose source is in
+ * member-auth/ in this repository and whose tests are beside it.
+ *
+ * No key is needed here: the function authenticates its callers itself
+ * and the members table is sealed behind row level security with no
+ * policies, so there is nothing a page could carry that would open it.
+ *
+ * shieldMemberStatus is left where it is — that one does answer.
+ */
+const LUNARA_AUTH = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth';
 const LUNARA_API = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions';
+
+async function authPost(action, payload){
+  const res = await fetch(LUNARA_AUTH + '/' + action, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
 
 function initGoogleSignIn(){
   if(!window.google || !google.accounts || !google.accounts.id) { setTimeout(initGoogleSignIn, 300); return; }
@@ -1094,31 +1117,22 @@ function initGoogleSignIn(){
   }
 }
 
-function decodeJwtEmail(jwt){
-  try{
-    const payload = JSON.parse(atob(jwt.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    return payload.email || null;
-  } catch(e){ return null; }
-}
-
 async function handleGoogleCredential(response){
   const err1 = document.getElementById('login-error');
   const err2 = document.getElementById('register-error');
   if(err1) err1.textContent = '';
   if(err2) err2.textContent = '';
   try{
-    const emailFromToken = decodeJwtEmail(response.credential);
-    if(emailFromToken) localStorage.setItem('lunara_email', emailFromToken.toLowerCase());
-    const res = await fetch(LUNARA_API+'/lunaraGoogleAuth', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ id_token: response.credential })
-    });
-    const data = await res.json();
+    const data = await authPost('google', { id_token: response.credential });
     if(data.success){
+      // The address comes back from the server, which checked Google's
+      // signature. Reading it out of the token here would be trusting
+      // a string the page was simply handed.
+      if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
     } else {
-      const msg = 'Google sign-in failed. Please try again.';
+      const msg = data.error || 'Google sign-in failed. Please try again.';
       if(err1) err1.textContent = msg;
       if(err2) err2.textContent = msg;
     }
@@ -1163,11 +1177,7 @@ async function doLogin(){
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Signing in...';
   try{
-    const res = await fetch(LUNARA_API+'/lunaraLogin', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ identifier, password: pass })
-    });
-    const data = await res.json();
+    const data = await authPost('login', { identifier, password: pass });
     if(data.success){
       if(identifier.includes('@')) localStorage.setItem('lunara_email', identifier.toLowerCase());
       else if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
@@ -1191,17 +1201,14 @@ async function doRegister(){
   err.textContent = '';
   const txn = document.getElementById('reg-txn').value.trim();
   if(!name||!email||!pass||!txn){ err.textContent='Please fill in all fields including PayPal Transaction ID.'; return; }
-  if(pass.length < 8){ err.textContent='Passphrase must be at least 8 characters.'; return; }
+  if(pass.length < 10){ err.textContent='Passphrase must be at least 10 characters.'; return; }
   if(txn.length < 6){ err.textContent='Please enter a valid PayPal Transaction ID from your confirmation email.'; return; }
   const btn = document.querySelector('#form-register .form-btn');
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Creating account...';
   try{
-    const res = await fetch(LUNARA_API+'/lunaraSignup', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email, full_name: name, password: pass, paypal_txn: txn })
-    });
-    const data = await res.json();
+    const data = await authPost('signup',
+      { email, full_name: name, password: pass, paypal_txn: txn });
     if(data.success){
       localStorage.setItem('lunara_email', email.toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
@@ -1318,12 +1325,10 @@ function showSection(name, el){
   const token = localStorage.getItem('lunara_session_token');
   if(!token) return;
   try{
-    const res = await fetch(LUNARA_API+'/lunaraVerifySession', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ session_token: token })
-    });
-    const data = await res.json();
+    const data = await authPost('session', { session_token: token });
     if(data.success){
+      if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
+      saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
     } else {
       clearSession();
@@ -1339,11 +1344,19 @@ document.addEventListener('keydown',e=>{
   if(onLogin) doLogin(); else doRegister();
 });
 
-// Security
-document.addEventListener('contextmenu',e=>e.preventDefault());
-document.addEventListener('keydown',e=>{
-  if((e.ctrlKey||e.metaKey)&&['c','s','u','a','p'].includes(e.key.toLowerCase()))e.preventDefault();
-  if(e.key==='F12')e.preventDefault();
+/* Security. lunara-security.js already does this for every page, and
+   does it with an exemption for form fields. This copy had none, so on
+   the one page that is nothing but a form it blocked Ctrl+A and Ctrl+C
+   inside the passphrase box and swallowed the right-click paste menu —
+   on the member's own Lunara ID, too, which is the single string they
+   are meant to keep. The shared layer is enough. */
+document.addEventListener('contextmenu', e => {
+  if(e.target.closest('input, textarea, select')) return;
+  e.preventDefault();
+});
+document.addEventListener('keydown', e => {
+  if(e.target.closest('input, textarea, select')) return;
+  if((e.ctrlKey||e.metaKey)&&['s','u','p'].includes(e.key.toLowerCase()))e.preventDefault();
 });
 </script>
 <script src="/lunara-security.js"></script>

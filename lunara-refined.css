@@ -3839,3 +3839,69 @@ html { scroll-padding-top: calc(var(--lx-nav-h) + 24px); }
 section, h1, h2, h3, [id] {
   scroll-margin-top: calc(var(--lx-nav-h) + 24px);
 }
+
+
+/* ─── THE REGULATORY HORIZON ──────────────────────────────────────
+   Shared, so any page can host the drawing with one div and one
+   script tag rather than a copy of this block.
+   The site carried seven images and five of them were the logo; five
+   of the pages that sell had no visual element at all. This is the
+   answer, and it is deliberately not a photograph. An institution
+   whose product is evidence should not decorate itself with stock
+   pictures of servers. The picture is the register.              */
+#horizon-section { padding:clamp(70px,9vw,130px) clamp(20px,5vw,60px); position:relative; }
+.horizon-inner { max-width:1280px; margin:0 auto; }
+.horizon-inner .eyebrow {
+  font-family:'Inter',sans-serif; font-size:10px; letter-spacing:0.34em;
+  text-transform:uppercase; color:rgba(159,195,232,0.72); margin-bottom:18px;
+}
+.horizon-inner h2 {
+  font-family:'Cormorant Garamond',Georgia,serif; font-weight:300;
+  font-size:clamp(30px,4.6vw,56px); line-height:1.12; color:#F4E5C4; margin:0 0 16px;
+}
+.horizon-inner h2 em { font-style:italic; color:var(--gold-b,#C4A46B); }
+.horizon-sub {
+  color:rgba(255,255,255,0.55); font-size:15px; line-height:1.75;
+  max-width:58ch; margin:0 0 44px;
+}
+#lx-horizon { position:relative; }
+.lx-horizon-svg { width:100%; height:auto; display:block; overflow:visible; }
+.lx-h-year { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px;
+  fill:rgba(159,195,232,0.5); letter-spacing:0.1em; }
+.lx-h-now { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:9.5px;
+  fill:#CFE4F8; letter-spacing:0.26em; }
+.lx-h-title { font-family:'Cormorant Garamond',Georgia,serif; font-size:15px;
+  fill:rgba(244,229,196,0.92); }
+.lx-h-title.past { fill:rgba(230,212,175,0.72); }
+.lx-h-title.is-next { fill:#FFFFFF; font-size:17px; }
+.lx-h-when { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px;
+  fill:rgba(159,195,232,0.72); letter-spacing:0.04em; }
+.lx-h-when.past { fill:rgba(196,164,107,0.66); }
+.lx-h-when.is-next { fill:#CFE4F8; font-size:11px; }
+/* Dim the field when the reader points at it, so whichever marker
+   they are on is the only one lit. Pointer only — this does nothing
+   on touch, where there is no hover to reward. */
+@media (hover:hover) {
+  .lx-h-mark { transition:opacity .28s ease; }
+  #lx-horizon:hover .lx-h-mark { opacity:0.34; }
+  #lx-horizon .lx-h-mark:hover { opacity:1; }
+}
+#lx-horizon-caption {
+  margin-top:26px; font-family:'Inter',sans-serif; font-size:13px;
+  color:rgba(255,255,255,0.5); line-height:1.75; max-width:70ch;
+}
+#lx-horizon-caption strong { color:#CFE4F8; font-weight:500; }
+#lx-horizon-caption a { color:rgba(159,195,232,0.85); }
+.lx-horizon-fail { color:rgba(255,255,255,0.5); font-size:14px; padding:40px 0; }
+@media (prefers-reduced-motion:reduce) { .lx-h-mark { transition:none; } }
+@media (max-width:720px) {
+  #horizon-section { padding-left:0; padding-right:0; }
+  .horizon-inner .eyebrow, .horizon-inner h2, .horizon-sub, #lx-horizon-caption {
+    padding-left:20px; padding-right:20px;
+  }
+  /* The axis is four years wide; at phone width it is read by
+     scrolling it, not by shrinking it into illegibility. */
+  #lx-horizon { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .lx-horizon-svg { min-width:860px; }
+}
+

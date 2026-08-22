@@ -3905,3 +3905,69 @@ section, h1, h2, h3, [id] {
   .lx-horizon-svg { min-width:860px; }
 }
 
+
+
+/* ─── THE SPECIMEN CREDENTIAL ─────────────────────────────────────
+   shield.html promised a badge and a registry listing and showed
+   neither, so a buyer read two thousand words about certification
+   without seeing the object. Drawn by lunara-credential.js; any page
+   hosts it with <div data-lunara-credential></div>.              */
+.lx-cred-svg{
+  width:100%; max-width:420px; height:auto; display:block;
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,0.75))
+         drop-shadow(0 0 40px rgba(159,195,232,0.10));
+}
+.lx-cred-issuer{
+  font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:0.42em;
+  fill:rgba(196,164,107,0.9);
+}
+.lx-cred-kind{
+  font-family:'Cormorant Garamond',Georgia,serif; font-size:26px;
+  fill:#F1E6CE; font-weight:300;
+}
+.lx-cred-seal-l{ font-family:Georgia,'Cormorant Garamond',serif; font-size:24px; }
+.lx-cred-k{
+  font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:0.2em;
+  text-transform:uppercase; fill:rgba(255,255,255,0.42);
+}
+.lx-cred-v{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px;
+  fill:rgba(255,255,255,0.9);
+}
+.lx-cred-v.id{ fill:#E4C88A; letter-spacing:0.06em; }
+.lx-cred-v.good{ fill:#7FC8A9; }
+.lx-cred-fine{
+  font-family:'Inter',sans-serif; font-size:8.5px; letter-spacing:0.04em;
+  fill:rgba(255,255,255,0.34);
+}
+.lx-cred-specimen-word{
+  font-family:'Inter',sans-serif; font-size:62px; font-weight:600;
+  letter-spacing:0.22em; fill:rgba(159,195,232,0.13);
+  stroke:rgba(159,195,232,0.16); stroke-width:0.7;
+}
+.lx-cred-rosette{ pointer-events:none; }
+
+.lx-cred-wrap{
+  display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr);
+  gap:clamp(32px,5vw,64px); align-items:center;
+  margin:clamp(40px,6vw,72px) 0;
+}
+.lx-cred-note h3{
+  font-family:'Cormorant Garamond',Georgia,serif; font-weight:300;
+  font-size:clamp(24px,3.4vw,38px); line-height:1.18; color:#F4E5C4; margin:0 0 16px;
+}
+.lx-cred-note h3 em{ font-style:italic; color:#C4A46B; }
+.lx-cred-note p{
+  font-family:'Inter',sans-serif; font-size:15px; line-height:1.78;
+  color:rgba(255,255,255,0.58); margin:0 0 14px; max-width:52ch;
+}
+.lx-cred-note .lx-cred-stamp{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px;
+  letter-spacing:0.14em; text-transform:uppercase; color:rgba(159,195,232,0.7);
+  border:1px solid rgba(159,195,232,0.28); border-radius:2px;
+  padding:5px 10px; display:inline-block; margin-top:6px;
+}
+@media (max-width:860px){
+  .lx-cred-wrap{ grid-template-columns:1fr; gap:32px; }
+  .lx-cred-svg{ margin:0 auto; }
+}

@@ -737,7 +737,27 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <div class="page-accent"></div>
     <p class="page-sub">The Shield is a status you earn through verification, not a badge you buy. A reviewer checks your business registration and domain before anything goes live and certification can be revoked if standards are later violated.</p>
     <div class="gold-rule"></div>
-    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);"><div id="domain-checker">  <span id="domain-checker-label">Check if your business is in the registry</span>  <div id="domain-checker-row">    <input id="domain-input" type="text" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false">    <button id="domain-check-btn">Check</button>  </div>  <div id="domain-result"></div></div>
+    
+  <!-- The object being sold, drawn. Marked SPECIMEN in the plate and
+       in words: a convincing rendering of an unissued credential is a
+       forgery template, and this institution is the last one that
+       should publish one. -->
+  <div class="lx-cred-wrap">
+    <div data-lunara-credential></div>
+    <div class="lx-cred-note">
+      <h3>This is the <em>record</em>,<br>not a picture of one.</h3>
+      <p>Certification produces an entry in the public register and a credential that points
+      back at it. The fields above are the fields a real entry carries &mdash; drawn from the
+      same source as the published registry contract, so what you see here is what a lookup
+      would return.</p>
+      <p>Nothing on it is permanent. Certification is revocable, and revocations are published
+      as openly as certifications, because a register whose entries could never be withdrawn
+      would not be worth querying.</p>
+      <span class="lx-cred-stamp">Specimen &middot; not an issued credential</span>
+    </div>
+  </div>
+
+<h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);"><div id="domain-checker">  <span id="domain-checker-label">Check if your business is in the registry</span>  <div id="domain-checker-row">    <input id="domain-input" type="text" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false">    <button id="domain-check-btn">Check</button>  </div>  <div id="domain-result"></div></div>
 How verification actually works</h2>
     <div class="step-list">
       <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You submit an application</div><div class="step-text">Business name, website, domain, legal registration number, and contact email. Free to apply no payment required to be reviewed.</div></div></div>
@@ -1267,5 +1287,6 @@ function goHome(){
 <!-- Hosted button removed. Payments are ordinary links now; see lunara-pricing.js -->
 <script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
+<script src="lunara-credential.js" defer></script>
 </body>
 </html>

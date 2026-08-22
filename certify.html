@@ -517,7 +517,27 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <!-- WHY NOW -->
 <section class="fade-in">
   <p class="section-label">The Context</p>
-  <h2 class="section-title">Governance is no longer optional.<br>It is the procurement criterion.</h2>
+  
+  <!-- The object being sold, drawn. Marked SPECIMEN in the plate and
+       in words: a convincing rendering of an unissued credential is a
+       forgery template, and this institution is the last one that
+       should publish one. -->
+  <div class="lx-cred-wrap">
+    <div data-lunara-credential></div>
+    <div class="lx-cred-note">
+      <h3>This is the <em>record</em>,<br>not a picture of one.</h3>
+      <p>Certification produces an entry in the public register and a credential that points
+      back at it. The fields above are the fields a real entry carries &mdash; drawn from the
+      same source as the published registry contract, so what you see here is what a lookup
+      would return.</p>
+      <p>Nothing on it is permanent. Certification is revocable, and revocations are published
+      as openly as certifications, because a register whose entries could never be withdrawn
+      would not be worth querying.</p>
+      <span class="lx-cred-stamp">Specimen &middot; not an issued credential</span>
+    </div>
+  </div>
+
+<h2 class="section-title">Governance is no longer optional.<br>It is the procurement criterion.</h2>
   <div class="divider"></div>
   <p class="section-body">Article 50 of the EU AI Act <span data-lx-phrase="eu-art50">has been in force since 2 August 2026</span>. US federal agencies have formally integrated autonomous AI agents into critical infrastructure. Enterprise procurement teams are now requiring governance documentation before any AI deployment is approved.</p>
   <p class="section-body">The question is no longer whether your AI is capable. The question is whether it can be governed, audited, and held accountable. Certified Constitutional AI is the credential that answers that question, formally and publicly.</p>
@@ -854,5 +874,6 @@ function handleSubmit(e){
 <script src="lunara-clock.js" defer></script>
 <script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
+<script src="lunara-credential.js" defer></script>
 </body>
 </html>

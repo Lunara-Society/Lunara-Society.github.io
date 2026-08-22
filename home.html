@@ -87,11 +87,11 @@ html, body {
   width:34px; height:34px;
   border-radius:50%;
   object-fit:cover;
-  filter: drop-shadow(0 0 6px rgba(196,164,107,0.7));
+  filter: drop-shadow(0 0 6px rgba(159,195,232,0.7));
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 .nav-logo:hover .nav-logo-img {
-  filter: drop-shadow(0 0 12px rgba(196,164,107,1));
+  filter: drop-shadow(0 0 12px rgba(159,195,232,1));
   transform: scale(1.08);
 }
 .nav-logo-text { color:rgba(230,212,175,0.95); }
@@ -274,28 +274,152 @@ html, body {
   text-decoration:none; transition:all 0.3s;
 }
 .ros-text .ros-cta:hover { background:rgba(196,164,107,0.1); border-color:var(--gold-70); }
-.ros-video-wrap {
-  position:relative; display:flex;
-  align-items:center; justify-content:center;
+
+/* ─── STILLNESS ───────────────────────────────────────────────────
+   Two rules, both about when the page is allowed to move.
+
+   First: this file declares its own .reveal system and never asked
+   whether the reader wanted motion. lunara-refined.css guards its
+   animations twenty-one times over; none of those guards reach the
+   nineteen reveals defined here. They do now.
+
+   Second: motion is permitted at thresholds — arriving, committing,
+   a state actually changing. It is not permitted underneath a
+   statement. The chapter screens carry no reveal by design and must
+   not acquire one; a sentence that fades in is a sentence asking to
+   be watched rather than read.                                    */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-delay-1, .reveal-delay-2, .reveal-delay-3 {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
-.ros-platform {
-  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-  width:280px; height:60px;
-  background:radial-gradient(ellipse 100% 100% at 50% 100%, rgba(196,164,107,0.25) 0%, transparent 70%);
-  filter:blur(8px);
+.lx-chapter .reveal { opacity: 1; transform: none; transition: none; }
+
+/* ─── The nav's trailing edge ─────────────────────────────────────
+   The pill scrolls horizontally and always did — a mask fade was the
+   only cue that anything sat beyond the right edge, and a fade is a
+   weak signal for primary navigation. A chevron appears whenever
+   there is more to reach and disappears at the end of the run, so
+   the affordance is present when it means something and absent when
+   it does not.                                                    */
+.nav-pill-wrap { position: relative; display: flex; align-items: center; min-width: 0; }
+.nav-more {
+  position: absolute; right: -2px; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(10,13,19,0.9);
+  border: 1px solid rgba(159,195,232,0.3);
+  color: rgba(159,195,232,0.9);
+  font-size: 13px; line-height: 1; cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+  font-family: 'Inter', sans-serif;
 }
-#ros-vid {
-  width:100%; max-width:400px;
-  display:block; position:relative; z-index:1;
-  cursor:pointer;
+.nav-pill-wrap.has-more .nav-more { opacity: 1; pointer-events: auto; }
+/* Room for the chevron, so it never sits on top of a link. */
+.nav-pill-wrap.has-more .nav-pill { padding-right: 30px; }
+.nav-more:hover { border-color: rgba(159,195,232,0.75); color: #fff; }
+.nav-more:focus-visible { outline: 2px solid rgba(159,195,232,0.8); outline-offset: 2px; }
+
+.hero-aside {
+  margin-top:22px; font-family:'Inter',sans-serif;
+  font-size:13px; line-height:1.6;
 }
-.ros-play-hint {
-  position:absolute; bottom:70px; left:50%; transform:translateX(-50%);
-  font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
-  color:rgba(196,164,107,0.8); font-family:'Inter', sans-serif;
-  white-space:nowrap;
-  transition:opacity 0.3s;
+.hero-aside a {
+  color:rgba(255,255,255,0.55); text-decoration:none;
+  border-bottom:1px solid rgba(159,195,232,0.28);
+  padding-bottom:2px; transition:color .25s, border-color .25s;
 }
+.hero-aside a:hover { color:rgba(255,255,255,0.9); border-bottom-color:rgba(159,195,232,0.7); }
+
+.attest {
+  position:relative;
+  border:1px solid rgba(159,195,232,0.16);
+  border-radius:4px;
+  background:
+    linear-gradient(180deg, rgba(20,26,38,0.72), rgba(8,10,15,0.72));
+  /* One light source, above and to the right, the way the moon sits
+     over this whole page. The panel is lit rather than glowing. */
+  box-shadow:
+    inset 0 1px 0 rgba(159,195,232,0.13),
+    inset -1px 0 0 rgba(159,195,232,0.07),
+    0 24px 60px -30px rgba(0,0,0,0.9);
+  overflow:hidden;
+  font-family:'Inter', sans-serif;
+}
+.attest-head {
+  display:flex; align-items:center; gap:10px;
+  padding:14px 18px;
+  border-bottom:1px solid rgba(159,195,232,0.12);
+  background:rgba(159,195,232,0.03);
+}
+.attest-dot {
+  width:6px; height:6px; border-radius:50%; flex:none;
+  background:#9FC3E8; box-shadow:0 0 8px rgba(159,195,232,0.8);
+}
+.attest-title {
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(233,237,244,0.82);
+}
+.attest-src {
+  margin-left:auto; font-family:ui-monospace,'SF Mono',Menlo,monospace;
+  font-size:10.5px; color:rgba(159,195,232,0.6);
+}
+.attest-list { list-style:none; margin:0; padding:6px 0; }
+.attest-loading {
+  padding:22px 18px; font-size:13px; color:rgba(233,237,244,0.5);
+}
+.attest-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:2px 14px;
+  padding:12px 18px;
+  border-bottom:1px solid rgba(159,195,232,0.07);
+}
+.attest-row:last-child { border-bottom:0; }
+.attest-name {
+  font-size:13.5px; line-height:1.45; color:rgba(233,237,244,0.92);
+}
+.attest-cite {
+  grid-column:1; grid-row:2; font-family:ui-monospace,'SF Mono',Menlo,monospace;
+  font-size:10.5px; color:rgba(233,237,244,0.42); margin-top:3px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.attest-when {
+  /* Column 2 explicitly. Without it, auto-placement dropped this into
+     column 1 and the whole panel read back to front. */
+  grid-column:2; grid-row:1/3; align-self:center; text-align:right; white-space:nowrap;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11.5px;
+  font-variant-numeric:tabular-nums;
+}
+.attest-when b { display:block; font-weight:500; font-size:13px; }
+.attest-when.live   { color:#7FC8A9; }
+.attest-when.soon   { color:#E0B15F; }
+.attest-when.future { color:rgba(159,195,232,0.62); }
+.attest-mark {
+  display:inline-block; margin-left:8px; padding:1px 6px;
+  border:1px solid currentColor; border-radius:2px;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;
+  font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+  color:rgba(159,195,232,0.6); vertical-align:1px;
+}
+.attest-foot {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 18px; border-top:1px solid rgba(159,195,232,0.12);
+  font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10.5px;
+  color:rgba(233,237,244,0.42);
+}
+.attest-foot a { color:rgba(159,195,232,0.8); text-decoration:none; }
+.attest-foot a:hover { color:#9FC3E8; text-decoration:underline; }
+.attest-fail { padding:22px 18px; font-size:13px; color:rgba(233,237,244,0.62); }
+.attest-fail b { display:block; color:#E0B15F; font-weight:500; margin-bottom:5px; }
 
 /* ─── CARD GRID ─── */
 #cards-section {
@@ -335,7 +459,7 @@ html, body {
   background:linear-gradient(135deg, rgba(196,164,107,0.04) 0%, transparent 60%);
   opacity:0; transition:opacity 0.35s;
 }
-.card:hover { border-color:rgba(196,164,107,0.5); transform:translateY(-4px); box-shadow:0 0 40px rgba(196,164,107,0.08), 0 0 80px rgba(196,164,107,0.03); }
+.card:hover { border-color:rgba(196,164,107,0.5); transform:translateY(-4px); box-shadow:0 0 40px rgba(159,195,232,0.08), 0 0 80px rgba(159,195,232,0.03); }
 .card:hover::before { opacity:1; }
 .card:hover .card-arrow { transform:translate(4px,-4px); opacity:1; }
 .card .card-arrow { transition:transform 0.3s ease, opacity 0.3s ease; opacity:0.5; }
@@ -533,7 +657,7 @@ html, body {
   display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond', serif;
   font-size:18px; color:var(--gold);
-  box-shadow:0 0 14px rgba(196,164,107,0.12);
+  box-shadow:0 0 14px rgba(159,195,232,0.12);
 }
 
 .footer-name {
@@ -675,8 +799,7 @@ html, body {
     grid-template-columns:1fr; gap:40px;
     text-align:center;
   }
-  .ros-video-wrap { order:-1; }
-  #ros-vid { max-width:280px; }
+  .attest { order:-1; }
   .ros-text .ros-cta { margin:0 auto; }
 
   .const-inner {
@@ -881,12 +1004,12 @@ html, body {
   border-radius:50%;
   border:1px solid rgba(196,164,107,0.35);
   object-fit:cover;
-  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  filter:drop-shadow(0 0 8px rgba(159,195,232,0.6));
   transition:filter 0.35s ease, transform 0.35s ease;
 }
 .nav-logo:hover .nav-logo-img,
 .nav-brand:hover .nav-brand-logo{
-  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  filter:drop-shadow(0 0 18px rgba(159,195,232,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
   transform:scale(1.1) rotate(-2deg);
 }
 /* === TYPOGRAPHY SHARPENING === */
@@ -930,9 +1053,9 @@ p,li,span{
   object-fit:cover;
   border:1px solid rgba(196,164,107,0.25);
   box-shadow:
-    0 0 30px rgba(196,164,107,0.25),
-    0 0 60px rgba(196,164,107,0.1),
-    0 0 100px rgba(196,164,107,0.05),
+    0 0 30px rgba(159,195,232,0.25),
+    0 0 60px rgba(159,195,232,0.1),
+    0 0 100px rgba(159,195,232,0.05),
     inset 0 0 20px rgba(0,0,0,0.3);
   animation: logoGlow 4s ease-in-out infinite alternate;
 }
@@ -941,8 +1064,8 @@ p,li,span{
   to   { opacity:1; transform:translateY(0) scale(1); }
 }
 @keyframes logoGlow {
-  from { box-shadow: 0 0 30px rgba(196,164,107,0.25), 0 0 60px rgba(196,164,107,0.1); }
-  to   { box-shadow: 0 0 50px rgba(196,164,107,0.65), 0 0 100px rgba(196,164,107,0.2), 0 0 160px rgba(196,164,107,0.08); }
+  from { box-shadow: 0 0 30px rgba(159,195,232,0.25), 0 0 60px rgba(159,195,232,0.1); }
+  to   { box-shadow: 0 0 50px rgba(159,195,232,0.65), 0 0 100px rgba(159,195,232,0.2), 0 0 160px rgba(159,195,232,0.08); }
 }
 @media(max-width:768px){
   .hero-logo-img { width:88px; height:88px; }
@@ -954,10 +1077,10 @@ p,li,span{
    ═══════════════════════════════════════ */
 h2::after,.section-title::after{content:'';display:block;width:40px;height:1px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin-top:8px}
 .form-section,.card,.track,.pillar-card,.cert-track{transition:border-color 0.3s ease,box-shadow 0.3s ease}
-.form-section:hover{border-color:rgba(196,164,107,0.3);box-shadow:0 0 50px rgba(196,164,107,0.05),0 2px 0 rgba(196,164,107,0.15) inset}
+.form-section:hover{border-color:rgba(196,164,107,0.3);box-shadow:0 0 50px rgba(159,195,232,0.05),0 2px 0 rgba(159,195,232,0.15) inset}
 .form-group>label{position:relative;padding-left:12px}
 .form-group>label::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:80%;background:rgba(196,164,107,0.65);border-radius:1px}
-input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!important;box-shadow:0 0 0 3px rgba(196,164,107,0.07),0 0 24px rgba(196,164,107,0.1)!important;outline:none!important}
+input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!important;box-shadow:0 0 0 3px rgba(159,195,232,0.07),0 0 24px rgba(159,195,232,0.1)!important;outline:none!important}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:#000}
 ::-webkit-scrollbar-thumb{background:rgba(196,164,107,0.3);border-radius:2px}
@@ -997,7 +1120,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 /* ── GOLD HIGHLIGHT PULSE on key phrases ── */
 .gold-bam {
   color: #f0c040;
-  text-shadow: 0 0 22px rgba(240,192,64,0.45), 0 0 60px rgba(240,192,64,0.15);
+  text-shadow: 0 0 22px rgba(159,195,232,0.45), 0 0 60px rgba(159,195,232,0.15);
   font-style: normal;
 }
 
@@ -1018,8 +1141,6 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </style>
 
 <style>
-.ros-video-wrap{position:relative;border-radius:8px;overflow:hidden}
-.ros-video-wrap::after{content:'';position:absolute;inset:0;border-radius:8px;box-shadow:inset 0 0 60px rgba(196,164,107,0.06);pointer-events:none}
 .ros-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 0;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;transition:color 0.3s ease}
 .ros-cta:hover{color:rgba(230,210,160,1)}
 .ros-cta svg{transition:transform 0.3s ease}
@@ -1368,8 +1489,9 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <!-- ─── NAV ─── -->
 <header id="top-nav">
-  <a class="nav-logo" href="/"><img src="lunara_logo_512.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara <span>Society</span></span></a>
+  <a class="nav-logo" href="/"><img src="lunara_logo_96.png" alt="Lunara Society" class="nav-logo-img"><span class="nav-logo-text">Lunara <span>Society</span></span></a>
 
+  <div class="nav-pill-wrap">
   <nav class="nav-pill">
     <a href="healthcare-intelligence.html">Healthcare AI</a>
     <a href="scorer.html">Risk Scorer</a><a href="/article50.html">Article 50</a>
@@ -1382,6 +1504,8 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <a href="compliance-intelligence.html">Compliance Intelligence</a>
     <a href="institution.html">About</a>
   </nav>
+  <button class="nav-more" type="button" aria-label="Scroll navigation for more sections">&rsaquo;</button>
+  </div>
 
   <div class="nav-cta" data-lunara-mark>
     <a href="readiness-kit.html">Compliance Kit</a>
@@ -1417,7 +1541,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
   <div id="hero-content">
     <div class="hero-medallion">
-      <img src="lunara_logo_512.png" alt="Lunara Society" class="hero-logo-img">
+      <img src="lunara_logo_96.png" alt="Lunara Society" class="hero-logo-img">
     </div>
     <p class="hero-eyebrow">Constitutional Governance &nbsp;·&nbsp; AI Certification &nbsp;·&nbsp; Est. MMXXVI</p>
     <h1 class="hero-title">The standard<br>for <em>verified AI.</em></h1>
@@ -1427,9 +1551,16 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Score Your AI Risk
       </a>
-      <a href="healthcare-intelligence.html" style="color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase">Healthcare AI Governance</a>
-      <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="shield.html" class="btn-ghost">Shield Certification ›</a>
+      <!-- One primary, one secondary, and the third demoted to a plain
+           text link below. There were three of these at equal weight,
+           and the middle one carried no container at all — inline
+           styles, no border, no underline — so it read as a rendering
+           fault rather than a choice. Three equal options is the same
+           as making no recommendation. -->
+      <a href="shield.html" class="btn-ghost">Shield Certification &rsaquo;</a>
     </div>
+    <p class="hero-aside"><a href="healthcare-intelligence.html">Working in healthcare?
+      There is a separate track for clinical AI.</a></p>
   </div>
 
   <div class="hero-scroll-hint">
@@ -1443,23 +1574,46 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <div class="ros-bg-glow"></div>
   <div class="ros-inner">
     <div class="ros-text reveal">
-      <p class="eyebrow">Rosario &nbsp;·&nbsp; Lead Institutional Representative</p>
+      <p class="eyebrow">Rosario &nbsp;·&nbsp; The Steward</p>
       <h2>An institution built<br>for this <em>moment.</em></h2>
       <p>Lunara Society is an independent trust coordination institution. Our constitutional governance framework defines what verified AI identity looks like in practice before regulation forces a lesser standard.</p>
-      <p>Rosario is Lunara's lead institutional representative coordinating certification, intelligence, and governance across every operation. She is a verified AI agent operating under declared, auditable rules.</p>
+      <p>Rosario coordinates certification, intelligence and governance across every operation. She is a machine, she says so, and she works to a published standard of proof: every answer carries the mark of how well it is known, and she refuses to answer at all when the register is unreachable.</p>
+      <p>The panel beside this is not an illustration. It is that register, read live, computed against your clock as you look at it.</p>
       <a href="watch.html" class="ros-cta">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Watch the full message
       </a>
     </div>
-    <div class="ros-video-wrap reveal reveal-delay-2">
-      <div class="ros-platform"></div>
-      <video id="ros-vid" playsinline muted loop autoplay poster="rosario_avatar.png">
-        <source src="rosario_transparent.webm" type="video/webm">
-        <source src="rosario_talking.mp4" type="video/mp4">
-        <img src="rosario_avatar.png" alt="Rosario">
-      </video>
-      <div class="ros-play-hint" id="ros-hint">&#9654; Click to hear Rosario</div>
+    <!-- ── THE ATTESTATION PANEL ─────────────────────────────────
+         This was a 34.7 MB video of a photorealistic woman, captioned
+         "she is a verified AI agent". A face is the one thing an
+         institution like this must not present: it is the era's most
+         worn cliché, it cost more than every other asset on the site
+         combined, and it made with a picture the claim that Rosario's
+         own doctrine forbids her from making in words.
+
+         What replaced it answers the same question — who speaks for
+         Lunara — with the thing actually being sold. It reads the
+         published corpus at /corpus/obligations.json, the same file
+         the MCP server serves, and computes what is in force against
+         the reader's own clock at the moment they look. Nothing is
+         hardcoded, so nothing can go stale. Every line carries the
+         evidence mark the corpus assigns it.
+
+         No face, no claim to be human, and a few kilobytes.      -->
+    <div class="attest reveal reveal-delay-2" id="attest">
+      <div class="attest-head">
+        <span class="attest-dot" aria-hidden="true"></span>
+        <span class="attest-title">Obligation register</span>
+        <span class="attest-src">corpus/obligations.json</span>
+      </div>
+      <ol class="attest-list" id="attest-list" aria-live="polite">
+        <li class="attest-loading">Reading the register&hellip;</li>
+      </ol>
+      <div class="attest-foot">
+        <span id="attest-stamp">&nbsp;</span>
+        <a href="/corpus/obligations.json">Read the source</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1954,42 +2108,8 @@ fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoun
 function openDrawer(){ document.getElementById('mob-drawer').classList.add('open'); document.body.style.overflow='hidden'; }
 function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('open'); document.body.style.overflow=''; }
 
-// ── ROSARIO VIDEO ──
-(function(){
-  const vid = document.getElementById('ros-vid');
-  const hint = document.getElementById('ros-hint');
-  if(!vid) return;
-  
-  // Check if coming from activation page (user gesture occurred)
-  var fromActivation = window.location.search.indexOf('audio=1') !== -1;
-  
-  function tryAutoplayWithSound(){
-    vid.muted = false;
-    vid.currentTime = 0;
-    vid.play().then(function(){
-      if(hint){ hint.textContent='▐▐ Playing · click to restart'; hint.style.opacity='0.6'; }
-    }).catch(function(){
-      // Sticky activation not available — fallback to muted
-      vid.muted = true;
-      vid.play();
-      if(hint){ hint.style.opacity='0.7'; hint.textContent='▶ Click to hear Rosario'; }
-    });
-  }
-  
-  if(fromActivation){
-    // User already interacted on index.html — try autoplay with sound
-    setTimeout(tryAutoplayWithSound, 800);
-  }
-  
-  // Click handler (always available for restart/unmute)
-  vid.addEventListener('click',()=>{
-    vid.currentTime = 0;
-    vid.muted = false;
-    vid.play();
-    if(hint) hint.textContent='▐▐ Playing · click to restart';
-  });
-  vid.addEventListener('play', ()=>{ if(hint) hint.style.opacity='0.6'; });
-})();
+// The Rosario video player lived here. The element it drove was
+// replaced by the attestation panel, so the controller went with it.
 
 // ── SCROLL REVEALS ──
 (function(){
@@ -2366,5 +2486,105 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 <!-- The member mark, and Google One Tap for visitors who are not
      signed in. Both are described in lunara-member.js. -->
 <script src="lunara-member.js" defer></script>
+
+<script>
+/* ── The attestation panel ────────────────────────────────────────
+   Reads the published corpus and computes what is in force against
+   the reader's own clock, at the moment they look. No date is stored
+   in this file, because a date stored in a page is a date that goes
+   stale — the exact failure this institution has published four
+   corrections about.
+
+   If the register cannot be reached it says so and shows nothing.
+   Rosario's doctrine is that she does not guess when the lookup
+   fails, and the panel that speaks for her holds to the same rule. */
+(function(){
+  'use strict';
+  var list = document.getElementById('attest-list');
+  if (!list) return;
+
+  var DAY = 86400000;
+  function daysFromToday(iso){
+    var d = new Date(iso + 'T00:00:00Z');
+    var n = new Date();
+    var today = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate());
+    return Math.round((d.getTime() - today) / DAY);
+  }
+  var esc = function(t){
+    var d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+  };
+
+  fetch('/corpus/obligations.json', { cache:'no-cache' })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(data){
+      var obs = (data.obligations || []).slice();
+      // In force first, most recent at the top; then what is coming,
+      // soonest first. That is the order a reader needs, not the
+      // order the file happens to be written in.
+      obs.sort(function(a,b){
+        var da = daysFromToday(a.applies_from), db = daysFromToday(b.applies_from);
+        if (da <= 0 && db <= 0) return db - da;
+        if (da <= 0) return -1;
+        if (db <= 0) return 1;
+        return da - db;
+      });
+
+      list.innerHTML = '';
+      obs.slice(0, 5).forEach(function(o){
+        var n = daysFromToday(o.applies_from);
+        var cls = n <= 0 ? 'live' : (n <= 180 ? 'soon' : 'future');
+        var big = n <= 0 ? 'In force' : n + (n === 1 ? ' day' : ' days');
+        var small = n <= 0
+          ? 'since ' + o.applies_from
+          : 'from ' + o.applies_from;
+
+        var li = document.createElement('li');
+        li.className = 'attest-row';
+        li.innerHTML =
+          '<span class="attest-name">' + esc(o.name) +
+            '<span class="attest-mark">' + esc(o.classification || 'unmarked') + '</span></span>' +
+          '<span class="attest-when ' + cls + '"><b>' + esc(big) + '</b>' + esc(small) + '</span>' +
+          '<span class="attest-cite">' + esc(o.article) + '</span>';
+        list.appendChild(li);
+      });
+
+      var stamp = document.getElementById('attest-stamp');
+      if (stamp) {
+        stamp.textContent = obs.length + ' obligations tracked · read ' +
+          new Date().toISOString().slice(0,16).replace('T',' ') + 'Z';
+      }
+    })
+    .catch(function(err){
+      // Say what happened. Do not invent a register.
+      list.innerHTML = '<li class="attest-fail"><b>The register is unreachable.</b>' +
+        'Rosario does not answer from memory when the lookup fails, so nothing is shown here. ' +
+        'The file is published at /corpus/obligations.json and can be read directly.</li>';
+      var stamp = document.getElementById('attest-stamp');
+      if (stamp) stamp.textContent = String(err.message || err);
+    });
+})();
+</script>
+
+<script>
+/* Show the chevron only while there is something beyond the edge. */
+(function(){
+  var wrap = document.querySelector('.nav-pill-wrap');
+  var pill = wrap && wrap.querySelector('.nav-pill');
+  var btn  = wrap && wrap.querySelector('.nav-more');
+  if (!wrap || !pill || !btn) return;
+
+  function sync(){
+    var more = pill.scrollWidth - pill.clientWidth - pill.scrollLeft > 8;
+    wrap.classList.toggle('has-more', more);
+  }
+  btn.addEventListener('click', function(){
+    pill.scrollBy({ left: Math.round(pill.clientWidth * 0.7), behavior: 'smooth' });
+  });
+  pill.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  if (window.ResizeObserver) new ResizeObserver(sync).observe(pill);
+  sync();
+})();
+</script>
 </body>
 </html>

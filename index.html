@@ -139,7 +139,13 @@ a:focus-visible,[tabindex]:focus-visible{
 #emblem-img{
   display:block;
   opacity:0;
-  filter:brightness(0.95) saturate(1.1);
+  /* The moonlight is on the seal itself, not only inside the breathe
+     animation — that animation starts several seconds into the
+     sequence, and until it did the seal sat in flat black with no
+     light on it at all. */
+  filter:brightness(0.95) saturate(1.05)
+    drop-shadow(0 0 30px rgba(159,195,232,0.32))
+    drop-shadow(0 0 90px rgba(122,158,196,0.20));
   transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
   animation: none;
 }
@@ -152,15 +158,37 @@ a:focus-visible,[tabindex]:focus-visible{
   transition:opacity 0.6s ease !important;
 }
 
+
+/* ─── COLD LIGHT, WARM METAL ──────────────────────────────────────
+   The halo around the seal was rgba(235,185,70) — firelight, around
+   2000 K. The institution is named for the moon, whose light is cool
+   and blue-shifted near 4100 K, so every glow on the front door was
+   arguing with the name above it.
+
+   The artwork itself does not change and must not: the seal is gold,
+   and gold is correct. What changes is what is falling on it. Light
+   is now cool; the metal stays warm and reads as metal precisely
+   because something cold is striking it. Warm-on-warm is a screen
+   effect; cool-on-warm is a lit object.                           */
 @keyframes breathe{
-  0%,100%{ filter:brightness(0.90) saturate(1.05) drop-shadow(0 0 22px rgba(196,144,40,0.25)); }
-  50%{     filter:brightness(1.06) saturate(1.20) drop-shadow(0 0 55px rgba(230,175,60,0.60)); }
+  0%,100%{
+    filter:brightness(0.94) saturate(1.02)
+      drop-shadow(0 0 26px rgba(159,195,232,0.34))
+      drop-shadow(0 0 74px rgba(122,158,196,0.20));
+  }
+  50%{
+    filter:brightness(1.05) saturate(1.08)
+      drop-shadow(0 0 44px rgba(178,208,240,0.58))
+      drop-shadow(0 0 120px rgba(122,158,196,0.30));
+  }
 }
 
 /* When emblem is clickable (after reveal), show pointer */
 #emblem-wrap.active{cursor:pointer}
 #emblem-wrap.active:hover #emblem-img{
-  filter:brightness(1.12) saturate(1.30) drop-shadow(0 0 65px rgba(235,185,70,0.70)) !important;
+  filter:brightness(1.10) saturate(1.14)
+    drop-shadow(0 0 52px rgba(196,222,248,0.72))
+    drop-shadow(0 0 140px rgba(140,178,216,0.36)) !important;
   animation-play-state:paused;
 }
 
@@ -179,9 +207,13 @@ a:focus-visible,[tabindex]:focus-visible{
 #glow.breathe{ animation: glowPulse 6s ease-in-out infinite; }
 #glow.dissolving{ opacity:0!important; transition:opacity 0.5s ease!important; }
 
+/* The seal's halo used to be painted into the PNG, so it could only
+   ever be the temperature it was baked at. It has been cut away and
+   the light is generated here instead, which is the only reason it
+   can be moonlight at all. */
 @keyframes glowPulse{
-  0%,100%{ box-shadow:0 0 40px 8px rgba(196,144,30,0.10), 0 0 80px 20px rgba(196,144,30,0.05); }
-  50%{     box-shadow:0 0 70px 20px rgba(220,170,50,0.28), 0 0 140px 50px rgba(210,150,30,0.12); }
+  0%,100%{ box-shadow:0 0 54px 12px rgba(122,158,196,0.13), 0 0 108px 30px rgba(94,124,158,0.07); }
+  50%{     box-shadow:0 0 92px 26px rgba(159,195,232,0.30), 0 0 180px 62px rgba(94,124,158,0.14); }
 }
 
 /* Welcome text — ABOVE emblem */
@@ -357,7 +389,7 @@ document.documentElement.className += ' lx-splash';
 <div id="welcome">You were expected</div>
 
 <div id="emblem-wrap">
-  <img id="emblem-img" src="lunara_emblem_transparent.png" alt="Lunara Society">
+  <img id="emblem-img" src="lunara_emblem_moon.png" alt="Lunara Society">
 </div>
 
 <div id="threshold"></div>
@@ -368,7 +400,7 @@ document.documentElement.className += ' lx-splash';
      Hidden by CSS while the emblem sequence plays.             -->
 <main id="entry">
   <div class="mark">
-    <img src="lunara_logo_512.png" alt="" width="44" height="44">
+    <img src="lunara_logo_96.png" alt="" width="44" height="44" decoding="async">
     <span>Lunara Society</span>
   </div>
 
@@ -590,7 +622,7 @@ document.addEventListener('keydown', function(e){
 
 // Hover sync: hovering either element boosts the glow
 function boostGlow(){
-  glowEl.style.boxShadow='0 0 90px 30px rgba(220,170,55,0.32),0 0 160px 60px rgba(210,150,30,0.15)';
+  glowEl.style.boxShadow='0 0 94px 30px rgba(159,195,232,0.30),0 0 170px 64px rgba(94,124,158,0.14)';
 }
 function calmGlow(){
   glowEl.style.boxShadow='';

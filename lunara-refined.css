@@ -17,7 +17,7 @@
   --lx-gold:        #C4A46B;
   --lx-gold-pale:   #F4E5C4;
   --lx-gold-lit:    #E2C892;
-  --lx-gold-deep:   #8A6B3C;
+  --lx-gold-deep:   #9A7A47;
   --lx-gold-ember:  #5C4724;
 
   /* ── Ink ──────────────────────────────────────────────────
@@ -156,7 +156,7 @@ body.lx-has-banner .lx-fixed-header {
 .nav-logo { margin-right: 4px; }
 
 .nav-logo-img {
-  filter: drop-shadow(0 0 8px rgba(196,164,107,0.65));
+  filter: drop-shadow(0 0 8px rgba(159,195,232,0.65));
 }
 
 /* Seven pages (architecture, doctrine, gateway, institution, network,
@@ -383,7 +383,7 @@ h1, h2 {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 14px rgba(196,164,107,0.30));
+  filter: drop-shadow(0 2px 14px rgba(159,195,232,0.30));
 }
 
 /* Engraved eyebrow labels. */
@@ -579,7 +579,7 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid var(--lx-border-lit);
   background: radial-gradient(circle at 50% 34%,
               rgba(196,164,107,0.20), rgba(7,6,3,0.9) 70%);
-  box-shadow: var(--lx-engrave), 0 0 22px -8px rgba(196,164,107,0.55);
+  box-shadow: var(--lx-engrave), 0 0 22px -8px rgba(159,195,232,0.55);
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 21px;
   line-height: 1;
@@ -750,13 +750,13 @@ input:focus, select:focus, textarea:focus {
 
 .footer-logo,
 .footer-mark {
-  filter: drop-shadow(0 0 10px rgba(196,164,107,0.35));
+  filter: drop-shadow(0 0 10px rgba(159,195,232,0.35));
   transition: filter 0.45s var(--lx-ease);
 }
 
 .footer-logo:hover,
 .footer-mark:hover {
-  filter: drop-shadow(0 0 20px rgba(196,164,107,0.65));
+  filter: drop-shadow(0 0 20px rgba(159,195,232,0.65));
 }
 
 .footer-col a,
@@ -790,7 +790,7 @@ input:focus, select:focus, textarea:focus {
               var(--lx-gold-ember),
               var(--lx-gold),
               var(--lx-gold-pale));
-  box-shadow: 0 0 12px rgba(196,164,107,0.55);
+  box-shadow: 0 0 12px rgba(159,195,232,0.55);
 }
 
 /* Return to top. Appears once you are well down the page. */
@@ -1346,7 +1346,7 @@ a.back,
   margin-top: -3.5px;
   transform: rotate(45deg);
   background: linear-gradient(135deg, var(--lx-gold-pale), var(--lx-gold-deep));
-  box-shadow: 0 0 10px -1px rgba(196,164,107,0.7);
+  box-shadow: 0 0 10px -1px rgba(159,195,232,0.7);
 }
 
 #reg-live-list > div:hover { background: rgba(196,164,107,0.05); }
@@ -2457,7 +2457,7 @@ a.back,
     color: transparent;
     /* A faint warm bloom under the glyphs. Real metal throws a little
        light onto what it sits on. */
-    filter: drop-shadow(0 0 18px rgba(196,164,107,0.18));
+    filter: drop-shadow(0 0 18px rgba(159,195,232,0.18));
   }
 }
 
@@ -2502,7 +2502,7 @@ a.back,
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    filter: drop-shadow(0 0 20px rgba(196,164,107,0.16));
+    filter: drop-shadow(0 0 20px rgba(159,195,232,0.16));
   }
 
   /* An italic <em> inside a metal headline would otherwise inherit
@@ -2671,7 +2671,7 @@ a.back,
     inset 0 1px 0 rgba(244,229,196,0.18),
     inset 0 -1px 0 rgba(0,0,0,0.6),
     0 26px 56px -28px rgba(0,0,0,1),
-    0 0 44px -14px rgba(196,164,107,0.30);
+    0 0 44px -14px rgba(159,195,232,0.30);
 }
 
 /* Touch devices have no pointer to track, so the edge would never
@@ -3003,7 +3003,7 @@ a.back,
   border-color: rgba(196,164,107,0.7);
   color: #FFF6DC;
   transform: translateY(-2px);
-  box-shadow: 0 0 34px -12px rgba(196,164,107,0.42);
+  box-shadow: 0 0 34px -12px rgba(159,195,232,0.42);
 }
 .lx30-opt:focus-visible { outline: 2px solid #C4A46B; outline-offset: 3px; }
 
@@ -3167,7 +3167,7 @@ a.back,
 .lxlc-stage:last-child .lxlc-node {
   background: #E2C47A;
   border-color: #E2C47A;
-  box-shadow: 0 0 14px rgba(226,196,122,0.55);
+  box-shadow: 0 0 14px rgba(159,195,232,0.55);
 }
 
 .lxlc-n {
@@ -3347,7 +3347,7 @@ a.back,
 .lxr-orb:hover {
   border-color: rgba(196,164,107,0.85);
   box-shadow: inset 0 1px 0 rgba(244,229,196,0.2),
-              0 0 34px -8px rgba(196,164,107,0.5);
+              0 0 34px -8px rgba(159,195,232,0.5);
   transform: translateY(-2px);
 }
 .lxr-orb:focus-visible { outline: 2px solid #C4A46B; outline-offset: 4px; }
@@ -3357,7 +3357,7 @@ a.back,
 .lxr-core {
   width: 8px; height: 8px; border-radius: 50%;
   background: #E2C47A;
-  box-shadow: 0 0 12px rgba(226,196,122,0.9);
+  box-shadow: 0 0 12px rgba(159,195,232,0.9);
 }
 @media (prefers-reduced-motion: no-preference) {
   .lxr-core { animation: lxr-breathe 4.2s ease-in-out infinite; }
@@ -3729,7 +3729,7 @@ a.back,
 .lxr-core {
   width: 6px; height: 6px;
   background: #C4A46B;
-  box-shadow: 0 0 8px rgba(196,164,107,0.7);
+  box-shadow: 0 0 8px rgba(159,195,232,0.7);
 }
 
 /* Shallower breath and a fainter ring: still alive, no longer
@@ -3791,7 +3791,7 @@ a.back,
   border-color: #C4A46B;
   color: #FFF6DC;
   transform: translateY(-2px);
-  box-shadow: 0 0 38px -12px rgba(196,164,107,0.5);
+  box-shadow: 0 0 38px -12px rgba(159,195,232,0.5);
 }
 .lx-buy:focus-visible { outline: 2px solid #C4A46B; outline-offset: 3px; }
 
@@ -3820,4 +3820,22 @@ a.back,
 
 @media (max-width: 560px) {
   .lx-buy { width: 100%; justify-content: center; padding: 15px 20px; }
+}
+
+
+/* ─── Scroll offset for the fixed header ──────────────────────────
+   Section headings passed behind #top-nav during scroll and were
+   sliced mid-letterform — observed on home.html, where "Does your AI
+   system talk to people?" was bisected, and on registry.html. Any
+   in-page anchor landed under the bar too.
+
+   One rule, applied to everything a jump or a scroll can land on. The
+   value is the bar plus a little air, so a heading arrives with space
+   above it rather than flush against the chrome.                  */
+:root { --lx-nav-h: 72px; }
+@media (max-width: 900px) { :root { --lx-nav-h: 62px; } }
+
+html { scroll-padding-top: calc(var(--lx-nav-h) + 24px); }
+section, h1, h2, h3, [id] {
+  scroll-margin-top: calc(var(--lx-nav-h) + 24px);
 }

@@ -215,6 +215,10 @@ body{animation:pageIn 0.6s ease forwards;}
   font-size:clamp(10px,1.2vw,12px);
   color:var(--white-70);line-height:1.8;
   overflow-x:auto;
+  /* The block is a JSON document with one key per line. Without this
+     the browser collapses every newline and it renders as a paragraph
+     of monospace prose — which is what it had been doing. */
+  white-space:pre-wrap;
 }
 .registry-label{
   font-size:9px;letter-spacing:3px;text-transform:uppercase;

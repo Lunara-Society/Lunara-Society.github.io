@@ -219,8 +219,12 @@ input,textarea{
    any of it appears. Nothing here is a progress bar for work that is
    not happening.                                                   */
 
-#rite{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 50% 42%,rgba(18,14,8,0.97) 0%,rgba(0,0,0,0.985) 60%);
+/* Above #mob-back-btn, which is also 9000 and sits later in the
+   document, so it painted on top of the overlay and left a lit
+   button floating in the middle of the sequence. Still below
+   #page-fade at 9999, which must cover everything. */
+#rite{position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 42%,rgba(20,15,8,0.985) 0%,#000 58%);
   backdrop-filter:blur(10px) saturate(0.6);-webkit-backdrop-filter:blur(10px) saturate(0.6);
   opacity:0;transition:opacity 520ms cubic-bezier(.22,.61,.36,1)}
 #rite.on{display:flex;opacity:1}
@@ -262,12 +266,13 @@ input,textarea{
 
 .rite-lines{list-style:none;margin:4px auto 0;padding:0;text-align:left;
   display:table;min-width:min(400px,100%)}
-.rite-lines li{display:flex;align-items:baseline;gap:12px;padding:9px 0;
+.rite-lines li{display:flex;align-items:baseline;gap:12px;padding:9px 0;flex-wrap:wrap;
   font-size:12.5px;letter-spacing:0.4px;color:var(--white-70);
   opacity:0;transform:translateY(6px)}
 .rite-lines li.shown{animation:riteIn 620ms cubic-bezier(.22,.61,.36,1) forwards}
 .rite-lines li .tick{color:var(--gold);font-size:11px;line-height:1;flex:none;width:12px}
-.rite-lines li .val{color:var(--white);font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:12px}
+.rite-lines li .val{color:var(--white);font-family:'SF Mono',ui-monospace,Menlo,monospace;
+  font-size:12px;word-break:break-all;min-width:0}
 
 /* The identifier. Characters settle one at a time, left to right —
    the same order they are read aloud. */

@@ -1383,7 +1383,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <a href="institution.html">About</a>
   </nav>
 
-  <div class="nav-cta">
+  <div class="nav-cta" data-lunara-mark>
     <a href="readiness-kit.html">Compliance Kit</a>
       <a style="margin:0 18px;color:rgba(196,164,107,0.8);text-decoration:none;font-size:12px;letter-spacing:0.12em;text-transform:uppercase" href="certify.html">Apply Now</a>
     <button id="mob-menu-btn" onclick="openDrawer()" aria-label="Menu">
@@ -2363,5 +2363,8 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 </script>
 <script src="lunara-clock.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
+<!-- The member mark, and Google One Tap for visitors who are not
+     signed in. Both are described in lunara-member.js. -->
+<script src="lunara-member.js" defer></script>
 </body>
 </html>

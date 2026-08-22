@@ -202,6 +202,104 @@ input,textarea{
 
 
 /* Mobile nav fix */
+/* ── THE RITE ─────────────────────────────────────────────────────
+   Google's account picker cannot be restyled. It is drawn by Google
+   in a cross-origin popup, or by the browser itself under FedCM, and
+   that is a security boundary rather than an oversight: a site that
+   could repaint the account chooser could forge one. So nothing here
+   touches it.
+
+   What it does instead is own the two moments either side. Before:
+   the page darkens and states what it is waiting for, so Google's
+   window opens into a composed frame rather than on top of a form.
+   After: the record is presented being made.
+
+   Every line the sequence shows is a fact from the server's answer,
+   in the past tense, because the work is already finished by the time
+   any of it appears. Nothing here is a progress bar for work that is
+   not happening.                                                   */
+
+#rite{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 42%,rgba(18,14,8,0.97) 0%,rgba(0,0,0,0.985) 60%);
+  backdrop-filter:blur(10px) saturate(0.6);-webkit-backdrop-filter:blur(10px) saturate(0.6);
+  opacity:0;transition:opacity 520ms cubic-bezier(.22,.61,.36,1)}
+#rite.on{display:flex;opacity:1}
+
+.rite-box{width:min(520px,calc(100vw - 40px));text-align:center;position:relative;padding:8px 0}
+
+/* The scanline and the sweep. Both are decoration and neither implies
+   that anything is being measured. */
+.rite-rule{height:1px;width:100%;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transform:scaleX(0.15)}
+#rite.on .rite-rule{animation:riteSweep 900ms cubic-bezier(.22,.61,.36,1) forwards}
+@keyframes riteSweep{0%{opacity:0;transform:scaleX(0.15)}45%{opacity:0.9}100%{opacity:0.35;transform:scaleX(1)}}
+
+.rite-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);
+  margin:26px 0 18px;opacity:0}
+#rite.on .rite-eyebrow{animation:riteIn 700ms 180ms cubic-bezier(.22,.61,.36,1) forwards}
+
+.rite-head{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(22px,4.2vw,31px);line-height:1.28;color:var(--white);margin-bottom:22px;opacity:0}
+#rite.on .rite-head{animation:riteIn 800ms 300ms cubic-bezier(.22,.61,.36,1) forwards}
+
+@keyframes riteIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+
+/* The waiting state, while Google's window is open over the top. */
+.rite-wait{display:flex;align-items:center;justify-content:center;gap:11px;
+  font-size:12px;letter-spacing:1.6px;color:var(--white-50);margin-top:6px;opacity:0}
+#rite.on .rite-wait{animation:riteIn 700ms 460ms cubic-bezier(.22,.61,.36,1) forwards}
+.rite-orb{width:7px;height:7px;border-radius:50%;background:var(--gold);
+  animation:riteBreath 1700ms ease-in-out infinite}
+@keyframes riteBreath{0%,100%{opacity:0.25;transform:scale(0.82)}50%{opacity:1;transform:scale(1.15)}}
+
+.rite-dismiss{display:block;margin:30px auto 0;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--white-30);background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;
+  padding:8px 14px;opacity:0;transition:color .2s}
+.rite-dismiss:hover{color:var(--gold)}
+#rite.on .rite-dismiss{animation:riteIn 600ms 1500ms cubic-bezier(.22,.61,.36,1) forwards}
+
+/* ── The record, once it exists ─────────────────────────────────── */
+
+.rite-lines{list-style:none;margin:4px auto 0;padding:0;text-align:left;
+  display:table;min-width:min(400px,100%)}
+.rite-lines li{display:flex;align-items:baseline;gap:12px;padding:9px 0;
+  font-size:12.5px;letter-spacing:0.4px;color:var(--white-70);
+  opacity:0;transform:translateY(6px)}
+.rite-lines li.shown{animation:riteIn 620ms cubic-bezier(.22,.61,.36,1) forwards}
+.rite-lines li .tick{color:var(--gold);font-size:11px;line-height:1;flex:none;width:12px}
+.rite-lines li .val{color:var(--white);font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:12px}
+
+/* The identifier. Characters settle one at a time, left to right —
+   the same order they are read aloud. */
+.rite-id{font-family:'SF Mono',ui-monospace,Menlo,monospace;
+  font-size:clamp(20px,4.6vw,30px);letter-spacing:0.16em;color:var(--gold-bright);
+  margin:30px 0 6px;text-shadow:0 0 26px rgba(196,164,107,0.34)}
+.rite-id:empty{margin:0}
+.rite-id .ch{display:inline-block;transition:color 160ms,opacity 160ms}
+.rite-id .ch.rolling{color:var(--gold-dim);opacity:0.75}
+.rite-id .ch.set{color:var(--gold-bright)}
+.rite-id .ch.sep{color:var(--gold-dim);padding:0 0.12em}
+.rite-id-cap{font-size:9.5px;letter-spacing:4px;text-transform:uppercase;color:var(--white-30)}
+
+/* The seal draws itself rather than fading in, because a seal being
+   struck is the thing actually being depicted. */
+.rite-seal{width:74px;height:74px;margin:0 auto 6px;display:none}
+#rite.sealed .rite-seal{display:block}
+.rite-seal circle,.rite-seal path{fill:none;stroke:var(--gold);stroke-width:1.1;
+  stroke-linecap:round;stroke-linejoin:round}
+.rite-seal .ring{stroke-dasharray:214;stroke-dashoffset:214}
+.rite-seal .glyph{stroke-dasharray:120;stroke-dashoffset:120}
+#rite.sealed .rite-seal .ring{animation:draw 1150ms cubic-bezier(.4,0,.2,1) forwards}
+#rite.sealed .rite-seal .glyph{animation:draw 900ms 420ms cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion: reduce){
+  #rite,.rite-rule,.rite-eyebrow,.rite-head,.rite-wait,.rite-lines li,.rite-dismiss{
+    animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
+  .rite-orb{animation:none!important;opacity:1!important}
+  .rite-seal .ring,.rite-seal .glyph{stroke-dashoffset:0!important;animation:none!important}
+}
+
 @media (max-width: 640px) {
   nav { padding: 0 12px !important; }
   .nav-wordmark, .nav-logo { font-size: 10px !important; letter-spacing: 1.5px !important; }
@@ -485,6 +583,35 @@ p,li,span{
 </nav>
 
 <!-- AUTH VIEW -->
+
+<!-- ── THE RITE ──────────────────────────────────────────────────
+     Two moments, either side of Google's account picker, which is
+     itself untouchable — drawn cross-origin by Google, or by the
+     browser under FedCM. Nothing here reaches into it.        -->
+<div id="rite" role="dialog" aria-modal="true" aria-live="polite" aria-label="Signing in">
+  <div class="rite-box">
+    <svg class="rite-seal" viewBox="0 0 80 80" aria-hidden="true">
+      <circle class="ring" cx="40" cy="40" r="34"/>
+      <path class="glyph" d="M40 20 A20 20 0 1 0 58 50 A16 16 0 1 1 40 20 Z"/>
+    </svg>
+    <div class="rite-rule"></div>
+    <p class="rite-eyebrow" id="rite-eyebrow">Lunara Society</p>
+    <h2 class="rite-head" id="rite-head">Awaiting your Google account</h2>
+
+    <div class="rite-wait" id="rite-wait">
+      <span class="rite-orb"></span>
+      <span>Google is asking which account you want to use</span>
+    </div>
+
+    <div class="rite-id" id="rite-id" aria-hidden="true"></div>
+    <p class="rite-id-cap" id="rite-id-cap" style="display:none">Your Lunara ID</p>
+
+    <ul class="rite-lines" id="rite-lines"></ul>
+
+    <button class="rite-dismiss" id="rite-dismiss" type="button" onclick="rite.close()">Cancel</button>
+  </div>
+</div>
+
 <div id="view-auth">
   <div class="auth-panel">
     <div class="auth-logo"><img src="lunara_logo_512.png" alt="Lunara Society" style="border-radius:50%;box-shadow:0 0 30px rgba(196,164,107,0.5),0 0 60px rgba(196,164,107,0.15)"></div>
@@ -510,7 +637,7 @@ p,li,span{
       <p class="auth-sub">Enter your credentials to access the member area with full methodology, intelligence briefings, and governance guides.</p>
       <div class="form-group">
         <label class="form-label">Lunara ID</label>
-        <input type="text" class="form-input" id="login-id" placeholder="LUN-BUS-2026-00001284">
+        <input type="text" class="form-input" id="login-id" placeholder="LUN-7K2M-94RT">
       </div>
       <div class="form-group">
         <label class="form-label">Passphrase</label>
@@ -569,7 +696,7 @@ p,li,span{
 <div id="view-dashboard">
   <div class="dash-sidebar">
     <div class="dash-user">
-      <div class="dash-user-id" id="dash-id">LUN-BUS-2026-00001284</div>
+      <div class="dash-user-id" id="dash-id">LUN-7K2M-94RT</div>
       <div class="dash-user-name" id="dash-name">Member</div>
       <div class="dash-user-status">Active · Protected</div>
     </div>
@@ -623,7 +750,7 @@ p,li,span{
         </div>
         <div class="card">
           <p class="card-label">Lunara ID</p>
-          <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-BUS-2026-00001284</p>
+          <p class="card-value" id="card-id" style="font-family:monospace;font-size:14px;color:var(--gold)">LUN-7K2M-94RT</p>
           <p class="card-sub">Permanent identifier · Revocable status</p>
         </div>
         <div class="card" id="card-ai-score-wrap">
@@ -656,7 +783,7 @@ p,li,span{
       <div class="card" style="font-family:monospace;font-size:12px;color:rgba(196,164,107,0.8);line-height:2;padding:32px;overflow-x:auto">
         <p style="color:var(--gold);letter-spacing:2px;font-size:10px;text-transform:uppercase;margin-bottom:16px">LIVE REGISTRY ENTRY lunarasociety.com/registry</p>
         <pre id="registry-record">{
-  "lunara_id": "LUN-BUS-2026-00001284",
+  "lunara_id": "LUN-7K2M-94RT",
   "entity_name": "Your Business",
   "domain": "yourdomain.com",
   "industry": "Your Industry",
@@ -1103,6 +1230,183 @@ async function authPost(action, payload){
   return res.json();
 }
 
+/* ── THE RITE ─────────────────────────────────────────────────────
+   Google's account chooser cannot be restyled, moved, or wrapped. It
+   is painted by Google in a cross-origin popup, or by the browser
+   itself under FedCM, and that boundary is deliberate — a page that
+   could repaint an account chooser could forge one. So this does not
+   try. It owns the moment before, so Google's window opens into a
+   composed frame instead of on top of a form, and the moment after,
+   where the record is shown being made.
+
+   Every line it prints is a fact taken from the server's answer, in
+   the past tense, because all of the work is finished before any of
+   it is on screen. Nothing here is a progress bar for work that is
+   not happening.                                                   */
+const rite = (function(){
+  const el     = () => document.getElementById('rite');
+  const still  = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+  let waiting = false;         // Google's window is open over us
+  let revealing = false;       // the record is being shown; not dismissible
+  let graceTimer = null;
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, still() ? 0 : ms));
+
+  function set(id, text){ const n = document.getElementById(id); if(n) n.textContent = text; }
+  function show(id, on){ const n = document.getElementById(id); if(n) n.style.display = on ? '' : 'none'; }
+
+  function reset(){
+    const r = el(); if(!r) return;
+    r.classList.remove('sealed');
+    document.getElementById('rite-lines').innerHTML = '';
+    document.getElementById('rite-id').innerHTML = '';
+    show('rite-id-cap', false);
+    show('rite-wait', true);
+    show('rite-dismiss', true);
+  }
+
+  /* Waiting. Called from Google's own click_listener, so it fires on
+     the real click rather than on a guess about one. */
+  function waitForGoogle(){
+    reset();
+    set('rite-eyebrow', 'Lunara Society');
+    set('rite-head', 'Awaiting your Google account');
+    waiting = true; revealing = false;
+    el().classList.add('on');
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* If the account chooser is closed without picking anything there is
+     no callback for it — the ID token flow has none. So: when the page
+     gets focus back and no credential has arrived shortly after, the
+     chamber lifts by itself rather than trapping the member behind a
+     screen with nothing coming. */
+  function onFocus(){
+    if(!waiting || revealing) return;
+    clearTimeout(graceTimer);
+    graceTimer = setTimeout(() => { if(waiting && !revealing) close(); }, 1400);
+  }
+
+  function close(){
+    clearTimeout(graceTimer);
+    waiting = false; revealing = false;
+    const r = el(); if(!r) return;
+    r.classList.remove('on');
+    document.body.style.overflow = '';
+  }
+
+  function line(tick, text, value){
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="tick">' + tick + '</span><span></span>';
+    li.lastChild.textContent = text;
+    if(value){
+      const v = document.createElement('span');
+      v.className = 'val'; v.textContent = value;
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(v);
+    }
+    document.getElementById('rite-lines').appendChild(li);
+    requestAnimationFrame(() => li.classList.add('shown'));
+    return li;
+  }
+
+  /* The identifier settles left to right, the order it is read aloud.
+     Dashes are structure, so they are placed and never rolled. */
+  async function settleId(id){
+    const host = document.getElementById('rite-id');
+    host.innerHTML = '';
+    show('rite-id-cap', true);
+    /* The separators are drawn as the hyphen they actually are. An en
+       dash would look better and would mean anyone who selected this
+       and pasted it got a string that is not their identifier. */
+    const cells = [...id].map(c => {
+      const s = document.createElement('span');
+      s.className = 'ch' + (c === '-' ? ' set sep' : ' rolling');
+      s.textContent = c === '-' ? '-' : ALPHABET[Math.floor(Math.random()*32)];
+      host.appendChild(s);
+      return { node: s, ch: c };
+    });
+    if(still()){ cells.forEach(c => { c.node.textContent = c.ch; c.node.className = 'ch set'; }); return; }
+
+    let spin = setInterval(() => {
+      cells.forEach(c => {
+        if(c.ch !== '-' && !c.node.classList.contains('set')){
+          c.node.textContent = ALPHABET[Math.floor(Math.random()*32)];
+        }
+      });
+    }, 45);
+
+    for(const c of cells){
+      await sleep(c.ch === '-' ? 40 : 105);
+      c.node.textContent = c.ch;
+      c.node.classList.remove('rolling'); c.node.classList.add('set');
+    }
+    clearInterval(spin);
+  }
+
+  /* data is the server's answer, unedited. isNew decides whether this
+     shows a record being created or a record being recognised, and it
+     comes from the server too rather than from guessing at the absence
+     of a cookie. */
+  async function reveal(data, how){
+    revealing = true; waiting = false;
+    clearTimeout(graceTimer);
+    reset();
+    show('rite-wait', false);
+    show('rite-dismiss', false);
+    el().classList.add('on');
+    document.body.style.overflow = 'hidden';
+
+    const fresh = data.is_new === true;
+    set('rite-eyebrow', fresh ? 'Admitted' : 'Recognised');
+    set('rite-head', fresh
+      ? 'A record has been created in your name.'
+      : (data.full_name ? 'Welcome back, ' + data.full_name.split(' ')[0] + '.' : 'Welcome back.'));
+
+    await sleep(560);
+
+    if(how === 'google'){
+      line('✓', 'Signature verified against Google’s published keys');
+    } else if(how === 'register'){
+      line('✓', 'Passphrase stored as a PBKDF2 hash, never as text');
+    } else {
+      line('✓', 'Passphrase verified');
+    }
+    await sleep(430);
+    line('✓', 'Address on record:', data.email || '');
+    await sleep(430);
+
+    if(fresh){
+      line('✓', 'Identifier issued');
+      await sleep(360);
+      await settleId(data.lunara_id);
+      el().classList.add('sealed');
+      await sleep(1150);
+    } else {
+      const since = data.member_since
+        ? new Date(data.member_since).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})
+        : null;
+      line('✓', since ? 'Member since' : 'Record recognised', since || '');
+      await sleep(360);
+      await settleId(data.lunara_id);
+      el().classList.add('sealed');
+      await sleep(820);
+    }
+
+    await sleep(still() ? 0 : 520);
+    close();
+  }
+
+  window.addEventListener('focus', onFocus);
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && waiting && !revealing) close();
+  });
+
+  return { waitForGoogle, reveal, close, get busy(){ return waiting || revealing; } };
+})();
+
 function initGoogleSignIn(){
   if(!window.google || !google.accounts || !google.accounts.id) { setTimeout(initGoogleSignIn, 300); return; }
   google.accounts.id.initialize({
@@ -1113,7 +1417,16 @@ function initGoogleSignIn(){
   });
   const btn = document.getElementById('google-signin-btn');
   if(btn){
-    google.accounts.id.renderButton(btn, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', width: 280 });
+    /* renderButton draws Google's own button inside a cross-origin
+       iframe. Its appearance can be configured only through these
+       options — a click inside it raises no event in this document,
+       which is why click_listener exists and why the chamber is
+       triggered from it rather than from a guess. */
+    google.accounts.id.renderButton(btn, {
+      theme: 'filled_black', size: 'large', shape: 'pill',
+      text: 'continue_with', width: 280,
+      click_listener: () => rite.waitForGoogle()
+    });
   }
 }
 
@@ -1131,12 +1444,15 @@ async function handleGoogleCredential(response){
       if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
+      await rite.reveal(data, 'google');
     } else {
+      rite.close();
       const msg = data.error || 'Google sign-in failed. Please try again.';
       if(err1) err1.textContent = msg;
       if(err2) err2.textContent = msg;
     }
   } catch(e){
+    rite.close();
     const msg = 'Connection error. Please try again.';
     if(err1) err1.textContent = msg;
     if(err2) err2.textContent = msg;
@@ -1183,6 +1499,7 @@ async function doLogin(){
       else if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
+      await rite.reveal(data, 'login');
     } else {
       err.textContent = data.error || 'Invalid credentials.';
     }
@@ -1213,6 +1530,7 @@ async function doRegister(){
       localStorage.setItem('lunara_email', email.toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
+      await rite.reveal(data, 'register');
     } else {
       err.textContent = data.error || 'Registration failed. Please try again.';
     }
@@ -1231,7 +1549,7 @@ function showDashboard(id, name){
   document.getElementById('card-id').textContent=id;
   document.getElementById('nav-status').textContent='MEMBER: '+id;
   const rec = document.getElementById('registry-record');
-  if(rec) rec.textContent = rec.textContent.replace('LUN-BUS-2026-00001284', id);
+  if(rec) rec.textContent = rec.textContent.replace('LUN-7K2M-94RT', id);
   loadRealShieldStatus();
 }
 

@@ -176,7 +176,8 @@ console.log('\nSignup and login with a passphrase');
   check('signup succeeds', r.status === 200 && out.success === true, JSON.stringify(out));
   check('signup returns a session token',
     typeof out.session_token === 'string' && out.session_token.includes('.'));
-  check('signup mints a Lunara id', /^LUN-MEM-\d{6}$/.test(out.lunara_id || ''), out.lunara_id);
+  check('signup mints a Lunara id', /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''),
+    out.lunara_id);
   check('the address is folded to lower case', store._rows.has('mem@example.org'),
     [...store._rows.keys()].join(','));
 
@@ -241,22 +242,92 @@ console.log('\nSigning in with a Lunara ID');
   r = await call('login', { identifier: reg.lunara_id, password: 'the wrong one' }, cfg);
   check('a Lunara ID with the wrong passphrase is still 401', r.status === 401, 'status=' + r.status);
 
-  r = await call('login', { identifier: 'LUN-MEM-000000', password: 'a long enough password' }, cfg);
+  r = await call('login', { identifier: 'LUN-ZZZZ-9999', password: 'a long enough password' }, cfg);
   check('an unissued Lunara ID is 401', r.status === 401, 'status=' + r.status);
 
+  /* Anyone who wrote down one of the shapes the site used to advertise
+     should meet a sign-in failure, not a validation error. */
+  r = await call('login', { identifier: 'LUN-BUS-2026-00001284', password: 'x' }, cfg);
+  check('a legacy LUN-BUS id is looked up rather than rejected outright',
+    r.status === 401, 'status=' + r.status);
+
   /* Minting must never hand two members the same id. Crowd the space
-     so that only one value is free and check that it finds it. */
+     so only one value is free and check that it finds it. */
   const crowded = memStore();
-  crowded.getById = async (id) => (id === 'LUN-MEM-424242' ? null : { lunara_id: id });
-  let n = 0;
+  let handed = 0;
+  const free = 'LUN-A1B2-C3D4';
+  crowded.getById = async (id) => (id === free ? null : { lunara_id: id });
   const realRandom = crypto.getRandomValues.bind(crypto);
-  crypto.getRandomValues = (arr) => { arr[0] = n++ < 3 ? 111111 : 424242; return arr; };
+  const bytesFor = (g) => Uint8Array.from([...g].map((c) => '0123456789ABCDEFGHJKMNPQRSTVWXYZ'.indexOf(c)));
+  const scripted = [
+    bytesFor('QQQQ'), bytesFor('QQQQ'),          // first attempt, both groups
+    bytesFor('A1B2'), bytesFor('C3D4')           // second attempt lands on the free one
+  ];
+  crypto.getRandomValues = (arr) => {
+    if (arr.length === 4 && handed < scripted.length) { arr.set(scripted[handed++]); return arr; }
+    return realRandom(arr);
+  };
   r = await call('signup', { email: 'crowded@example.org', password: 'a long enough password' },
     cfgFor(crowded));
   out = await r.json();
   crypto.getRandomValues = realRandom;
-  check('minting skips ids that are already taken', out.lunara_id === 'LUN-MEM-424242',
-    out.lunara_id);
+  check('minting skips an id that is already taken', out.lunara_id === free, out.lunara_id);
+}
+
+console.log('\nThe shape of a Lunara ID');
+{
+  const store = memStore();
+  const cfg = cfgFor(store);
+  const ids = [];
+  for (let i = 0; i < 40; i++) {
+    ids.push((await (await call('signup',
+      { email: 'shape' + i + '@example.org', password: 'a long enough password' }, cfg)).json()).lunara_id);
+  }
+
+  check('every id matches LUN-XXXX-XXXX',
+    ids.every((id) => /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(id)), ids[0]);
+
+  /* I and L cannot be misread as 1, O cannot be misread as 0, and
+     without U the groups cannot spell anything unfortunate. */
+  check('no id contains I, L, O or U', !ids.some((id) => /[ILOU]/.test(id.slice(4))),
+    ids.find((id) => /[ILOU]/.test(id.slice(4))));
+
+  check('every group carries at least one digit',
+    ids.every((id) => id.split('-').slice(1).every((g) => /\d/.test(g))),
+    ids.find((id) => id.split('-').slice(1).some((g) => !/\d/.test(g))));
+
+  /* The point of the change: an id must not tell its holder, or
+     anyone they show it to, how many came before them. */
+  check('ids are not sequential', new Set(ids).size === ids.length &&
+    ids.slice(1).every((id, i) => id !== ids[i]), 'collision in 40');
+  check('no id carries a category or a year',
+    !ids.some((id) => /BUS|MEM|20\d\d/.test(id)), ids.find((id) => /BUS|MEM|20\d\d/.test(id)));
+}
+
+console.log('\nWhat the page is told about the moment');
+{
+  const store = memStore();
+  const cfg = cfgFor(store);
+
+  let out = await (await call('signup',
+    { email: 'fresh@example.org', password: 'a long enough password' }, cfg)).json();
+  check('a first registration is marked new', out.is_new === true, JSON.stringify(out.is_new));
+
+  out = await (await call('login',
+    { identifier: 'fresh@example.org', password: 'a long enough password' }, cfg)).json();
+  check('signing in again is not marked new', out.is_new === false, JSON.stringify(out.is_new));
+
+  out = await (await call('session', { session_token: out.session_token }, cfg)).json();
+  check('restoring a session is not marked new', out.is_new === false, JSON.stringify(out.is_new));
+  check('the session reports when the member joined',
+    typeof out.member_since === 'string' && !isNaN(Date.parse(out.member_since)),
+    String(out.member_since));
+
+  /* Nothing beyond identity and standing may leave this endpoint —
+     no hash, no salt, no PayPal reference, no Google subject. */
+  const leaked = ['hash', 'salt', 'paypal_txn', 'google_sub', 'payment_verified', 'id']
+    .filter((k) => k in out);
+  check('no credential material is returned to the page', leaked.length === 0, leaked.join(','));
 }
 
 console.log('\nSessions');
@@ -340,8 +411,8 @@ console.log('\nGoogle sign-in');
   let out = await r.json();
   check('a properly signed token signs in', r.status === 200 && out.success === true,
     JSON.stringify(out));
-  check('Google sign-in mints a Lunara id', /^LUN-MEM-\d{6}$/.test(out.lunara_id || ''),
-    out.lunara_id);
+  check('Google sign-in mints a Lunara id',
+    /^LUN-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(out.lunara_id || ''), out.lunara_id);
   check('the name from the token is kept', out.full_name === 'A Founder', out.full_name);
   const firstId = out.lunara_id;
 

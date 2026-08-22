@@ -258,16 +258,71 @@ export async function hashPassword(password, saltHex) {
 /* ── members ────────────────────────────────────────────────────── */
 
 const normalise = (email) => String(email || '').trim().toLowerCase();
-const LUNARA_ID = /^LUN-MEM-\d{6}$/i;
 
-/* Six digits is a million possibilities, which is not many. Minting
-   without looking would eventually hand two members the same id, and
-   the collision would surface as one of them signing in as the other.
-   Checking costs one read at registration and nothing afterwards. */
+/* ── The Lunara ID ──────────────────────────────────────────────────
+   LUN-7K2M-94RT
+
+   It used to be LUN-BUS-2026-00001284, and that was wrong three ways.
+
+   BUS was meant to read "business". It reads "bus". It also encodes a
+   category into a permanent identifier, which breaks the first time a
+   person registers rather than a company — which is exactly what the
+   Google button does. An identifier that has to change when the thing
+   it names is reclassified is not a permanent identifier.
+
+   And 00001284 is a counter. A sequential number tells every holder,
+   and anyone they show the card to, precisely how many registrations
+   came before them. This institution has already had to publish one
+   correction about overstating its size; a number that understates it
+   in public, permanently, on every member's credential, is the same
+   mistake pointing the other way.
+
+   So: opaque, non-sequential, and it says nothing at all except which
+   record it names.
+
+   The alphabet is Crockford's base 32 — the digits and the letters
+   with I, L, O and U removed. I and L cannot be misread as 1, O
+   cannot be misread as 0, and dropping U means the groups cannot
+   spell anything anyone would be embarrassed to read out. Each group
+   is additionally required to carry at least one digit, which rules
+   out the remaining four-letter words without meaningfully shrinking
+   the space: about 6.6 × 10^11 identifiers, against a registry that
+   will not see a millionth of that. */
+
+const ID_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+/* Accepted at sign-in: the current form, and the LUN-BUS / LUN-MEM
+   forms that were advertised before it. Nothing was ever issued under
+   those — the table was empty when this changed — but anyone who
+   wrote one down from a screenshot should still get in rather than
+   meet a validation error. */
+const LUNARA_ID = /^LUN-(?:[0-9A-Z]{4}-[0-9A-Z]{4}|(?:BUS|MEM)-[0-9-]{4,16})$/i;
+
+function idGroup() {
+  const bytes = crypto.getRandomValues(new Uint8Array(4));
+  let out = '';
+  for (const b of bytes) out += ID_ALPHABET[b % 32];
+  return out;
+}
+
+function mintId() {
+  let a = idGroup(), b = idGroup();
+  // Rejection rather than substitution: forcing a digit into a fixed
+  // position would make that position predictable and every id would
+  // wear the same shape.
+  while (!/\d/.test(a)) a = idGroup();
+  while (!/\d/.test(b)) b = idGroup();
+  return 'LUN-' + a + '-' + b;
+}
+
+/* Minting without looking would eventually hand two members the same
+   id, and the collision would surface as one of them signing in as
+   the other. At this size that is vanishingly unlikely, which is
+   exactly why it would never be found by testing. One read at
+   registration, nothing afterwards. */
 async function newLunaraId(store) {
   for (let i = 0; i < 8; i++) {
-    const n = crypto.getRandomValues(new Uint32Array(1))[0] % 1000000;
-    const id = 'LUN-MEM-' + String(n).padStart(6, '0');
+    const id = mintId();
     if (!(await store.getById(id))) return id;
   }
   throw new Error('could not mint an unused Lunara id in 8 attempts');
@@ -284,7 +339,7 @@ async function findMember(identifier, store) {
 /* The session carries the tier as it stood at sign-in. A page that
    trusted that forever would show a lapsed member as current, so the
    record stays the truth and the session is only a claim of identity. */
-async function sessionFor(member, cfg) {
+async function sessionFor(member, cfg, isNew = false) {
   const exp = Date.now() + SESSION_DAYS * 86400000;
   const token = await signSession({ email: member.email, exp }, cfg.sessionSecret);
   return {
@@ -293,7 +348,12 @@ async function sessionFor(member, cfg) {
     lunara_id: member.lunara_id,
     full_name: member.full_name || '',
     tier: member.tier || 'member',
-    email: member.email
+    email: member.email,
+    member_since: member.created_at || null,
+    // The page shows a record being created or a record being
+    // recognised, and those are different things to watch. It decides
+    // from this rather than from guessing at the absence of a cookie.
+    is_new: !!isNew
   };
 }
 
@@ -323,6 +383,7 @@ async function authGoogle(body, cfg) {
       auth_method: 'google'
     });
     console.log('New member via Google: ' + member.lunara_id);
+    return json(await sessionFor(member, cfg, true));
   } else if (!member.google_sub) {
     // The same person arriving by a second route. Link it, rather than
     // creating a duplicate they can never sign back into.
@@ -372,7 +433,7 @@ async function authSignup(body, cfg) {
   });
 
   console.log('New member via password: ' + member.lunara_id);
-  return json(await sessionFor(member, cfg));
+  return json(await sessionFor(member, cfg, true));
 }
 
 async function authLogin(body, cfg) {

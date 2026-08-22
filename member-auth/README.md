@@ -37,7 +37,44 @@ form asks for "Lunara ID or email". The action may also travel in the
 body as `{ "action": "login", ... }`.
 
 A session is `{ success, session_token, lunara_id, full_name, tier,
-email }`. Nothing else is ever returned about a member.
+email, member_since, is_new }`. Nothing else is ever returned about a
+member — no hash, no salt, no PayPal reference, no Google subject, and
+there is a test that fails if any of them start appearing.
+
+## The Lunara ID
+
+    LUN-7K2M-94RT
+
+It was `LUN-BUS-2026-00001284`, and that was wrong three ways.
+
+`BUS` was meant to read "business". It reads "bus". It also encodes a
+category into a permanent identifier, which breaks the first time a
+person registers rather than a company — which is exactly what the
+Google button does. An identifier that has to change when the thing it
+names is reclassified is not a permanent identifier.
+
+And `00001284` is a counter. A sequential number tells every holder,
+and everyone they show the card to, how many registrations came before
+them. This institution has already published one correction about
+overstating its size. A number that understates it in public,
+permanently, on every member's credential, is the same mistake pointing
+the other way.
+
+The alphabet is Crockford's base 32 — the digits and the letters with
+**I, L, O and U** removed. I and L cannot be misread as 1, O cannot be
+misread as 0, and without U the groups cannot spell anything anyone
+would rather not read aloud. Each group additionally carries at least
+one digit, which rules out the rest. About 6.6 × 10¹¹ identifiers.
+
+Minting checks for collision before issuing. At this scale a clash is
+vanishingly unlikely, which is exactly why it would never be caught by
+testing and exactly why it would be catastrophic — the symptom is one
+member signing in as another.
+
+`LUN-BUS-…` and `LUN-MEM-…` are still accepted at sign-in. Nothing was
+ever issued under either; the table was empty when the format changed.
+They are accepted so that anyone who wrote one down from an old screen
+meets a sign-in failure rather than a validation error.
 
 ## The files
 
@@ -45,7 +82,7 @@ email }`. Nothing else is ever returned about a member.
 |---|---|
 | `auth-core.mjs` | All of the logic. Plain JavaScript over Web Crypto and `fetch`, with storage injected. |
 | `index.ts` | The Deno entry point. Only two things: where members are kept, and where the signing key comes from. |
-| `test_auth.mjs` | 71 tests. `node member-auth/test_auth.mjs`. Runs in CI on every deploy. |
+| `test_auth.mjs` | 82 tests. `node member-auth/test_auth.mjs`. Runs in CI on every deploy. |
 
 The split exists so that the code the tests run is the code that
 serves the site. The deployed function hands `auth-core.mjs` a
@@ -120,3 +157,34 @@ so in as many words:
 That is a separate failure from the one fixed here, and it would have
 been hidden behind it: with the backend answering 404, the button could
 not have worked either way.
+
+
+## The sign-in sequence
+
+`member.html` carries a presentation layer around all of this, and
+`lunara-member.js` puts a member indicator in the navigation of any
+page that includes it.
+
+Google's account picker is not part of either, and cannot be. It is
+drawn by Google in a cross-origin popup, or by the browser itself under
+FedCM. Nothing on this side can restyle it, reposition it, or wrap it —
+which is the correct arrangement rather than a limitation, because a
+page that could repaint an account chooser could forge one.
+
+What is ours is the moment either side. Before: the page darkens and
+names what it is waiting for, so Google's window opens into a composed
+frame instead of on top of a half-filled form. It is triggered from
+`renderButton`'s own `click_listener`, because a click inside Google's
+iframe raises no event in this document. There is no callback for a
+picker that gets closed without a choice, so the chamber lifts itself
+when the window regains focus and nothing arrives.
+
+After: the record is shown being made — the facts the server returned,
+in the past tense, and the identifier settling one character at a time.
+Past tense because all of the work finished before any of it is on
+screen. Nothing there is a progress bar for work that is not happening,
+and every line corresponds to a field in the response.
+
+`prefers-reduced-motion: reduce` collapses the whole sequence to its
+end state. It is a presentation of a result, so there is nothing to
+lose by skipping to it.

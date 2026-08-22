@@ -69,19 +69,15 @@
      size.
      ========================================================== */
 
+  /* The mark used to be drawn here: three circles, a shield outline
+     and a Georgia "L". It was a stand-in for the emblem and it looked
+     like one — a generic monogram standing in for an institution that
+     has an actual seal. It is the seal now.
+
+     256px, because this renders at 4% opacity and nobody has ever
+     resolved detail through that. */
   function emblemMark() {
-    return '' +
-      '<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">' +
-      '<g fill="none" stroke="currentColor" stroke-width="0.6">' +
-      '<circle cx="50" cy="50" r="47"/>' +
-      '<circle cx="50" cy="50" r="41"/>' +
-      '<circle cx="50" cy="50" r="33"/>' +
-      '</g>' +
-      '<path d="M50 20 L74 33 L74 54 C74 68 63 78 50 83 C37 78 26 68 26 54 L26 33 Z" ' +
-      '      fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round"/>' +
-      '<text x="50" y="63" text-anchor="middle" font-family="Georgia,serif" ' +
-      '      font-size="34" fill="currentColor">L</text>' +
-      '</svg>';
+    return '<img src="/lunara_emblem_256.png" alt="" loading="lazy" decoding="async">';
   }
 
   function placeWatermark() {
@@ -162,7 +158,10 @@
     band.setAttribute('aria-hidden', 'true');
 
     var img = document.createElement('img');
-    img.src = 'shield_gate.jpg';
+    /* This band carried shield_gate.jpg — an ornate compass rose with
+       laurel and mountains that has nothing to do with the emblem, on
+       a site that already has one. The seal goes here instead. */
+    img.src = '/lunara_emblem_512.png';
     img.alt = '';
     img.loading = 'lazy';
     img.decoding = 'async';

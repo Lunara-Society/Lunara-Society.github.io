@@ -111,19 +111,16 @@
     });
     svg.appendChild(g);
 
-    /* ── the seal ─────────────────────────────────────────────── */
-    var seal = el('g', { transform: 'translate(' + (W / 2 - 34) + ',162)' });
-    seal.appendChild(el('circle', { cx: 34, cy: 34, r: 32, fill: 'none',
-      stroke: 'url(#lxCredGold)', 'stroke-width': '1.6' }));
-    seal.appendChild(el('circle', { cx: 34, cy: 34, r: 26, fill: 'none',
-      stroke: 'url(#lxCredGold)', 'stroke-width': '0.6', opacity: '0.6' }));
-    seal.appendChild(el('path', {
-      d: 'M34 14 L51 23 L51 37 C51 47 43 54 34 57 C25 54 17 47 17 37 L17 23 Z',
-      fill: 'none', stroke: 'url(#lxCredGold)', 'stroke-width': '1.3',
-      'stroke-linejoin': 'round' }));
-    seal.appendChild(txt('L', { x: 34, y: 43, 'text-anchor': 'middle',
-      class: 'lx-cred-seal-l', fill: 'url(#lxCredGold)' }));
-    svg.appendChild(seal);
+    /* ── the seal ─────────────────────────────────────────────
+       This drew its own circles-and-shield "L" at first, which was
+       the same stand-in the watermark used: a monogram in place of an
+       institution that owns an actual seal. It is the seal. */
+    var SEAL = 76;
+    svg.appendChild(el('image', {
+      href: '/lunara_emblem_256.png',
+      x: (W - SEAL) / 2, y: 158, width: SEAL, height: SEAL,
+      preserveAspectRatio: 'xMidYMid meet'
+    }));
 
     /* ── the record ───────────────────────────────────────────── */
     svg.appendChild(txt('LUNARA SOCIETY', { x: W / 2, y: 54, 'text-anchor': 'middle',

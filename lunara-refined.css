@@ -1278,7 +1278,10 @@ a.back,
   color: var(--lx-gold);
 }
 
-.lx-watermark svg { width: 100%; height: 100%; display: block; }
+/* The watermark's child was an inline svg and is now the emblem
+   image; sizing only svg left it at its intrinsic size. */
+.lx-watermark svg,
+.lx-watermark img { width: 100%; height: 100%; display: block; object-fit: contain; }
 
 /* ── 15.5 LETTERBOX ──────────────────────────────────────────
    A ratio, not an effect. 2.39:1 reads as cinema instantly.   */
@@ -1296,11 +1299,25 @@ a.back,
 }
 
 .lx-letterbox img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.5;
-  filter: grayscale(0.25) contrast(1.1);
+  /* The band used to hold a wide photograph and cropped it to fill.
+     The seal is square, so filling would blow it up and slice the
+     rim off. It sits centred in the band instead, at the height of
+     the band, the way a mark is struck on a page. */
+  width: auto;
+  height: 78%;
+  margin: 0 auto;
+  display: block;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  opacity: 0.62;
+  filter: none;
+}
+.lx-letterbox {
+  background:
+    radial-gradient(ellipse 60% 120% at 50% 50%, rgba(159,195,232,0.07), transparent 70%),
+    #000;
 }
 
 .lx-letterbox::after {

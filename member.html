@@ -38,7 +38,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 /* AUTH PANEL */
 .auth-panel{background:var(--black-card);border:1px solid var(--border);padding:56px 48px;width:100%;max-width:480px}
 .auth-logo{margin-bottom:32px}
-.auth-logo img{width:72px;border-radius:50%;border:1px solid rgba(196,164,107,0.3);padding:2px}
+.auth-logo img{
+  width:82px;
+  /* No ring and no crop: the seal has its own rim, and border-radius
+     on a transparent mark just clips its corners for nothing. The
+     light around it is moonlight, like everywhere else. */
+  filter:drop-shadow(0 0 24px rgba(159,195,232,0.34))
+         drop-shadow(0 0 60px rgba(122,158,196,0.18));
+}
 .auth-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .auth-title{font-size:28px;font-weight:300;color:var(--white);margin-bottom:8px}
 .auth-sub{font-size:14px;color:var(--white-30);margin-bottom:40px;line-height:1.6}
@@ -581,7 +588,7 @@ p,li,span{
 
 <nav>
   <a href="/" class="nav-logo">
-    <img src="lunara_logo_96.png" alt="Lunara Society">
+    <img src="lunara_emblem_96.png" alt="Lunara Society">
     <span class="nav-wordmark">Lunara Society</span>
   </a>
   <span class="nav-right" id="nav-status">MEMBER AREA</span>
@@ -619,7 +626,7 @@ p,li,span{
 
 <div id="view-auth">
   <div class="auth-panel">
-    <div class="auth-logo"><img src="lunara_logo_96.png" alt="Lunara Society" style="border-radius:50%;box-shadow:0 0 30px rgba(196,164,107,0.5),0 0 60px rgba(196,164,107,0.15)"></div>
+    <div class="auth-logo"><img src="lunara_emblem_96.png" alt="Lunara Society"></div>
     <p class="auth-label">Lunara Society</p>
 
     <div class="auth-tabs">

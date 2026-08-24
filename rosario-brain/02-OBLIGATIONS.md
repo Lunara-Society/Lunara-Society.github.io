@@ -29,10 +29,10 @@ is why we link it.
 - **Jurisdiction:** European Union
 - **Applies from:** 2025-02-02 *(compute tense against today — never store it)*
 - **Instrument:** EU AI Act, Regulation (EU) 2024/1689
-- **Article:** Art. 113(a) — Chapters I and II
-- **Requires:** Unacceptable-risk systems banned outright. Staff operating AI must be demonstrably competent to do so.
+- **Article:** Art. 113, third para, point (a) as amended — Chapters I and II, except Art. 5(1)(ba), (bb), 5(1a) and (1b)
+- **Requires:** Unacceptable-risk systems banned outright. Staff operating AI must be demonstrably competent to do so. Two further prohibitions were added later and do not run from this date — see eu-prohibitions-synthetic, which applies from 2 December 2026.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-prohibitions`
 
 ### General-purpose AI obligations and penalties
@@ -43,7 +43,7 @@ is why we link it.
 - **Article:** Art. 113(b) — Chapters V, VII, XII
 - **Requires:** Model documentation, training-data summaries and copyright policy. The penalty regime becomes enforceable.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-gpai`
 
 ### Article 50 transparency obligations
@@ -55,7 +55,7 @@ is why we link it.
 - **Requires:** AI systems must disclose that they are AI. Synthetic content must be marked machine-readable.
 - **Penalty:** Up to EUR 15,000,000 or 3% of worldwide annual turnover
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-art50`
 
 ### AI Transparency Act
@@ -70,16 +70,29 @@ is why we link it.
 - **Mark:** verified · last verified 2026-08-21
 - **Corpus id:** `ca-sb942`
 
+### Prohibition on non-consensual intimate and child sexual abuse material
+
+- **Jurisdiction:** European Union
+- **Applies from:** 2026-12-02 *(compute tense against today — never store it)*
+- **Instrument:** EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744
+- **Article:** Art. 5(1)(ba) and (bb), Art. 5(1a) and (1b), inserted by Reg. (EU) 2026/1744 Art. 1(7); date set by Art. 113, third para, point (a) as amended
+- **Requires:** Placing on the market, putting into service or using an AI system that generates or manipulates intimate imagery of an identifiable person without their explicit consent, or child sexual abuse material, is prohibited outright. A general-purpose generator is caught where such output is a reasonably foreseeable and reproducible outcome without significant modification and adequate safeguards are absent; a deployer is caught where they use the system for that purpose.
+- **Penalty:** Up to EUR 35,000,000 or 7% of worldwide annual turnover — Art. 99(3), the prohibited-practice tier
+- **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
+- **Amended by:** https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng
+- **Mark:** verified · last verified 2026-08-24
+- **Corpus id:** `eu-prohibitions-synthetic`
+
 ### Article 50(2) marking for systems already on the market
 
 - **Jurisdiction:** European Union
 - **Applies from:** 2026-12-02 *(compute tense against today — never store it)*
 - **Instrument:** EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744
-- **Article:** Art. 50(2), four-month transitional period — Reg. 2026/1744 recital 38
+- **Article:** Art. 111(4), inserted by Reg. (EU) 2026/1744 Art. 1(39)(b) — four-month transitional period for Art. 50(2)
 - **Requires:** Generative systems placed on the market before 2 August 2026 were given four months of relief from the machine-readable marking duty. That relief expires and marking becomes mandatory. Systems placed on the market on or after 2 August 2026 never had it.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
 - **Amended by:** https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-art50-legacy`
 
 ### Hosting platforms and large online platforms
@@ -102,7 +115,7 @@ is why we link it.
 - **Article:** Art. 111(3)
 - **Requires:** Models already on the market before August 2025 lose their grace period and must comply in full.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-legacy-gpai`
 
 ### High-risk obligations, Annex III
@@ -114,7 +127,7 @@ is why we link it.
 - **Requires:** Risk management, data governance, logging, human oversight and conformity assessment for listed high-risk uses. Deferred, not cancelled.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
 - **Amended by:** https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-annex3`
 
 ### High-risk obligations, Annex I products
@@ -126,7 +139,7 @@ is why we link it.
 - **Requires:** AI acting as a safety component of a regulated product falls under the full high-risk regime.
 - **Primary source:** https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
 - **Amended by:** https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng
-- **Mark:** verified · last verified 2026-08-21
+- **Mark:** verified · last verified 2026-08-24
 - **Corpus id:** `eu-annex1`
 
 

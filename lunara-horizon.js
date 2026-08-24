@@ -8,8 +8,8 @@
    photograph: an institution whose product is evidence should not
    decorate itself with stock imagery of servers and handshakes.
 
-   So the picture is the data. Nine obligations laid across four
-   years, drawn as markers standing on a plain, lit by one moon. What
+   So the picture is the data. Every obligation in the register laid
+   across four years, drawn as markers standing on a plain, lit by one moon. What
    is already in force stands behind you in gold — settled, factual.
    What is coming stands ahead in moonlight, and the nearest one is
    lit brightest, because it is the one that should worry you.
@@ -70,6 +70,25 @@
     obs = obs.slice().sort(function (a, b) { return iso(a.applies_from) - iso(b.applies_from); });
 
     var now = todayUTC();
+
+    /* The section heading used to read "Four are behind you. Five are
+       ahead." — two counts typed into a page, which is the one thing no
+       page here is allowed to do. Adding one obligation to the register
+       made it wrong, silently, above a drawing that was right. */
+    (function () {
+      var words = ['None', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
+                   'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+      var behind = 0;
+      for (var i = 0; i < obs.length; i++) if (iso(obs[i].applies_from) <= now) behind++;
+      var ahead = obs.length - behind;
+      var say = function (n) { return words[n] || String(n); };
+      var setAll = function (sel, v) {
+        var nodes = document.querySelectorAll(sel);
+        for (var j = 0; j < nodes.length; j++) nodes[j].textContent = v;
+      };
+      setAll('[data-lx-hz="behind"]', say(behind) + (behind === 1 ? ' is' : ' are'));
+      setAll('[data-lx-hz="ahead"]', say(ahead) + (ahead === 1 ? ' is' : ' are'));
+    })();
     var first = iso(obs[0].applies_from);
     var last = iso(obs[obs.length - 1].applies_from);
     // A season of air either side so nothing stands on the frame edge.
@@ -187,26 +206,42 @@
 
       var name = shortName(o.name);
       var w = name.length * 7.6 + 26;
-      var anchor = 'middle', lx = px;
-      if (px < PAD_L + w / 2) { anchor = 'start'; lx = PAD_L - 30; }
-      else if (px > W - PAD_R - w / 2) { anchor = 'end'; lx = W - PAD_R + 30; }
-      var left = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
+      var left = px - w / 2;
+      var MIN_L = PAD_L - 44, MAX_R = W - PAD_R + 44;
 
-      var lane = 0;
-      while (lane < LANES.length - 1 && left < laneEnd[lane] + 16) lane++;
-      laneEnd[lane] = left + w;
+      /* Five of these dates fall inside six months of a four-year axis, so
+         a label sitting directly over its own marker cannot always fit.
+         Take the first lane with room; if none has room, take the lane with
+         the most, and slide the label sideways until it clears. The leader
+         then runs at an angle instead of straight down, which is what says
+         "this label belongs to that marker" once they are no longer in a
+         column. Labels that only stack — the earlier behaviour — say
+         nothing at all, and printed through each other. */
+      var lane = -1;
+      for (var li = 0; li < LANES.length; li++) {
+        if (left >= laneEnd[li] + 14) { lane = li; break; }
+      }
+      if (lane < 0) {
+        lane = 0;
+        for (var lj = 1; lj < LANES.length; lj++) if (laneEnd[lj] < laneEnd[lane]) lane = lj;
+        left = Math.max(left, laneEnd[lane] + 14);
+      }
+      if (left + w > MAX_R) left = MAX_R - w;
+      if (left < MIN_L) left = MIN_L;
+      laneEnd[lane] = Math.max(laneEnd[lane], left + w);
       var ly = LANES[lane];
+      var lx = left + w / 2;
 
-      // Leader from the label down to the marker's head.
-      g.appendChild(el('line', { x1: px, y1: ly + 8, x2: px, y2: top - 6,
+      // Leader from the label to the marker's head, angled when they differ.
+      g.appendChild(el('line', { x1: lx, y1: ly + 8, x2: px, y2: top - 6,
         stroke: inForce ? GOLD : MOON, 'stroke-opacity': '0.22', 'stroke-width': '0.8' }));
 
-      g.appendChild(text(name, { x: lx, y: ly, 'text-anchor': anchor,
+      g.appendChild(text(name, { x: lx, y: ly, 'text-anchor': 'middle',
         class: 'lx-h-title' + (isNearest ? ' is-next' : '') + (inForce ? ' past' : '') }));
       g.appendChild(text(
         inForce ? 'in force · ' + o.applies_from
                 : days + (days === 1 ? ' day' : ' days') + ' · ' + o.applies_from,
-        { x: lx, y: ly + 15, 'text-anchor': anchor,
+        { x: lx, y: ly + 15, 'text-anchor': 'middle',
           class: 'lx-h-when' + (inForce ? ' past' : '') + (isNearest ? ' is-next' : '') }));
 
       var title = el('title');
@@ -240,6 +275,7 @@
       .replace('High-risk obligations, Annex III', 'High-risk · Annex III')
       .replace('High-risk obligations, Annex I products', 'High-risk · Annex I')
       .replace('Legacy general-purpose models', 'Legacy GPAI models')
+      .replace('Prohibition on non-consensual intimate and child sexual abuse material', 'Prohibition · synthetic NCII and CSAM')
       .replace('AI Transparency Act', 'California SB 942');
   }
 })();

@@ -1,62 +1,95 @@
 {
   "$schema": "https://lunarasociety.com/corpus/applicability.schema.json",
   "model": "lunara-applicability",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "https://lunarasociety.com",
   "evidence_standard": "https://lunarasociety.com/evidence.html",
   "classification": "interpretation",
-
   "what_this_is": "An ordered, first-match-wins decision model for which published obligations reach a given AI deployment. It is marked interpretation, not verified: the obligations it points at are verified, our reading of which one catches you is ours. You are free to accept the facts and reject the reading.",
-
   "what_this_is_not": "Legal advice, and not a qualifier. Three of the outcomes below conclude that nothing in this corpus binds the asker. A model that only ever escalates is a sales funnel, and it would make every other answer we give worth less.",
-
   "inputs": [
     {
       "id": "interacts_with_people",
       "question": "Does the system exchange words with a person?",
       "hint": "Chat, voice, email replies, a triage assistant. Anything a customer, patient or employee converses with.",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "generates_content",
       "question": "Does it produce text, images, audio or video?",
       "hint": "Generated rather than retrieved. A drafted summary counts. A generated image counts.",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
+    },
+    {
+      "id": "generates_images_audio_or_video",
+      "question": "Does it produce images, audio or video — as opposed to only text?",
+      "hint": "Decides whether the December 2026 prohibition on non-consensual intimate imagery and child sexual abuse material can reach the system at all. A text-only system is outside it.",
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "eu_exposure",
       "question": "Does anyone in the EU use the system, or its output?",
       "hint": "The Act binds on output, not on where you are incorporated. An EU customer reading a generated reply is enough.",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "on_market_before_art50",
       "question": "Was the system placed on the market before 2 August 2026?",
       "hint": "Decides whether the Article 50(2) transitional relief applied to you, and therefore whether its expiry is your nearest deadline.",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "california_exposure",
       "question": "Is the system made available to people in California?",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "monthly_users_over_1m",
       "question": "Does it have more than one million monthly users?",
       "hint": "This threshold decides the California Act entirely. Below the line it imposes nothing. Stating the Act without this threshold is a published correction on this site.",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     },
     {
       "id": "hosts_or_distributes_models",
       "question": "Do you host third-party generative models, or distribute their output at scale?",
-      "values": ["yes", "no", "unsure"]
+      "values": [
+        "yes",
+        "no",
+        "unsure"
+      ]
     }
   ],
-
   "derived": {
     "engages": "interacts_with_people == 'yes' OR generates_content == 'yes'"
   },
-
   "rules": [
     {
       "id": "eu-out-of-scope",
@@ -72,7 +105,9 @@
       "when": "engages == true AND eu_exposure == 'no'",
       "verdict": "not_yet",
       "obligations": [],
-      "watch": ["eu-art50"],
+      "watch": [
+        "eu-art50"
+      ],
       "finding": "The system does what Article 50 governs. What it does not do today is reach the European Union.",
       "reasoning": "The Act binds on output rather than on establishment. The day an EU user reads a generated reply, this changes, with no grace period attached.",
       "revisit_if": "Any EU user reaches the system or its output."
@@ -90,7 +125,9 @@
       "id": "eu-art50-applies",
       "when": "engages == true AND eu_exposure != 'no'",
       "verdict": "applies",
-      "obligations": ["eu-art50"],
+      "obligations": [
+        "eu-art50"
+      ],
       "finding": "Article 50 reaches this system.",
       "reasoning": "The system engages people or generates content, and its output reaches the European Union.",
       "duties": [
@@ -107,19 +144,32 @@
       ]
     }
   ],
-
   "overlays": [
+    {
+      "id": "eu-synthetic-prohibition-overlay",
+      "when": "generates_images_audio_or_video != 'no' AND eu_exposure != 'no'",
+      "adds": [
+        "eu-prohibitions-synthetic"
+      ],
+      "finding": "A prohibition — not a transparency duty — can reach a system that generates images, audio or video, from 2 December 2026.",
+      "reasoning": "Article 5(1)(ba) and (bb), inserted by the Digital Omnibus on AI, prohibit systems that generate intimate imagery of an identifiable person without their explicit consent, or child sexual abuse material. This is flagged rather than concluded: paragraph 1a limits it. A general-purpose generator is caught only where that output is the intended purpose, or where it is a reasonably foreseeable and reproducible outcome without significant technical modification AND the system lacks reasonable and adequate safeguards against it. A deployer is caught only where they use the system for that purpose. Safeguards are the whole question, and whether yours are adequate is not something this model can answer from seven inputs.",
+      "do_not_read_this_as": "A finding that this system is unlawful. It is a finding that the strictest tier in the Act now has a provision aimed at generative media, that it carries the Article 99(3) penalty band, and that the defence is technical safeguards you either have or do not."
+    },
     {
       "id": "eu-art50-legacy-overlay",
       "when": "generates_content == 'yes' AND eu_exposure != 'no' AND on_market_before_art50 == 'yes'",
-      "adds": ["eu-art50-legacy"],
+      "adds": [
+        "eu-art50-legacy"
+      ],
       "finding": "The transitional relief under Article 50(2) ends for this system, and that is the nearest binding date in the Act.",
       "reasoning": "Systems placed on the market before Article 50's application date were given transitional relief from the machine-readable marking duty. That relief expires."
     },
     {
       "id": "ca-sb942-overlay",
       "when": "generates_content == 'yes' AND california_exposure != 'no' AND monthly_users_over_1m == 'yes'",
-      "adds": ["ca-sb942"],
+      "adds": [
+        "ca-sb942"
+      ],
       "finding": "The California AI Transparency Act reaches this system.",
       "reasoning": "The Act reaches generative systems above one million monthly users."
     },
@@ -134,14 +184,14 @@
     {
       "id": "ca-platforms-overlay",
       "when": "hosts_or_distributes_models == 'yes' AND california_exposure != 'no'",
-      "adds": ["ca-platforms"],
+      "adds": [
+        "ca-platforms"
+      ],
       "finding": "The second wave of AB 853 reaches hosting and distribution, separately from whether you ship a model yourself.",
       "reasoning": "Platforms hosting generative systems, and large online platforms distributing their output, take on their own disclosure and provenance duties."
     }
   ],
-
   "unsure_handling": "An 'unsure' is never resolved in the direction that manufactures an obligation. Where an input is unsure, the model reports which answer would change the verdict and says so plainly, because guessing is the expensive option and the question is usually answerable in an afternoon by whoever owns the deployment.",
-
   "out_of_scope_of_this_model": [
     "High-risk classification under Annex III or Annex I. Different article, different dates, not a transparency question.",
     "Sector regimes untouched by any of this — HIPAA, financial conduct rules, professional duties.",

@@ -18,6 +18,8 @@ Every input accepts `unsure`. Ask for what you need; do not assume.
   - *Chat, voice, email replies, a triage assistant. Anything a customer, patient or employee converses with.*
 - **generates_content** — Does it produce text, images, audio or video?
   - *Generated rather than retrieved. A drafted summary counts. A generated image counts.*
+- **generates_images_audio_or_video** — Does it produce images, audio or video — as opposed to only text?
+  - *Decides whether the December 2026 prohibition on non-consensual intimate imagery and child sexual abuse material can reach the system at all. A text-only system is outside it.*
 - **eu_exposure** — Does anyone in the EU use the system, or its output?
   - *The Act binds on output, not on where you are incorporated. An EU customer reading a generated reply is enough.*
 - **on_market_before_art50** — Was the system placed on the market before 2 August 2026?
@@ -50,6 +52,9 @@ Every input accepts `unsure`. Ask for what you need; do not assume.
 
 ## Overlays — these stack on top
 
+- **eu-synthetic-prohibition-overlay** — when `generates_images_audio_or_video != 'no' AND eu_exposure != 'no'`
+  - A prohibition — not a transparency duty — can reach a system that generates images, audio or video, from 2 December 2026.
+  - *Article 5(1)(ba) and (bb), inserted by the Digital Omnibus on AI, prohibit systems that generate intimate imagery of an identifiable person without their explicit consent, or child sexual abuse material. This is flagged rather than concluded: paragraph 1a limits it. A general-purpose generator is caught only where that output is the intended purpose, or where it is a reasonably foreseeable and reproducible outcome without significant technical modification AND the system lacks reasonable and adequate safeguards against it. A deployer is caught only where they use the system for that purpose. Safeguards are the whole question, and whether yours are adequate is not something this model can answer from seven inputs.*
 - **eu-art50-legacy-overlay** — when `generates_content == 'yes' AND eu_exposure != 'no' AND on_market_before_art50 == 'yes'`
   - The transitional relief under Article 50(2) ends for this system, and that is the nearest binding date in the Act.
   - *Systems placed on the market before Article 50's application date were given transitional relief from the machine-readable marking duty. That relief expires.*

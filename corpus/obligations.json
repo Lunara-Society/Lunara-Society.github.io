@@ -15,7 +15,7 @@
     "Every entry cites the article that sets the date. If you cannot reach our conclusion from the linked source, treat that as a defect and tell us.",
     "Absence from this corpus is not a statement that nothing applies. It is a short table that is right rather than a long one that is mostly right."
   ],
-  "count": 9,
+  "count": 10,
   "obligations": [
     {
       "id": "eu-prohibitions",
@@ -23,14 +23,30 @@
       "name": "Prohibited AI practices and AI literacy",
       "applies_from": "2025-02-02",
       "instrument": "EU AI Act, Regulation (EU) 2024/1689",
-      "article": "Art. 113(a) — Chapters I and II",
-      "summary": "Unacceptable-risk systems banned outright. Staff operating AI must be demonstrably competent to do so.",
+      "article": "Art. 113, third para, point (a) as amended — Chapters I and II, except Art. 5(1)(ba), (bb), 5(1a) and (1b)",
+      "summary": "Unacceptable-risk systems banned outright. Staff operating AI must be demonstrably competent to do so. Two further prohibitions were added later and do not run from this date — see eu-prohibitions-synthetic, which applies from 2 December 2026.",
       "penalty": null,
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": null,
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 2,
+      "primary": false
+    },
+    {
+      "id": "eu-prohibitions-synthetic",
+      "jurisdiction": "European Union",
+      "name": "Prohibition on non-consensual intimate and child sexual abuse material",
+      "applies_from": "2026-12-02",
+      "instrument": "EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744",
+      "article": "Art. 5(1)(ba) and (bb), Art. 5(1a) and (1b), inserted by Reg. (EU) 2026/1744 Art. 1(7); date set by Art. 113, third para, point (a) as amended",
+      "summary": "Placing on the market, putting into service or using an AI system that generates or manipulates intimate imagery of an identifiable person without their explicit consent, or child sexual abuse material, is prohibited outright. A general-purpose generator is caught where such output is a reasonably foreseeable and reproducible outcome without significant modification and adequate safeguards are absent; a deployer is caught where they use the system for that purpose.",
+      "penalty": "Up to EUR 35,000,000 or 7% of worldwide annual turnover — Art. 99(3), the prohibited-practice tier",
+      "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+      "amended_by": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
+      "classification": "verified",
+      "verified": "2026-08-24",
+      "significance": 3,
       "primary": false
     },
     {
@@ -45,7 +61,7 @@
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": null,
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 2,
       "primary": false
     },
@@ -61,7 +77,7 @@
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": null,
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 3,
       "primary": true
     },
@@ -77,7 +93,7 @@
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 3,
       "primary": false
     },
@@ -119,13 +135,13 @@
       "name": "Article 50(2) marking for systems already on the market",
       "applies_from": "2026-12-02",
       "instrument": "EU AI Act 2024/1689, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744",
-      "article": "Art. 50(2), four-month transitional period — Reg. 2026/1744 recital 38",
+      "article": "Art. 111(4), inserted by Reg. (EU) 2026/1744 Art. 1(39)(b) — four-month transitional period for Art. 50(2)",
       "summary": "Generative systems placed on the market before 2 August 2026 were given four months of relief from the machine-readable marking duty. That relief expires and marking becomes mandatory. Systems placed on the market on or after 2 August 2026 never had it.",
       "penalty": null,
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 3,
       "primary": false
     },
@@ -141,7 +157,7 @@
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 3,
       "primary": false
     },
@@ -157,7 +173,7 @@
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "amended_by": null,
       "classification": "verified",
-      "verified": "2026-08-21",
+      "verified": "2026-08-24",
       "significance": 2,
       "primary": false
     }

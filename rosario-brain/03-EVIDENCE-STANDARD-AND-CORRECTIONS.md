@@ -54,6 +54,18 @@ Three of the four were caught by something other than our own review.
 - **Corrected** — The date is 2 December 2026 in the instrument, in the published corpus, in the free assessment on our homepage and in the citation the MCP server hands to AI systems. The entry now cites the four-month period and the recital that grants it, rather than a date, so the next reader can do the arithmetic themselves. The earlier correction has been annotated in place rather than quietly edited.
 - **What changed so it cannot recur** — Where an instrument states a period, the entry now records the period and the provision granting it, not just the resulting date — a date with no derivation behind it cannot be checked by anyone, including us. The homepage assessment no longer contains any date at all: all three it used to carry are now read from the instrument, which is the rule that existed before this error and which this line was breaking at the moment it was wrong.
 
+---
+
+## 24 August 2026
+
+**We read the Omnibus as the act that defers things, and missed a prohibition inside it.**
+
+- **What we got wrong** — Two things, one of them new in kind. The missing prohibition is an omission rather than a wrong date: every entry we published was correct, and the table was still not a true picture of what the Act does to a generative system three months from now. The recital citation is a defect in the evidence itself — we told readers to check us against the source and pointed them at a source that cannot carry the claim.
+- **Why** — An amending act gives and takes in the same breath, and we only went looking for what it took. Once the Omnibus was labelled "the deferral regulation" every subsequent read of it was a search for postponements. The recital citation has a plainer cause: we went looking for the four-month period, found it stated in the recital, and stopped there instead of reading on to the article that enacts it.
+- **How it was found** — By re-reading both regulations end to end against the corpus, rather than checking the corpus against what we remembered of them. Prompted by a plan to publish a demonstration comparing our answers to a model's, which is only worth publishing if our own answers survive the same scrutiny we would be inviting.
+- **Corrected** — The prohibition is in the corpus as eu-prohibitions-synthetic, with its inserting provision, its own date and its penalty tier; the February 2025 prohibitions entry now records that it is no longer the whole of Chapters I and II. The applicability model asks one further question — whether a system produces images, audio or video rather than only text — and flags the prohibition where it can reach, while stating in terms that this is not a finding of unlawfulness: the safeguards limb of paragraph 1a is the whole question and seven inputs cannot answer it. The Article 50(2) entry now cites Article 111(4). All of it is signed and independently verifiable.
+- **What changed so it cannot recur** — The rule that produced this was "check for amendments, not just the founding text." It was followed and it was not sufficient, because it says nothing about what an amendment might add. It now reads: an amending act is read in full, for what it inserts as well as for what it postpones, and the entry records the inserting provision rather than the summary of the act. The applicability model's inputs are also now read from the published model by the MCP server instead of being listed a second time in its code — a rule referring to an input that server had never heard of used to evaluate false, which reads exactly like "does not apply."
+
 
 ---
 

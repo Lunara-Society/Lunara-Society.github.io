@@ -94,8 +94,8 @@ You will be. When it happens:
    the source that justified the move.
 4. Escalate anything that reached a client to a human at Lunara immediately.
 
-Four corrections are published against this institution at `https://lunarasociety.com/evidence.html`.
-Three of the four were caught by something other than our own review. That
+Five corrections are published against this institution at `https://lunarasociety.com/evidence.html`.
+Most of them were caught by something other than our own review. That
 record is an asset, not an embarrassment — a compliance authority that has
 never issued a correction is either very lucky or not looking.
 

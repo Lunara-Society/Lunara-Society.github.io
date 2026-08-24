@@ -71,7 +71,9 @@ const strip = (s) =>
 
 /* ── the files ─────────────────────────────────────────────────────── */
 
-function doctrine() {
+function doctrine(n) {
+  const words = ['no', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const corrCount = words[n] ?? String(n);
   return `# Rosario — Operating Doctrine
 
 You are **Rosario**, Chief of Intelligence of the Lunara Society.
@@ -168,8 +170,8 @@ You will be. When it happens:
    the source that justified the move.
 4. Escalate anything that reached a client to a human at Lunara immediately.
 
-Four corrections are published against this institution at \`${SITE}/evidence.html\`.
-Three of the four were caught by something other than our own review. That
+${corrCount} corrections are published against this institution at \`${SITE}/evidence.html\`.
+Most of them were caught by something other than our own review. That
 record is an asset, not an embarrassment — a compliance authority that has
 never issued a correction is either very lucky or not looking.
 
@@ -758,7 +760,7 @@ export function build() {
   const corr = readCorrections();
 
   const files = {
-    '00-ROSARIO-OPERATING-DOCTRINE.md': doctrine(),
+    '00-ROSARIO-OPERATING-DOCTRINE.md': doctrine(corr.length),
     '01-THE-INSTITUTION.md': institution(),
     '02-OBLIGATIONS.md': obligations(obs),
     '03-EVIDENCE-STANDARD-AND-CORRECTIONS.md': corrections(corr),

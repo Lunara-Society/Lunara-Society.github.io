@@ -153,7 +153,19 @@ async function checkSignature(path, text) {
     return {
       state: 'verified',
       line: `Ed25519 signature verified · key ${a.key_id}${jwk.status === 'development' ? ' (development key — see keys.json)' : ''} · issued ${a.issued_at.slice(0, 10)}`,
-      detail: ''
+      detail: '',
+      evidence: {
+        algorithm: 'Ed25519',
+        key_id: a.key_id,
+        key_status: jwk.status,
+        digest: a.claims?.digest,
+        issued_at: a.issued_at,
+        expires_at: a.expires_at,
+        assertion: `${AUTHORITY}${path.replace(/\.json$/, '.assertion.json')}`,
+        keys: `${AUTHORITY}/.well-known/keys.json`,
+        method: 'Ed25519 over the RFC 8785 canonical form of the assertion body; SHA-256 over the document exactly as served.',
+        verified_by: 'this MCP server, at the moment of the fetch'
+      }
     };
   } catch (e) {
     /* No Ed25519 in this runtime, no network for the key document, no
@@ -237,16 +249,12 @@ function evaluate(model, answers) {
   const a = (k) => answers[k] ?? 'unsure';
   const engages = a('interacts_with_people') === 'yes' || a('generates_content') === 'yes';
 
-  const ctx = {
-    engages,
-    interacts_with_people: a('interacts_with_people'),
-    generates_content: a('generates_content'),
-    eu_exposure: a('eu_exposure'),
-    on_market_before_art50: a('on_market_before_art50'),
-    california_exposure: a('california_exposure'),
-    monthly_users_over_1m: a('monthly_users_over_1m'),
-    hosts_or_distributes_models: a('hosts_or_distributes_models')
-  };
+  /* Built from the model's own input list rather than a hardcoded one.
+     An input added to the published model used to need a matching edit
+     here, and a rule referring to an input this file had never heard of
+     silently evaluated false — which reads exactly like "does not apply". */
+  const ctx = { engages };
+  for (const input of model.inputs) ctx[input.id] = a(input.id);
 
   // The `when` strings are a tiny fixed grammar: comparisons against
   // literals joined by AND. Parsed, never evaluated as code.
@@ -305,6 +313,7 @@ const TOOLS = [
       properties: {
         interacts_with_people:       { type: 'string', enum: ['yes','no','unsure'], description: 'Does the system exchange words with a person?' },
         generates_content:           { type: 'string', enum: ['yes','no','unsure'], description: 'Does it produce text, images, audio or video?' },
+        generates_images_audio_or_video: { type: 'string', enum: ['yes','no','unsure'], description: 'Does it produce images, audio or video, as opposed to only text? Decides whether the prohibition applying from 2 December 2026 can reach it at all.' },
         eu_exposure:                 { type: 'string', enum: ['yes','no','unsure'], description: 'Does anyone in the EU use it, or its output? The Act binds on output, not on where you are incorporated.' },
         on_market_before_art50:      { type: 'string', enum: ['yes','no','unsure'], description: 'Was it placed on the market before 2 August 2026?' },
         california_exposure:         { type: 'string', enum: ['yes','no','unsure'], description: 'Is it available to people in California?' },
@@ -354,6 +363,23 @@ const TOOLS = [
   }
 ];
 
+/* Attached to every structured answer. A model that receives an answer
+   should not have to make a second call to find out whether the source it
+   came from was authentic — and a caller that wants to check the maths
+   itself gets the digest, the key and the assertion URL rather than a
+   sentence saying it was fine. */
+function evidence(paths) {
+  const rows = paths.map((path) => {
+    const i = integrityOf(path);
+    return { document: `${AUTHORITY}${path}`, state: i.state, note: i.line, ...(i.evidence ?? {}) };
+  });
+  return {
+    integrity: rows.length === 1 ? rows[0] : rows,
+    verify: `${AUTHORITY}/signing.html`,
+    what_this_proves: 'That these bytes are the ones Lunara Society published, unaltered. Not that the claims inside them are correct — every obligation carries a link to primary law for that.'
+  };
+}
+
 const ok = (text, data) => ({
   content: [{ type: 'text', text }],
   ...(data ? { structuredContent: data } : {})
@@ -394,7 +420,7 @@ async function callTool(name, args = {}) {
         `\n\n${lines.join('\n\n')}\n\n` +
         `Corpus v${c.version} · ${AUTHORITY}/corpus/obligations.json · tense computed ${new Date().toISOString()}` +
           `\nIntegrity: ${integrityOf('/corpus/obligations.json').line}`,
-        { corpus_version: c.version, count: list.length, obligations: list, integrity: integrityOf('/corpus/obligations.json') }
+        { corpus_version: c.version, count: list.length, obligations: list, evidence: evidence(['/corpus/obligations.json']) }
       );
     }
 
@@ -413,6 +439,7 @@ async function callTool(name, args = {}) {
 
       for (const o of result.overlays) {
         parts.push('', `ALSO             ${o.finding}`, `                 ${o.reasoning}`);
+        if (o.do_not_read_this_as) parts.push(`NOT A FINDING    ${o.do_not_read_this_as}`);
       }
 
       if (hits.length) {
@@ -461,7 +488,8 @@ async function callTool(name, args = {}) {
         overlays: result.overlays.map((o) => o.id),
         obligations: hits,
         unresolved_inputs: result.unsure,
-        classification: 'interpretation'
+        classification: 'interpretation',
+        evidence: evidence(['/corpus/applicability.json', '/corpus/obligations.json'])
       });
     }
 
@@ -471,7 +499,7 @@ async function callTool(name, args = {}) {
       if (!o) {
         return ok(`No obligation with id "${args.id}" is in the Lunara corpus. Known ids: ${c.obligations.map((x) => x.id).join(', ')}`);
       }
-      return ok(citation(o), tense(o));
+      return ok(citation(o), { ...tense(o), evidence: evidence(['/corpus/obligations.json']) });
     }
 
     case 'lunara_integrity': {

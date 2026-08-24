@@ -63,6 +63,24 @@ jobs:
       - name: Verify the registry protocol
         run: node tools/verify-registry-protocol.mjs
 
+      # Everything this institution publishes for machines travels as JSON,
+      # and a copy of it — a mirror, a cached crawl, a vendor's snapshot —
+      # carries none of the transport security of the original fetch. Each
+      # document is published with a detached Ed25519 assertion over its
+      # hash, and a signature covering the previous version of a document is
+      # worse than no signature: it invites a reader to check, tells them
+      # the check failed, and leaves them unable to tell a stale build from
+      # an attack. So the deploy stops while any document and its assertion
+      # disagree. Re-signing is one command and the failure message carries it.
+      - name: Verify published signatures
+        run: node tools/verify-signatures.mjs
+
+      # And the verifier itself is exercised against tampering, because a
+      # verifier that always says yes passes every test that only feeds it
+      # good input and looks identical in the log.
+      - name: Exercise the signing layer against tampering
+        run: node tools/test-assertions.mjs
+
       # The member area is the only place on this site where a person hands
       # over a credential, and the four functions behind it used to answer
       # 404 to every call — the form posted into nothing for as long as it

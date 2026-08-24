@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lunarasociety.com/.well-known/keys.schema.json",
+  "title": "Lunara signing keys",
+  "description": "The public keys Lunara Society signs published assertions with. RFC 8037 Ed25519 JWKs. A superseded key stays in this document with `revoked` set rather than being removed: a key that disappears turns every assertion it ever signed into an unknown-key failure, which a verifier cannot tell apart from a forgery.",
+  "type": "object",
+  "required": ["issuer", "keys"],
+  "properties": {
+    "issuer": { "const": "https://lunarasociety.com" },
+    "document": { "const": "lunara-signing-keys-1" },
+    "updated": { "type": "string", "format": "date-time" },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kid", "kty", "crv", "x", "use", "alg", "status", "created"],
+        "properties": {
+          "kid": { "type": "string", "description": "Key id, derived from the key material itself so it cannot be pointed at a different key later." },
+          "kty": { "const": "OKP" },
+          "crv": { "const": "Ed25519" },
+          "x": { "type": "string", "description": "The public key, base64url. There is no `d` member here and there never will be — that is the secret half." },
+          "use": { "const": "sig" },
+          "alg": { "const": "EdDSA" },
+          "status": {
+            "type": "string",
+            "enum": ["development", "production"],
+            "description": "development means the key was not generated in dedicated custody. It is published as such rather than presented as more than it is; a development key must also carry `assurance` saying what it does not establish."
+          },
+          "assurance": { "type": "string" },
+          "created": { "type": "string", "format": "date-time" },
+          "not_after": { "type": "string", "format": "date-time" },
+          "revoked": { "type": ["string", "null"], "description": "Null while the key is live. Once set, it carries the date from which signatures under this key should be disbelieved, and the reason." },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "rotation": { "type": "object" },
+    "verification": { "type": "object" }
+  }
+}

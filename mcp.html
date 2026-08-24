@@ -5,10 +5,10 @@
 <link rel="icon" type="image/png" href="lunara_logo_512.png">
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="Lunara Intelligence MCP server. Regulatory obligations for AI systems, with the article that sets each date and a link to primary law. Free, no key, four tools.">
+<meta name="description" content="Lunara Intelligence MCP server. Regulatory obligations for AI systems, with the article that sets each date and a link to primary law. Free, no key, five tools.">
 <title>The MCP Server — Lunara Society</title>
 <meta property="og:title" content="Lunara Intelligence — the MCP server">
-<meta property="og:description" content="Your model's training data is probably wrong about these dates. Four tools so it can look them up instead of recalling them.">
+<meta property="og:description" content="Your model's training data is probably wrong about these dates. Five tools so it can look them up instead of recalling them.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://lunarasociety.com/mcp.html">
 <meta property="og:image" content="https://lunarasociety.com/lunara_logo_512.png">
@@ -118,7 +118,7 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
 
   <p>Node 18 or later. No dependencies, no API key, no account, nothing to sign up for. Reading is free and always will be: a claim nobody can check is worth nothing, so checking must never cost anything.</p>
 
-  <h2>Four tools</h2>
+  <h2>Five tools</h2>
 
   <div class="tools">
     <div class="tool">
@@ -149,7 +149,14 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
         <p class="ask">“Is this supplier in the Lunara registry?”</p>
       </div>
     </div>
-  </div>
+    <div class="tool">
+      <div class="tool-name">lunara_integrity</div>
+      <div class="tool-body">
+        <p>Whether the corpus this server just read carries a valid Ed25519 signature from us, with the digests and key material needed to check that independently. A document that fails verification produces an error, never an answer.</p>
+        <p class="ask">“Is this regulatory data actually from Lunara, or from a copy of it?”</p>
+      </div>
+    </div>
+</div>
 
   <h2>What an answer looks like</h2>
 
@@ -204,7 +211,10 @@ COMPUTED         2026-08-21T06:12:04.118Z</code></pre>
     <li><a class="inline" href="/corpus/obligations.schema.json">/corpus/obligations.schema.json</a> — the schema they are held to</li>
     <li><a class="inline" href="/corpus/applicability.json">/corpus/applicability.json</a> — the decision model</li>
     <li><a class="inline" href="/llms.txt">/llms.txt</a> — the full context file</li>
+    <li><a class="inline" href="/.well-known/assertions.json">/.well-known/assertions.json</a> — the signature over each of them</li>
   </ul>
+
+  <p>Each of those documents is published with a detached Ed25519 signature, and the server checks it on every fetch: a corpus that fails verification produces an error rather than an answer. That matters most where it is least visible — a corpus reaching a model through a mirror, a cache or a snapshot is not covered by the transport security of the original request. The fifth tool, <code>lunara_integrity</code>, reports what verified and what did not, and <a class="inline" href="signing.html">signing.html</a> performs the same check in front of you.</p>
 
   <div class="callout">
     <p><strong>If an entry does not follow from the source it cites, that is a defect.</strong> Tell us at <a class="inline" href="mailto:rosario@lunarasociety.com">rosario@lunarasociety.com</a>. Two of our three published corrections were things our own review did not catch, and one was found by an outside reader. We would rather be told than found out.</p>

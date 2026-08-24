@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lunarasociety.com/.well-known/assertions.schema.json",
+  "title": "Lunara assertion index",
+  "description": "Every document Lunara Society publishes with a detached signature, and where that signature lives. A convenience, deliberately not the trust anchor: an assertion is verified against the key document and the document it covers, so a tampered index can hide an assertion but never forge one.",
+  "type": "object",
+  "required": ["issuer", "assertions"],
+  "properties": {
+    "issuer": { "const": "https://lunarasociety.com" },
+    "document": { "const": "lunara-assertion-index-1" },
+    "updated": { "type": "string", "format": "date-time" },
+    "keys": { "type": "string", "format": "uri" },
+    "envelope_schema": { "type": "string", "format": "uri" },
+    "human": { "type": "string", "format": "uri" },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["subject", "assertion", "type", "key_id", "issued_at"],
+        "properties": {
+          "subject": { "type": "string", "format": "uri" },
+          "assertion": { "type": "string", "format": "uri" },
+          "type": { "type": "string" },
+          "key_id": { "type": "string" },
+          "issued_at": { "type": "string", "format": "date-time" },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "digest": { "type": "string", "description": "Repeated here for convenience only. The digest that counts is the one inside the signed assertion body." }
+        }
+      }
+    }
+  }
+}

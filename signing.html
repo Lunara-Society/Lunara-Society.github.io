@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Every machine-readable document Lunara Society publishes carries a detached Ed25519 signature. This page verifies one in your browser, in front of you, with no request to us beyond the files themselves.">
+<title>Signing — Lunara Society</title>
+<meta property="og:title" content="Verify it yourself">
+<meta property="og:description" content="A signature you have to take our word for is not a signature. This page checks ours in your browser.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lunarasociety.com/signing.html">
+<meta property="og:image" content="https://lunarasociety.com/lunara_logo_512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lunarasociety.com/signing.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;overflow-x:clip}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.7);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+
+.wrap{max-width:840px;margin:0 auto;padding:150px 28px 40px}
+.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
+h1{font-size:clamp(34px,6vw,60px);font-weight:300;line-height:1.14;color:#f0e0b0;letter-spacing:-0.015em;margin-bottom:26px}
+h1 em{font-style:italic;color:var(--gold-b)}
+.standfirst{font-size:clamp(17px,2.2vw,21px);line-height:1.7;color:rgba(220,200,160,0.62);max-width:60ch;font-weight:300}
+h2{font-size:clamp(24px,3.4vw,34px);font-weight:300;color:#f0e0b0;line-height:1.25;margin:74px 0 20px}
+h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--gold-b);margin:34px 0 10px}
+p{font-size:16px;line-height:1.92;color:var(--text);margin-bottom:18px;max-width:66ch;font-family:'Inter',sans-serif;font-weight:300}
+p strong{font-weight:500;color:#f0e0b0}
+a.inline{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3)}
+a.inline:hover{color:var(--gold-b)}
+
+pre{background:rgba(196,164,107,0.045);border:1px solid rgba(196,164,107,0.18);border-left:2px solid var(--gold);padding:20px 22px;margin:22px 0;overflow-x:auto;border-radius:2px}
+code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.75;color:rgba(226,200,146,0.92);white-space:pre}
+p code,li code{background:rgba(196,164,107,0.1);padding:2px 6px;font-size:13px;border-radius:2px;white-space:normal}
+
+.callout{border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(196,164,107,0.05),rgba(196,164,107,0.01));padding:24px 26px;margin:34px 0}
+.callout p{margin-bottom:0;color:rgba(220,200,160,0.72);font-size:15px}
+
+.tools{margin:34px 0;border-top:1px solid rgba(196,164,107,0.16)}
+.tool{display:grid;grid-template-columns:210px 1fr;gap:26px;padding:24px 4px;border-bottom:1px solid rgba(196,164,107,0.09);align-items:start}
+.tool-name{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--gold-b);letter-spacing:0.02em}
+.tool-body p{margin:0 0 6px;font-size:14px;line-height:1.8;color:rgba(220,200,160,0.68)}
+.tool-body .ask{font-size:12.5px;color:rgba(196,164,107,0.55);font-style:italic}
+
+.spec{margin:30px 0;border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px}
+.spec-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:16px}
+.spec pre{background:none;border:none;border-left:none;padding:0;margin:0}
+.spec code{font-size:12.5px;color:rgba(226,206,160,0.82)}
+
+.wont{border:1px solid rgba(226,196,122,0.32);border-left-width:2px;background:linear-gradient(177deg,rgba(24,20,12,0.9),rgba(7,6,3,0.98));padding:28px 30px;margin:34px 0}
+.wont h3{margin-top:0}
+.wont h3:not(:first-child){margin-top:26px}
+.wont p{font-size:14.5px;line-height:1.85;color:rgba(220,200,160,0.66)}
+
+footer{border-top:1px solid var(--gold-faint);padding:44px 28px 60px;text-align:center}
+footer p{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.1em;color:rgba(196,164,107,0.35);margin:0 auto 6px;max-width:60ch}
+footer a{color:rgba(196,164,107,0.55);text-decoration:none}
+
+@media(max-width:760px){
+  nav{padding:14px 18px}.nav-links{gap:14px}
+  .wrap{padding:120px 20px 30px}
+  .tool{grid-template-columns:1fr;gap:10px}
+  code{font-size:12px}
+}
+
+.verify{border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px;margin:34px 0}
+.verify-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:4px}
+.verify-sub{font-family:'Inter',sans-serif;font-size:12.5px;color:rgba(196,164,107,0.5);margin-bottom:22px;font-style:italic}
+.step{display:grid;grid-template-columns:22px 1fr;gap:14px;padding:13px 0;border-top:1px solid rgba(196,164,107,0.09);align-items:start}
+.step:first-of-type{border-top:none}
+.dot{width:9px;height:9px;border-radius:50%;margin-top:6px;background:rgba(196,164,107,0.18);box-shadow:0 0 0 0 rgba(196,164,107,0);transition:background .5s,box-shadow .5s}
+.step[data-state="run"] .dot{background:rgba(226,196,122,0.55);animation:pulse 1.4s ease-in-out infinite}
+.step[data-state="ok"] .dot{background:#E2C47A;box-shadow:0 0 14px 1px rgba(226,196,122,0.45)}
+.step[data-state="bad"] .dot{background:#c96a5a;box-shadow:0 0 14px 1px rgba(201,106,90,0.4)}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+.step-label{font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(220,200,160,0.82);letter-spacing:.01em}
+.step-detail{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;color:rgba(196,164,107,0.52);margin-top:5px;word-break:break-all;line-height:1.65;min-height:1px}
+.step[data-state="bad"] .step-detail{color:#c96a5a}
+.verdict{margin-top:20px;padding-top:18px;border-top:1px solid rgba(196,164,107,0.16);font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.02em;color:rgba(196,164,107,0.55);min-height:20px}
+.verdict.ok{color:#E2C47A}
+.verdict.bad{color:#c96a5a}
+</style>
+<link rel="stylesheet" href="lunara-refined.css">
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand">Lunara Society</a>
+  <div class="nav-links">
+    <a href="intelligence.html">Intelligence</a>
+    <a href="mcp.html">MCP</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="registry.html">Registry</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="eyebrow">Integrity</div>
+  <h1>Don't trust this page.<br><em>Check it.</em></h1>
+  <p class="standfirst">Every machine-readable document this institution publishes is signed. The signature can be verified without asking us anything — and the box below does exactly that, in your browser, right now.</p>
+
+  <p>An institution that publishes regulatory dates is asking to be believed about facts that carry penalties. The usual answer to “why should I believe this file?” is the padlock in the address bar. That answer is weaker than it looks: HTTPS proves these bytes came from whatever server answered for this domain, at the moment you asked. It proves nothing about the copy — and copies are how a corpus like this actually travels. A mirror. A cached crawl. A vendor's snapshot. A model's training set. In every one of those, a modified <code>obligations.json</code> with one date moved is indistinguishable from ours.</p>
+
+  <p>So each document is published with a <strong>detached assertion</strong>: a short signed statement naming the document, its SHA-256, when it was issued and how long it should be trusted. The signature is Ed25519 over the canonical form of that statement. Checking it needs the public key and nothing else — no call to us, no account, no rate limit, no permission.</p>
+
+  <div class="verify" id="verify">
+    <div class="verify-head">Live verification</div>
+    <div class="verify-sub">Running in your browser against the files as they are being served to you.</div>
+
+    <div class="step" id="s1" data-state="idle"><div class="dot"></div><div><div class="step-label">Fetch the public key document</div><div class="step-detail"></div></div></div>
+    <div class="step" id="s2" data-state="idle"><div class="dot"></div><div><div class="step-label">Fetch the obligation corpus and its assertion</div><div class="step-detail"></div></div></div>
+    <div class="step" id="s3" data-state="idle"><div class="dot"></div><div><div class="step-label">Hash the corpus with SHA-256</div><div class="step-detail"></div></div></div>
+    <div class="step" id="s4" data-state="idle"><div class="dot"></div><div><div class="step-label">Compare that hash to the one inside the signed statement</div><div class="step-detail"></div></div></div>
+    <div class="step" id="s5" data-state="idle"><div class="dot"></div><div><div class="step-label">Verify the Ed25519 signature over the statement</div><div class="step-detail"></div></div></div>
+    <div class="verdict" id="verdict">Waiting.</div>
+  </div>
+
+  <p>Nothing above is a claim we are making about ourselves. Your browser fetched two files, computed a hash and checked a signature; the only thing we contributed was the maths being hard to forge. If a single byte of the corpus had been altered — by us, by a mirror, by anything between — step four would be red and the page would say so.</p>
+
+  <div class="callout">
+    <p><strong>What a signature proves, and what it does not.</strong> It proves the bytes you hold are the bytes this institution published, and that nobody altered them in transit or in a copy. It proves nothing whatsoever about whether the regulatory claims inside them are <em>correct</em>. That is what the link to primary law on every row is for, and why every row has one. A signed wrong answer is still a wrong answer — we have published three corrections and the <a class="inline" href="evidence.html">evidence page</a> lists them.</p>
+  </div>
+
+  <h2>What is signed</h2>
+
+  <ul style="list-style:none;margin:22px 0;font-family:'Inter',sans-serif;font-size:14px;line-height:2.1;color:rgba(220,200,160,0.7)">
+    <li><a class="inline" href="/corpus/obligations.json">/corpus/obligations.json</a> &nbsp;·&nbsp; <a class="inline" href="/corpus/obligations.assertion.json">assertion</a></li>
+    <li><a class="inline" href="/corpus/applicability.json">/corpus/applicability.json</a> &nbsp;·&nbsp; <a class="inline" href="/corpus/applicability.assertion.json">assertion</a></li>
+    <li><a class="inline" href="/corpus/registry-protocol.json">/corpus/registry-protocol.json</a> &nbsp;·&nbsp; <a class="inline" href="/corpus/registry-protocol.assertion.json">assertion</a></li>
+    <li><a class="inline" href="/corpus/index.json">/corpus/index.json</a> &nbsp;·&nbsp; <a class="inline" href="/corpus/index.assertion.json">assertion</a></li>
+    <li><a class="inline" href="/.well-known/lunara-verify.json">/.well-known/lunara-verify.json</a> &nbsp;·&nbsp; <a class="inline" href="/.well-known/lunara-verify.assertion.json">assertion</a></li>
+  </ul>
+
+  <p>The index of all of them is at <a class="inline" href="/.well-known/assertions.json">/.well-known/assertions.json</a>, the public keys at <a class="inline" href="/.well-known/keys.json">/.well-known/keys.json</a>, and the envelope schema at <a class="inline" href="/.well-known/assertion.schema.json">/.well-known/assertion.schema.json</a>. The index is a convenience and deliberately not the trust anchor: an assertion is checked against the key document and the document it covers, so a tampered index can hide an assertion but never forge one.</p>
+
+  <h2>Verify it from a terminal</h2>
+
+  <p>The same check, without a browser. Any Ed25519 implementation will do; this uses Node, which is already required for the MCP server.</p>
+
+  <pre><code>curl -s https://lunarasociety.com/corpus/obligations.json -o obligations.json
+curl -s https://lunarasociety.com/corpus/obligations.assertion.json -o assertion.json
+curl -s https://lunarasociety.com/.well-known/keys.json -o keys.json
+
+node -e '
+const c = require("crypto"), fs = require("fs");
+const env = JSON.parse(fs.readFileSync("assertion.json"));
+const key = JSON.parse(fs.readFileSync("keys.json")).keys.find(k => k.kid === env.assertion.key_id);
+const doc = fs.readFileSync("obligations.json");
+
+// RFC 8785: sorted keys, no whitespace
+const canon = v => Array.isArray(v) ? "[" + v.map(canon) + "]"
+  : v && typeof v === "object"
+    ? "{" + Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + canon(v[k])) + "}"
+    : JSON.stringify(v);
+
+const b64u = b => b.toString("base64").replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const sig  = c.verify(null, Buffer.from(canon(env.assertion)),
+               c.createPublicKey({ key, format: "jwk" }),
+               Buffer.from(env.signature.value, "base64url"));
+const hash = b64u(c.createHash("sha256").update(doc).digest()) === env.assertion.claims.digest.value;
+
+console.log("signature:", sig ? "valid" : "INVALID");
+console.log("digest:   ", hash ? "matches" : "MISMATCH");
+'</code></pre>
+
+  <h2>The key</h2>
+
+  <p>One Ed25519 key is published today, and it is marked <code>status: development</code> in the key document rather than quietly presented as more than it is. It was generated in an ephemeral build container, not on dedicated hardware in someone's custody. That is enough to establish that the copy you hold is the copy we published — which is the entire job it is doing here. It is not enough to hang a legal conclusion on, and the key document says so in the key's own <code>assurance</code> field, where a machine reading it will see it too.</p>
+
+  <p>Keys are valid for two years. A superseded key stays published and is marked revoked with a date and a reason, because a key that simply disappears turns every assertion it ever signed into “unknown key” — indistinguishable from a forgery. Revocation with a reason tells a verifier which of those two it is looking at.</p>
+
+  <h2>Why this exists now</h2>
+
+  <p>There is no dramatic reason. Nobody has mirrored this corpus and altered it, as far as we know. It is here because the primitive is the same one that everything after it needs: an identity assertion, an authority credential, a permission scope, a statement that some agent is allowed to act for some organisation — all of them are a signed statement with a subject, a claim, an issuer and a window of validity. The envelope was designed for that and the only thing currently inside it is a hash of a JSON file. That is the right order to build it in. A signing scheme first proved on documents nobody is attacking is a signing scheme that works before it is needed.</p>
+
+  <div class="callout">
+    <p>If a signature here fails to verify, that is either an attack or our mistake, and we would rather be told about either: <a class="inline" href="mailto:rosario@lunarasociety.com">rosario@lunarasociety.com</a>.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>Lunara Society &nbsp;·&nbsp; Independent constitutional governance for autonomous AI systems</p>
+  <p><a href="evidence.html">Evidence standard</a> &nbsp;·&nbsp; <a href="mcp.html">MCP</a> &nbsp;·&nbsp; <a href="intelligence.html">Intelligence</a> &nbsp;·&nbsp; <a href="/llms.txt">llms.txt</a></p>
+</footer>
+
+<script>
+(async function () {
+  const step = (id, state, detail) => {
+    const el = document.getElementById(id);
+    el.dataset.state = state;
+    if (detail !== undefined) el.querySelector('.step-detail').textContent = detail;
+  };
+  const verdict = (text, cls) => {
+    const v = document.getElementById('verdict');
+    v.textContent = text;
+    v.className = 'verdict' + (cls ? ' ' + cls : '');
+  };
+  const pause = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // RFC 8785 canonical JSON — sorted keys, no insignificant whitespace.
+  const canon = (v) => {
+    if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+    if (v && typeof v === 'object') {
+      return '{' + Object.keys(v).filter(k => v[k] !== undefined).sort()
+        .map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+    }
+    return JSON.stringify(v);
+  };
+  const b64u = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const unb64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+
+  try {
+    step('s1', 'run', '/.well-known/keys.json');
+    const keys = await (await fetch('/.well-known/keys.json', { cache: 'no-store' })).json();
+    await pause(260);
+
+    step('s2', 'run', '/corpus/obligations.json');
+    const docText = await (await fetch('/corpus/obligations.json', { cache: 'no-store' })).text();
+    const env = await (await fetch('/corpus/obligations.assertion.json', { cache: 'no-store' })).json();
+    const a = env.assertion;
+    const jwk = (keys.keys || []).find(k => k.kid === a.key_id);
+    if (!jwk) throw new Error('the signing key named by the assertion is not published');
+    step('s1', 'ok', jwk.kid + ' · Ed25519 · status ' + jwk.status);
+    await pause(200);
+    const docBytes = new TextEncoder().encode(docText).length;
+    step('s2', 'ok', docBytes.toLocaleString() + ' bytes · assertion issued ' + a.issued_at.slice(0, 10) + ', expires ' + a.expires_at.slice(0, 10));
+    await pause(240);
+
+    step('s3', 'run', 'computing…');
+    const digest = b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(docText)));
+    await pause(320);
+    step('s3', 'ok', digest);
+
+    step('s4', 'run');
+    await pause(240);
+    const digestOk = digest === a.claims.digest.value;
+    step('s4', digestOk ? 'ok' : 'bad', digestOk
+      ? 'identical — this is the document that was signed'
+      : 'MISMATCH — the assertion covers ' + a.claims.digest.value);
+
+    step('s5', 'run', 'Ed25519 over the canonical statement…');
+    let sigOk = false, unsupported = false;
+    try {
+      const key = await crypto.subtle.importKey('jwk',
+        { kty: jwk.kty, crv: jwk.crv, x: jwk.x, key_ops: ['verify'] }, { name: 'Ed25519' }, false, ['verify']);
+      sigOk = await crypto.subtle.verify({ name: 'Ed25519' }, key,
+        unb64u(env.signature.value), new TextEncoder().encode(canon(a)));
+    } catch (e) {
+      unsupported = true;
+    }
+    await pause(280);
+
+    if (unsupported) {
+      // Ed25519 in WebCrypto is recent. Saying "your browser cannot check
+      // this" is honest; showing a green tick anyway would not be.
+      step('s5', 'idle', 'this browser has no Ed25519 in WebCrypto — the terminal command below performs the same check');
+      verdict(digestOk
+        ? 'Digest verified here. Signature not checkable in this browser.'
+        : 'DIGEST MISMATCH — do not rely on this copy.', digestOk ? '' : 'bad');
+      return;
+    }
+
+    step('s5', sigOk ? 'ok' : 'bad', sigOk
+      ? 'valid — signed by ' + a.key_id
+      : 'INVALID — the signed statement has been altered');
+
+    if (sigOk && digestOk) {
+      verdict('Verified. This corpus is the one Lunara Society published, unaltered. Checked by your browser, not asserted by this page.', 'ok');
+    } else {
+      verdict('VERIFICATION FAILED. Do not rely on this copy. Fetch it from https://lunarasociety.com and tell us: rosario@lunarasociety.com', 'bad');
+    }
+  } catch (e) {
+    step('s5', 'bad');
+    verdict('The check could not complete: ' + e.message, 'bad');
+  }
+})();
+</script>
+
+</body>
+</html>

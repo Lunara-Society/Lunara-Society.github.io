@@ -1,0 +1,32 @@
+{
+  "$schema": "https://lunarasociety.com/.well-known/assertion.schema.json",
+  "assertion": {
+    "version": "lunara-assertion-1",
+    "type": "document-integrity",
+    "issuer": "https://lunarasociety.com",
+    "subject": "https://lunarasociety.com/corpus/registry-protocol.json",
+    "statement": "Lunara Society published this registry contract. Every response shape in it carries an evidence mark: verified means observed from the live endpoint on the date given, unverified means expected and never observed.",
+    "evidence": "verified",
+    "claims": {
+      "digest": {
+        "alg": "sha-256",
+        "encoding": "base64url",
+        "value": "xJm0cwmsrcbXwi87W6fa0KCVCSuAeKQRIyxtxnAoOSw"
+      },
+      "bytes": 5201,
+      "media_type": "application/json",
+      "document_version": "LUNA-PROTO-1"
+    },
+    "issued_at": "2026-08-24T17:33:22.548Z",
+    "expires_at": "2027-08-24T17:33:22.548Z",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a"
+  },
+  "signature": {
+    "alg": "EdDSA",
+    "curve": "Ed25519",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a",
+    "keys": "https://lunarasociety.com/.well-known/keys.json",
+    "value": "GGemBHgvot6M3MTEKvQg44ZoJkF_mcFpQweO88BacF_8ID9uIHrvMhap01fKhmHcHEeT42mCw264MTS1o2alBg"
+  },
+  "how_to_verify": "Take assertion, serialise it as RFC 8785 canonical JSON, and verify signature.value as Ed25519 over those bytes using the key whose kid is signature.key_id from https://lunarasociety.com/.well-known/keys.json. Then SHA-256 the subject document as served and compare it to assertion.claims.digest.value. Both must hold. Nothing needs to be fetched from this institution to check the maths."
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lunarasociety.com/.well-known/assertion.schema.json",
+  "title": "Lunara signed assertion",
+  "description": "A signed statement issued by Lunara Society. The envelope is intentionally not specific to any one kind of claim: `type` selects what is being asserted and `claims` carries it, so an assertion about a document's integrity and a later assertion about an entity, an agent's authority or a permission's scope are the same structure, verified by the same code. The signature covers the RFC 8785 canonical form of `assertion` and nothing else — the envelope's other fields are conveniences and are not trusted.",
+  "type": "object",
+  "required": ["assertion", "signature"],
+  "properties": {
+    "assertion": {
+      "type": "object",
+      "description": "The signed body. This exact object, serialised as RFC 8785 canonical JSON, is what the signature is over.",
+      "required": ["version", "type", "issuer", "subject", "evidence", "claims", "issued_at", "key_id"],
+      "properties": {
+        "version": { "const": "lunara-assertion-1" },
+        "type": {
+          "type": "string",
+          "description": "What is being asserted. `document-integrity` is the only type currently issued. Types are added, never redefined: a verifier that does not recognise a type must reject it rather than ignore the parts it does not understand.",
+          "examples": ["document-integrity"]
+        },
+        "issuer": { "const": "https://lunarasociety.com" },
+        "subject": { "type": "string", "format": "uri", "description": "What the assertion is about. For document-integrity, the URL the document is served from." },
+        "statement": { "type": "string", "description": "What this institution is actually claiming, in words, so that a person reading the signed bytes sees the same claim a machine acts on." },
+        "evidence": {
+          "type": "string",
+          "enum": ["verified", "reported", "interpretation", "hypothesis"],
+          "description": "The evidence standard this institution marks every published claim against. A signature proves who said it, never that it is true; the mark says how the issuer knows."
+        },
+        "claims": {
+          "type": "object",
+          "description": "Type-specific content. For document-integrity: digest, bytes, media_type, document_version.",
+          "properties": {
+            "digest": {
+              "type": "object",
+              "required": ["alg", "value"],
+              "properties": {
+                "alg": { "const": "sha-256" },
+                "encoding": { "const": "base64url" },
+                "value": { "type": "string", "description": "SHA-256 of the subject document exactly as served — not of a re-serialisation of it, because re-serialising is where a whitespace-altered second document hides." }
+              }
+            },
+            "bytes": { "type": "integer", "minimum": 0 },
+            "media_type": { "type": "string" },
+            "document_version": { "type": ["string", "null"], "description": "The version the subject document declares for itself, if it declares one. A claim about the document, not about the signature." }
+          }
+        },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time", "description": "After this, the assertion is stale. Stale is not the same as false: it means nobody has restated it lately, which is exactly what an abandoned mirror looks like." },
+        "key_id": { "type": "string", "description": "The kid of the signing key, inside the signed bytes so a signature cannot be replayed under another key's authority." }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "curve", "key_id", "value"],
+      "properties": {
+        "alg": { "const": "EdDSA" },
+        "curve": { "const": "Ed25519" },
+        "key_id": { "type": "string", "description": "Must equal assertion.key_id. A verifier that reads only this one is trusting an unsigned field." },
+        "keys": { "type": "string", "format": "uri" },
+        "value": { "type": "string", "description": "base64url, unpadded, 64 bytes decoded." }
+      }
+    },
+    "how_to_verify": { "type": "string" },
+    "$schema": { "type": "string" }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://lunarasociety.com/.well-known/keys.schema.json",
+  "issuer": "https://lunarasociety.com",
+  "document": "lunara-signing-keys-1",
+  "updated": "2026-08-24T17:32:05.805Z",
+  "description": "The public keys Lunara Society signs published assertions with. Ed25519, RFC 8037 JWK. Fetch this once, keep it, and verify every assertion offline against it — no request to this institution is needed to check a signature, which is the point.",
+  "keys": [
+    {
+      "kid": "luna-2026-Uju42vez3TYJh_2a",
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "x": "wpndqK-GIXkCqmS0vWKzKUGWz049NYMYopfmP0Fo4h8",
+      "use": "sig",
+      "alg": "EdDSA",
+      "status": "development",
+      "created": "2026-08-24T17:32:05.805Z",
+      "not_after": "2028-08-24T00:00:00.000Z",
+      "revoked": null,
+      "purpose": "Signs the assertions Lunara Society publishes about its own machine-readable documents.",
+      "assurance": "This key was generated in an ephemeral build container and handed to the operator over a chat channel. It establishes that two copies of a document are the same document and that the copy you hold is the one this institution published. It does not carry hardware-backed assurance, and nothing that matters legally should rest on it alone until it has been replaced by a key generated on trusted hardware and rotated in as production."
+    }
+  ],
+  "rotation": {
+    "policy": "Keys are valid for two years from creation. A superseded key is marked revoked with a date and a reason and stays published, because a key that disappears makes every assertion it signed look forged.",
+    "on_compromise": "The compromised entry is marked revoked immediately, every covered document is re-signed under a new kid, and the revocation reason states the date from which signatures under the old key should be disbelieved.",
+    "procedure": "https://lunarasociety.com/signing.html"
+  },
+  "verification": {
+    "envelope": "https://lunarasociety.com/.well-known/assertion.schema.json",
+    "index": "https://lunarasociety.com/.well-known/assertions.json",
+    "steps": [
+      "Fetch the assertion for the document you hold.",
+      "Serialise assertion (the inner object) as RFC 8785 canonical JSON — sorted keys, no whitespace.",
+      "Verify signature.value as an Ed25519 signature over those bytes, using the key here whose kid matches signature.key_id.",
+      "SHA-256 the document exactly as served, base64url it, and compare to assertion.claims.digest.value.",
+      "Check issued_at is in the past and expires_at is in the future."
+    ]
+  }
+}

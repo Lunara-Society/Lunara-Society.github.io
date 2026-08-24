@@ -23,6 +23,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 import { createInterface } from 'node:readline';
+import { webcrypto as crypto } from 'node:crypto';
 
 const AUTHORITY = process.env.LUNARA_AUTHORITY || 'https://lunarasociety.com';
 const REGISTRY  = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions';
@@ -55,13 +56,112 @@ async function authoritative(path) {
   }
   if (!res.ok) throw new Error(`The Lunara corpus at ${url} returned HTTP ${res.status}.`);
 
-  const body = await res.json();
-  cache.set(path, { at: Date.now(), body });
+  /* The bytes, not a re-serialisation of them: the digest in the assertion
+     covers the document exactly as served. */
+  const text = await res.text();
+  const body = JSON.parse(text);
+  const integrity = await checkSignature(path, text);
+  if (integrity.state === 'failed') {
+    throw new Error(
+      `The signature on ${url} does not verify (${integrity.detail}). No answer is returned. ` +
+      `Either this copy has been altered, or the issuer published a document and its signature out of step. ` +
+      `Check https://lunarasociety.com/.well-known/keys.json and https://lunarasociety.com/signing.html — deliberately the ` +
+      `canonical origin and not ${AUTHORITY}, because a copy that fails its own signature is not the place to go for the key that checks it.`
+    );
+  }
+  cache.set(path, { at: Date.now(), body, integrity });
   return body;
 }
 
+const integrityOf = (path) => cache.get(path)?.integrity ?? { state: 'unknown', line: 'not checked' };
+
 const corpus        = () => authoritative('/corpus/obligations.json');
 const applicability = () => authoritative('/corpus/applicability.json');
+
+/* ── integrity ─────────────────────────────────────────────────────
+   TLS proves these bytes came from whatever answered for the domain. It
+   proves nothing about a copy — a mirror, a cached crawl, a vendor's
+   snapshot — and copies are how a corpus like this actually travels. So
+   each document is published with a detached Ed25519 assertion over its
+   SHA-256, and this checks it rather than trusting the transport.
+
+   Verification failing is fatal: a client that reports a bad signature and
+   answers anyway has told the user something is wrong and then acted as
+   though it were not. Verification being *unavailable* — an old runtime
+   without Ed25519, an authority serving no assertion — is not fatal, and
+   is reported as unverified rather than dressed up as verified. */
+
+const KEYS_TTL = 6 * 3600 * 1000;
+let keyringCache = null;
+
+const b64u = (bytes) => Buffer.from(bytes).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = (s) => new Uint8Array(Buffer.from(String(s).replace(/-/g, '+').replace(/_/g, '/'), 'base64'));
+
+/* RFC 8785 canonical JSON, the same serialisation the issuer signs. */
+function canonical(v) {
+  if (v === null || typeof v === 'boolean' || typeof v === 'string') return JSON.stringify(v);
+  if (typeof v === 'number') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(canonical).join(',') + ']';
+  if (typeof v === 'object') {
+    return '{' + Object.keys(v).filter((k) => v[k] !== undefined).sort()
+      .map((k) => JSON.stringify(k) + ':' + canonical(v[k])).join(',') + '}';
+  }
+  throw new Error('uncanonicalisable value');
+}
+
+async function keyring() {
+  if (keyringCache && Date.now() - keyringCache.at < KEYS_TTL) return keyringCache.keys;
+  const res = await fetch(`${AUTHORITY}/.well-known/keys.json`, { headers: { accept: 'application/json', 'user-agent': UA } });
+  if (!res.ok) throw new Error(`key document returned HTTP ${res.status}`);
+  const doc = await res.json();
+  if (!Array.isArray(doc.keys)) throw new Error('key document has no keys');
+  keyringCache = { at: Date.now(), keys: doc.keys };
+  return doc.keys;
+}
+
+async function checkSignature(path, text) {
+  const url = `${AUTHORITY}${path.replace(/\.json$/, '.assertion.json')}`;
+  try {
+    const res = await fetch(url, { headers: { accept: 'application/json', 'user-agent': UA } });
+    if (res.status === 404) return { state: 'unsigned', line: 'no assertion published for this document', detail: '' };
+    if (!res.ok) return { state: 'unverified', line: `assertion fetch returned HTTP ${res.status}`, detail: '' };
+    const env = await res.json();
+    const a = env.assertion;
+    if (a?.version !== 'lunara-assertion-1') return { state: 'unverified', line: `unknown assertion version ${a?.version}`, detail: '' };
+    if (env.signature?.key_id !== a.key_id) return { state: 'failed', line: 'key_id mismatch', detail: 'signature block names a different key than the signed body' };
+
+    const keys = await keyring();
+    const jwk = keys.find((k) => k.kid === a.key_id);
+    if (!jwk) return { state: 'failed', line: `unknown key ${a.key_id}`, detail: 'the signing key is not in the published key document' };
+    if (jwk.revoked) return { state: 'failed', line: `key ${a.key_id} revoked`, detail: String(jwk.revoked) };
+
+    const key = await crypto.subtle.importKey(
+      'jwk', { kty: jwk.kty, crv: jwk.crv, x: jwk.x, key_ops: ['verify'] }, { name: 'Ed25519' }, false, ['verify']
+    );
+    const good = await crypto.subtle.verify(
+      { name: 'Ed25519' }, key, unb64u(env.signature.value), new TextEncoder().encode(canonical(a))
+    );
+    if (!good) return { state: 'failed', line: 'signature does not verify', detail: 'the assertion body was altered after signing' };
+
+    const digest = b64u(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))));
+    if (digest !== a.claims?.digest?.value) {
+      return { state: 'failed', line: 'digest mismatch', detail: `document hashes to ${digest}, the assertion says ${a.claims?.digest?.value}` };
+    }
+    if (a.expires_at && new Date(a.expires_at) < new Date()) {
+      return { state: 'unverified', line: `signature valid but the assertion expired ${a.expires_at.slice(0, 10)}`, detail: '' };
+    }
+    return {
+      state: 'verified',
+      line: `Ed25519 signature verified · key ${a.key_id}${jwk.status === 'development' ? ' (development key — see keys.json)' : ''} · issued ${a.issued_at.slice(0, 10)}`,
+      detail: ''
+    };
+  } catch (e) {
+    /* No Ed25519 in this runtime, no network for the key document, no
+       assertion served. None of these mean the document is bad, and
+       saying so would be a lie in the other direction. */
+    return { state: 'unverified', line: `signature could not be checked (${e.message})`, detail: '' };
+  }
+}
 
 /* ── tense ─────────────────────────────────────────────────────────
    Computed here, at the moment of the call, for the same reason the
@@ -123,7 +223,8 @@ function citation(o) {
     `CLASSIFICATION   ${o.classification} (Lunara evidence standard)`,
     `LAST VERIFIED    ${longDate(o.verified)}`,
     `COMPUTED         ${t.computed_at}`,
-    `AUTHORITY        ${AUTHORITY}/corpus/obligations.json`
+    `AUTHORITY        ${AUTHORITY}/corpus/obligations.json`,
+    `INTEGRITY        ${integrityOf('/corpus/obligations.json').line}`
   ].filter(Boolean).join('\n');
 }
 
@@ -226,6 +327,16 @@ const TOOLS = [
     }
   },
   {
+    name: 'lunara_integrity',
+    title: 'Check that the corpus this server is reading is authentic',
+    description:
+      'Reports whether the documents this server fetched carry a valid Ed25519 signature from Lunara Society, and returns ' +
+      'the digests and key material needed to check that independently. Use it when the answer matters enough that the ' +
+      'provenance of the source does: a corpus served from a mirror, a cache or a snapshot is not covered by the ' +
+      'transport security of the original fetch, and this is what covers it instead.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
     name: 'lunara_verify',
     title: 'Verify a business in the Lunara registry',
     description:
@@ -281,8 +392,9 @@ async function callTool(name, args = {}) {
         `${inForce} of ${list.length} shown obligations ${inForce === 1 ? 'is' : 'are'} in force today.` +
         (next ? ` The next lands in ${next.days_until} days, on ${longDate(next.applies_from)}.` : '') +
         `\n\n${lines.join('\n\n')}\n\n` +
-        `Corpus v${c.version} · ${AUTHORITY}/corpus/obligations.json · tense computed ${new Date().toISOString()}`,
-        { corpus_version: c.version, count: list.length, obligations: list }
+        `Corpus v${c.version} · ${AUTHORITY}/corpus/obligations.json · tense computed ${new Date().toISOString()}` +
+          `\nIntegrity: ${integrityOf('/corpus/obligations.json').line}`,
+        { corpus_version: c.version, count: list.length, obligations: list, integrity: integrityOf('/corpus/obligations.json') }
       );
     }
 
@@ -340,6 +452,7 @@ async function callTool(name, args = {}) {
       parts.push(
         'NOT LEGAL ADVICE An assessment of whether a given implementation is adequate is a separate engagement.',
         `AUTHORITY        ${AUTHORITY}/corpus/applicability.json (model v${model.version}, corpus v${c.version})`,
+        `INTEGRITY        ${integrityOf('/corpus/applicability.json').line}`,
         `COMPUTED         ${new Date().toISOString()}`);
 
       return ok(parts.join('\n'), {
@@ -359,6 +472,32 @@ async function callTool(name, args = {}) {
         return ok(`No obligation with id "${args.id}" is in the Lunara corpus. Known ids: ${c.obligations.map((x) => x.id).join(', ')}`);
       }
       return ok(citation(o), tense(o));
+    }
+
+    case 'lunara_integrity': {
+      /* Fetching them is what checks them; the state is a by-product of
+         the fetch rather than a separate claim about it. */
+      const paths = ['/corpus/obligations.json', '/corpus/applicability.json'];
+      for (const path of paths) { try { await authoritative(path); } catch { /* reported below */ } }
+      const rows = paths.map((path) => ({ document: `${AUTHORITY}${path}`, ...integrityOf(path) }));
+      const verified = rows.filter((r) => r.state === 'verified').length;
+      return ok([
+        `INTEGRITY OF THE DOCUMENTS THIS SERVER IS READING`,
+        '',
+        ...rows.map((r) => `${r.state.toUpperCase().padEnd(11)} ${r.document}\n            ${r.line}`),
+        '',
+        `${verified} of ${rows.length} documents carry a signature that verified in this process.`,
+        '',
+        'What the signature does and does not establish: it establishes that the bytes are the bytes Lunara Society',
+        'published and that nobody altered them in a mirror or a cache. It establishes nothing about whether the',
+        'regulatory claims inside them are correct — that is what the primary-source link on every row is for, and why',
+        'each row carries one.',
+        '',
+        `KEYS        ${AUTHORITY}/.well-known/keys.json`,
+        `INDEX       ${AUTHORITY}/.well-known/assertions.json`,
+        `ENVELOPE    ${AUTHORITY}/.well-known/assertion.schema.json`,
+        `METHOD      Ed25519 over the RFC 8785 canonical form of the assertion body; SHA-256 over the document as served.`
+      ].join('\n'), { documents: rows, verified, total: rows.length, keys: `${AUTHORITY}/.well-known/keys.json` });
     }
 
     case 'lunara_verify': {

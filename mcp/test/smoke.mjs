@@ -48,7 +48,7 @@ notify('notifications/initialized');
 
 const list = await rpc('tools/list');
 const names = (list.result?.tools || []).map((t) => t.name);
-check('four tools advertised', names.length === 4, names.join(','));
+check('five tools advertised', names.length === 5, names.join(','));
 check('tools have input schemas', (list.result.tools || []).every((t) => t.inputSchema?.type === 'object'));
 
 const all = await rpc('tools/call', { name: 'lunara_obligations', arguments: {} });
@@ -67,6 +67,13 @@ const citeText = cite.result?.content?.[0]?.text || '';
 check('cite names the amending instrument', /2026\/1744/.test(citeText), citeText);
 check('cite links the amending act', /AMENDED BY/.test(citeText));
 check('cite carries the evidence classification', /CLASSIFICATION\s+verified/.test(citeText));
+
+const integ = await rpc('tools/call', { name: 'lunara_integrity', arguments: {} });
+const integText = integ.result?.content?.[0]?.text || '';
+check('integrity verifies the corpus signature', integ.result?.structuredContent?.verified === 2, integText.slice(0, 400));
+check('integrity names the key document', /\.well-known\/keys\.json/.test(integText));
+check('integrity does not overclaim what a signature proves', /establishes nothing about whether the/.test(integText));
+check('citations carry the integrity line', /INTEGRITY/.test((await rpc('tools/call', { name: 'lunara_cite', arguments: { id: 'eu-art50' } })).result?.content?.[0]?.text || ''));
 
 const bad = await rpc('tools/call', { name: 'lunara_cite', arguments: { id: 'nope' } });
 check('unknown id lists known ids instead of failing', /eu-art50/.test(bad.result?.content?.[0]?.text || ''));

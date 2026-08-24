@@ -1,0 +1,32 @@
+{
+  "$schema": "https://lunarasociety.com/.well-known/assertion.schema.json",
+  "assertion": {
+    "version": "lunara-assertion-1",
+    "type": "document-integrity",
+    "issuer": "https://lunarasociety.com",
+    "subject": "https://lunarasociety.com/corpus/index.json",
+    "statement": "Lunara Society published this corpus index — the list of machine-readable documents this institution stands behind.",
+    "evidence": "verified",
+    "claims": {
+      "digest": {
+        "alg": "sha-256",
+        "encoding": "base64url",
+        "value": "-86gEG0c0-qJGNqilvBHPZU-lVaRYtFOpzuCN9wElFU"
+      },
+      "bytes": 4341,
+      "media_type": "application/json",
+      "document_version": "1.0.0"
+    },
+    "issued_at": "2026-08-24T17:33:22.548Z",
+    "expires_at": "2027-08-24T17:33:22.548Z",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a"
+  },
+  "signature": {
+    "alg": "EdDSA",
+    "curve": "Ed25519",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a",
+    "keys": "https://lunarasociety.com/.well-known/keys.json",
+    "value": "ky_SkH1QukXahJ9WbYtu10SrZM7r0TtWdSJJJNtQdddhjR7ZBxskGFREsvuwUqsXfNNOA-Ih1fpA-szbQAxyDA"
+  },
+  "how_to_verify": "Take assertion, serialise it as RFC 8785 canonical JSON, and verify signature.value as Ed25519 over those bytes using the key whose kid is signature.key_id from https://lunarasociety.com/.well-known/keys.json. Then SHA-256 the subject document as served and compare it to assertion.claims.digest.value. Both must hold. Nothing needs to be fetched from this institution to check the maths."
+}

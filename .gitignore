@@ -20,3 +20,7 @@ node_modules/
 outreach/letters/
 outreach/scan*.json
 outreach/prospects/
+
+# Signing keys never belong in a repository that is served publicly.
+*signing-key*.json
+*.private.jwk

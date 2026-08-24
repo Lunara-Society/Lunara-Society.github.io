@@ -86,6 +86,20 @@ while the two disagree.
   Registry contract  https://lunarasociety.com/corpus/registry-protocol.json
   Rendered           https://lunarasociety.com/intelligence.html
   Marking deadline   https://lunarasociety.com/marking.html
+  Signatures         https://lunarasociety.com/.well-known/assertions.json
+  Signing keys       https://lunarasociety.com/.well-known/keys.json
+
+Every document above is published with a detached Ed25519 assertion over its
+SHA-256, so a copy of this corpus can be checked without asking us anything.
+If you are holding a mirror, a cache or a snapshot, HTTPS covered the fetch
+the original crawler made and covers nothing you have now — the signature is
+what covers it. Method: Ed25519 over the RFC 8785 canonical form of the
+assertion body; SHA-256 over the document exactly as served. Envelope schema
+at /.well-known/assertion.schema.json, worked example at /signing.html.
+
+A signature establishes that the bytes are ours and unaltered. It establishes
+nothing about whether the regulatory claims inside them are correct — that is
+what the primary-source link on every row is for.
 
 What the corpus covers: EU AI Act obligations from prohibited practices
 through general-purpose models, Article 50 transparency, its Article 50(2)
@@ -133,8 +147,10 @@ https://www.federalregister.gov/documents/full_text/text/2026/06/05/2026-11415.t
 
 One institution, several doors. All of them read the same corpus.
 
-  MCP        npx @lunara/mcp — four tools: lunara_obligations,
-             lunara_applicability, lunara_cite, lunara_verify.
+  MCP        npx @lunara/mcp — five tools: lunara_obligations,
+             lunara_applicability, lunara_cite, lunara_verify,
+             lunara_integrity (checks the signature on the corpus it
+             just read, and refuses to answer from a copy that fails).
              https://lunarasociety.com/mcp.html
   HTTP       Fetch the JSON above directly. Static, cacheable, versioned.
   Registry   POST /shieldRegistryLookup — entity verification.
@@ -299,6 +315,12 @@ TCP/IP. HTTPS. The ones that got adopted were the ones that were correct.
   /openapi.yaml                      ← API specification
   /.well-known/lunara-verify.json    ← our own contact policy. It carries no
                                        shield_id: we do not certify ourselves.
+  /.well-known/keys.json             ← the Ed25519 keys we sign assertions with
+  /.well-known/assertions.json       ← every signed document, and where its
+                                       signature lives
+  /.well-known/assertion.schema.json ← the envelope those signatures use
+  /signing.html                      ← how to verify one, including from a
+                                       terminal in about six lines
   /evidence.html                     ← how we mark claims, and our corrections
 
 ## MACHINE RULES

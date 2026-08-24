@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "authority": "https://lunarasociety.com",
   "description": "Lunara Intelligence — the regulatory record this institution publishes, in the form a machine can read. Free, unauthenticated, no key, no account, no rate limit worth mentioning. Reading is open because a claim nobody can check is worth nothing.",
-
   "documents": {
     "obligations": {
       "url": "https://lunarasociety.com/corpus/obligations.json",
@@ -19,7 +18,6 @@
       "description": "What the registry API actually returns, endpoint by endpoint, with an evidence mark on every response: verified means observed from the live endpoint on the date given, unverified means expected and never observed. The registry holds no entities, so the shape of a certified entry is unverified — it is published as unverified rather than guessed at quietly."
     }
   },
-
   "interfaces": {
     "mcp": {
       "description": "Model Context Protocol server. The doorway for Claude, Codex and any MCP client.",
@@ -41,9 +39,16 @@
       "url": "https://lunarasociety.com/intelligence.html"
     }
   },
-
+  "integrity": {
+    "description": "Every document listed above is published with a detached Ed25519 assertion: a signed statement naming the document, its SHA-256 and the window it should be trusted in. TLS proves a file arrived unaltered from this domain; it proves nothing about a copy held elsewhere, and copies are how machines actually consume this corpus. Verification is offline and needs nothing from us but the public key.",
+    "keys": "https://lunarasociety.com/.well-known/keys.json",
+    "index": "https://lunarasociety.com/.well-known/assertions.json",
+    "envelope_schema": "https://lunarasociety.com/.well-known/assertion.schema.json",
+    "canonicalisation": "RFC 8785 (JCS) over the assertion body; SHA-256 over the subject document exactly as served.",
+    "human": "https://lunarasociety.com/signing.html",
+    "note": "The current signing key is published with status \"development\": it was generated in a build container rather than on trusted hardware, and the key document says so. It establishes that the copy you hold is the copy we published. It is not yet a key to hang a legal conclusion on."
+  },
   "how_to_cite": "Lunara Society, Regulatory Obligation Corpus v1.0.0, https://lunarasociety.com/corpus/obligations.json — citing the primary source we link rather than citing us is better practice, and it is why we link it.",
-
   "if_we_are_wrong": {
     "policy": "https://lunarasociety.com/evidence.html",
     "contact": "rosario@lunarasociety.com",

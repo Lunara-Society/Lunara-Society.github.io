@@ -1,0 +1,32 @@
+{
+  "$schema": "https://lunarasociety.com/.well-known/assertion.schema.json",
+  "assertion": {
+    "version": "lunara-assertion-1",
+    "type": "document-integrity",
+    "issuer": "https://lunarasociety.com",
+    "subject": "https://lunarasociety.com/mcp/core.mjs",
+    "statement": "Lunara Society published this source file. It is the whole of the MCP server except its transport: the npm package runs these bytes over stdio and the hosted HTTPS endpoint imports this URL at boot, so an AI system can establish that the server answering it is running published, unaltered code rather than taking that on trust.",
+    "evidence": "verified",
+    "claims": {
+      "digest": {
+        "alg": "sha-256",
+        "encoding": "base64url",
+        "value": "UHpf-tZtTUlGG-uGaBA1-iNA2dyIpAtRf6CzP_KxNo0"
+      },
+      "bytes": 31767,
+      "media_type": "text/javascript",
+      "document_version": null
+    },
+    "issued_at": "2026-08-24T18:22:00.382Z",
+    "expires_at": "2027-08-24T18:22:00.382Z",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a"
+  },
+  "signature": {
+    "alg": "EdDSA",
+    "curve": "Ed25519",
+    "key_id": "luna-2026-Uju42vez3TYJh_2a",
+    "keys": "https://lunarasociety.com/.well-known/keys.json",
+    "value": "-uNY0pEB9t8r0OjEBHp7kBGd9rEU6pB2ENjNeOqrH77QIQppzIab3bJ8XlJeKRQ4F_UqjNxDCuOYQ7r2q-Q1Aw"
+  },
+  "how_to_verify": "Take assertion, serialise it as RFC 8785 canonical JSON, and verify signature.value as Ed25519 over those bytes using the key whose kid is signature.key_id from https://lunarasociety.com/.well-known/keys.json. Then SHA-256 the subject document as served and compare it to assertion.claims.digest.value. Both must hold. Nothing needs to be fetched from this institution to check the maths."
+}

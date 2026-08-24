@@ -81,7 +81,7 @@ for (const doc of COVERED) {
     claims: {
       digest: { alg: 'sha-256', encoding: 'base64url', value: digest },
       bytes: bytes.length,
-      media_type: 'application/json',
+      media_type: doc.media_type ?? 'application/json',
       /* The version the covered document declares for itself, when it
          declares one. It is a claim about the document, not about the
          signature, and it is here so a reader can tell "same bytes" from

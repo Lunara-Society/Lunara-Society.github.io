@@ -64,6 +64,15 @@ export const COVERED = [
     statement: 'Lunara Society published this corpus index — the list of machine-readable documents this institution stands behind.'
   },
   {
+    path: 'mcp/core.mjs',
+    assertion: 'mcp/core.assertion.json',
+    media_type: 'text/javascript',
+    statement:
+      'Lunara Society published this source file. It is the whole of the MCP server except its transport: the npm package ' +
+      'runs these bytes over stdio and the hosted HTTPS endpoint imports this URL at boot, so an AI system can establish ' +
+      'that the server answering it is running published, unaltered code rather than taking that on trust.'
+  },
+  {
     path: '.well-known/lunara-verify.json',
     assertion: '.well-known/lunara-verify.assertion.json',
     statement:

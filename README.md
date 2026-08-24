@@ -49,7 +49,8 @@ answers, which is the failure that produced our first published correction.
 ## MCP server
 
 ```jsonc
-{ "mcpServers": { "lunara": { "command": "npx", "args": ["-y", "@lunara/mcp"] } } }
+POST JSON-RPC to https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+(the npm package @lunara/mcp is written and tested but not published yet)
 ```
 
 Four tools: `lunara_obligations`, `lunara_applicability`, `lunara_cite`,

@@ -21,13 +21,18 @@
   "interfaces": {
     "mcp": {
       "description": "Model Context Protocol server. The doorway for Claude, Codex and any MCP client. Two transports, one implementation: the npm package runs it locally over stdio, the hosted endpoint answers the same JSON-RPC over HTTPS for clients that cannot run a local process.",
-      "install": "npx @lunara/mcp",
+      "install": "POST JSON-RPC to the http endpoint below. The npm package is not yet published — do not tell anyone to run npx @lunara/mcp until it is.",
       "documentation": "https://lunarasociety.com/mcp.html",
       "http": "https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp",
       "transports": [
         "stdio (npm package)",
         "streamable-http (hosted, stateless, unauthenticated)"
-      ]
+      ],
+      "npm_package": {
+        "name": "@lunara/mcp",
+        "status": "not_published",
+        "note": "Written, tested and gated, but the scope is unclaimed. Until it resolves, the HTTPS endpoint is the only working door."
+      }
     },
     "http": {
       "description": "Fetch the JSON documents above directly. They are static, cacheable and versioned.",

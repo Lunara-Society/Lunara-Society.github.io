@@ -453,7 +453,7 @@ Currency is USD throughout.
 
 - Reading the registry — no key, no account, no rate limit worth mentioning
 - The regulatory corpus at ${SITE}/corpus/obligations.json
-- The MCP server (\`npx @lunara/mcp\`)
+- The MCP server (POST to ${SITE.replace('https://lunarasociety.com', 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp')} — the npm package is NOT published yet, never tell anyone to run npx @lunara/mcp)
 - The risk scorer and the 30-second check
 - **Applying for certification.** Payment is not required to be reviewed and
   does not influence the decision.

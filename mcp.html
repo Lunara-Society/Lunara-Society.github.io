@@ -103,28 +103,21 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
     <p>We know how easy this is to miss because we missed it. This site published the superseded Annex III date and sold it to paying users, and the <a class="inline" href="evidence.html">correction is on our evidence page</a> along with two others. The server below exists so the answer is looked up rather than remembered.</p>
   </div>
 
-  <h2>Install</h2>
+  <h2>Connect</h2>
 
-  <p>Add this to <code>.mcp.json</code> in a project, or to <code>claude_desktop_config.json</code>:</p>
+  <div class="callout">
+    <p><strong>The HTTPS endpoint is live; the npm package is not published yet.</strong> This page told readers to run <code>npx @lunara/mcp</code> for weeks while that command resolved to nothing &mdash; a published instruction pointing at nothing, on a site whose whole argument is that claims should be checkable. It is written, tested and gated, and it is not advertised again until the registry answers for it.</p>
+  </div>
 
-  <pre><code>{
-  "mcpServers": {
-    "lunara": {
-      "command": "npx",
-      "args": ["-y", "@lunara/mcp"]
-    }
-  }
-}</code></pre>
-
-  <p>Node 18 or later. No dependencies, no API key, no account, nothing to sign up for. Reading is free and always will be: a claim nobody can check is worth nothing, so checking must never cost anything.</p>
-
-  <h3>Or connect over HTTPS</h3>
-
-  <p>A client that cannot run a local process &mdash; a hosted assistant, a connector directory, anything speaking to us from a server rather than from a laptop &mdash; can use the same server over the network:</p>
+  <p>Point an MCP client that speaks Streamable HTTP at:</p>
 
   <pre><code>https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp</code></pre>
 
-  <p>Streamable HTTP, one POST per JSON-RPC message. Stateless on purpose: no session id, no server-initiated stream, nothing to log a client into. Both doors run the same module &mdash; the answers live in one file that neither transport owns, because two implementations of one corpus is how an institution ends up telling two people two different dates.</p>
+  <p>Node 18 or later. No dependencies, no API key, no account, nothing to sign up for. Reading is free and always will be: a claim nobody can check is worth nothing, so checking must never cost anything.</p>
+
+  <p>One POST per JSON-RPC message. Stateless on purpose: no session id, no server-initiated stream, nothing to log a client into &mdash; reading this corpus is free and unauthenticated, and a session store would quietly make that untrue.</p>
+
+  <p>A local stdio server will follow, running the same module: the answers live in one file that neither transport owns, because two implementations of one corpus is how an institution ends up telling two people two different dates.</p>
 
   <h2>Five tools</h2>
 

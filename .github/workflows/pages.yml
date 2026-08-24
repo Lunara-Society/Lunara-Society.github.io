@@ -81,6 +81,18 @@ jobs:
       - name: Exercise the signing layer against tampering
         run: node tools/test-assertions.mjs
 
+      # `npx @lunara/mcp` was printed on the homepage, on the MCP page, in
+      # llms.txt, in the corpus index and in Rosario's briefing for weeks
+      # while the package did not exist. Every reader who followed our own
+      # install instructions got a 404 — a form posting into nothing,
+      # aimed at the audience this institution most wants to reach. While
+      # the registry does not answer for a package, no surface here may
+      # print its install command except where it says so in the same
+      # breath. A registry that cannot be reached is not a failure: the
+      # gate reports that it could not check rather than stopping a deploy.
+      - name: Verify install commands resolve
+        run: node tools/verify-install-commands.mjs
+
       # The member area is the only place on this site where a person hands
       # over a credential, and the four functions behind it used to answer
       # 404 to every call — the form posted into nothing for as long as it

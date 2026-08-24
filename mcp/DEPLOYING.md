@@ -43,8 +43,8 @@ reader, and requiring a Supabase token would make "free to read" untrue.
 The first attempt imported `core.mjs` straight from
 `https://lunarasociety.com/mcp/core.mjs`, which would have made drift
 impossible. The edge runtime's bundler refuses imports from arbitrary hosts.
-Once the npm package exists, `npm:@lunara/mcp` is the better import and
-removes the upload step entirely.
+Once the npm package exists — it is not published yet — `npm:@lunara/mcp`
+is the better import and removes the upload step entirely.
 
 What is deployed can still be checked from outside: `mcp/core.mjs` is among
 the signed documents, so its digest is published at

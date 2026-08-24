@@ -12,7 +12,19 @@ often enough that getting one right is no evidence of getting the other right.
 
 This server exists so a model can look the answer up instead of recalling it.
 
-## Install
+## Connect
+
+**The hosted endpoint is live. The npm package is not published yet** — the
+install command below resolves to nothing until the `@lunara` scope is
+claimed, and this repository refuses to advertise it in the meantime.
+
+Point any MCP client that speaks Streamable HTTP at:
+
+```
+https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+```
+
+Once the package is published, this is the local alternative:
 
 ```jsonc
 // Claude Code: .mcp.json — or claude_desktop_config.json

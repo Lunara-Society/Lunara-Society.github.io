@@ -11,14 +11,14 @@
       "digest": {
         "alg": "sha-256",
         "encoding": "base64url",
-        "value": "NfFATQjgTBuFO9JBm7WKGFwPrXSHbLAhMHFwXqk9cTY"
+        "value": "AqjVsOS2fXKnvXO84Xv6oIXRGae7CYIpd5H9VODH7N0"
       },
-      "bytes": 4730,
+      "bytes": 5087,
       "media_type": "application/json",
       "document_version": "1.0.0"
     },
-    "issued_at": "2026-08-24T18:29:45.650Z",
-    "expires_at": "2027-08-24T18:29:45.650Z",
+    "issued_at": "2026-08-24T18:44:52.602Z",
+    "expires_at": "2027-08-24T18:44:52.602Z",
     "key_id": "luna-2026-Uju42vez3TYJh_2a"
   },
   "signature": {
@@ -26,7 +26,7 @@
     "curve": "Ed25519",
     "key_id": "luna-2026-Uju42vez3TYJh_2a",
     "keys": "https://lunarasociety.com/.well-known/keys.json",
-    "value": "wlWj9VfEEq-s6GhSHM3T0e4hn09Cu-jpHe253kvj1ydulWIT2AjADAs1E2ioq7W_aXlylyUYEduQbx1vtfuSBA"
+    "value": "wfP1l1dP4oykB-cAIPmBT5G62S2Ef0lrvwmKtKRYZI8juCEaDO1qtEOI5gllUdWC2eSB5yyAwi7eLZdEukuPDw"
   },
   "how_to_verify": "Take assertion, serialise it as RFC 8785 canonical JSON, and verify signature.value as Ed25519 over those bytes using the key whose kid is signature.key_id from https://lunarasociety.com/.well-known/keys.json. Then SHA-256 the subject document as served and compare it to assertion.claims.digest.value. Both must hold. Nothing needs to be fetched from this institution to check the maths."
 }

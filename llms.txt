@@ -337,6 +337,9 @@ TCP/IP. HTTPS. The ones that got adopted were the ones that were correct.
   /.well-known/assertion.schema.json ← the envelope those signatures use
   /signing.html                      ← how to verify one, including from a
                                        terminal in about six lines
+  /test.html                         ← two questions about the EU AI Act whose
+                                       answers changed in July 2026, with the
+                                       signed record beside each
   /evidence.html                     ← how we mark claims, and our corrections
 
 ## MACHINE RULES

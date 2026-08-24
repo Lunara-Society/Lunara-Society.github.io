@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Two questions about the EU AI Act whose answers changed in July 2026. Ask your assistant, then check it against the signed regulatory record. Run it yourself — nothing here is a screenshot.">
+<title>The Lunara Test — Lunara Society</title>
+<meta property="og:title" content="The Lunara Test">
+<meta property="og:description" content="Two questions your assistant will probably get wrong, and the signed record that settles them. Reproducible — run it yourself.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lunarasociety.com/test.html">
+<meta property="og:image" content="https://lunarasociety.com/lunara_logo_512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lunarasociety.com/test.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;overflow-x:clip}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.7);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+
+.wrap{max-width:840px;margin:0 auto;padding:150px 28px 40px}
+.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
+h1{font-size:clamp(34px,6vw,60px);font-weight:300;line-height:1.14;color:#f0e0b0;letter-spacing:-0.015em;margin-bottom:26px}
+h1 em{font-style:italic;color:var(--gold-b)}
+.standfirst{font-size:clamp(17px,2.2vw,21px);line-height:1.7;color:rgba(220,200,160,0.62);max-width:60ch;font-weight:300}
+h2{font-size:clamp(24px,3.4vw,34px);font-weight:300;color:#f0e0b0;line-height:1.25;margin:74px 0 20px}
+h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--gold-b);margin:34px 0 10px}
+p{font-size:16px;line-height:1.92;color:var(--text);margin-bottom:18px;max-width:66ch;font-family:'Inter',sans-serif;font-weight:300}
+p strong{font-weight:500;color:#f0e0b0}
+a.inline{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3)}
+a.inline:hover{color:var(--gold-b)}
+
+pre{background:rgba(196,164,107,0.045);border:1px solid rgba(196,164,107,0.18);border-left:2px solid var(--gold);padding:20px 22px;margin:22px 0;overflow-x:auto;border-radius:2px}
+code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.75;color:rgba(226,200,146,0.92);white-space:pre}
+p code,li code{background:rgba(196,164,107,0.1);padding:2px 6px;font-size:13px;border-radius:2px;white-space:normal}
+
+.callout{border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(196,164,107,0.05),rgba(196,164,107,0.01));padding:24px 26px;margin:34px 0}
+.callout p{margin-bottom:0;color:rgba(220,200,160,0.72);font-size:15px}
+
+.tools{margin:34px 0;border-top:1px solid rgba(196,164,107,0.16)}
+.tool{display:grid;grid-template-columns:210px 1fr;gap:26px;padding:24px 4px;border-bottom:1px solid rgba(196,164,107,0.09);align-items:start}
+.tool-name{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--gold-b);letter-spacing:0.02em}
+.tool-body p{margin:0 0 6px;font-size:14px;line-height:1.8;color:rgba(220,200,160,0.68)}
+.tool-body .ask{font-size:12.5px;color:rgba(196,164,107,0.55);font-style:italic}
+
+.spec{margin:30px 0;border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px}
+.spec-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:16px}
+.spec pre{background:none;border:none;border-left:none;padding:0;margin:0}
+.spec code{font-size:12.5px;color:rgba(226,206,160,0.82)}
+
+.wont{border:1px solid rgba(226,196,122,0.32);border-left-width:2px;background:linear-gradient(177deg,rgba(24,20,12,0.9),rgba(7,6,3,0.98));padding:28px 30px;margin:34px 0}
+.wont h3{margin-top:0}
+.wont h3:not(:first-child){margin-top:26px}
+.wont p{font-size:14.5px;line-height:1.85;color:rgba(220,200,160,0.66)}
+
+footer{border-top:1px solid var(--gold-faint);padding:44px 28px 60px;text-align:center}
+footer p{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.1em;color:rgba(196,164,107,0.35);margin:0 auto 6px;max-width:60ch}
+footer a{color:rgba(196,164,107,0.55);text-decoration:none}
+
+@media(max-width:760px){
+  nav{padding:14px 18px}.nav-links{gap:14px}
+  .wrap{padding:120px 20px 30px}
+  .tool{grid-template-columns:1fr;gap:10px}
+  code{font-size:12px}
+}
+
+.q{border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px;margin:34px 0}
+.q-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:14px}
+.q-ask{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,2.6vw,25px);line-height:1.45;color:#f0e0b0;font-style:italic;margin-bottom:8px}
+.copy{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(196,164,107,0.6);background:none;border:1px solid rgba(196,164,107,0.28);padding:7px 13px;cursor:pointer;transition:color .3s,border-color .3s;margin-top:14px}
+.copy:hover{color:#E2C47A;border-color:rgba(226,196,122,0.55)}
+.copy.done{color:#E2C47A;border-color:rgba(226,196,122,0.55)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(196,164,107,0.14);margin:22px 0 0;border:1px solid rgba(196,164,107,0.14)}
+.ans{background:#08070500;padding:20px 22px;background:rgba(8,7,5,0.6)}
+.ans h4{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;font-weight:400}
+.ans.stale h4{color:rgba(201,106,90,0.8)}
+.ans.live h4{color:#E2C47A}
+.ans p{font-size:14px;line-height:1.75;margin-bottom:10px;color:rgba(220,200,160,0.7)}
+.ans .date{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:rgba(226,206,160,0.85);display:block;margin-bottom:8px}
+.ans .cite{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;line-height:1.6;color:rgba(196,164,107,0.5);word-break:break-word}
+.ans.live .date{color:#E2C47A}
+.sig{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;color:rgba(196,164,107,0.42);margin-top:16px;padding-top:12px;border-top:1px solid rgba(196,164,107,0.1);word-break:break-all}
+.sig.ok{color:rgba(226,196,122,0.6)}
+.sig.bad{color:#c96a5a}
+@media(max-width:700px){ .answers{grid-template-columns:1fr} }
+</style>
+<link rel="stylesheet" href="lunara-refined.css">
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand">Lunara Society</a>
+  <div class="nav-links">
+    <a href="mcp.html">MCP</a>
+    <a href="intelligence.html">Intelligence</a>
+    <a href="signing.html">Signing</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="eyebrow">The Lunara Test</div>
+  <h1>Two questions your assistant<br>will probably answer <em>wrong.</em></h1>
+  <p class="standfirst">Not because it is a bad model. Because the law moved after it was trained, and it moved twice in one instrument &mdash; deferring one regime and creating a new prohibition in the same breath.</p>
+
+  <p>On 24 July 2026 the Digital Omnibus on AI, <strong>Regulation (EU) 2026/1744</strong>, was published in the Official Journal; it entered into force three days later. It did two things that pull in opposite directions, and almost every summary written since covers only the first.</p>
+
+  <p>Below are the two questions. Ask them in whatever assistant you use &mdash; ours included &mdash; then read the answer the signed record gives. <strong>Nothing on this page is a screenshot of anyone.</strong> Screenshots age, and a comparison you cannot rerun is a claim, not evidence. Run it yourself, today, and see what you get.</p>
+
+  <div class="q">
+    <div class="q-head">Question one</div>
+    <p class="q-ask">&ldquo;Under the EU AI Act, which AI practices are prohibited, and from what date does each prohibition apply?&rdquo;</p>
+    <button class="copy" data-copy="Under the EU AI Act, which AI practices are prohibited, and from what date does each prohibition apply?">Copy the question</button>
+
+    <div class="answers">
+      <div class="ans stale">
+        <h4>What a pre-August-2026 source says</h4>
+        <span class="date">All of Article 5 &middot; 2 February 2025</span>
+        <p>The eight prohibitions of Article 5 of Regulation (EU) 2024/1689, all applying from 2 February 2025. Complete, and complete as of the day it was written.</p>
+        <p class="cite">Regulation (EU) 2024/1689, Art. 113 third para, point (a) &mdash; as originally enacted.</p>
+      </div>
+      <div class="ans live" id="a1">
+        <h4>What the record says today</h4>
+        <span class="date">loading&hellip;</span>
+        <p></p>
+        <p class="cite"></p>
+      </div>
+    </div>
+    <div class="sig" id="s1">checking the signature on the record&hellip;</div>
+  </div>
+
+  <p>Article 1(7) of the Omnibus inserts two further prohibitions into Article 5, and Article 1(40)(a) gives them their own date, apart from the rest of Chapters I and II. They are not a transparency duty and not a high-risk classification: they are the <strong>strictest tier the Act has</strong>, carrying the Article 99(3) penalty band. An answer that lists eight prohibitions and one date is not slightly out of date. It is missing the newest thing in the article, three months before it applies.</p>
+
+  <div class="q">
+    <div class="q-head">Question two</div>
+    <p class="q-ask">&ldquo;When do the EU AI Act's high-risk obligations for Annex III systems start to apply?&rdquo;</p>
+    <button class="copy" data-copy="When do the EU AI Act's high-risk obligations for Annex III systems start to apply?">Copy the question</button>
+
+    <div class="answers">
+      <div class="ans stale">
+        <h4>What a pre-August-2026 source says</h4>
+        <span class="date">2 August 2026</span>
+        <p>The date the Act carried for two years, quoted alongside the Article 50 transparency date in nearly every summary written before that week &mdash; because until that week they were the same date.</p>
+        <p class="cite">Regulation (EU) 2024/1689, Art. 113 &mdash; as originally enacted.</p>
+      </div>
+      <div class="ans live" id="a2">
+        <h4>What the record says today</h4>
+        <span class="date">loading&hellip;</span>
+        <p></p>
+        <p class="cite"></p>
+      </div>
+    </div>
+    <div class="sig" id="s2">checking the signature on the record&hellip;</div>
+  </div>
+
+  <p>Deferred by sixteen months, five days before it would have applied &mdash; while Article 50 was deliberately left exactly where it was. A model that answers correctly about Article 50 will very often answer confidently and wrongly about Annex III in the same breath, because for two years that was the right answer.</p>
+
+  <h2>If your assistant got them right</h2>
+
+  <p>Then say so, and take that seriously: it means its sources were current and this particular gap is not costing you anything. We would rather publish that than pretend otherwise &mdash; a test rigged to be failed is worth nothing, and you would find out.</p>
+
+  <p>The question that remains is not whether an answer is right today. It is whether you can tell. Both answers above are <em>checkable</em>: each cites the article that sets the date, links the instrument, and arrives with a signature you can verify without asking us anything.</p>
+
+  <div class="callout">
+    <p><strong>We failed the first question too.</strong> This institution published its machine-readable corpus, gated it in CI, signed it &mdash; and did not have those two prohibitions in it for three days, because we had filed the Omnibus in our heads as "the act that defers things" and only ever went looking for what it postponed. The <a class="inline" href="evidence.html">correction is published</a>, as prominently as the error. Five corrections are on that page. The record of getting it wrong is the reason to believe the record.</p>
+  </div>
+
+  <h2>Give your assistant the record</h2>
+
+  <p>Point any MCP client that speaks Streamable HTTP at this endpoint, and the questions above stop depending on what it was trained on:</p>
+
+  <pre><code>https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp</code></pre>
+
+  <p>Five tools. No key, no account, no rate limit worth mentioning. Every answer carries the instrument, the article, a link to primary law, and the digest and key id of the signed document it came from &mdash; so the model can check its own source rather than trusting the transport. <a class="inline" href="mcp.html">What the tools do</a> &middot; <a class="inline" href="signing.html">how the signature works</a>.</p>
+
+  <p style="font-size:14px;color:rgba(196,164,107,0.5)">A signature proves the bytes are ours and unaltered. It proves nothing about whether the claims inside them are correct &mdash; that is what the link to primary law on every row is for, and why every row has one.</p>
+
+</div>
+
+<footer>
+  <p>Lunara Society &nbsp;·&nbsp; Independent constitutional governance for autonomous AI systems</p>
+  <p><a href="mcp.html">MCP</a> &nbsp;·&nbsp; <a href="signing.html">Signing</a> &nbsp;·&nbsp; <a href="evidence.html">Evidence standard</a> &nbsp;·&nbsp; <a href="/llms.txt">llms.txt</a></p>
+</footer>
+
+<script>
+(function () {
+  document.querySelectorAll('.copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      navigator.clipboard.writeText(b.dataset.copy).then(function () {
+        var was = b.textContent;
+        b.textContent = 'Copied';
+        b.classList.add('done');
+        setTimeout(function () { b.textContent = was; b.classList.remove('done'); }, 2200);
+      }).catch(function () { b.textContent = 'Select and copy the question above'; });
+    });
+  });
+})();
+
+/* The live half of the page. Nothing below states a date: both answers are
+   read from the published register, tensed against the reader's own clock,
+   and checked against the signature before they are shown. A page that
+   claims a model's dates are stale cannot carry a stale date of its own. */
+(function () {
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function longDate(iso) { var p = iso.split('-').map(Number); return p[2] + ' ' + MONTHS[p[1] - 1] + ' ' + p[0]; }
+  function todayUTC() { var n = new Date(); return Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()); }
+  function isoUTC(s) { var p = s.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); }
+
+  var canon = function (v) {
+    if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+    if (v && typeof v === 'object') {
+      return '{' + Object.keys(v).filter(function (k) { return v[k] !== undefined; }).sort()
+        .map(function (k) { return JSON.stringify(k) + ':' + canon(v[k]); }).join(',') + '}';
+    }
+    return JSON.stringify(v);
+  };
+  var b64u = function (buf) {
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  };
+  var unb64u = function (s) {
+    return Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), function (c) { return c.charCodeAt(0); });
+  };
+
+  function render(el, o) {
+    var days = Math.round((isoUTC(o.applies_from) - todayUTC()) / 86400000);
+    var phrase = days <= 0
+      ? 'in force since ' + longDate(o.applies_from)
+      : longDate(o.applies_from) + ' — in ' + days + ' days';
+    el.querySelector('.date').textContent = phrase;
+    el.querySelector('p').textContent = o.summary;
+    el.querySelector('.cite').textContent = o.instrument + ' · ' + o.article +
+      (o.penalty ? ' · ' + o.penalty : '');
+  }
+
+  function fail(msg) {
+    ['a1', 'a2'].forEach(function (id) {
+      var el = document.getElementById(id);
+      el.querySelector('.date').textContent = 'unavailable';
+      el.querySelector('p').textContent = msg;
+    });
+    ['s1', 's2'].forEach(function (id) {
+      var s = document.getElementById(id);
+      s.textContent = 'The record could not be read. Nothing is shown rather than something remembered — which is the whole argument of this page.';
+      s.className = 'sig bad';
+    });
+  }
+
+  Promise.all([
+    fetch('/corpus/obligations.json', { cache: 'no-cache' }).then(function (r) { return r.text(); }),
+    fetch('/corpus/obligations.assertion.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }),
+    fetch('/.well-known/keys.json', { cache: 'no-cache' }).then(function (r) { return r.json(); })
+  ]).then(function (parts) {
+    var text = parts[0], env = parts[1], keys = parts[2];
+    var data = JSON.parse(text);
+    var byId = {};
+    data.obligations.forEach(function (o) { byId[o.id] = o; });
+
+    if (byId['eu-prohibitions-synthetic']) render(document.getElementById('a1'), byId['eu-prohibitions-synthetic']);
+    if (byId['eu-annex3']) render(document.getElementById('a2'), byId['eu-annex3']);
+
+    var a = env.assertion;
+    var jwk = (keys.keys || []).filter(function (k) { return k.kid === a.key_id; })[0];
+    return Promise.all([
+      crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)),
+      jwk ? crypto.subtle.importKey('jwk', { kty: jwk.kty, crv: jwk.crv, x: jwk.x, key_ops: ['verify'] },
+        { name: 'Ed25519' }, false, ['verify']) : Promise.reject(new Error('no key'))
+    ]).then(function (r) {
+      return crypto.subtle.verify({ name: 'Ed25519' }, r[1], unb64u(env.signature.value),
+        new TextEncoder().encode(canon(a))).then(function (sigOk) {
+        var digestOk = b64u(r[0]) === a.claims.digest.value;
+        var line = (sigOk && digestOk)
+          ? 'Signature verified in your browser · Ed25519 · key ' + a.key_id + ' · corpus digest ' + a.claims.digest.value
+          : 'SIGNATURE CHECK FAILED — do not rely on this copy.';
+        ['s1', 's2'].forEach(function (id) {
+          var s = document.getElementById(id);
+          s.textContent = line;
+          s.className = 'sig ' + ((sigOk && digestOk) ? 'ok' : 'bad');
+        });
+      });
+    }).catch(function () {
+      ['s1', 's2'].forEach(function (id) {
+        var s = document.getElementById(id);
+        s.textContent = 'Answers read from the published register. This browser could not check the Ed25519 signature — see lunarasociety.com/signing.html for the same check from a terminal.';
+        s.className = 'sig';
+      });
+    });
+  }).catch(function (e) { fail(e.message); });
+})();
+</script>
+
+</body>
+</html>

@@ -9,7 +9,7 @@
    Streamable HTTP, one POST per JSON-RPC message.
 
    It owns the transport and nothing else. Every answer comes from
-   core.mjs, byte for byte the file the npm package runs, because two
+   core.mjs — the same module the npm package runs — because two
    implementations of one corpus is how an institution ends up telling
    two people two different dates.
 
@@ -20,17 +20,19 @@
    session store would quietly make that untrue.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Imported over the network, from the canonical origin, rather than
-   vendored beside this file. Two copies of a corpus reader is how the two
-   doors end up disagreeing, and a copy uploaded by hand is a copy nobody
-   re-uploads. The module this fetches is itself published with a detached
-   Ed25519 assertion, so what runs here is checkable from outside:
+/* core.mjs is not kept beside this file in the repository. It is uploaded
+   at deploy time from mcp/core.mjs — byte for byte the module the npm
+   package ships — so there is no second copy here to fall behind the
+   first. The first attempt imported it straight from
+   https://lunarasociety.com/mcp/core.mjs, which would have made drift
+   impossible; the edge runtime's bundler refuses imports from arbitrary
+   hosts, so the upload is the next best thing.
 
-     https://lunarasociety.com/mcp/core.assertion.json
-
-   The cost is a boot-time dependency on the same origin that serves the
-   corpus — which this server is useless without anyway. */
-import { dispatch, VERSION, AUTHORITY } from 'https://lunarasociety.com/mcp/core.mjs';
+   What is deployed can still be checked from outside: the module is
+   published with a detached Ed25519 assertion at
+   https://lunarasociety.com/mcp/core.assertion.json, and the digest there
+   is the digest of what this endpoint is running. */
+import { dispatch, VERSION, AUTHORITY } from './core.mjs';
 
 const CORS = {
   'access-control-allow-origin': '*',

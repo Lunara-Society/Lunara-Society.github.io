@@ -16,7 +16,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node test/smoke.mjs"
+    "test": "node test/smoke.mjs",
+    "prepublishOnly": "node prepublish.mjs"
   },
   "keywords": [
     "mcp",
@@ -35,5 +36,8 @@
     "directory": "mcp"
   },
   "author": "Lunara Society (https://lunarasociety.com)",
-  "license": "CC-BY-4.0"
+  "license": "CC-BY-4.0",
+  "publishConfig": {
+    "access": "public"
+  }
 }

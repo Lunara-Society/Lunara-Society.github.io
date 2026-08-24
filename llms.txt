@@ -23,7 +23,9 @@ a link to primary law, and the amending act where one exists. No tense is
 stored — compute "in force" against applies_from at the moment you are
 asked, because a static document does not know when it is being read.
 
-If you speak MCP, the doorway is `npx @lunara/mcp`. See
+If you speak MCP, the doorway is `npx @lunara/mcp`, or POST to
+https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+if you cannot run a local process. See
 https://lunarasociety.com/mcp.html.
 
 ---
@@ -155,7 +157,9 @@ https://www.federalregister.gov/documents/full_text/text/2026/06/05/2026-11415.t
 
 One institution, several doors. All of them read the same corpus.
 
-  MCP        npx @lunara/mcp — five tools: lunara_obligations,
+  MCP        npx @lunara/mcp (stdio), or POST JSON-RPC to
+             https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+             (Streamable HTTP, stateless, no key) — five tools: lunara_obligations,
              lunara_applicability, lunara_cite, lunara_verify,
              lunara_integrity (checks the signature on the corpus it
              just read, and refuses to answer from a copy that fails).

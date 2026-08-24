@@ -29,6 +29,16 @@ This server exists so a model can look the answer up instead of recalling it.
 Node 18 or later. No dependencies, no API key, no account. Reading is free and
 always will be: a claim nobody can check is worth nothing.
 
+If you cannot run a local process, the same server answers over HTTPS:
+
+```
+https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+```
+
+Streamable HTTP, one POST per JSON-RPC message, stateless, no key. Both
+transports import the same module, so they cannot drift into giving
+different dates.
+
 ## Integrity
 
 Every document this server reads is published with a detached Ed25519 assertion

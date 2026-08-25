@@ -91,8 +91,8 @@
     overlay.innerHTML = '<div style="background:#141414;border:1px solid rgba(196,164,107,0.3);padding:48px;max-width:440px;text-align:center;">' +
       '<p style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#C4A46B;margin-bottom:16px">Security Notice</p>' +
       '<p style="font-size:16px;color:rgba(255,255,255,0.9);margin-bottom:12px">This content is protected.</p>' +
-      '<p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:32px">Lunara Society content is for authorized access only. This session is being logged.</p>' +
-      '<p style="font-size:10px;font-family:monospace;color:rgba(196,164,107,0.5);margin-bottom:24px">Session: ' + sessionId + '</p>' +
+      '<p style="font-size:13px;color:rgba(255, 255, 255, 0.472);line-height:1.7;margin-bottom:32px">Lunara Society content is for authorized access only. This session is being logged.</p>' +
+      '<p style="font-size:10px;font-family:monospace;color:rgba(196, 164, 107, 0.714);margin-bottom:24px">Session: ' + sessionId + '</p>' +
       '<button onclick="document.getElementById(\'lunara-security-notice\').style.display=\'none\'" style="background:#C4A46B;color:#000;border:none;padding:12px 32px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:Inter,sans-serif">Understood</button>' +
       '</div>';
     document.body.appendChild(overlay);

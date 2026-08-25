@@ -15,6 +15,21 @@ Disallow: /member.html
 Disallow: /dashboard.html
 Disallow: /invoice-template.html
 
+# Email artwork and superseded homepages. They are kept in the repository as
+# a record and are no longer part of the published artifact; these lines are
+# belt and braces for anything holding a cached URL. Four of them carried the
+# bare title "Lunara Society", which is also how they competed with the real
+# pages for the same query.
+Disallow: /email_clay_hq.html
+Disallow: /email_omnibus_followup.html
+Disallow: /email_outreach.html
+Disallow: /email_small_business_shield.html
+Disallow: /index-old-backup.html
+Disallow: /index-backup-june25.html
+
+# Internal operations console. Not served, and named here so that stays true.
+Disallow: /shield-os/
+
 # Working notes and vendored code are no longer published at all. These
 # lines are belt and braces for anything still holding a cached URL.
 Disallow: /tmp/

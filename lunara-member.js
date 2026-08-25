@@ -57,9 +57,9 @@
       '70%{box-shadow:0 0 0 7px rgba(196,164,107,0)}100%{box-shadow:0 0 0 0 rgba(196,164,107,0)}}',
     '.lun-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;',
       'letter-spacing:0.09em;color:#D4B47B}',
-    '.lun-id .s{color:rgba(196,164,107,0.45);padding:0 .1em}',
+    '.lun-id .s{color:rgba(196, 164, 107, 0.714);padding:0 .1em}',
     '.lun-who{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;',
-      'color:rgba(255,255,255,0.42)}',
+      'color:rgba(255, 255, 255, 0.472)}',
     '@media (max-width:900px){.lun-who{display:none}}',
     '@media (prefers-reduced-motion:reduce){.lun-mark{transition:none}.lun-dot{animation:none}}'
   ].join('');

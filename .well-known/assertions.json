@@ -2,7 +2,7 @@
   "$schema": "https://lunarasociety.com/.well-known/assertions.schema.json",
   "issuer": "https://lunarasociety.com",
   "document": "lunara-assertion-index-1",
-  "updated": "2026-08-24T18:44:52.602Z",
+  "updated": "2026-08-25T04:10:32.731Z",
   "description": "Every document Lunara Society publishes with a detached signature, and where that signature lives. This index is a convenience and is deliberately not itself the trust anchor: an assertion is checked against the key document and the document it covers, so a tampered index can only hide an assertion, never forge one.",
   "keys": "https://lunarasociety.com/.well-known/keys.json",
   "envelope_schema": "https://lunarasociety.com/.well-known/assertion.schema.json",

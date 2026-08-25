@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.50);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.55);--bg:#000000;--card:#060606;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
+:root{--gold:#C4A46B;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50: rgba(196, 164, 107, 0.714);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim: rgba(196, 164, 107, 0.714);--bg:#000000;--card:#060606;--red:#e85858;--green:#7ac47a;--amber:#e8c44a}
 html{scroll-behavior:smooth}
 body{background:#000000;color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(196,164,107,0.08) 0%,transparent 65%);pointer-events:none;z-index:0}
@@ -23,11 +23,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .nav-brand{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);text-decoration:none;font-family:'Cormorant Garamond',serif}
 .nav-brand span{color:var(--gold)}
 .nav-links{display:flex;gap:24px}
-.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none}
+.nav-links a{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none}
 
 .main{max-width:900px;margin:0 auto;padding:60px 32px;position:relative;z-index:1}
 .header{text-align:center;margin-bottom:48px}
-.header .label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);margin-bottom:16px}
+.header .label{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);margin-bottom:16px}
 .header h1{font-size:clamp(28px,4vw,44px);font-weight:300;color:#e8d5a3;font-family:'Cormorant Garamond',serif;margin-bottom:12px}
 .header p{font-size:15px;color:var(--text-dim);max-width:500px;margin:0 auto}
 
@@ -73,7 +73,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .form-group select option{background:#060606}
 
 .checkbox-group{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}
-.checkbox-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);padding:8px 12px;background:#060606;border:1px solid var(--gold-15);cursor:pointer;transition:border-color .3s}
+.checkbox-item{display:flex;align-items:center;gap:8px;min-height:34px;font-size:13px;color:var(--text-dim);padding:8px 12px;background:#060606;border:1px solid var(--gold-15);cursor:pointer;transition:border-color .3s}
 .checkbox-item:hover{border-color:var(--gold-30)}
 .checkbox-item input{accent-color:var(--gold);width:16px;height:16px}
 .checkbox-item.checked{border-color:rgba(196,164,107,0.8);background:rgba(196,164,107,0.05)}
@@ -122,7 +122,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
   position:absolute;
   top:6px;
   right:8px;
-  font-size:10px;
+  font-size:11px;
   color:rgba(196,164,107,0.8);
 }
 .radio-item input{display:none}
@@ -134,7 +134,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 /* Progress */
 .progress-bar{height:3px;background:rgba(196,164,107,0.08);border-radius:2px;margin-bottom:28px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,rgba(196,164,107,0.7),rgba(196,164,107,1));transition:width .6s ease;border-radius:2px;box-shadow:0 0 8px rgba(196,164,107,0.5)}
-.progress-labels{display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+.progress-labels{display:flex;justify-content:space-between;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
 
 /* Results */
 .results{display:none}
@@ -144,13 +144,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .score-display{text-align:center;margin-bottom:32px}
 .score-circle{width:180px;height:180px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid var(--gold-30);position:relative}
 .score-num{font-size:56px;font-weight:300;color:var(--gold);font-family:'Cormorant Garamond',serif;line-height:1}
-.score-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)}
+.score-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)}
 .score-grade{font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:8px}
 
 .benchmark-box{display:flex;justify-content:space-around;margin:32px 0;padding:24px;background:#060606;border:1px solid var(--gold-15)}
 .benchmark-stat{text-align:center}
 .benchmark-num{font-size:32px;font-weight:300;color:rgba(196,164,107,0.8);font-family:'Cormorant Garamond',serif;line-height:1}
-.benchmark-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px}
+.benchmark-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px}
 .benchmark-comp{font-size:12px;color:var(--text);margin-top:8px}
 .benchmark-comp .up{color:var(--green)}
 .benchmark-comp .down{color:var(--red)}
@@ -160,7 +160,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .pillar-bar{flex:1;max-width:200px;height:8px;background:#060606;border-radius:4px;margin:0 16px;overflow:hidden}
 .pillar-fill{height:100%;border-radius:4px;transition:width 1s ease}
 .pillar-pct{font-size:13px;color:rgba(196,164,107,0.8);min-width:40px;text-align:right}
-.pillar-bench{font-size:10px;color:var(--text-dim);margin-left:8px}
+.pillar-bench{font-size:11px;color:var(--text-dim);margin-left:8px}
 
 .gap-list{margin-top:20px}
 .gap-item{padding:14px 16px;background:#060606;border-left:3px solid var(--red);margin-bottom:8px}
@@ -168,7 +168,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .gap-item.low{border-left-color:var(--green)}
 .gap-item h4{font-size:13px;color:#e8d5a3;margin-bottom:4px;font-weight:500}
 .gap-item p{font-size:12px;color:var(--text-dim);line-height:1.6}
-.gap-item .reg{font-size:10px;letter-spacing:1px;color:rgba(196,164,107,0.8);text-transform:uppercase;margin-top:4px}
+.gap-item .reg{font-size:11px;letter-spacing:1px;color:rgba(196,164,107,0.8);text-transform:uppercase;margin-top:4px}
 .gap-item .timeline{font-size:11px;color:var(--amber);margin-top:4px;font-weight:500}
 
 /* The line between diagnosis and prescription.
@@ -183,7 +183,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
    exposure. They are told exactly what is wrong and how much of it
    there is. They are not told how to fix it. */
 .locked{background:#060606;border:1px solid var(--gold-30);border-left:3px solid var(--gold);padding:26px 28px;margin-top:16px}
-.locked-tag{font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.locked-tag{font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .locked h4{font-size:17px;color:#e8d5a3;font-family:'Cormorant Garamond',serif;font-weight:400;margin-bottom:10px;line-height:1.3}
 .locked p{font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;max-width:520px}
 .locked ul{list-style:none;margin:0 0 18px;padding:0}
@@ -192,7 +192,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .locked-count{color:#e8d5a3}
 .locked a{display:inline-block;padding:12px 30px;border:1px solid var(--gold-50);color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:3px;text-transform:uppercase;transition:all .3s;margin:4px 6px 0 0}
 .locked a:hover{background:rgba(196,164,107,0.1);border-color:var(--gold)}
-.locked-note{font-size:11px;color:rgba(196,164,107,0.5);margin-top:14px;line-height:1.7}
+.locked-note{font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:14px;line-height:1.7}
 @media(max-width:600px){.locked{padding:20px 18px}.locked a{display:block;text-align:center;margin:8px 0 0}}
 
 .reg-item{padding:14px 0;border-bottom:1px solid rgba(196,164,107,0.08)}
@@ -213,7 +213,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,6,6,0.95);backdrop-filte
 .share-box input:focus{border-color:rgba(196,164,107,0.8)}
 
 .footer{text-align:center;padding:40px 0;border-top:1px solid var(--gold-15)}
-.footer p{font-size:10px;letter-spacing:3px;color:var(--text-dim)}
+.footer p{font-size:11px;letter-spacing:3px;color:var(--text-dim)}
 
 @media(max-width:768px){.main{padding:40px 16px}.form-section{padding:24px 16px}.checkbox-group{grid-template-columns:1fr}.nav-links{display:none}.benchmark-box{flex-direction:column;gap:16px}.pillar-name{min-width:120px;font-size:12px}}
 
@@ -281,12 +281,12 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 
 <style>
 #livePreview{position:fixed;bottom:24px;right:24px;background:#000;border:1px solid rgba(196,164,107,0.3);border-radius:8px;padding:16px 20px;z-index:9000;transition:opacity 0.3s ease;box-shadow:0 0 30px rgba(196,164,107,0.1)}
-#livePreview .lp-label{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(196,164,107,0.6);margin-bottom:6px}
+#livePreview .lp-label{font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:6px}
 #livePreview .lp-score{font-family:'Cormorant Garamond',serif;font-size:28px;color:rgba(196,164,107,0.9);line-height:1;font-weight:300}
-#livePreview .lp-score span{font-size:14px;color:rgba(255,255,255,0.4);font-family:'Inter',sans-serif}
+#livePreview .lp-score span{font-size:14px;color:rgba(255, 255, 255, 0.472);font-family:'Inter',sans-serif}
 #livePreview .lp-bar{height:3px;background:rgba(196,164,107,0.1);border-radius:2px;margin-top:10px;overflow:hidden}
 #livePreview .lp-bar-fill{height:100%;background:linear-gradient(90deg,rgba(196,164,107,0.4),rgba(230,210,160,0.8));width:0%;transition:width 0.4s ease;border-radius:2px}
-#livePreview .lp-grade{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-top:8px}
+#livePreview .lp-grade{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin-top:8px}
 .lp-hidden{opacity:0;pointer-events:none}
 .score-circle{position:relative;width:140px;height:140px;border-radius:50%;border:2px solid rgba(196,164,107,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;transition:border-color 0.5s ease}
 .score-circle.scored{border-color:rgba(196,164,107,0.5);box-shadow:0 0 40px rgba(196,164,107,0.1)}
@@ -549,15 +549,15 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <div id="inputForm">
 
 <div class="form-section" id="section1">
-<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:6px">SECTION 01</div>
+<div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:6px">SECTION 01</div>
 <h2>Organization & System Information</h2>
 <div class="form-group">
-<label>Organization Name</label>
+<label for="orgName">Organization Name</label>
 <input type="text" id="orgName" placeholder="e.g. Meridian Health Systems">
 </div>
 <div class="form-group">
-<label>Your Role</label>
-<select id="role">
+<label for="role">Your Role</label>
+<select id="role" aria-label="Role">
 <option value="">Select your role</option>
 <option value="CISO">Chief Information Security Officer</option>
 <option value="CMO">Chief Medical Officer</option>
@@ -568,46 +568,46 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </select>
 </div>
 <div class="form-group">
-<label>Email (optional, to receive your report)</label>
+<label for="email">Email (optional, to receive your report)</label>
 <input type="email" id="email" placeholder="you@organization.com">
 </div>
 <div class="form-group">
-<label>AI System Name or Description</label>
+<label for="systemName">AI System Name or Description</label>
 <input type="text" id="systemName" placeholder="e.g. Radiology triage AI, Clinical documentation assistant, Predictive readmission model">
 </div>
 <div class="form-group">
-<label>What does the AI system do?</label>
+<label for="systemDesc">What does the AI system do?</label>
 <textarea id="systemDesc" placeholder="Brief description of the AI system's clinical function and use case"></textarea>
 </div>
 </div>
 
 <div class="form-section" id="section2">
-<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:6px">SECTION 02</div>
+<div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:6px">SECTION 02</div>
 <h2>Risk Classification</h2>
-<p style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.65);margin-bottom:24px;margin-top:-10px">Your answers determine your compliance exposure</p>
+<p style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:24px;margin-top:-10px">Your answers determine your compliance exposure</p>
 <div class="form-group">
 <label>EU AI Act Risk Category</label>
 <div class="radio-group" id="riskCategory">
 <div class="radio-item" data-value="high" style="border-color:rgba(232,88,88,0.25)">
   <div style="font-size:16px;margin-bottom:6px">⚠</div>
   <div style="font-weight:500;color:#f0d0d0">High Risk</div>
-  <div style="font-size:11px;color:rgba(232,88,88,0.7);margin-top:5px">Annex III systems</div>
+  <div style="font-size:11px;color:rgba(232, 88, 88, 0.885);margin-top:5px">Annex III systems</div>
 </div>
 <div class="radio-item" data-value="limited" style="border-color:rgba(232,196,74,0.2)">
   <div style="font-size:16px;margin-bottom:6px">◈</div>
   <div style="font-weight:500">Limited Risk</div>
-  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Transparency obligations</div>
+  <div style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:5px">Transparency obligations</div>
 </div>
 <div class="radio-item" data-value="minimal" style="border-color:rgba(122,196,122,0.2)">
   <div style="font-size:16px;margin-bottom:6px">◎</div>
   <div style="font-weight:500;color:#c0e0c0">Minimal Risk</div>
-  <div style="font-size:11px;color:rgba(122,196,122,0.6);margin-top:5px">Voluntary codes</div>
+  <div style="font-size:11px;color:rgba(122, 196, 122, 0.672);margin-top:5px">Voluntary codes</div>
 </div>
 </div>
 </div>
 <div class="form-group">
 <label>Does the AI system process Protected Health Information (PHI)?</label>
-<p style="font-size:11px;color:rgba(232,88,88,0.5);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">HIPAA breach penalties up to $1.9M per violation category</p>
+<p style="font-size:11px;color:rgba(232, 88, 88, 0.885);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">HIPAA breach penalties up to $1.9M per violation category</p>
 <div class="radio-group" id="processesPHI">
 <div class="radio-item" data-value="yes">Yes</div>
 <div class="radio-item" data-value="no">No</div>
@@ -616,7 +616,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </div>
 <div class="form-group">
 <label>Is the AI system FDA classified as a Software as a Medical Device (SaMD)?</label>
-<p style="font-size:11px;color:rgba(232,88,88,0.5);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">SaMD requires 510(k) clearance or De Novo classification</p>
+<p style="font-size:11px;color:rgba(232, 88, 88, 0.885);margin-top:-6px;margin-bottom:10px;letter-spacing:1px">SaMD requires 510(k) clearance or De Novo classification</p>
 <div class="radio-group" id="fdaSaMD">
 <div class="radio-item" data-value="yes">Yes</div>
 <div class="radio-item" data-value="no">No</div>
@@ -629,98 +629,98 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 <div class="radio-item" data-value="pilot">
   <div style="font-size:16px;margin-bottom:6px">◷</div>
   <div style="font-weight:500">Pilot</div>
-  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Testing phase</div>
+  <div style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:5px">Testing phase</div>
 </div>
 <div class="radio-item" data-value="production">
   <div style="font-size:16px;margin-bottom:6px">▶</div>
   <div style="font-weight:500">Production</div>
-  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Live deployment</div>
+  <div style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:5px">Live deployment</div>
 </div>
 <div class="radio-item" data-value="planning">
   <div style="font-size:16px;margin-bottom:6px">◌</div>
   <div style="font-weight:500">Planning</div>
-  <div style="font-size:11px;color:rgba(196,164,107,0.65);margin-top:5px">Not yet deployed</div>
+  <div style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:5px">Not yet deployed</div>
 </div>
 </div>
 </div>
 </div>
 
 <div class="form-section" id="section3">
-<div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.5);margin-bottom:6px">SECTION 03</div>
+<div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:6px">SECTION 03</div>
 <h2>Governance Readiness Assessment</h2>
 <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px">Check all that apply to your organization across the 7 constitutional pillars.</p>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar I: Identity & Accountability</label>
 <div class="checkbox-group" id="pillar1">
-<div class="checkbox-item"><input type="checkbox" value="1.1"> Named individual accountable for AI governance</div>
-<div class="checkbox-item"><input type="checkbox" value="1.2"> AI governance policy document exists and is current</div>
-<div class="checkbox-item"><input type="checkbox" value="1.3"> Vendor due diligence process for AI procurement</div>
-<div class="checkbox-item"><input type="checkbox" value="1.4"> Staff training on AI governance procedures</div>
+<label class="checkbox-item"><input type="checkbox" value="1.1"> Named individual accountable for AI governance</label>
+<label class="checkbox-item"><input type="checkbox" value="1.2"> AI governance policy document exists and is current</label>
+<label class="checkbox-item"><input type="checkbox" value="1.3"> Vendor due diligence process for AI procurement</label>
+<label class="checkbox-item"><input type="checkbox" value="1.4"> Staff training on AI governance procedures</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar II: Data Governance</label>
 <div class="checkbox-group" id="pillar2">
-<div class="checkbox-item"><input type="checkbox" value="2.1"> Data processing locations documented and declared</div>
-<div class="checkbox-item"><input type="checkbox" value="2.2"> PHI encryption at rest and in transit verified</div>
-<div class="checkbox-item"><input type="checkbox" value="2.3"> Data retention policy for AI outputs exists</div>
-<div class="checkbox-item"><input type="checkbox" value="2.4"> Training data composition documented (CA SB 1001)</div>
-<div class="checkbox-item"><input type="checkbox" value="2.5"> Cross border data transfer documentation complete</div>
-<div class="checkbox-item"><input type="checkbox" value="2.6"> Data subject access and deletion procedures defined</div>
+<label class="checkbox-item"><input type="checkbox" value="2.1"> Data processing locations documented and declared</label>
+<label class="checkbox-item"><input type="checkbox" value="2.2"> PHI encryption at rest and in transit verified</label>
+<label class="checkbox-item"><input type="checkbox" value="2.3"> Data retention policy for AI outputs exists</label>
+<label class="checkbox-item"><input type="checkbox" value="2.4"> Training data composition documented (CA SB 1001)</label>
+<label class="checkbox-item"><input type="checkbox" value="2.5"> Cross border data transfer documentation complete</label>
+<label class="checkbox-item"><input type="checkbox" value="2.6"> Data subject access and deletion procedures defined</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar III: Transparency</label>
 <div class="checkbox-group" id="pillar3">
-<div class="checkbox-item"><input type="checkbox" value="3.1"> Patients informed when interacting with AI systems</div>
-<div class="checkbox-item"><input type="checkbox" value="3.2"> AI system outputs labeled as AI generated</div>
-<div class="checkbox-item"><input type="checkbox" value="3.3"> Domain and contact information verified and public</div>
-<div class="checkbox-item"><input type="checkbox" value="3.4"> AI system limitations disclosed to clinical users</div>
+<label class="checkbox-item"><input type="checkbox" value="3.1"> Patients informed when interacting with AI systems</label>
+<label class="checkbox-item"><input type="checkbox" value="3.2"> AI system outputs labeled as AI generated</label>
+<label class="checkbox-item"><input type="checkbox" value="3.3"> Domain and contact information verified and public</label>
+<label class="checkbox-item"><input type="checkbox" value="3.4"> AI system limitations disclosed to clinical users</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar IV: Audit & Oversight</label>
 <div class="checkbox-group" id="pillar4">
-<div class="checkbox-item"><input type="checkbox" value="4.1"> Audit logs retained for minimum 12 months</div>
-<div class="checkbox-item"><input type="checkbox" value="4.2"> Human oversight mechanisms documented</div>
-<div class="checkbox-item"><input type="checkbox" value="4.3"> Escalation paths for AI failures defined</div>
-<div class="checkbox-item"><input type="checkbox" value="4.4"> Override procedures for clinical AI decisions</div>
-<div class="checkbox-item"><input type="checkbox" value="4.5"> Bias testing and fairness audit conducted</div>
-<div class="checkbox-item"><input type="checkbox" value="4.6"> Performance monitoring dashboard in place</div>
+<label class="checkbox-item"><input type="checkbox" value="4.1"> Audit logs retained for minimum 12 months</label>
+<label class="checkbox-item"><input type="checkbox" value="4.2"> Human oversight mechanisms documented</label>
+<label class="checkbox-item"><input type="checkbox" value="4.3"> Escalation paths for AI failures defined</label>
+<label class="checkbox-item"><input type="checkbox" value="4.4"> Override procedures for clinical AI decisions</label>
+<label class="checkbox-item"><input type="checkbox" value="4.5"> Bias testing and fairness audit conducted</label>
+<label class="checkbox-item"><input type="checkbox" value="4.6"> Performance monitoring dashboard in place</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar V: Revocability & Incident Response</label>
 <div class="checkbox-group" id="pillar5">
-<div class="checkbox-item"><input type="checkbox" value="5.1"> Documented AI system revocation procedure</div>
-<div class="checkbox-item"><input type="checkbox" value="5.2"> Incident response plan for AI failures</div>
-<div class="checkbox-item"><input type="checkbox" value="5.3"> Breach notification process for AI related PHI exposure</div>
-<div class="checkbox-item"><input type="checkbox" value="5.4"> Vendor termination and data return procedures</div>
+<label class="checkbox-item"><input type="checkbox" value="5.1"> Documented AI system revocation procedure</label>
+<label class="checkbox-item"><input type="checkbox" value="5.2"> Incident response plan for AI failures</label>
+<label class="checkbox-item"><input type="checkbox" value="5.3"> Breach notification process for AI related PHI exposure</label>
+<label class="checkbox-item"><input type="checkbox" value="5.4"> Vendor termination and data return procedures</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar VI: Interoperability & Standards</label>
 <div class="checkbox-group" id="pillar6">
-<div class="checkbox-item"><input type="checkbox" value="6.1"> AI system integrates with EHR via standardized APIs (FHIR/HL7)</div>
-<div class="checkbox-item"><input type="checkbox" value="6.2"> USCDI data elements mapped for AI inputs and outputs</div>
-<div class="checkbox-item"><input type="checkbox" value="6.3"> Model cards or system documentation published</div>
-<div class="checkbox-item"><input type="checkbox" value="6.4"> Interoperability testing completed with existing systems</div>
+<label class="checkbox-item"><input type="checkbox" value="6.1"> AI system integrates with EHR via standardized APIs (FHIR/HL7)</label>
+<label class="checkbox-item"><input type="checkbox" value="6.2"> USCDI data elements mapped for AI inputs and outputs</label>
+<label class="checkbox-item"><input type="checkbox" value="6.3"> Model cards or system documentation published</label>
+<label class="checkbox-item"><input type="checkbox" value="6.4"> Interoperability testing completed with existing systems</label>
 </div>
 </div>
 
 <div class="form-group">
 <label style="margin-bottom:12px">Pillar VII: Public Accountability & Recourse</label>
 <div class="checkbox-group" id="pillar7">
-<div class="checkbox-item"><input type="checkbox" value="7.1"> Public transparency report on AI usage published</div>
-<div class="checkbox-item"><input type="checkbox" value="7.2"> Patient complaint or appeal process for AI decisions</div>
-<div class="checkbox-item"><input type="checkbox" value="7.3"> External audit or third party certification obtained</div>
-<div class="checkbox-item"><input type="checkbox" value="7.4"> Ethics committee review for AI system deployment</div>
+<label class="checkbox-item"><input type="checkbox" value="7.1"> Public transparency report on AI usage published</label>
+<label class="checkbox-item"><input type="checkbox" value="7.2"> Patient complaint or appeal process for AI decisions</label>
+<label class="checkbox-item"><input type="checkbox" value="7.3"> External audit or third party certification obtained</label>
+<label class="checkbox-item"><input type="checkbox" value="7.4"> Ethics committee review for AI system deployment</label>
 </div>
 </div>
 
@@ -1230,7 +1230,7 @@ updateProgress();
   <div class="lp-label">Live Score Preview</div>
   <div class="lp-score"><span id="lpNum">0</span><span> / 100</span></div>
   <div class="lp-bar"><div class="lp-bar-fill" id="lpBarFill"></div></div>
-  <div class="lp-grade" id="lpGrade" style="color:rgba(196,164,107,0.5)"></div>
+  <div class="lp-grade" id="lpGrade" style="color:rgba(196, 164, 107, 0.714)"></div>
 </div>
 
 <script>

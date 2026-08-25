@@ -84,7 +84,7 @@ async function downloadPDF() {
   --gold-15: rgba(196,164,107,0.15);
   --bg: #060606;
   --text: rgba(230,212,175,0.85);
-  --text-dim: rgba(196,164,107,0.5);
+  --text-dim: rgba(196, 164, 107, 0.714);
   --serif: 'Cormorant Garamond', Georgia, serif;
   --sans: 'Inter', -apple-system, sans-serif;
 }
@@ -122,7 +122,7 @@ body {
 }
 .hero-badge {
   display: inline-block;
-  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  font-size:11px; letter-spacing: 3px; text-transform: uppercase;
   color: var(--gold);
   padding: 6px 18px;
   border: 1px solid var(--gold-30);
@@ -149,7 +149,7 @@ body {
 }
 .hero-meta div { text-align: center; }
 .hero-meta .num { font-family: var(--serif); font-size: 28px; color: var(--gold-b); }
-.hero-meta .lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+.hero-meta .lbl { font-size:11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
 
 /* Form */
 .assessment {
@@ -171,7 +171,7 @@ body {
 .form-section.visible { opacity: 1; transform: translateY(0); }
 
 .form-section-num {
-  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  font-size:11px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 6px;
 }
@@ -313,7 +313,7 @@ body {
 }
 .result-card .obligation:last-child { border-bottom: none; }
 .obligation-ref {
-  font-size: 10px; letter-spacing: 1px;
+  font-size:11px; letter-spacing: 1px;
   color: var(--gold);
   margin-bottom: 4px;
 }
@@ -323,7 +323,7 @@ body {
 }
 .obligation-status {
   display: inline-block;
-  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  font-size:11px; letter-spacing: 1px; text-transform: uppercase;
   padding: 3px 10px; border-radius: 100px;
 }
 .status-required { background: rgba(239,154,154,0.1); color: rgba(239,154,154,0.8); border: 1px solid rgba(239,154,154,0.2); }
@@ -360,7 +360,7 @@ body {
 .footer-links { margin: 12px 0; }
 .footer-links a { color: var(--text-dim); font-size: 11px; text-decoration: none; margin: 0 12px; letter-spacing: 1px; }
 .footer-links a:hover { color: var(--gold-70); }
-.footer-copy { font-size: 10px; color: var(--text-dim); }
+.footer-copy { font-size:11px; color: var(--text-dim); }
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -637,7 +637,7 @@ body {
 
     <div class="field">
       <label class="field-label">Who owns AI compliance in your organization?</label>
-      <select id="compliance-owner">
+      <select id="compliance-owner" aria-label="Compliance owner">
         <option value="">Select responsible role</option>
         <option value="ciso">CISO or Security team</option>
         <option value="dpo">Data Protection Officer</option>
@@ -679,7 +679,7 @@ body {
     <a href="/dashboard.html">Dashboard</a>
   </div>
   <div class="footer-copy">© 2026 Lunara Society. All Rights Reserved. lunarasociety@gmail.com</div>
-  <div style="font-size:9px;color:rgba(196,164,107,0.2);margin-top:8px;letter-spacing:2px">ESTABLISHED MMXXVI</div>
+  <div style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:8px;letter-spacing:2px">ESTABLISHED MMXXVI</div>
 </footer>
 
 <script>

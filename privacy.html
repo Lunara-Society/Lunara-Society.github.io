@@ -18,23 +18,23 @@
 body{background:#000;font-family:'Inter',sans-serif;font-weight:300;color:rgba(255,255,255,0.75);-webkit-font-smoothing:antialiased;min-height:100vh;-webkit-user-select:none;user-select:none;}
 @media print{body{display:none!important;}}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,48px);height:60px;background:rgba(0,0,0,0.96);border-bottom:1px solid var(--border);}
-.back{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196,164,107,0.5);cursor:pointer;text-decoration:none;}
+.back{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);cursor:pointer;text-decoration:none;}
 .back:hover{color:var(--gold);}
 .nav-logo{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.62);}
 .wrap{max-width:780px;margin:0 auto;padding:100px clamp(20px,4vw,48px) 80px;}
-.eyebrow{font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.eyebrow{font-size:11px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,48px);font-weight:300;color:#fff;margin-bottom:12px;line-height:1.2;}
-.date{font-size:11px;letter-spacing:0.2em;color:rgba(255,255,255,0.3);margin-bottom:40px;}
+.date{font-size:11px;letter-spacing:0.2em;color:rgba(255, 255, 255, 0.472);margin-bottom:40px;}
 .rule{width:clamp(40px,6vw,80px);height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:32px 0;}
 h2{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,2vw,22px);font-weight:400;color:rgba(255,255,255,0.9);margin:32px 0 12px;}
 p{font-size:clamp(13px,1.4vw,15px);line-height:1.8;color:rgba(255,255,255,0.6);margin-bottom:16px;}
 a{color:var(--gold);text-decoration:none;}
-.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255, 255, 255, 0.472);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 
 /* Mobile nav fix */
 @media (max-width: 640px) {
   nav { padding: 0 12px !important; }
-  .nav-wordmark, .nav-logo { font-size: 10px !important; letter-spacing: 1.5px !important; }
+  .nav-wordmark, .nav-logo { font-size:11px !important; letter-spacing: 1.5px !important; }
   .nav-right { display: none !important; }
   /* Hide portal links in nav */
   nav a:not(.back):not(.back-link):not([href="home.html"]) { display: none !important; }
@@ -334,7 +334,7 @@ window.addEventListener('beforeprint',e=>{document.body.style.display='none';});
 }
 #mob-back-btn .back-text{
   font-family:"Inter",sans-serif;
-  font-size:9px;
+  font-size:11px;
   letter-spacing:0.22em;
   text-transform:uppercase;
   color:rgba(196,164,107,0.72);

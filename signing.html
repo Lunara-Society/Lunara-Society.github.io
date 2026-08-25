@@ -5,7 +5,7 @@
 <link rel="icon" type="image/png" href="lunara_logo_512.png">
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="Every machine-readable document Lunara Society publishes carries a detached Ed25519 signature. This page verifies one in your browser, in front of you, with no request to us beyond the files themselves.">
+<meta name="description" content="Every machine-readable document we publish carries a detached Ed25519 signature. This page verifies one in your browser, with nothing taken on trust.">
 <title>Signing — Lunara Society</title>
 <meta property="og:title" content="Verify it yourself">
 <meta property="og:description" content="A signature you have to take our word for is not a signature. This page checks ours in your browser.">
@@ -21,16 +21,16 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:#000;color:#d4c5a9;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;overflow-x:clip}
-:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.7);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim:rgba(196,164,107,0.5)}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-dim:rgba(196,164,107,0.7);--gold-faint:rgba(196,164,107,0.12);--text:rgba(220,200,160,0.88);--text-dim: rgba(196, 164, 107, 0.714)}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,6,6,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-faint);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none}
 .nav-links{display:flex;gap:28px}
-.nav-links a{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
+.nav-links a{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;font-family:'Inter',sans-serif;transition:color .3s}
 .nav-links a:hover{color:var(--gold)}
 
 .wrap{max-width:840px;margin:0 auto;padding:150px 28px 40px}
-.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
+.eyebrow{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:26px}
 h1{font-size:clamp(34px,6vw,60px);font-weight:300;line-height:1.14;color:#f0e0b0;letter-spacing:-0.015em;margin-bottom:26px}
 h1 em{font-style:italic;color:var(--gold-b)}
 .standfirst{font-size:clamp(17px,2.2vw,21px);line-height:1.7;color:rgba(220,200,160,0.62);max-width:60ch;font-weight:300}
@@ -52,10 +52,10 @@ p code,li code{background:rgba(196,164,107,0.1);padding:2px 6px;font-size:13px;b
 .tool{display:grid;grid-template-columns:210px 1fr;gap:26px;padding:24px 4px;border-bottom:1px solid rgba(196,164,107,0.09);align-items:start}
 .tool-name{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--gold-b);letter-spacing:0.02em}
 .tool-body p{margin:0 0 6px;font-size:14px;line-height:1.8;color:rgba(220,200,160,0.68)}
-.tool-body .ask{font-size:12.5px;color:rgba(196,164,107,0.55);font-style:italic}
+.tool-body .ask{font-size:12.5px;color:rgba(196, 164, 107, 0.714);font-style:italic}
 
 .spec{margin:30px 0;border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px}
-.spec-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:16px}
+.spec-head{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:16px}
 .spec pre{background:none;border:none;border-left:none;padding:0;margin:0}
 .spec code{font-size:12.5px;color:rgba(226,206,160,0.82)}
 
@@ -65,8 +65,8 @@ p code,li code{background:rgba(196,164,107,0.1);padding:2px 6px;font-size:13px;b
 .wont p{font-size:14.5px;line-height:1.85;color:rgba(220,200,160,0.66)}
 
 footer{border-top:1px solid var(--gold-faint);padding:44px 28px 60px;text-align:center}
-footer p{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.1em;color:rgba(196,164,107,0.35);margin:0 auto 6px;max-width:60ch}
-footer a{color:rgba(196,164,107,0.55);text-decoration:none}
+footer p{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714);margin:0 auto 6px;max-width:60ch}
+footer a{color:rgba(196, 164, 107, 0.714);text-decoration:none}
 
 @media(max-width:760px){
   nav{padding:14px 18px}.nav-links{gap:14px}
@@ -76,8 +76,8 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
 }
 
 .verify{border:1px solid rgba(196,164,107,0.22);background:linear-gradient(177deg,rgba(20,17,10,0.85),rgba(6,5,3,0.97));padding:26px 28px;margin:34px 0}
-.verify-head{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:4px}
-.verify-sub{font-family:'Inter',sans-serif;font-size:12.5px;color:rgba(196,164,107,0.5);margin-bottom:22px;font-style:italic}
+.verify-head{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:#E2C47A;margin-bottom:4px}
+.verify-sub{font-family:'Inter',sans-serif;font-size:12.5px;color:rgba(196, 164, 107, 0.714);margin-bottom:22px;font-style:italic}
 .step{display:grid;grid-template-columns:22px 1fr;gap:14px;padding:13px 0;border-top:1px solid rgba(196,164,107,0.09);align-items:start}
 .step:first-of-type{border-top:none}
 .dot{width:9px;height:9px;border-radius:50%;margin-top:6px;background:rgba(196,164,107,0.18);box-shadow:0 0 0 0 rgba(196,164,107,0);transition:background .5s,box-shadow .5s}
@@ -86,9 +86,9 @@ footer a{color:rgba(196,164,107,0.55);text-decoration:none}
 .step[data-state="bad"] .dot{background:#c96a5a;box-shadow:0 0 14px 1px rgba(201,106,90,0.4)}
 @keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
 .step-label{font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(220,200,160,0.82);letter-spacing:.01em}
-.step-detail{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;color:rgba(196,164,107,0.52);margin-top:5px;word-break:break-all;line-height:1.65;min-height:1px}
+.step-detail{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;color:rgba(196, 164, 107, 0.714);margin-top:5px;word-break:break-all;line-height:1.65;min-height:1px}
 .step[data-state="bad"] .step-detail{color:#c96a5a}
-.verdict{margin-top:20px;padding-top:18px;border-top:1px solid rgba(196,164,107,0.16);font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.02em;color:rgba(196,164,107,0.55);min-height:20px}
+.verdict{margin-top:20px;padding-top:18px;border-top:1px solid rgba(196,164,107,0.16);font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.02em;color:rgba(196, 164, 107, 0.714);min-height:20px}
 .verdict.ok{color:#E2C47A}
 .verdict.bad{color:#c96a5a}
 </style>

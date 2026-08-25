@@ -233,7 +233,7 @@ body.lx-has-banner .lx-fixed-header {
   .nav-pill a {
     padding-left: 9px;
     padding-right: 9px;
-    font-size: 10px;
+    font-size:11px;
     letter-spacing: 0.06em;
   }
 }
@@ -502,7 +502,7 @@ input:focus, select:focus, textarea:focus {
   box-shadow: var(--lx-engrave), var(--lx-halo);
 }
 
-::placeholder { color: rgba(196,164,107,0.38); }
+::placeholder { color: rgba(196, 164, 107, 0.714); }
 
 /* Selection styled in house colours. */
 ::selection {
@@ -631,7 +631,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .footer-col h4 {
-  font-size: 10px;
+  font-size:11px;
   font-weight: 500;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -911,7 +911,7 @@ html { scroll-behavior: smooth; }
 
 @media (max-width: 900px) {
   .lx-banner {
-    font-size: 9.5px !important;
+    font-size:11px !important;
     letter-spacing: 0.08em !important;
     line-height: 1.5 !important;
     padding: 8px 14px !important;
@@ -1032,7 +1032,7 @@ html { scroll-behavior: smooth; }
      sentence on the site. Ten pixels across two lines is worth more
      than eight and a half across one. */
   .lx-banner {
-    font-size: 10px !important;
+    font-size:11px !important;
     letter-spacing: 0.04em !important;
     line-height: 1.5 !important;
   }
@@ -1577,7 +1577,7 @@ a.back,
 
 .lx-glass-label {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size:11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--lx-gold);
@@ -1744,10 +1744,10 @@ a.back,
 .lxc-head { text-align: center; margin-bottom: 42px; }
 
 .lxc-eyebrow {
-  font-size: 10px;
+  font-size:11px;
   letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.55);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 18px;
 }
 /* The one live element. A slow pulse reads as "running", where a
@@ -1776,17 +1776,17 @@ a.back,
 .lxc-lede {
   font-size: 14px;
   line-height: 1.75;
-  color: rgba(220,200,160,0.55);
+  color: rgba(220, 200, 160, 0.595);
   margin: 0;
 }
 
 .lxc-group { margin-bottom: 34px; }
 
 .lxc-glabel {
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.42);
+  color: rgba(196, 164, 107, 0.714);
   padding-bottom: 10px;
   margin-bottom: 4px;
   border-bottom: 1px solid rgba(196,164,107,0.14);
@@ -1825,7 +1825,7 @@ a.back,
   font-size: 34px;
   font-weight: 300;
   line-height: 1;
-  color: rgba(196,164,107,0.55);
+  color: rgba(196, 164, 107, 0.714);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
@@ -1834,17 +1834,17 @@ a.back,
 .lxc-unit {
   display: block;
   margin-top: 7px;
-  font-size: 9px;
+  font-size:11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.4);
+  color: rgba(196, 164, 107, 0.714);
 }
 
 .lxc-jur {
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.5);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 7px;
 }
 
@@ -1861,7 +1861,7 @@ a.back,
   text-align: left;
   font-size: 13px;
   line-height: 1.75;
-  color: rgba(220,200,160,0.5);
+  color: rgba(220, 200, 160, 0.595);
   margin: 0 0 10px;
   max-width: 58ch;
 }
@@ -1869,20 +1869,20 @@ a.back,
 /* The citation is the difference between an assertion and a claim
    someone can check. It stays quiet but it never gets dropped. */
 .lxc-cite {
-  font-size: 10.5px;
+  font-size:11px;
   line-height: 1.6;
   letter-spacing: 0.02em;
-  color: rgba(196,164,107,0.36);
+  color: rgba(196, 164, 107, 0.714);
 }
 
 .lxc-when { text-align: right; white-space: nowrap; }
 
 .lxc-state {
   display: block;
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.45);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 6px;
 }
 .lxc-live .lxc-state { color: #E2C47A; }
@@ -1890,15 +1890,15 @@ a.back,
 .lxc-date {
   display: block;
   font-size: 12px;
-  color: rgba(220,200,160,0.45);
+  color: rgba(220, 200, 160, 0.595);
   font-variant-numeric: tabular-nums;
 }
 
 .lxc-foot {
-  font-size: 10.5px;
+  font-size:11px;
   line-height: 1.7;
   text-align: center;
-  color: rgba(196,164,107,0.34);
+  color: rgba(196, 164, 107, 0.714);
   padding-top: 22px;
   border-top: 1px solid rgba(196,164,107,0.1);
   max-width: 60ch;
@@ -1951,10 +1951,10 @@ a.back,
 #lx-lookup { max-width: 720px; margin: 0 auto; text-align: center; }
 
 .lxq-eyebrow {
-  font-size: 10px;
+  font-size:11px;
   letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.55);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 16px;
 }
 
@@ -1970,7 +1970,7 @@ a.back,
 .lxq-lede {
   font-size: 13.5px;
   line-height: 1.75;
-  color: rgba(220,200,160,0.5);
+  color: rgba(220, 200, 160, 0.595);
   margin: 0 0 30px;
 }
 
@@ -2003,7 +2003,7 @@ a.back,
   letter-spacing: 0.02em;
   padding: 14px 4px;
 }
-.lxq-form .lxq-input::placeholder { color: rgba(196,164,107,0.35); }
+.lxq-form .lxq-input::placeholder { color: rgba(196, 164, 107, 0.714); }
 
 .lxq-go {
   background: transparent;
@@ -2041,10 +2041,10 @@ a.back,
 .lxq-card.lxq-miss { border-left-color: rgba(196,164,107,0.3); }
 
 .lxq-state {
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.5);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 9px;
 }
 .lxq-hit .lxq-state { color: #E2C47A; }
@@ -2062,7 +2062,7 @@ a.back,
 .lxq-say {
   font-size: 13px;
   line-height: 1.8;
-  color: rgba(220,200,160,0.55);
+  color: rgba(220, 200, 160, 0.595);
   margin: 0;
 }
 
@@ -2075,9 +2075,9 @@ a.back,
 
 .lxq-note {
   margin-top: 18px;
-  font-size: 10.5px;
+  font-size:11px;
   line-height: 1.7;
-  color: rgba(196,164,107,0.34);
+  color: rgba(196, 164, 107, 0.714);
 }
 
 @media (max-width: 560px) {
@@ -2112,7 +2112,7 @@ a.back,
   line-height: 1.75;
   letter-spacing: 0.02em;
   text-align: center;
-  color: rgba(196,164,107,0.42);
+  color: rgba(196, 164, 107, 0.714);
 }
 .lxf-cap b {
   font-weight: 400;
@@ -2141,10 +2141,10 @@ a.back,
 .lxf-stratum:last-child { border-bottom: none; }
 
 .lxf-stratum-label {
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.45);
+  color: rgba(196, 164, 107, 0.714);
   margin-bottom: 9px;
 }
 
@@ -2160,7 +2160,7 @@ a.back,
 .lxf-stratum p {
   font-size: 12.5px;
   line-height: 1.75;
-  color: rgba(220,200,160,0.42);
+  color: rgba(220, 200, 160, 0.595);
   margin: 0;
   max-width: 62ch;
 }
@@ -2190,7 +2190,7 @@ a.back,
   z-index: 2;
 }
 .lxf-boundary span {
-  font-size: 9px;
+  font-size:11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(196,164,107,0.75);
@@ -2234,16 +2234,16 @@ a.back,
   display: block;
   margin-top: 4px;
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 9.5px;
+  font-size:11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.42);
+  color: rgba(196, 164, 107, 0.714);
 }
 
 .lxf-demand {
   font-size: 12.5px;
   line-height: 1.75;
-  color: rgba(220,200,160,0.5);
+  color: rgba(220, 200, 160, 0.595);
 }
 
 /* The answering pillar. Set as a mark rather than a sentence,
@@ -2270,10 +2270,10 @@ a.back,
   grid-template-columns: 190px 1fr 200px;
   gap: 22px;
   padding: 0 6px 10px;
-  font-size: 9px;
+  font-size:11px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.4);
+  color: rgba(196, 164, 107, 0.714);
 }
 .lxf-maphead span:last-child { text-align: right; }
 
@@ -2288,7 +2288,7 @@ a.back,
 .lxf-seal .lxs-rule   { stroke: rgba(196,164,107,0.55); stroke-width: 1; fill: none; }
 .lxf-seal .lxs-col    { stroke: rgba(196,164,107,0.34); stroke-width: 1; fill: none; }
 .lxf-seal .lxs-fill   { fill: rgba(196,164,107,0.05); }
-.lxf-seal .lxs-num    { fill: rgba(196,164,107,0.5); font-size: 7px; letter-spacing: 0.1em; }
+.lxf-seal .lxs-num    { fill: rgba(196,164,107,0.5); font-size:11px; letter-spacing: 0.1em; }
 
 /* The columns draw themselves in, once, on reveal. A building
    being erected rather than a logo animating. */
@@ -2326,7 +2326,7 @@ a.back,
   .lxf-stratum { padding: 22px 20px; }
   .lxf-stratum.lxf-ours { padding-left: 18px; }
   .lxf-boundary { padding: 0 14px; }
-  .lxf-boundary span { font-size: 8.5px; letter-spacing: 0.18em; }
+  .lxf-boundary span { font-size:11px; letter-spacing: 0.18em; }
 }
 
 @media print {
@@ -2426,8 +2426,8 @@ a.back,
 
   /* Text at rest sits lower than it used to. Dimmer surroundings are
      what let the headline gradient register as illuminated. */
-  --lx-t-faint:  rgba(196,164,107,0.30);
-  --lx-t-quiet:  rgba(214,190,146,0.44);
+  --lx-t-faint: rgba(196, 164, 107, 0.714);
+  --lx-t-quiet: rgba(214, 190, 146, 0.623);
   --lx-t-body:   rgba(226,205,166,0.62);
   --lx-t-strong: rgba(244,229,196,0.86);
 
@@ -2970,8 +2970,8 @@ a.back,
 .lx30 { max-width: 720px; margin: 0 auto; text-align: center; }
 
 .lx30-eyebrow {
-  font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(196,164,107,0.55); margin-bottom: 16px;
+  font-size:11px; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(196, 164, 107, 0.714); margin-bottom: 16px;
 }
 .lx30-eyebrow::after {
   content: ''; display: inline-block; width: 5px; height: 5px;
@@ -2997,7 +2997,7 @@ a.back,
   margin: 0 0 12px;
 }
 .lx30-hint {
-  font-size: 13px; line-height: 1.75; color: rgba(220,200,160,0.45);
+  font-size: 13px; line-height: 1.75; color: rgba(220, 200, 160, 0.595);
   margin: 0 auto 30px; max-width: 52ch;
 }
 
@@ -3036,10 +3036,10 @@ a.back,
 /* ── the verdict ── */
 .lx30-verdict { text-align: left; }
 .lx30-vhead {
-  font-size: 9.5px; letter-spacing: 0.26em; text-transform: uppercase;
+  font-size:11px; letter-spacing: 0.26em; text-transform: uppercase;
   margin-bottom: 10px; color: #E2C47A;
 }
-.lx30-verdict.lx30-clear .lx30-vhead { color: rgba(196,164,107,0.55); }
+.lx30-verdict.lx30-clear .lx30-vhead { color: rgba(196, 164, 107, 0.714); }
 
 .lx30-vtitle {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -3052,7 +3052,7 @@ a.back,
 }
 .lx30-vlist { list-style: none; margin: 16px 0 20px; }
 .lx30-vlist li {
-  font-size: 13px; line-height: 1.8; color: rgba(220,200,160,0.55);
+  font-size: 13px; line-height: 1.8; color: rgba(220, 200, 160, 0.595);
   padding-left: 18px; position: relative; margin-bottom: 7px;
 }
 .lx30-vlist li::before {
@@ -3074,7 +3074,7 @@ a.back,
   background: none; border: none; cursor: pointer;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(196,164,107,0.5); padding: 8px 4px; min-height: 32px;
+  color: rgba(196, 164, 107, 0.714); padding: 8px 4px; min-height: 32px;
 }
 .lx30-again:hover { color: #E2C892; }
 
@@ -3189,8 +3189,8 @@ a.back,
 
 .lxlc-n {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(196,164,107,0.4); margin-bottom: 7px;
+  font-size:11px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(196, 164, 107, 0.714); margin-bottom: 7px;
 }
 .lxlc-name {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -3198,7 +3198,7 @@ a.back,
 }
 .lxlc-what {
   font-size: 12px; line-height: 1.72;
-  color: rgba(220,200,160,0.44);
+  color: rgba(220, 200, 160, 0.595);
   max-width: 24ch; margin: 0 auto;
 }
 
@@ -3228,11 +3228,11 @@ a.back,
   font-size: 19px; font-weight: 400; color: #f0e0b0; margin: 0 0 7px;
 }
 .lxlc-exit p {
-  font-size: 13px; line-height: 1.78; color: rgba(220,200,160,0.55); margin: 0;
+  font-size: 13px; line-height: 1.78; color: rgba(220, 200, 160, 0.595); margin: 0;
 }
 .lxlc-stamp {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase;
+  font-size:11px; letter-spacing: 0.24em; text-transform: uppercase;
   color: #E2C47A; white-space: nowrap; text-align: right;
 }
 
@@ -3465,10 +3465,10 @@ a.back,
   position: absolute;
   right: 0; bottom: -20px;
   white-space: nowrap;
-  font-size: 8.5px;
+  font-size:11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(196,164,107,0.62);
+  color: rgba(196, 164, 107, 0.714);
   text-decoration: none;
   border-bottom: 1px solid rgba(196,164,107,0.2);
   padding-bottom: 2px;
@@ -3525,8 +3525,8 @@ a.back,
 
 .lxr-close {
   background: none; border: none; cursor: pointer;
-  color: rgba(196,164,107,0.5);
-  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(196, 164, 107, 0.714);
+  font-size:11px; letter-spacing: 0.16em; text-transform: uppercase;
   padding: 8px 6px; min-height: 32px;
   opacity: 0; transition: opacity .4s ease .64s, color .3s ease;
 }
@@ -3570,7 +3570,7 @@ a.back,
   font-size: 25px; font-weight: 300; color: #f0e0b0; margin: 0 0 6px;
 }
 .lxr-sheet .lxr-sub {
-  font-size: 12.5px; line-height: 1.7; color: rgba(220,200,160,0.45);
+  font-size: 12.5px; line-height: 1.7; color: rgba(220, 200, 160, 0.595);
   margin: 0 0 26px;
 }
 
@@ -3580,8 +3580,8 @@ a.back,
   gap: 26px;
 }
 .lxr-col h4 {
-  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(196,164,107,0.45);
+  font-size:11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(196, 164, 107, 0.714);
   padding-bottom: 8px; margin-bottom: 10px;
   border-bottom: 1px solid rgba(196,164,107,0.14);
 }
@@ -3602,7 +3602,7 @@ a.back,
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
   flex-wrap: wrap;
 }
-.lxr-note { font-size: 10.5px; line-height: 1.7; color: rgba(196,164,107,0.38); }
+.lxr-note { font-size:11px; line-height: 1.7; color: rgba(196, 164, 107, 0.714); }
 .lxr-note a { color: rgba(226,196,122,0.7); text-decoration: none; border-bottom: 1px solid rgba(196,164,107,0.25); }
 
 /* ── 30.6 SMALL SCREENS ────────────────────────────────────
@@ -3616,8 +3616,8 @@ a.back,
   .lxr-fig { width: 96px; }
   .lxr-light { width: 108px; height: 56px; right: 4px; }
   .lxr-cmds { right: 118px; bottom: 28px; gap: 7px; }
-  .lxr-cmd { font-size: 10.5px; padding: 9px 12px; min-height: 36px; }
-  .lxr-tag { font-size: 8px; bottom: -16px; }
+  .lxr-cmd { font-size:11px; padding: 9px 12px; min-height: 36px; }
+  .lxr-tag { font-size:11px; bottom: -16px; }
   .lxr-sheet {
     right: 0; bottom: 0; left: 0;
     width: 100%; max-height: 88vh;
@@ -3829,10 +3829,10 @@ a.back,
   display: block;
   margin-top: 10px;
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 10.5px;
+  font-size:11px;
   line-height: 1.7;
   letter-spacing: 0.04em;
-  color: rgba(196,164,107,0.42);
+  color: rgba(196, 164, 107, 0.714);
 }
 
 @media (max-width: 560px) {
@@ -3869,7 +3869,7 @@ section, h1, h2, h3, [id] {
 #horizon-section { padding:clamp(70px,9vw,130px) clamp(20px,5vw,60px); position:relative; }
 .horizon-inner { max-width:1280px; margin:0 auto; }
 .horizon-inner .eyebrow {
-  font-family:'Inter',sans-serif; font-size:10px; letter-spacing:0.34em;
+  font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.34em;
   text-transform:uppercase; color:rgba(159,195,232,0.72); margin-bottom:18px;
 }
 .horizon-inner h2 {
@@ -3883,15 +3883,15 @@ section, h1, h2, h3, [id] {
 }
 #lx-horizon { position:relative; }
 .lx-horizon-svg { width:100%; height:auto; display:block; overflow:visible; }
-.lx-h-year { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px;
+.lx-h-year { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px;
   fill:rgba(159,195,232,0.5); letter-spacing:0.1em; }
-.lx-h-now { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:9.5px;
+.lx-h-now { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px;
   fill:#CFE4F8; letter-spacing:0.26em; }
 .lx-h-title { font-family:'Cormorant Garamond',Georgia,serif; font-size:15px;
   fill:rgba(244,229,196,0.92); }
 .lx-h-title.past { fill:rgba(230,212,175,0.72); }
 .lx-h-title.is-next { fill:#FFFFFF; font-size:17px; }
-.lx-h-when { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px;
+.lx-h-when { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px;
   fill:rgba(159,195,232,0.72); letter-spacing:0.04em; }
 .lx-h-when.past { fill:rgba(196,164,107,0.66); }
 .lx-h-when.is-next { fill:#CFE4F8; font-size:11px; }
@@ -3935,7 +3935,7 @@ section, h1, h2, h3, [id] {
          drop-shadow(0 0 40px rgba(159,195,232,0.10));
 }
 .lx-cred-issuer{
-  font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:0.42em;
+  font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.42em;
   fill:rgba(196,164,107,0.9);
 }
 .lx-cred-kind{
@@ -3944,8 +3944,8 @@ section, h1, h2, h3, [id] {
 }
 .lx-cred-seal-l{ font-family:Georgia,'Cormorant Garamond',serif; font-size:24px; }
 .lx-cred-k{
-  font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:0.2em;
-  text-transform:uppercase; fill:rgba(255,255,255,0.42);
+  font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.2em;
+  text-transform:uppercase; fill:rgba(255,255,255,0.62);
 }
 .lx-cred-v{
   font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px;
@@ -3954,7 +3954,7 @@ section, h1, h2, h3, [id] {
 .lx-cred-v.id{ fill:#E4C88A; letter-spacing:0.06em; }
 .lx-cred-v.good{ fill:#7FC8A9; }
 .lx-cred-fine{
-  font-family:'Inter',sans-serif; font-size:8.5px; letter-spacing:0.04em;
+  font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.04em;
   fill:rgba(255,255,255,0.34);
 }
 .lx-cred-specimen-word{
@@ -3987,4 +3987,24 @@ section, h1, h2, h3, [id] {
 @media (max-width:860px){
   .lx-cred-wrap{ grid-template-columns:1fr; gap:32px; }
   .lx-cred-svg{ margin:0 auto; }
+}
+
+/* ── Tap targets ────────────────────────────────────────────────────
+   Measured on a 390px viewport: the navigation links are 10–24px tall,
+   well under the 32px a finger can reliably hit and under the 24px WCAG
+   asks for. Raising the type would move every nav on the site, so the
+   visible link keeps its size and an invisible band is stretched over
+   it instead. Nothing shifts; the target doubles.                    */
+.nav-links a, .nav-link, nav a.nav-brand, footer a {
+  position: relative;
+}
+.nav-links a::before, .nav-link::before, nav a.nav-brand::before, footer a::before {
+  content: '';
+  position: absolute;
+  left: -6px; right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 34px;
+  /* Behind the text, so it never eats a hover or a selection. */
+  z-index: -1;
 }

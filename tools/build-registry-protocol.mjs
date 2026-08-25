@@ -73,9 +73,9 @@ export function block(label) {
     ...lines.map(esc),
     '}</div>',
     '<p class="registry-provenance" style="font-size:11.5px;line-height:1.7;' +
-      'color:rgba(255,255,255,0.42);margin-top:10px;letter-spacing:0.02em">' +
+      'color:rgba(255,255,255,0.62);margin-top:10px;letter-spacing:0.02em">' +
       '<strong style="color:#C4A46B;font-weight:500;text-transform:uppercase;' +
-      'letter-spacing:0.14em;font-size:10px">' + evidence + '</strong> &mdash; ' +
+      'letter-spacing:0.14em;font-size:11px">' + evidence + '</strong> &mdash; ' +
       note + '</p>',
     MARK.end
   ].join('\n');

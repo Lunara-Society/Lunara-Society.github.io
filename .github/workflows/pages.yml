@@ -140,13 +140,41 @@ jobs:
       - name: Trim unreferenced media from the published artifact
         run: |
           before=$(du -sm . | cut -f1)
+          # Referenced by nothing: no page, script, stylesheet or manifest.
+          # An audit of every asset against every reference found 25 such
+          # images totalling 7.6 MB, plus the internal operations console,
+          # plus email artwork and two superseded homepages that were being
+          # served and indexed against the real pages.
           rm -f rosario_talking.webm \
                 lunara_avatar_hook.webm \
+                maya-hologram.png \
                 maya-hologram-v2.png \
                 maya-hologram-new.png \
                 maya-hologram-clean.png \
                 lunara_emblem_full.png \
-                lunara_emblem_v2_768.png
+                lunara_emblem_transparent.png \
+                lunara_emblem_v2_768.png \
+                lunara_emblem_512.png \
+                lunara_emblem_activation.png \
+                lunara_emblem_v2.jpg \
+                lunara_emblem_new.jpg \
+                lunara_logo_256.png \
+                rosario-fullbody.png \
+                rosario_mini.png \
+                hall-bg-new.png \
+                shield_gate.jpg \
+                index-old-backup.html \
+                index-backup-june25.html \
+                email_clay_hq.html \
+                email_omnibus_followup.html \
+                email_outreach.html \
+                email_small_business_shield.html
+          # The internal operations console. It is not linked from anywhere
+          # and does not currently resolve; this makes that guaranteed rather
+          # than incidental. Rosario's briefing stays published — it is the
+          # institution's own doctrine and corrections, and nothing in it is
+          # private.
+          rm -rf shield-os
           after=$(du -sm . | cut -f1)
           echo "published payload: ${before}MB -> ${after}MB"
 

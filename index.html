@@ -378,6 +378,7 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
 }
 </style>
 <link rel="stylesheet" href="lunara-stage.css">
+<link rel="stylesheet" href="lunara-shell.css">
 
 <script type="application/ld+json" data-lunara-authority-schema>
 {
@@ -542,37 +543,7 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
   </svg>
 </div>
 
-<nav id="nav">
-  <a class="brand" href="/">
-    <img src="lunara_emblem_96.png" alt="" width="31" height="31" decoding="async">
-    <span>Lunara Society</span>
-  </a>
 
-  <div class="nav-mid">
-    <a href="/" class="here">Home</a>
-    <a href="intelligence.html">Intelligence</a>
-    <a href="registry.html">Registry</a>
-    <a href="shield.html">Certification</a>
-    <a href="mcp.html">For AI Systems</a>
-    <a href="evidence.html">Evidence</a>
-  </div>
-
-  <div class="nav-end">
-    <a class="nav-ghost" href="member.html">Sign in</a>
-    <a class="nav-cta" href="shield.html">Apply</a>
-    <button id="burger" type="button" aria-label="Open navigation" aria-expanded="false"><i></i></button>
-  </div>
-</nav>
-
-<div id="drawer" role="dialog" aria-label="Navigation" aria-modal="true">
-  <button class="close" type="button" aria-label="Close navigation">&times;</button>
-  <a href="intelligence.html">Intelligence</a>
-  <a href="registry.html">Registry</a>
-  <a href="shield.html">Certification</a>
-  <a href="mcp.html">For AI Systems</a>
-  <a href="evidence.html">Evidence</a>
-  <a href="member.html">Sign in</a>
-</div>
 
 <!-- ── THE OPENING ────────────────────────────────────────────────── -->
 <main>
@@ -736,22 +707,9 @@ requestAnimationFrame(function () {
   requestAnimationFrame(function () { document.body.classList.add('lit'); });
 });
 
-(function () {
-  var burger = document.getElementById('burger');
-  var drawer = document.getElementById('drawer');
-  var close  = drawer.querySelector('.close');
-  function set(on) {
-    drawer.classList.toggle('on', on);
-    burger.setAttribute('aria-expanded', on ? 'true' : 'false');
-    document.body.style.overflow = on ? 'hidden' : '';
-    if (on) close.focus(); else burger.focus();
-  }
-  burger.addEventListener('click', function () { set(true); });
-  close.addEventListener('click', function () { set(false); });
-  drawer.addEventListener('click', function (e) { if (e.target === drawer) set(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('on')) set(false); });
-})();
+
 </script>
+<script src="lunara-shell.js" defer></script>
 <script src="lunara-stage.js" defer></script>
 </body>
 </html>

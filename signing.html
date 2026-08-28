@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="description" content="Every machine-readable document we publish carries a detached Ed25519 signature. This page verifies one in your browser, with nothing taken on trust.">
-<title>Signing — Lunara Society</title>
+<title>How to Verify Us — Lunara Society</title>
 <meta property="og:title" content="Verify it yourself">
 <meta property="og:description" content="A signature you have to take our word for is not a signature. This page checks ours in your browser.">
 <meta property="og:type" content="article">
@@ -93,6 +93,7 @@ footer a{color:rgba(196, 164, 107, 0.714);text-decoration:none}
 .verdict.bad{color:#c96a5a}
 </style>
 <link rel="stylesheet" href="lunara-refined.css">
+<link rel="stylesheet" href="lunara-shell.css">
 </head>
 <body>
 
@@ -293,5 +294,6 @@ console.log("digest:   ", hash ? "matches" : "MISMATCH");
 })();
 </script>
 
+<script src="lunara-shell.js" defer></script>
 </body>
 </html>

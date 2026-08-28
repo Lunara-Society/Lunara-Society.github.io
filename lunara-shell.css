@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THE SHELL — one navigation, one footer, one vocabulary
+   ═══════════════════════════════════════════════════════════════════
+
+   Twenty-nine distinct navigations were running across fifty-three
+   pages. Eight pages had none at all; fourteen had a single link back
+   to the root. Worse than the structure was the vocabulary: the same
+   product was called Shield on one page, Initiation on another, Apply
+   on a third and Get Certified on a fourth. A visitor cannot build a
+   model of an institution that renames itself between pages.
+
+   This file and lunara-shell.js are the single source. The markup is
+   injected at runtime rather than pasted into fifty-three files,
+   because a partial that has to be copied is a partial that drifts —
+   which is exactly how there came to be twenty-nine of them.
+
+   Class names are prefixed lxn-/lxf- so nothing here collides with
+   the per-page CSS that is still in every file.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root{
+  --lx-ink:      #07080A;
+  --lx-white:    #EFEAE0;
+  --lx-grey:     #A49E93;
+  --lx-grey-2:   #8D887F;
+  --lx-gold:     #C4A46B;
+  --lx-gold-lit: #E2C47A;
+  --lx-hair:     rgba(214,222,234,0.13);
+}
+
+/* ── navigation ─────────────────────────────────────────────────── */
+.lxn{
+  position:fixed;top:0;left:0;right:0;z-index:400;
+  display:flex;align-items:center;gap:22px;
+  padding:15px clamp(18px,3.2vw,42px);
+  background:linear-gradient(to bottom, rgba(7,8,10,0.94), rgba(7,8,10,0.60) 62%, transparent);
+  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-weight:300;
+}
+.lxn *{box-sizing:border-box}
+.lxn-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none}
+.lxn-brand img{width:31px;height:31px;border-radius:50%;box-shadow:0 0 16px -5px rgba(232,226,208,0.5)}
+.lxn-brand span{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:16px;letter-spacing:.30em;text-transform:uppercase;
+  color:var(--lx-white);white-space:nowrap;
+}
+.lxn-mid{
+  display:flex;gap:4px;margin-left:auto;
+  padding:4px;border-radius:100px;
+  border:1px solid var(--lx-hair);background:rgba(255,255,255,0.018);
+}
+.lxn-mid a{
+  position:relative;font-size:12.5px;letter-spacing:.02em;text-decoration:none;
+  color:var(--lx-grey);padding:8px 15px;border-radius:100px;white-space:nowrap;
+  transition:color .22s ease,background .22s ease;
+}
+.lxn-mid a:hover,.lxn-mid a:focus-visible{color:var(--lx-white);background:rgba(255,255,255,0.055)}
+.lxn-mid a[aria-current="page"]{color:var(--lx-white);background:rgba(255,255,255,0.075)}
+.lxn-end{display:flex;align-items:center;gap:9px;margin-left:auto}
+.lxn-ghost{
+  font-size:12.5px;text-decoration:none;color:var(--lx-grey);
+  padding:9px 14px;border-radius:100px;transition:color .22s ease;
+}
+.lxn-ghost:hover{color:var(--lx-white)}
+.lxn-cta{
+  font-size:12.5px;text-decoration:none;color:#141210;
+  background:linear-gradient(180deg,#F0E6CE,#CBB07C);
+  padding:9px 17px;border-radius:100px;font-weight:500;white-space:nowrap;
+  transition:filter .22s ease,transform .22s ease;
+}
+.lxn-cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.lxn-burger{
+  display:none;flex:none;width:42px;height:40px;border-radius:10px;
+  border:1px solid var(--lx-hair);background:rgba(255,255,255,0.03);
+  cursor:pointer;align-items:center;justify-content:center;
+}
+.lxn-burger i{display:block;width:16px;height:1px;background:var(--lx-white);position:relative}
+.lxn-burger i::before,.lxn-burger i::after{content:'';position:absolute;left:0;width:16px;height:1px;background:var(--lx-white)}
+.lxn-burger i::before{top:-5px}.lxn-burger i::after{top:5px}
+
+@media (max-width:1080px){
+  .lxn-mid{display:none}
+  .lxn-burger{display:flex}
+  .lxn-end .lxn-ghost{display:none}
+}
+@media (max-width:520px){
+  .lxn-brand span{font-size:13px;letter-spacing:.20em}
+}
+
+/* ── drawer ─────────────────────────────────────────────────────── */
+.lxn-drawer{
+  position:fixed;inset:0;z-index:450;
+  background:rgba(6,7,9,0.97);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;justify-content:center;gap:2px;
+  padding:0 30px;opacity:0;pointer-events:none;transition:opacity .3s ease;
+  font-family:'Inter',sans-serif;
+}
+.lxn-drawer.on{opacity:1;pointer-events:auto}
+.lxn-drawer a{
+  font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;color:var(--lx-white);
+  text-decoration:none;padding:12px 0;border-bottom:1px solid var(--lx-hair);
+}
+.lxn-drawer a:last-of-type{border-bottom:none}
+.lxn-drawer .lxn-x{
+  position:absolute;top:16px;right:20px;
+  font-size:26px;color:var(--lx-grey);background:none;border:none;cursor:pointer;
+  width:44px;height:44px;line-height:1;
+}
+
+/* Every page below has a fixed header now, so content needs clearance
+   and anchors need somewhere to land that is not underneath it. */
+body.lx-shelled{padding-top:0}
+body.lx-shelled [id]{scroll-margin-top:96px}
+
+/* ── footer ─────────────────────────────────────────────────────── */
+.lxf{
+  position:relative;z-index:5;
+  padding:clamp(46px,6vh,74px) clamp(18px,3.2vw,42px) 46px;
+  margin-top:40px;border-top:1px solid var(--lx-hair);
+  background:var(--lx-ink);
+  font-family:'Inter',system-ui,sans-serif;font-weight:300;
+  color:var(--lx-grey-2);
+}
+.lxf-in{max-width:1280px;margin:0 auto}
+.lxf-grid{
+  display:grid;grid-template-columns:1.5fr repeat(3,1fr);
+  gap:clamp(22px,3vw,44px);margin-bottom:40px;
+}
+.lxf-brand p{font-size:13px;color:var(--lx-grey-2);max-width:34ch;margin:14px 0 0;line-height:1.7}
+.lxf h4{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--lx-grey);margin:0 0 14px;font-weight:400;
+}
+.lxf-col a{
+  display:block;font-size:13px;color:var(--lx-grey-2);text-decoration:none;
+  padding:5px 0;transition:color .2s ease;
+}
+.lxf-col a:hover{color:var(--lx-white)}
+.lxf-base{
+  display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;
+  padding-top:22px;border-top:1px solid var(--lx-hair);
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;color:var(--lx-grey-2);
+}
+.lxf-base a{color:var(--lx-grey-2);text-decoration:none}
+.lxf-base a:hover{color:var(--lx-white)}
+@media (max-width:900px){ .lxf-grid{grid-template-columns:1fr 1fr} }
+@media (max-width:560px){ .lxf-grid{grid-template-columns:1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .lxn *,.lxf *{transition:none!important}
+}

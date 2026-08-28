@@ -1,0 +1,376 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THE STAGE
+   ═══════════════════════════════════════════════════════════════════
+
+   The homepage used to be a headline, a paragraph and two buttons on
+   black. Everything this institution actually does — the clock, the
+   signature, the registry — was described in prose further down the
+   page, where a first-time visitor never reached.
+
+   So the hero is now a lit stage with three instruments floating in it,
+   and every one of them is live. The clock counts against the reader's
+   own machine. The signature is verified by their browser, against the
+   published key, while they watch. The registry answers a real lookup
+   they type themselves.
+
+   That is the whole argument for building it this way: a hero panel
+   that reads "99.99% uptime" is a picture of a product. A panel that
+   verifies an Ed25519 signature in front of you is the product.
+   ═══════════════════════════════════════════════════════════════════ */
+
+#hero {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ── the light ─────────────────────────────────────────────────────
+   Three sources: a cold horizon behind everything, a warm pool where
+   the emblem stands, and a tight rim on the instruments themselves.  */
+.lxs-light {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.lxs-light::before {
+  /* the horizon — cold, wide, low */
+  content: ''; position: absolute;
+  left: 50%; bottom: -30%;
+  width: 150%; height: 110%;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(60% 46% at 50% 50%, rgba(96,146,196,0.20) 0%, rgba(60,96,140,0.09) 38%, transparent 72%);
+  filter: blur(6px);
+}
+.lxs-light::after {
+  /* the warm pool — small, gold, centred under the type */
+  content: ''; position: absolute;
+  left: 28%; top: 46%;
+  width: 46vw; height: 46vw;
+  max-width: 620px; max-height: 620px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(196,164,107,0.13) 0%, rgba(160,128,74,0.05) 40%, transparent 68%);
+}
+
+/* A slow drift across the stage, so the light is never quite static.
+   14 seconds, 3% of the frame — felt, not watched. */
+@keyframes lxs-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .85; }
+  50%      { transform: translate(-47%, -52%) scale(1.06); opacity: 1; }
+}
+.lxs-light::after { animation: lxs-drift 14s ease-in-out infinite; }
+
+/* ── the stage floor ───────────────────────────────────────────────
+   A single hairline with a gradient falloff. It reads as a horizon
+   without drawing a horizon.                                        */
+.lxs-floor {
+  position: absolute; left: 0; right: 0; bottom: 14%;
+  height: 1px; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(159,195,232,0.22) 22%, rgba(196,164,107,0.30) 50%, rgba(159,195,232,0.22) 78%, transparent);
+  opacity: 0; transform: scaleX(.4);
+  transition: opacity 1.6s ease 0.3s, transform 2.2s cubic-bezier(.16,1,.3,1) 0.3s;
+}
+.lxs-ready .lxs-floor { opacity: 1; transform: scaleX(1); }
+
+/* ── layout ────────────────────────────────────────────────────────
+   Type on the left, instruments on the right, in perspective. Below
+   980px the instruments fall under the type and flatten out.        */
+.lxs-stage {
+  position: relative; z-index: 2;
+  width: 100%; max-width: 1240px;
+  margin: 0 auto; padding: 0 34px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+
+/* ── the instruments ───────────────────────────────────────────────
+   Dark glass, not frosted white. The border is a gradient hairline
+   because a flat 1px border on glass reads as a box; a hairline that
+   catches light at one edge reads as an object.                     */
+.lxs-rack {
+  display: grid; gap: 15px;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+.lxs-panel {
+  position: relative;
+  padding: 17px 19px 16px;
+  border-radius: 15px;
+  background:
+    linear-gradient(152deg, rgba(24,31,41,0.78) 0%, rgba(11,14,19,0.62) 58%, rgba(8,10,13,0.70) 100%);
+  -webkit-backdrop-filter: blur(15px) saturate(1.25);
+  backdrop-filter: blur(15px) saturate(1.25);
+  box-shadow:
+    inset 0 1px 0 rgba(198,224,255,0.10),
+    inset 0 0 0 1px rgba(140,175,215,0.055),
+    0 22px 50px -24px rgba(0,0,0,0.95),
+    0 0 46px -22px rgba(120,168,220,0.34);
+  /* entrance: from below and slightly turned away */
+  opacity: 0;
+  transform: translateY(26px) rotateX(7deg) rotateY(-5deg) scale(.985);
+  transition:
+    opacity .9s cubic-bezier(.16,1,.3,1),
+    transform 1.15s cubic-bezier(.16,1,.3,1),
+    box-shadow .5s ease;
+  will-change: transform, opacity;
+}
+.lxs-ready .lxs-panel { opacity: 1; transform: none; }
+.lxs-ready .lxs-panel:nth-child(1) { transition-delay: .10s, .10s, 0s; }
+.lxs-ready .lxs-panel:nth-child(2) { transition-delay: .24s, .24s, 0s; }
+.lxs-ready .lxs-panel:nth-child(3) { transition-delay: .38s, .38s, 0s; }
+
+/* the rim light that makes it an object rather than a rectangle */
+.lxs-panel::before {
+  content: ''; position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, rgba(178,212,255,0.16), transparent 34%, transparent 66%, rgba(196,164,107,0.10));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  padding: 1px;
+}
+.lxs-panel:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(198,224,255,0.16),
+    inset 0 0 0 1px rgba(150,190,235,0.10),
+    0 26px 58px -24px rgba(0,0,0,0.95),
+    0 0 66px -20px rgba(130,180,235,0.48);
+}
+
+.lxs-head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: .21em; text-transform: uppercase;
+  color: rgba(176,205,240,0.80);
+  margin-bottom: 11px;
+}
+.lxs-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(120,170,220,0.55);
+  box-shadow: 0 0 8px rgba(120,170,220,0.7);
+  flex: none;
+}
+.lxs-dot.live  { background: #7FD7C4; box-shadow: 0 0 10px rgba(127,215,196,0.85); }
+.lxs-dot.gold  { background: #E2C47A; box-shadow: 0 0 10px rgba(226,196,122,0.8); }
+.lxs-dot.work  { animation: lxs-pulse 1.5s ease-in-out infinite; }
+@keyframes lxs-pulse { 0%,100% { opacity:.35 } 50% { opacity:1 } }
+
+.lxs-big {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(30px, 3.4vw, 43px);
+  line-height: 1; letter-spacing: -.01em;
+  color: #F2E4BE;
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 9px;
+}
+.lxs-big small {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(226,200,146,0.66);
+}
+.lxs-sub {
+  font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.55;
+  color: rgba(214,229,247,0.72); margin-top: 9px;
+}
+.lxs-mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; line-height: 1.6;
+  color: rgba(150,186,226,0.62);
+  word-break: break-all;
+}
+
+/* the verifying panel's own progress hairline */
+.lxs-track {
+  position: relative; height: 2px; border-radius: 2px;
+  background: rgba(140,175,215,0.14);
+  margin: 13px 0 10px; overflow: hidden;
+}
+.lxs-fill {
+  position: absolute; inset: 0 100% 0 0;
+  background: linear-gradient(90deg, rgba(127,215,196,0.55), #7FD7C4);
+  transition: inset .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* the registry instrument accepts input, so it must look operable */
+.lxs-field {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 4px;
+  border-radius: 9px;
+  border: 1px solid rgba(150,190,235,0.16);
+  background: rgba(6,9,13,0.55);
+  padding: 3px 4px 3px 12px;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.lxs-field:focus-within {
+  border-color: rgba(160,205,250,0.45);
+  box-shadow: 0 0 0 3px rgba(120,170,220,0.13);
+}
+.lxs-field input {
+  flex: 1 1 auto; min-width: 0;
+  background: none; border: none; outline: none;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 12.5px; color: #EAF2FC; padding: 8px 0;
+}
+.lxs-field input::placeholder { color: rgba(160,190,225,0.42); }
+.lxs-field button {
+  flex: none; cursor: pointer;
+  border: none; border-radius: 7px;
+  background: rgba(150,190,235,0.14);
+  color: #DCEAFA;
+  font-family: 'Inter', sans-serif; font-size: 11px;
+  letter-spacing: .13em; text-transform: uppercase;
+  padding: 9px 13px; min-height: 34px;
+  transition: background .25s ease, color .25s ease;
+}
+.lxs-field button:hover, .lxs-field button:focus-visible {
+  background: rgba(160,205,250,0.26); color: #fff;
+}
+.lxs-verdict {
+  font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.55;
+  margin-top: 10px; min-height: 1.55em;
+  color: rgba(214,229,247,0.74);
+}
+.lxs-verdict b { color: #E2C47A; font-weight: 500; }
+.lxs-verdict .ok { color: #7FD7C4; font-weight: 500; }
+
+/* ── the type side ─────────────────────────────────────────────────
+   Entrance mirrors the panels so the whole stage resolves as one
+   movement rather than two.                                         */
+.lxs-copy { position: relative; z-index: 3; }
+.lxs-copy > * {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .95s cubic-bezier(.16,1,.3,1), transform 1.05s cubic-bezier(.16,1,.3,1);
+}
+.lxs-ready .lxs-copy > *      { opacity: 1; transform: none; }
+.lxs-ready .lxs-copy > *:nth-child(1) { transition-delay: .02s }
+.lxs-ready .lxs-copy > *:nth-child(2) { transition-delay: .10s }
+.lxs-ready .lxs-copy > *:nth-child(3) { transition-delay: .18s }
+.lxs-ready .lxs-copy > *:nth-child(4) { transition-delay: .28s }
+.lxs-ready .lxs-copy > *:nth-child(5) { transition-delay: .36s }
+
+/* ── responsive ────────────────────────────────────────────────────
+   Under 980px the rack drops below the type and loses its perspective
+   — a tilted panel on a 390px screen is a broken panel.             */
+@media (max-width: 980px) {
+  .lxs-stage {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 0 22px;
+    align-content: center;
+  }
+  .lxs-rack { perspective: none; }
+  .lxs-panel { transform: translateY(20px) scale(.99); }
+  .lxs-ready .lxs-panel { transform: none; }
+  .lxs-light::after { left: 50%; top: 38%; width: 90vw; height: 90vw; }
+  .lxs-big { font-size: clamp(27px, 8vw, 36px); }
+}
+
+/* Motion is the point of this page, and it is still optional. With
+   reduced motion the stage arrives assembled: no drift, no parallax,
+   no stagger — the instruments still run, they simply do not move. */
+@media (prefers-reduced-motion: reduce) {
+  .lxs-panel, .lxs-copy > *, .lxs-floor {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  .lxs-light::after { animation: none; }
+  .lxs-fill { transition: none; }
+}
+
+/* ── overrides for the page's own hero rules ───────────────────────
+   The old hero was one centred column, so its rules centre everything
+   and size the headline against the full viewport. Inside the stage
+   the type has half the width and a neighbour, and both of those have
+   to be told.                                                       */
+#hero-content:has(#lxs) {
+  max-width: none; width: 100%;
+  padding: 96px 0 40px;
+  text-align: left;
+  display: block;
+}
+#lxs .hero-medallion { margin: 0 0 22px; display: block; }
+#lxs .hero-logo-img { width: 62px; height: 62px; }
+#lxs .hero-eyebrow {
+  margin: 0 0 18px; text-align: left;
+  font-size: 11px; letter-spacing: .30em;
+}
+#lxs .hero-title {
+  font-size: clamp(38px, 4.5vw, 62px);
+  line-height: 1.06; margin: 0 0 20px;
+  text-align: left; text-wrap: balance;
+}
+#lxs .hero-subtitle {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15.5px; line-height: 1.68; font-style: normal;
+  max-width: 44ch; margin: 0 0 30px; text-align: left;
+  color: rgba(226,235,247,0.74);
+}
+#lxs .hero-actions {
+  justify-content: flex-start; margin: 0;
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+#lxs .lxs-rack, #lxs .lxs-panel { text-align: left; }
+
+@media (max-width: 980px) {
+  #hero-content:has(#lxs) { padding: 88px 0 30px; }
+  #lxs .hero-medallion { margin-bottom: 16px; }
+  #lxs .hero-logo-img { width: 52px; height: 52px; }
+  #lxs .hero-title { font-size: clamp(33px, 9.4vw, 46px); margin-bottom: 14px; }
+  #lxs .hero-subtitle { font-size: 14.5px; margin-bottom: 22px; max-width: none; }
+}
+
+/* Safari before 15.4 has no :has(). It gets the old centred hero,
+   which is not broken — only less composed. */
+@supports not selector(:has(*)) {
+  .lxs-stage { display: block; }
+  .lxs-rack { margin-top: 34px; }
+}
+
+/* The emblem carried three stacked box-shadows out to 100px, which on a
+   small mark smears into a horizontal streak across the headline rather
+   than reading as light on an object. One tight halo instead, and the
+   mark is large enough to be a mark. */
+#lxs .hero-logo-img {
+  width: 72px; height: 72px;
+  border: 1px solid rgba(196,164,107,0.30);
+  box-shadow: 0 0 22px -4px rgba(159,195,232,0.35);
+}
+#lxs .hero-eyebrow {
+  letter-spacing: .24em;
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+@media (max-width: 980px) {
+  #lxs .hero-eyebrow { white-space: normal; letter-spacing: .18em; font-size: 10.5px; }
+}
+
+/* lunara-refined.css gives .hero-medallion a plinth — a ::before rim and
+   an ::after pool of light — sized to the element. Centred in the old
+   hero that was a coin under the emblem; in a 568px-wide column it
+   stretched into a 600px streak across the headline. Shrink the element
+   to the mark and the plinth is a plinth again. */
+#hero-content #lxs .hero-medallion {
+  width: max-content;
+  max-width: 100%;
+}
+#hero-content #lxs .hero-logo-img {
+  box-shadow: 0 0 26px -6px rgba(159,195,232,0.42);
+}
+
+/* On a phone the fixed nav and the announcement band eat the first
+   110px; the emblem was sitting underneath both. */
+@media (max-width: 980px) {
+  #hero-content:has(#lxs) { padding-top: 124px; }
+}
+
+/* The hero centres its content in a full-viewport box. With three
+   instruments added, the stage is taller than a phone screen, so
+   centring pushed the emblem up behind the navigation. On small
+   screens the hero stops being a fixed-height box and simply flows. */
+@media (max-width: 980px) {
+  #hero:has(#lxs) {
+    height: auto; min-height: 0;
+    align-items: flex-start; justify-content: flex-start;
+    padding-bottom: 40px;
+  }
+  #hero:has(#lxs) .hero-scroll-hint { display: none; }
+}

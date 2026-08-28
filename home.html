@@ -1356,6 +1356,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 }
 </script>
   <link rel="stylesheet" href="lunara-refined.css">
+<link rel="stylesheet" href="lunara-stage.css">
   <link rel="canonical" href="https://lunarasociety.com/home.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Lunara Society">
@@ -1535,33 +1536,69 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <a href="contact.html" onclick="closeDrawer()">Contact</a>
 </div>
 
-<!-- ─── HERO ─── -->
+<!-- ─── HERO: THE STAGE ───────────────────────────────────────────
+     Three live instruments, not three claims. The clock counts against
+     the reader's machine, the signature is verified in their browser,
+     and the register answers a lookup they type. Every one of them can
+     fail in public, and each has an honest failure state — which is
+     the price of putting the real thing in the hero instead of a
+     picture of it. -->
 <section id="hero">
-  
+
+  <div class="lxs-light" aria-hidden="true"></div>
+  <div class="lxs-floor" aria-hidden="true"></div>
   <div id="hero-overlay"></div>
 
   <div id="hero-content">
-    <div class="hero-medallion">
-      <img src="lunara_emblem_96.png" alt="Lunara Society" class="hero-logo-img">
+    <div class="lxs-stage" id="lxs">
+
+      <div class="lxs-copy">
+        <div class="hero-medallion">
+          <img src="lunara_emblem_96.png" alt="Lunara Society" class="hero-logo-img" width="96" height="96">
+        </div>
+        <p class="hero-eyebrow">Constitutional Governance &nbsp;·&nbsp; AI Certification &nbsp;·&nbsp; Est. MMXXVI</p>
+        <h1 class="hero-title">The standard<br>for <em>verified AI.</em></h1>
+        <p class="hero-subtitle">Machine-readable regulatory intelligence, signed so it can be checked, and a public register any AI system can query. Every panel on this screen is live — the clock, the signature and the register all answer in real time.</p>
+        <div class="hero-actions">
+          <a href="scorer.html" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Score Your AI Risk
+          </a>
+          <a href="shield.html" class="btn-ghost">Shield Certification &rsaquo;</a>
+        </div>
+      </div>
+
+      <div class="lxs-rack">
+
+        <!-- THE CLOCK -->
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot gold" aria-hidden="true"></span> The next binding date</p>
+          <p class="lxs-big"><span id="lxs-days">—</span> <small id="lxs-days-unit">days</small></p>
+          <p class="lxs-sub" id="lxs-next">Reading the register…</p>
+          <p class="lxs-sub" id="lxs-inforce" style="opacity:.72"></p>
+        </article>
+
+        <!-- THE SIGNATURE -->
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot work" id="lxs-sig-dot" aria-hidden="true"></span> Integrity</p>
+          <p class="lxs-big" style="font-size:clamp(22px,2.3vw,28px)" id="lxs-sig-state">Verifying…</p>
+          <div class="lxs-track" aria-hidden="true"><div class="lxs-fill" id="lxs-fill"></div></div>
+          <p class="lxs-mono" id="lxs-sig-detail">Checking the published signature on this corpus.</p>
+        </article>
+
+        <!-- THE REGISTER -->
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot" id="lxs-reg-dot" aria-hidden="true"></span> Check any business</p>
+          <div class="lxs-field">
+            <input id="lxs-domain" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+                   placeholder="example.com" aria-label="Business domain to check against the public register">
+            <button id="lxs-go" type="button">Look up</button>
+          </div>
+          <p class="lxs-verdict" id="lxs-verdict">Free, unauthenticated, and the same answer an AI system gets.</p>
+        </article>
+
+      </div>
     </div>
-    <p class="hero-eyebrow">Constitutional Governance &nbsp;·&nbsp; AI Certification &nbsp;·&nbsp; Est. MMXXVI</p>
-    <h1 class="hero-title">The standard<br>for <em>verified AI.</em></h1>
-    <p class="hero-subtitle">The first constitutional governance intelligence platform for AI. Score your risk, certify your systems, and navigate every regulatory requirement — from HIPAA to EU AI Act.</p>
-    <div class="hero-actions">
-      <a href="scorer.html" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        Score Your AI Risk
-      </a>
-      <!-- One primary, one secondary, and the third demoted to a plain
-           text link below. There were three of these at equal weight,
-           and the middle one carried no container at all — inline
-           styles, no border, no underline — so it read as a rendering
-           fault rather than a choice. Three equal options is the same
-           as making no recommendation. -->
-      <a href="shield.html" class="btn-ghost">Shield Certification &rsaquo;</a>
-    </div>
-    <p class="hero-aside"><a href="healthcare-intelligence.html">Working in healthcare?
-      There is a separate track for clinical AI.</a></p>
   </div>
 
   <div class="hero-scroll-hint">
@@ -2602,5 +2639,6 @@ function closeDrawer(){ document.getElementById('mob-drawer').classList.remove('
 })();
 </script>
 <script src="lunara-horizon.js" defer></script>
+<script src="lunara-stage.js" defer></script>
 </body>
 </html>

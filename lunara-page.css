@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THE PAGE — the design language, below the shell
+   ═══════════════════════════════════════════════════════════════════
+
+   lunara-shell.css owns the header and the footer. This file owns
+   everything between them: the ground, the type scale, the section
+   furniture, the panels.
+
+   THE PROPORTION, restated because it is easy to lose. Gold is
+   structural, not decorative — it holds under five per cent of any
+   screen. Body text is warm off-white rather than pure white, because
+   #FFF on #000 is a screen, not a printed page. The third neutral is
+   a warm grey, not a cold one. Everything machine-facing — dates,
+   identifiers, digests, article citations — is set in monospace, so
+   the claim that this institution publishes machine-readable evidence
+   is visible in the typography and not only asserted in the prose.
+
+   index.html still carries its own copy of these tokens inline. That
+   is one copy too many and it is the next thing to merge; nothing
+   here has been allowed to diverge from it in the meantime.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root{
+  --ink:      #07080A;
+  --ink-2:    #0C0E12;
+  --ink-3:    #12151A;
+  --white:    #EFEAE0;
+  --grey:     #A49E93;
+  --grey-2:   #8D887F;
+  --gold:     #C4A46B;
+  --gold-lit: #E2C47A;
+  --silver:   rgba(236,240,246,0.92);
+  --hair:     rgba(214,222,234,0.13);
+  --live:     #7FD7C4;
+  --mono:     ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--ink)}
+body{
+  background:var(--ink);color:var(--white);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-weight:300;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;overflow-x:clip;
+}
+a{color:inherit}
+::selection{background:rgba(196,164,107,0.24);color:#fff}
+:focus-visible{outline:2px solid var(--gold-lit);outline-offset:3px;border-radius:3px}
+
+/* ── the ground ─────────────────────────────────────────────────────
+   Grain over flat black, so the background has a surface rather than
+   being an absence. Nothing here animates; the front door does the
+   ceremony, the pages below it do the work.                         */
+#grain{
+  position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+#wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 40% at 76% -6%, rgba(196,164,107,0.075), transparent 68%),
+    radial-gradient(52% 38% at 8% 104%, rgba(150,158,172,0.075), transparent 70%);
+}
+
+/* ── measure ───────────────────────────────────────────────────── */
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(18px,3.2vw,42px);position:relative;z-index:2}
+.wrap-tight{max-width:860px}
+
+/* ── the opening of a page ─────────────────────────────────────── */
+/* Longhand only. `padding:` shorthand here would reset the horizontal
+   padding .wrap sets, and .phead is always used together with it —
+   which is exactly what happened: the page heading sat 42px to the
+   left of every section under it. */
+.phead{padding-top:clamp(104px,15vh,158px);padding-bottom:clamp(30px,4.5vh,52px)}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+}
+h1,.h1{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(38px,6.2vw,72px);line-height:1.03;letter-spacing:-.015em;
+  color:var(--white);
+}
+h1 em,.h1 em{font-style:italic;color:var(--gold-lit)}
+.lede{font-size:clamp(15px,1.5vw,17.5px);color:var(--grey);max-width:62ch;margin-top:22px;line-height:1.7}
+.lede strong{color:var(--white);font-weight:400}
+
+/* ── section furniture ─────────────────────────────────────────── */
+section{position:relative;z-index:2;padding:clamp(44px,7vh,84px) 0}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent)}
+.kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--grey);margin-bottom:16px;
+}
+h2,.h2{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(27px,3.6vw,42px);line-height:1.12;letter-spacing:-.01em;color:var(--white);
+}
+h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:20px;color:var(--white);line-height:1.25}
+.sec-lede{font-size:15px;color:var(--grey);max-width:64ch;margin-top:14px}
+p+p{margin-top:14px}
+
+/* ── panels ─────────────────────────────────────────────────────
+   Dark glass with a hairline that is brighter at the top edge than
+   the bottom, which is what a pane of glass under a light does.   */
+.panel{
+  position:relative;border-radius:14px;padding:clamp(18px,2.2vw,26px);
+  background:linear-gradient(160deg,rgba(22,26,32,0.72),rgba(10,12,16,0.62));
+  border:1px solid var(--hair);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+}
+.panel::before{
+  content:'';position:absolute;inset:0;border-radius:14px;padding:1px;pointer-events:none;
+  background:linear-gradient(160deg,rgba(236,240,246,0.20),transparent 42%,rgba(196,164,107,0.14));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+
+/* ── doors ──────────────────────────────────────────────────────── */
+.doors{display:flex;flex-wrap:wrap;gap:11px;align-items:center;margin-top:30px}
+.door{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 24px;border-radius:100px;text-decoration:none;
+  font-size:14px;transition:transform .25s ease,background .25s ease,border-color .25s ease,filter .25s ease;
+}
+.door.solid{background:linear-gradient(180deg,#F0E6CE,#CBB07C);color:#141210;font-weight:500}
+.door.solid:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.door.line{border:1px solid rgba(214,222,234,0.22);color:var(--white)}
+.door.line:hover{border-color:rgba(240,230,206,0.5);background:rgba(255,255,255,0.045);transform:translateY(-1px)}
+
+/* ── machine-facing type ────────────────────────────────────────── */
+.mono{font-family:var(--mono)}
+code,kbd,samp,pre{font-family:var(--mono)}
+pre.code{
+  overflow-x:auto;border-radius:11px;padding:16px 18px;
+  background:rgba(6,8,11,0.8);border:1px solid var(--hair);
+  font-size:12.5px;line-height:1.8;color:var(--grey);
+}
+pre.code b{color:var(--white);font-weight:400}
+
+/* ── status dots ────────────────────────────────────────────────── */
+.dot{width:6px;height:6px;border-radius:50%;background:var(--grey-2);flex:none;display:inline-block}
+.dot.live{background:var(--live);box-shadow:0 0 9px rgba(127,215,196,0.6)}
+.dot.gold{background:var(--gold-lit);box-shadow:0 0 9px rgba(226,196,122,0.5)}
+.dot.work{background:var(--grey);animation:pulse 1.05s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.28}50%{opacity:1}}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}

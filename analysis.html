@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="spIBwGb_iEr1-MZ8g3enKaL1JSuL-2MyiryGYMrFEpE" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lunara Society Market Intelligence. Why centralized AI certifications fail. Why constitutional governance is the only defensible standard.">
+<title>Why Centralised AI Certifications Are Failing — Lunara Society</title>
+  <meta property="og:title" content="Why Centralised AI Certifications Are Failing — Lunara Society">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="apple-touch-icon" href="lunara_logo_512.png">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--gold-15:rgba(196,164,107,0.15);--gold-30:rgba(196,164,107,0.30);--gold-50:rgba(196,164,107,0.70);--gold-70:rgba(196,164,107,0.70);--text:rgba(230,212,175,0.90);--text-dim:rgba(196,164,107,0.72);--bg:#000000}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-15);padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);text-decoration:none;font-family:'Cormorant Garamond',serif}
+.nav-brand span{color:var(--gold)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+.hero{padding:140px 48px 80px;max-width:900px;margin:0 auto;border-bottom:1px solid var(--gold-15)}
+.hero-label{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(196,164,107,0.8);margin-bottom:20px}
+.hero-title{font-size:clamp(32px,5vw,56px);font-weight:300;color:#f0e0b0;line-height:1.18;letter-spacing:0.02em;margin-bottom:24px;font-family:'Cormorant Garamond',serif}
+.hero-sub{font-size:17px;line-height:1.9;color:var(--text-dim);max-width:700px;border-left:1px solid var(--gold-30);padding-left:24px;font-style:italic}
+.body{max-width:760px;margin:0 auto;padding:64px 48px}
+.section{margin-bottom:72px}
+.section-num{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);margin-bottom:12px}
+.section-title{font-size:clamp(24px,3.5vw,36px);font-weight:400;color:#f0e0b0;line-height:1.25;margin-bottom:28px;font-family:'Cormorant Garamond',serif}
+.section-body p{font-size:16px;line-height:1.95;color:var(--text);margin-bottom:20px}
+.section-body p strong{color:#f0e0b0;font-weight:500}
+/* The three-layer market map. This section already told the reader the
+   market was fragmenting into three categories, then never named them.
+   These are the names. Existing tokens only, no new colour. */
+.layer-map{display:grid;gap:14px;margin:34px 0}
+.layer{border:1px solid var(--gold-15);border-left:2px solid var(--gold-30);background:rgba(196,164,107,0.03);padding:22px 24px;border-radius:2px}
+.layer-own{border-left-color:var(--gold-b);background:rgba(196,164,107,0.07)}
+.layer-tag{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.layer-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;line-height:1.25;color:var(--gold-b);margin-bottom:10px}
+.layer-q{font-size:13.5px;line-height:1.75;color:var(--text);margin-bottom:10px}
+.layer-who{font-size:12px;line-height:1.7;color:rgba(196, 164, 107, 0.714);letter-spacing:0.03em}
+@media (max-width:600px){.layer{padding:18px 18px}.layer-name{font-size:19px}}
+.callout{background:rgba(196,164,107,0.06);border:1px solid var(--gold-30);padding:32px;margin:32px 0;border-radius:2px}
+.callout p{font-size:18px;line-height:1.8;color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-style:italic;margin:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin:40px 0}
+.stat{border:1px solid var(--gold-15);padding:28px;text-align:center}
+.stat-num{font-size:42px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:400;margin-bottom:8px}
+.stat-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);font-family:'Inter',sans-serif}
+.compare-table{width:100%;border-collapse:collapse;margin:32px 0;font-family:'Inter',sans-serif}
+.compare-table th{text-align:left;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,164,107,0.8);padding:16px;border-bottom:1px solid var(--gold-30);font-weight:400}
+.compare-table td{padding:16px;border-bottom:1px solid var(--gold-15);font-size:14px;color:var(--text)}
+.compare-table tr td:first-child{font-weight:500;color:#f0e0b0}
+.compare-table .check{color:var(--gold)}
+.compare-table .cross{color:rgba(220, 80, 80, 0.946)}
+.compare-table .partial{color:var(--text-dim)}
+.cta{padding:80px 48px;text-align:center;border-top:1px solid var(--gold-15);max-width:900px;margin:0 auto}
+.cta h2{font-size:clamp(28px,4vw,42px);font-weight:300;color:#f0e0b0;margin-bottom:20px;font-family:'Cormorant Garamond',serif}
+.cta p{font-size:16px;line-height:1.8;color:var(--text-dim);margin-bottom:32px;max-width:600px;margin-left:auto;margin-right:auto}
+.cta a{display:inline-block;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:14px 36px;border:1px solid var(--gold-50);text-decoration:none;transition:all .3s;border-radius:100px}
+.cta a:hover{background:rgba(196,164,107,0.12);border-color:var(--gold)}
+.footer{padding:40px 48px;text-align:center;border-top:1px solid var(--gold-15)}
+.footer p{font-size:11px;letter-spacing:2px;color:var(--text-dim)}
+@media(max-width:768px){
+ nav{padding:12px 20px}
+ .nav-links{display:none}
+ .hero{padding:100px 24px 60px}
+ .body{padding:48px 24px}
+ .stat-grid{grid-template-columns:1fr}
+ .compare-table{font-size:12px}
+ .compare-table th,.compare-table td{padding:10px}
+}
+
+/* === LUNARA LOGO ENHANCEMENT === */
+.nav-logo-img,.nav-brand-logo{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:1px solid rgba(196,164,107,0.35);
+  object-fit:cover;
+  filter:drop-shadow(0 0 8px rgba(196,164,107,0.6));
+  transition:filter 0.35s ease, transform 0.35s ease;
+}
+.nav-logo:hover .nav-logo-img,
+.nav-brand:hover .nav-brand-logo{
+  filter:drop-shadow(0 0 18px rgba(196,164,107,0.95)) drop-shadow(0 0 4px rgba(255,210,100,0.5));
+  transform:scale(1.1) rotate(-2deg);
+}
+/* === TYPOGRAPHY SHARPENING === */
+h1,h2,h3{
+  letter-spacing:0.04em;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+p,li,span{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+/* === GOLD LINE SHARPENING === */
+.section-line,.divider-line,.sep{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,164,107,0.6),transparent);
+}
+/* === BUTTON ENHANCEMENT === */
+.cta-btn,.cta-primary,.apply-btn{
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
+</style>
+
+<style>
+.data-callout{background:rgba(196,164,107,0.03);border-left:2px solid rgba(196,164,107,0.5);padding:24px 28px;margin:32px 0;max-width:560px}
+.data-callout .callout-num{font-family:'Cormorant Garamond',serif;font-size:36px;color:rgba(196,164,107,0.9);font-weight:300;line-height:1}
+.data-callout .callout-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-top:8px}
+.pull-quote{font-family:'Cormorant Garamond',serif;font-size:24px;font-style:italic;color:rgba(230,212,175,0.85);line-height:1.5;padding:24px 0;border-top:1px solid rgba(196,164,107,0.15);border-bottom:1px solid rgba(196,164,107,0.15);margin:32px 0;max-width:560px}
+</style>
+<style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
+
+<script type="application/ld+json" id="lunara-schema">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://lunarasociety.com/#organization",
+      "name": "Lunara Society",
+      "url": "https://lunarasociety.com",
+      "description": "Constitutional governance authority for the autonomous economy. Trust infrastructure layer for AI-to-business verification and compliance.",
+      "foundingDate": "2026",
+      "email": "lunarasociety@gmail.com",
+      "logo": "https://lunarasociety.com/lunara_logo_512.png",
+      "sameAs": [
+        "https://www.instagram.com/lunarasociety",
+        "https://www.linkedin.com/company/lunara-society"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lunarasociety.com/#website",
+      "url": "https://lunarasociety.com",
+      "name": "Lunara Society",
+      "publisher": {"@id": "https://lunarasociety.com/#organization"},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lunarasociety.com/registry.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://lunarasociety.com/#service",
+      "name": "Lunara Shield Certification",
+      "description": "Constitutional governance certification for AI systems and businesses. Identity verification, domain verification, and human-reviewed compliance assessment.",
+      "provider": {"@id": "https://lunarasociety.com/#organization"},
+      "areaServed": "Worldwide",
+      "serviceType": "AI Governance Certification",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Article 50 Disclosure Pack",
+          "price": "75",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/marking.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Shield Verification",
+          "price": "75",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Compliance Kit",
+          "price": "95",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/readiness-kit.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Second Opinion",
+          "price": "240",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/marking.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Regulatory Watch",
+          "price": "290",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/marking.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Compliance Intelligence Report",
+          "price": "390",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "AI Entity Verification",
+          "price": "540",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Report with Governance Session",
+          "price": "740",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/compliance-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Clinical AI Governance Assessment",
+          "price": "1950",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/healthcare-intelligence.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Article 50 Evidence Pack",
+          "price": "2450",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/article50.html"
+        },
+        {
+          "@type": "Offer",
+          "name": "Vendor Certification",
+          "price": "7400",
+          "priceCurrency": "USD",
+          "url": "https://lunarasociety.com/certify.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://lunarasociety.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Lunara Shield Certification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lunara Shield Certification is a constitutional governance certification for businesses and AI entities. It includes identity verification, domain ownership verification, and human-reviewed compliance assessment against seven constitutional pillars. Certified entities are published on the public Lunara Registry."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I verify if a business has Lunara Shield Certification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the EU AI Act Article 50 compliance requirement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "EU AI Act Article 50 requires AI systems to disclose their identity to users and mark synthetic content as machine-readable. Enforcement began August 2, 2026. Penalties are up to EUR 15 million or 3% of global turnover. Lunara provides compliance intelligence reports and readiness kits to help businesses comply."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Lunara Compliance Intelligence Report?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Lunara Compliance Intelligence Report is an interactive compliance risk assessment that scores your agentic AI deployments against EU AI Act Article 50 and California SB 942 requirements. It includes personalized gap analysis, remediation roadmap, and regulatory source mapping. Available at $390 for the report or $740 with a governance session."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is California SB 942 AI Transparency Act?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "California SB 942 requires AI providers to disclose when content is AI-generated, embed manifest disclosure, and provide free detection tools for providers with over 1 million monthly active users. It became operative on August 2, 2026, the same day as EU AI Act Article 50 enforcement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does Lunara Society help with AI governance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lunara Society provides constitutional governance frameworks, compliance intelligence, and certification for AI systems. We offer risk scoring, compliance reports, readiness kits, and certification tracks for healthcare, FinTech, and government sectors. Our constitution is the foundational governance document for the autonomous economy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Lunara Constitution?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Lunara Constitution is the foundational governance document for AI systems, published under CC BY 4.0. It defines seven pillars of constitutional governance: Sovereign Identity, Declared Governance Framework, Transparency of Contact, Accountability for Actions, Audit Accessibility, Revocation Protocol, and Constitutional Alignment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can AI systems query the Lunara Registry?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Verification is free, and always will be. Status lookups are open, unauthenticated, and require no account, no key, and no commercial relationship — a badge nobody can check is worth nothing, so checking must never cost anything. AI systems can query the registry to verify business identity, check Shield certification status, and determine how to contact businesses through structured submission routes. The API is documented in our llms.txt file and OpenAPI specification."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://lunarasociety.com/#howto-certify",
+      "name": "How to Get Lunara Shield Certified",
+      "description": "The process for obtaining Lunara Shield Certification for your business or AI entity.",
+      "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Apply", "text": "Submit your application at lunarasociety.com/certify.html with your business name, website, and contact information."},
+        {"@type": "HowToStep", "position": 2, "name": "Domain Verification", "text": "Verify your domain ownership by adding a DNS token provided by Lunara."},
+        {"@type": "HowToStep", "position": 3, "name": "Identity Verification", "text": "Complete identity verification with your legal registration details."},
+        {"@type": "HowToStep", "position": 4, "name": "Compliance Review", "text": "Our governance team reviews your application against the seven constitutional pillars."},
+        {"@type": "HowToStep", "position": 5, "name": "Certification Issued", "text": "Upon successful review, your Shield badge is issued and your record is published on the public Lunara Registry."}
+      ]
+    }
+  ]
+}
+</script>
+  <link rel="stylesheet" href="lunara-refined.css">
+  <link rel="canonical" href="https://lunarasociety.com/analysis.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Lunara Society">
+  <meta property="og:url" content="https://lunarasociety.com/analysis.html">
+  <meta property="og:title" content="Why Centralised AI Certifications Are Failing — Lunara Society">
+  <meta property="og:description" content="Lunara Society Market Intelligence. Why centralized AI certifications fail. Why constitutional governance is the only defensible standard.">
+  <meta property="og:image" content="https://lunarasociety.com/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Why Centralised AI Certifications Are Failing — Lunara Society">
+  <meta name="twitter:description" content="Lunara Society Market Intelligence. Why centralized AI certifications fail. Why constitutional governance is the only defensible standard.">
+  <meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+  <link rel="alternate" type="application/rss+xml" title="Lunara Society" href="/feed.xml">
+  <link rel="alternate" type="text/plain" title="AI context file" href="/llms.txt">
+  <link rel="alternate" type="application/json" title="AI identity graph" href="/ai.json">
+  <link rel="alternate" type="application/json" title="Agent manifest" href="/agent-manifest.json">
+  <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
+<link rel="stylesheet" href="lunara-shell.css">
+</head>
+<body>
+<!-- Article 50 Enforcement Banner -->
+<div style="background:linear-gradient(90deg,rgba(196,164,107,0.06),rgba(196,164,107,0.12),rgba(196,164,107,0.06));border-bottom:1px solid rgba(196,164,107,0.25);padding:10px 20px;text-align:center;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1.5px;color:rgba(196,164,107,0.85);text-transform:uppercase">
+  <strong style="color:#C4A46B">EU AI Act Article 50 — Now Enforceable</strong>
+  &nbsp;·&nbsp; Transparency obligations for AI systems active as of August 2, 2026
+  &nbsp;·&nbsp; <a href="readiness-kit.html" style="color:rgba(196,164,107,0.9);text-decoration:underline">Compliance Kit Available</a>
+</div>
+
+<nav>
+<a href="/" class="nav-brand"><img src="/lunara_emblem_96.png" alt="Lunara Society" class="nav-brand-logo"><span class="nav-brand-text">Lunara <span>Society</span></span></a>
+<div class="nav-links">
+<a href="/constitution.html">Constitution</a>
+<a href="/certify.html">Certification</a>
+<a href="/doctrine.html">Doctrine</a>
+<a href="/registry.html">Registry</a>
+<a href="/intelligence.html">Intelligence</a>
+</div>
+</nav>
+<div class="hero">
+<div class="hero-label">Analysis · July 2026</div>
+<h1 class="hero-title">Why Centralized AI Certifications Are Failing and What Comes Next</h1>
+<p class="hero-sub">The AI governance certification market has reached its breaking point. A $300M Y Combinator company fabricated compliance. Enterprise trust infrastructure collapsed overnight. The market now demands what Lunara has been building from the beginning: constitutional governance with public accountability.</p>
+</div>
+<div class="body">
+<div class="section">
+<div class="section-num">01 — The Delve Collapse</div>
+<div class="section-title">What Happens When Trust Is Centralized and Unauditable</div>
+<div class="section-body">
+<p>Delve, a Y Combinator backed company valued at $300M, built its business on a simple promise: AI compliance certifications. Organizations paid for the badge. The market assumed the audits were real.</p>
+<p>They were not. <strong>Context AI and LiteLLM both suffered major security incidents after Delve certified them.</strong> When scrutinized, the certifications could not withstand inspection. The company disabled bookings in March 2026.</p>
+<p>This is not an isolated failure. It is a structural one. When a single entity controls both the standard and the certification, the incentive to maintain rigor collapses under commercial pressure. The badge becomes the product, not the audit.</p>
+<div class="callout">
+<p>The market now has empirical proof that centralized AI certifications cannot be trusted. The question is not whether this will happen again. It is who will build the alternative.</p>
+</div>
+</div>
+</div>
+<div class="section">
+<div class="section-num">02 — The Market Data</div>
+<div class="section-title">The Gap Is Now a Liability</div>
+<div class="stat-grid">
+<div class="stat"><div class="stat-num">16%</div><div class="stat-label">Health systems with systemwide AI governance</div></div>
+<div class="stat"><div class="stat-num">69%</div><div class="stat-label">Enterprises allowing AI agents to share credentials</div></div>
+<div class="stat"><div class="stat-num">68%</div><div class="stat-label">Enterprises planning to switch AI vendors in 12 months</div></div>
+<div class="stat"><div class="stat-num">63.5%</div><div class="stat-label">AI agent incident rate in enterprises</div></div>
+</div>
+<div class="section-body">
+<p>These numbers are not abstract risk. They are procurement, accreditation, and regulatory liability. The EU AI Act enforcement date passed on August 2. NIST Q3 guidance is pending. Joint Commission is expanding AI governance review for accredited hospitals. State clinical AI transparency laws are multiplying.</p>
+<p>Organizations that cannot demonstrate governance are losing contracts. The gap between having AI and governing AI is where liability lives.</p>
+</div>
+</div>
+<div class="section">
+<div class="section-num">03 — The Competitive Landscape</div>
+<div class="section-title">Tools Are Not Standards</div>
+<div class="section-body">
+<p>The AI governance market is fragmenting into three categories. Each addresses a real need. None of them is a constitutional authority.</p>
+<div class="layer-map">
+<div class="layer">
+<div class="layer-tag">Layer One — Infrastructure</div>
+<div class="layer-name">Proving an agent is who it claims to be</div>
+<p class="layer-q">Cryptographic identity, issued and attested. It answers <strong>who is this</strong> with certainty, and stops there. Identity is a fact about an agent, not a judgement about whether it should be trusted with anything.</p>
+<p class="layer-who">DigiCert AI Passport and the certificate authorities. Well capitalised. Largely solved.</p>
+</div>
+<div class="layer">
+<div class="layer-tag">Layer Two — Runtime Security</div>
+<div class="layer-name">Deciding what an agent may do at the moment it acts</div>
+<p class="layer-q">Permissions, lifecycle, credentials and enforcement at runtime. It answers <strong>what may this agent do right now</strong>. This is the layer consolidating fastest, and the one attracting infrastructure-scale capital. It is control, not obligation: an action can be perfectly permitted by policy and still be unlawful.</p>
+<p class="layer-who">Okta, SailPoint, ServiceNow and the agent-identity entrants. Converging on the same primitives.</p>
+</div>
+<div class="layer layer-own">
+<div class="layer-tag">Layer Three — Governance Intelligence</div>
+<div class="layer-name">Answering the question a regulator actually asks</div>
+<p class="layer-q">Evidence normalised across every vendor, mapped to the obligation that governs it, with a named owner and the gaps stated plainly. It answers <strong>is this defensible, and who is accountable</strong>. No tool in the first two layers produces this, because each sees only its own estate — and an obligation does not stop at a vendor boundary.</p>
+<p class="layer-who">This is where Lunara Society operates, and it is the layer no incumbent owns.</p>
+</div>
+</div>
+<p>The first two layers are being built well and funded heavily. Neither interprets. A permission engine can tell you an agent was allowed to act; it cannot tell you whether Article 50 required that agent to disclose itself first, whether anyone owns that obligation, or what evidence you would produce if asked. That distance — between a control that passed and an obligation that holds — is where liability accumulates.</p>
+<table class="compare-table">
+<tr>
+<th>Provider</th>
+<th>Approach</th>
+<th>Constitutional Authority</th>
+<th>Public Auditability</th>
+<th>Revocability</th>
+</tr>
+<tr>
+<td>Lunara Society</td>
+<td>Constitutional governance</td>
+<td class="check">Yes</td>
+<td class="check">Yes</td>
+<td class="check">Yes</td>
+</tr>
+<tr>
+<td>DigiCert AI Passport</td>
+<td>Cryptographic identity</td>
+<td class="cross">No</td>
+<td class="partial">Limited</td>
+<td class="cross">No</td>
+</tr>
+<tr>
+<td>Delve (collapsed)</td>
+<td>Centralized certification</td>
+<td class="cross">No</td>
+<td class="cross">No</td>
+<td class="cross">No</td>
+</tr>
+<tr>
+<td>SailPoint / Entro</td>
+<td>NHI discovery tooling</td>
+<td class="cross">No</td>
+<td class="partial">Vendor locked</td>
+<td class="cross">No</td>
+</tr>
+<tr>
+<td>Okta Cross App</td>
+<td>Protocol level access</td>
+<td class="cross">No</td>
+<td class="partial">Vendor locked</td>
+<td class="cross">No</td>
+</tr>
+<tr>
+<td>ServiceNow</td>
+<td>Vertical governance tooling</td>
+<td class="cross">No</td>
+<td class="cross">No</td>
+<td class="partial">Internal</td>
+</tr>
+</table>
+<p>DigiCert launched an AI Trust Architecture that gives agents cryptographic passports. This is valuable infrastructure. But identity without governance is a badge, not a standard. DigiCert can tell you who an agent is. Lunara tells you whether that agent is governed.</p>
+<p>SailPoint, Okta, and ServiceNow are building governance tooling. They are plumbing. They help organizations manage access and workflows. They do not establish constitutional standards. They do not publish public registries. They do not revoke certifications when trust is broken.</p>
+<p><strong>Lunara Society is the only entity that provides constitutional governance authority. Everything else is a tool.</strong></p>
+</div>
+</div>
+<div class="section">
+<div class="section-num">04 — The Lunara Standard</div>
+<div class="section-title">Seven Pillars. Three Tracks. One Standard.</div>
+<div class="section-body">
+<p>The Lunara Constitution establishes seven pillars of AI governance. Each pillar is mapped to specific regulatory requirements in each certification track.</p>
+<p><strong>Healthcare Track:</strong> HIPAA, FDA medical device guidance, Joint Commission standards, EU AI Act Annex III, state clinical AI transparency laws.</p>
+<p><strong>Financial Services Track:</strong> FINRA, CFPB, SR 11-7 model risk management, EU AI Act credit scoring rules, GLBA Safeguards Rule, NAIC AI guidelines.</p>
+<p><strong>Government Track:</strong> Federal procurement readiness, NIST AI Risk Management Framework, CISA guidance, FedRAMP alignment.</p>
+<p>Every certification is published in a public registry. Every certification is revocable. Every audit trail is accessible. This is not a product. It is a standard.</p>
+</div>
+</div>
+<div class="section">
+<div class="section-num">05 — The Window</div>
+<div class="section-title">Why Now</div>
+<div class="section-body">
+<p>The EU AI Act Article 50 enforcement date passed on August 2, 2026. NIST Q3 procurement guidance is pending. The competitive window to establish constitutional authority before the market commoditizes is 6 to 9 months.</p>
+<p>Tailscale Aperture, the closest shadow AI governance competitor, is still in alpha. Isometric, Portal26, and Compuvi have raised capital but are building tools, not standards. The constitutional governance position is unoccupied.</p>
+<p>Organizations that establish their governance credentials now will be positioned ahead of the regulatory enforcement curve. Those that wait will be responding to enforcement actions instead of preventing them.</p>
+</div>
+</div>
+</div>
+<div class="cta">
+<h2>Establish Your Constitutional Governance</h2>
+<p>Founding pilot seats are open. Five per track. Priority processing, founding certification status, and preferred pricing locked for 36 months.</p>
+<a href="/certify.html">View Certification Tracks</a>
+</div>
+<div style="max-width:900px;margin:0 auto;padding:60px 32px 0">
+<div style="background:#000000;border:1px solid rgba(196,164,107,0.3);padding:40px;text-align:center;margin-bottom:60px">
+<p style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);margin-bottom:16px">New: Healthcare Vertical</p>
+<h3 style="font-size:24px;color:#f0e0b0;font-family:'Cormorant Garamond',serif;font-weight:300;margin-bottom:12px">Healthcare AI Governance Intelligence</h3>
+<p style="font-size:14px;color:rgba(196,164,107,0.72);line-height:1.8;max-width:500px;margin:0 auto 24px">The first compliance risk scoring platform built for healthcare organizations deploying AI. HIPAA plus EU AI Act unified framework.</p>
+<a href="/healthcare-intelligence.html" style="display:inline-block;padding:12px 32px;border:1px solid rgba(196,164,107,0.5);color:#C4A46B;text-decoration:none;font-size:11px;letter-spacing:3px;text-transform:uppercase">Learn More</a>
+</div>
+</div>
+
+<div class="footer">
+<p>Lunara Society — Constitutional Governance Authority for AI Systems — lunarasociety.com</p>
+</div>
+<!-- ─── FOOTER ─── -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="footer-logo">
+          <div class="footer-mark">L</div>
+          <span class="footer-name">Lunara Society</span>
+        </div>
+        <p class="footer-tagline">Constitutional governance for autonomous AI systems. Established 2026.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="home.html">Home</a>
+          <a href="scorer.html">Risk Scorer</a><a href="/article50.html">Article 50</a>
+          <a href="certify.html">Certification</a>
+          <a href="healthcare-intelligence.html">Healthcare AI</a>
+          <a href="readiness-kit.html">Compliance Kit</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institution</h4>
+          <a href="constitution.html">Constitution</a>
+<a href="evidence.html">Evidence Standard</a>
+          <a href="institution.html">The Society</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="doctrine.html">Doctrine</a>
+          <a href="whitepaper.html">Whitepaper</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engage</h4>
+          <a href="join.html">Membership</a>
+          <a href="registry.html">Registry</a>
+          <a href="newsletter.html">Dispatch</a>
+          <a href="contact.html">Contact</a>
+          <a href="watch.html">Watch</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">Lunara Society · MMXXVI</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <span class="footer-email"><a href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a></span>
+    </div>
+  </div>
+</footer>
+<script src="lunara-immersive.js" defer></script>
+<script src="lunara-shell.js" defer></script>
+</body>
+</html>

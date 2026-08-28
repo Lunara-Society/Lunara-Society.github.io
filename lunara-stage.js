@@ -72,6 +72,13 @@
     var next = ahead[0];
     var days = Math.round((isoUTC(next.applies_from) - now) / 86400000);
 
+    /* Two obligations share 2 December 2026, and for a while this panel
+       named one of them while the record page named the other, because
+       each broke the tie its own way. Neither was wrong and the pair
+       still contradicted each other, which is the failure this
+       institution is supposed to be immune to. Name the whole group. */
+    var sameDay = ahead.filter(function (o) { return o.applies_from === next.applies_from; });
+
     /* Counts up to the real figure rather than appearing at it. The
        number is true at every frame — it starts at zero and stops at
        the answer, it does not drift past it and come back. */
@@ -88,7 +95,10 @@
     }
 
     $('lxs-days-unit').textContent = target === 1 ? 'day' : 'days';
-    $('lxs-next').innerHTML = next.name + ' &middot; ' + longDate(next.applies_from);
+    $('lxs-next').textContent = sameDay.length === 1
+      ? next.name + ' \u00b7 ' + longDate(next.applies_from)
+      : sameDay.length + ' obligations bind on ' + longDate(next.applies_from) + ' \u2014 ' +
+        sameDay.map(function (o) { return o.name; }).sort().join('; ');
     $('lxs-inforce').textContent = inForce + ' of ' + corpus.obligations.length +
       ' obligation' + (corpus.obligations.length === 1 ? '' : 's') + ' in this register are already in force.';
   }

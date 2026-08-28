@@ -81,6 +81,16 @@ jobs:
       - name: Exercise the signing layer against tampering
         run: node tools/test-assertions.mjs
 
+      # intelligence.html renders the signed corpus for people. The corpus
+      # is signed; the page is not — so the quiet failure is a corrected
+      # date in the corpus, a signature reissued over the corrected file,
+      # and the page still showing the old date underneath a green
+      # "Verified" badge computed from the new one. The badge would be
+      # telling the truth about a file the reader cannot see, on a page
+      # lying about what is in it. Regenerate and diff instead.
+      - name: Verify the regulatory record page matches the corpus
+        run: node tools/verify-intelligence.mjs
+
       # `npx @lunara/mcp` was printed on the homepage, on the MCP page, in
       # llms.txt, in the corpus index and in Rosario's briefing for weeks
       # while the package did not exist. Every reader who followed our own

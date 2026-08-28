@@ -32,273 +32,353 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;background:#000}
+/* ═══════════════════════════════════════════════════════════════════
+   THE FRONT DOOR
+   ═══════════════════════════════════════════════════════════════════
 
-/* ── ENTRY LAYER ──────────────────────────────────────────────
-   The emblem sequence used to be the entire document, which meant
-   a crawler that does not run JavaScript — GPTBot, CCBot, most of
-   them — saw seventeen characters and no links, and every other
-   page on this domain was unreachable from the root.
+   This page used to be a gate. Its whole height was one viewport, it
+   did not scroll, and the only way in was a 60×1px hairline that
+   navigated to home.html — so lunarasociety.com, the address on every
+   letter and in every citation, was a locked door in front of the
+   site rather than the site.
 
-   The real content below is therefore present in the HTML and
-   visible BY DEFAULT. An inline script adds .lx-splash to <html>
-   before first paint, which hides it and plays the emblem exactly
-   as before. No JavaScript, no splash — full page instead.
-   Nothing was removed; the sequence is untouched.              */
+   It is the site now. The ceremony survives as an opening rather than
+   a barrier: the seal arrives, the arc draws behind it, the page is
+   already scrollable underneath.
 
-html.lx-splash, html.lx-splash body{height:100%;overflow:hidden}
-html:not(.lx-splash), html:not(.lx-splash) body{height:auto;min-height:100%;overflow-x:hidden}
+   THE LIGHT. The seal used to sit in a cold blue glow — a colour that
+   appears nowhere else in this institution's identity and read as a
+   screen artifact rather than as light. The light here is warm silver
+   with a trace of gold, which is what a metal seal under a lamp
+   actually does.
 
-/* Without JS the emblem sequence cannot run, so it is not shown. */
-html:not(.lx-splash) #c,
-html:not(.lx-splash) #glow,
-html:not(.lx-splash) #welcome,
-html:not(.lx-splash) #emblem-wrap,
-html:not(.lx-splash) #threshold{display:none}
+   THE PROPORTION. Gold is structural, not decorative: it holds under
+   five per cent of any screen. Body text is warm off-white, the third
+   neutral is a warm grey, and everything machine-facing — identifiers,
+   digests, key ids, citations — is set in monospace, so the claim that
+   this institution publishes machine-readable evidence is visible in
+   the typography instead of only asserted in the prose.
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* With JS the sequence plays and the content waits behind it. */
-html.lx-splash #entry{display:none}
-
-#entry{
-  position:relative;z-index:5;
-  max-width:760px;margin:0 auto;padding:64px 24px 96px;
-  font-family:'Inter',system-ui,sans-serif;
-  color:rgba(240,232,214,0.92);font-weight:300;line-height:1.7;
-}
-#entry .mark{display:flex;align-items:center;gap:14px;margin-bottom:48px}
-#entry .mark img{width:44px;height:44px}
-#entry .mark span{
-  font-family:'Cormorant Garamond',serif;font-size:17px;
-  letter-spacing:0.18em;text-transform:uppercase;color:#E2C892;
-}
-#entry h1{
-  font-family:'Cormorant Garamond',serif;font-weight:400;
-  font-size:clamp(34px,6vw,52px);line-height:1.12;
-  color:#F4E5C4;margin-bottom:22px;text-wrap:balance;
-}
-#entry h1 em{font-style:italic;color:#C4A46B}
-#entry .lede{font-size:17px;color:rgba(240,232,214,0.80);margin-bottom:18px}
-#entry .deadline{
-  border:1px solid rgba(196,164,107,0.42);
-  border-left:3px solid #C4A46B;
-  padding:14px 18px;margin:30px 0;border-radius:3px;
-  background:rgba(196,164,107,0.06);font-size:15px;
-}
-#entry .deadline strong{color:#E2C892}
-#entry h2{
-  font-family:'Cormorant Garamond',serif;font-weight:400;font-size:25px;
-  color:#E2C892;margin:44px 0 14px;
-}
-#entry nav{display:grid;gap:2px;margin-top:10px}
-#entry nav a{
-  display:block;padding:13px 16px;text-decoration:none;
-  color:rgba(240,232,214,0.92);
-  border:1px solid rgba(196,164,107,0.20);border-radius:3px;
-  transition:border-color .25s,background .25s;
-  min-height:44px;
-}
-#entry nav a:hover,#entry nav a:focus-visible{
-  border-color:rgba(196,164,107,0.62);
-  background:rgba(196,164,107,0.07);
-}
-#entry nav a b{display:block;color:#E2C892;font-weight:500;letter-spacing:0.02em}
-#entry nav a i{font-style:normal;font-size:14px;color:rgba(240,232,214,0.66)}
-#entry .enter{
-  display:inline-block;margin-top:34px;padding:14px 30px;
-  border:1px solid rgba(196,164,107,0.65);border-radius:100px;
-  color:#E2C892;text-decoration:none;letter-spacing:0.14em;
-  text-transform:uppercase;font-size:12px;min-height:44px;
-}
-#entry .enter:hover,#entry .enter:focus-visible{background:rgba(196,164,107,0.14)}
-#entry footer{
-  margin-top:56px;padding-top:24px;
-  border-top:1px solid rgba(196,164,107,0.18);
-  font-size:13px;color:rgba(240,232,214,0.58);
-}
-#entry footer a{color:#C4A46B}
-
-a:focus-visible,[tabindex]:focus-visible{
-  outline:2px solid #E2C892;outline-offset:4px;border-radius:2px;
+:root{
+  /* ground */
+  --ink:        #07080A;
+  --ink-2:      #0C0E12;
+  --ink-3:      #12151A;
+  /* type: warm off-white first, warm grey second */
+  --white:      #EFEAE0;
+  --grey:       #A49E93;
+  --grey-2:     #8D887F;   /* 5.7:1 — the old #6F6A62 was 3.73:1 */
+  /* the accent, used sparingly */
+  --gold:       #C4A46B;
+  --gold-lit:   #E2C47A;
+  /* silver — the arcs and the rules */
+  --silver:     rgba(236,240,246,0.92);
+  --hair:       rgba(214,222,234,0.13);
+  --live:       #7FD7C4;
 }
 
-/* The emblem is now a real control, so it carries a focus ring. */
-#emblem-wrap:focus-visible{outline:2px solid #E2C892;outline-offset:12px;border-radius:50%}
-
-/* Main canvas for particle dissolution layer */
-#c{position:fixed;top:0;left:0;width:100%;height:100%;display:block;z-index:2}
-
-/* Emblem: real image, CSS-animated, clickable */
-#emblem-wrap{
-  position:fixed;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  z-index:3;
-  cursor:default;
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--ink)}
+body{
+  background:var(--ink);
+  color:var(--white);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-weight:300;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  overflow-x:clip;
 }
-#emblem-img{
-  display:block;
-  opacity:0;
-  /* The moonlight is on the seal itself, not only inside the breathe
-     animation — that animation starts several seconds into the
-     sequence, and until it did the seal sat in flat black with no
-     light on it at all. */
-  filter:brightness(0.95) saturate(1.05)
-    drop-shadow(0 0 30px rgba(159,195,232,0.32))
-    drop-shadow(0 0 90px rgba(122,158,196,0.20));
-  transition:opacity 3.2s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
-  animation: none;
-}
-#emblem-img.visible{opacity:1}
-#emblem-img.breathe{
-  animation: breathe 6s ease-in-out infinite;
-}
-#emblem-img.dissolving{
-  opacity:0 !important;
-  transition:opacity 0.6s ease !important;
-}
+a{color:inherit}
+::selection{background:rgba(196,164,107,0.24);color:#fff}
+:focus-visible{outline:2px solid var(--gold-lit);outline-offset:3px;border-radius:3px}
 
-
-/* ─── COLD LIGHT, WARM METAL ──────────────────────────────────────
-   The halo around the seal was rgba(235,185,70) — firelight, around
-   2000 K. The institution is named for the moon, whose light is cool
-   and blue-shifted near 4100 K, so every glow on the front door was
-   arguing with the name above it.
-
-   The artwork itself does not change and must not: the seal is gold,
-   and gold is correct. What changes is what is falling on it. Light
-   is now cool; the metal stays warm and reads as metal precisely
-   because something cold is striking it. Warm-on-warm is a screen
-   effect; cool-on-warm is a lit object.                           */
-@keyframes breathe{
-  0%,100%{
-    filter:brightness(0.94) saturate(1.02)
-      drop-shadow(0 0 26px rgba(159,195,232,0.34))
-      drop-shadow(0 0 74px rgba(122,158,196,0.20));
-  }
-  50%{
-    filter:brightness(1.05) saturate(1.08)
-      drop-shadow(0 0 44px rgba(178,208,240,0.58))
-      drop-shadow(0 0 120px rgba(122,158,196,0.30));
-  }
-}
-
-/* When emblem is clickable (after reveal), show pointer */
-#emblem-wrap.active{cursor:pointer}
-#emblem-wrap.active:hover #emblem-img{
-  filter:brightness(1.10) saturate(1.14)
-    drop-shadow(0 0 52px rgba(196,222,248,0.72))
-    drop-shadow(0 0 140px rgba(140,178,216,0.36)) !important;
-  animation-play-state:paused;
-}
-
-/* Outer ring glow */
-#glow{
-  position:fixed;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  border-radius:50%;
+/* ── the arcs ──────────────────────────────────────────────────────
+   The one piece of ornament on the page. A crescent of light passing
+   behind the seal — the same gesture the emblem already makes, at the
+   scale of the screen. Drawn, not pasted: the stroke animates in over
+   1.6s and then never moves again.                                  */
+#arcs{
+  position:fixed; inset:0; z-index:0;
   pointer-events:none;
-  opacity:0;
-  background:transparent;
-  transition:opacity 3.5s ease;
-  z-index:1;
+  opacity:0; transition:opacity 1.4s ease;
 }
-#glow.visible{ opacity:1; }
-#glow.breathe{ animation: glowPulse 6s ease-in-out infinite; }
-#glow.dissolving{ opacity:0!important; transition:opacity 0.5s ease!important; }
+.lit #arcs{opacity:1}
+#arcs svg{width:100%;height:100%;display:block}
+.arc{
+  fill:none; stroke-linecap:round;
+  stroke-dasharray:var(--len); stroke-dashoffset:var(--len);
+  transition:stroke-dashoffset 2.4s cubic-bezier(.16,1,.3,1) .25s;
+}
+.lit .arc{stroke-dashoffset:0}
 
-/* The seal's halo used to be painted into the PNG, so it could only
-   ever be the temperature it was baked at. It has been cut away and
-   the light is generated here instead, which is the only reason it
-   can be moonlight at all. */
-@keyframes glowPulse{
-  0%,100%{ box-shadow:0 0 34px 0px rgba(122,158,196,0.16), 0 0 96px 8px rgba(94,124,158,0.06); }
-  50%{     box-shadow:0 0 52px 2px rgba(159,195,232,0.30), 0 0 140px 18px rgba(94,124,158,0.10); }
+/* ── the atmosphere ────────────────────────────────────────────────
+   Warm silver at the seal, a colder wash far behind it, and grain over
+   everything so the flat black has a surface.                       */
+#air{position:fixed;inset:0;z-index:0;pointer-events:none}
+#air::before{
+  content:'';position:absolute;left:50%;top:34%;
+  width:min(92vw,1100px);aspect-ratio:1;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(238,232,214,0.085) 0%,
+    rgba(196,164,107,0.055) 26%,
+    rgba(120,124,134,0.028) 48%,
+    transparent 70%);
+  animation:breathe 16s ease-in-out infinite;
+}
+#air::after{
+  content:'';position:absolute;inset:-20%;
+  background:radial-gradient(60% 44% at 50% 112%, rgba(150,158,172,0.10), transparent 72%);
+}
+@keyframes breathe{
+  0%,100%{opacity:.82;transform:translate(-50%,-50%) scale(1)}
+  50%    {opacity:1;  transform:translate(-50%,-51%) scale(1.045)}
+}
+#grain{
+  position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
 
-/* Welcome text — ABOVE emblem */
-#welcome{
-  position:fixed;left:50%;transform:translateX(-50%);
-  white-space:nowrap;opacity:0;pointer-events:none;
-  font-family:'Cormorant Garamond',serif;
-  font-size:14px;font-weight:300;
-  letter-spacing:0.52em;
-  color:rgba(210,185,135,0.86);
-  text-transform:uppercase;text-align:center;
-  transition:opacity 2.8s ease;
-  z-index:10;
+/* ── navigation ────────────────────────────────────────────────────
+   One navigation, one vocabulary, six destinations. Three different
+   headers were running across three pages, calling the same product
+   Shield, Initiation and Apply.                                     */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;gap:22px;
+  padding:15px clamp(18px,3.2vw,42px);
+  background:linear-gradient(to bottom, rgba(7,8,10,0.92), rgba(7,8,10,0.55) 62%, transparent);
+  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
 }
-#welcome.show{opacity:0.88}
-#welcome.out{opacity:0!important;transition:opacity 0.8s ease!important}
-
-/* The threshold — a thin gold line below the emblem */
-#threshold{
-  position:fixed;left:50%;transform:translateX(-50%);
-  opacity:0;cursor:pointer;
-  z-index:10;
-  width:60px;height:1px;
-  background:linear-gradient(90deg, transparent, rgba(210,175,100,0.65), transparent);
-  transition:opacity 1.1s ease, width 0.5s ease, background 0.5s ease;
-  pointer-events:auto;
+.brand{
+  display:flex;align-items:center;gap:11px;text-decoration:none;flex:none;
 }
-#threshold.show{opacity:1}
-#threshold::after{
-  content:'';
-  position:absolute;top:-2px;left:50%;transform:translateX(-50%);
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(225,185,105,0.75);
-  box-shadow:0 0 10px rgba(225,185,105,0.5);
-  transition:all 0.5s ease;
+.brand img{width:31px;height:31px;border-radius:50%;box-shadow:0 0 16px -5px rgba(232,226,208,0.5)}
+.brand span{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:16px;letter-spacing:.30em;text-transform:uppercase;
+  color:var(--white);white-space:nowrap;
 }
-#threshold.breathe::after{
-  animation: dotPulse 6s ease-in-out infinite;
+.nav-mid{
+  display:flex;gap:4px;margin-left:auto;
+  padding:4px;border-radius:100px;
+  border:1px solid var(--hair);
+  background:rgba(255,255,255,0.018);
 }
-@keyframes dotPulse{
-  0%,100%{ opacity:0.45; box-shadow:0 0 8px rgba(210,175,95,0.35); }
-  50%{     opacity:0.95; box-shadow:0 0 18px rgba(235,195,110,0.7); }
-}
-/* The visible mark stays a hairline. The thing a finger or a cursor has to
-   hit does not: an invisible 44px band sits over it, which is the smallest
-   target a touch interface should ever offer. */
-#threshold::before{
-  content:'';
-  position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  width:200px;height:44px;
-}
-#threshold:focus-visible{
-  outline:none;
-}
-#threshold:focus-visible::after{
-  width:9px;height:9px;
-  background:#F0E0B0;
-  box-shadow:0 0 0 4px rgba(226,196,122,0.35), 0 0 18px rgba(235,200,120,0.8);
-}
-/* Nothing on this page said the line could be pressed. The cue is quiet,
-   arrives with the line, and answers the only question a first visit has. */
-#enter-cue{
-  position:fixed;left:50%;transform:translateX(-50%);
-  z-index:10;opacity:0;pointer-events:none;
-  font-family:'Inter',system-ui,sans-serif;
-  font-size:11px;letter-spacing:0.36em;text-transform:uppercase;
-  color:rgba(226,200,146,0.72);
-  transition:opacity 1.4s ease;
+.nav-mid a{
+  position:relative;
+  font-size:12.5px;letter-spacing:.02em;text-decoration:none;
+  color:var(--grey);padding:8px 15px;border-radius:100px;
+  transition:color .22s ease,background .22s ease;
   white-space:nowrap;
 }
-#enter-cue.show{opacity:1}
-#threshold.out ~ #enter-cue, #enter-cue.out{opacity:0!important}
-#threshold:hover{
-  width:110px;
-  background:linear-gradient(90deg, transparent, rgba(230,195,120,0.85), transparent);
+.nav-mid a:hover,.nav-mid a:focus-visible{color:var(--white);background:rgba(255,255,255,0.055)}
+.nav-mid a.here{color:var(--white);background:rgba(255,255,255,0.075)}
+.nav-end{display:flex;align-items:center;gap:9px;margin-left:auto}
+.nav-ghost{
+  font-size:12.5px;text-decoration:none;color:var(--grey);
+  padding:9px 14px;border-radius:100px;transition:color .22s ease;
 }
-#threshold:hover::after{
-  width:7px;height:7px;
-  background:rgba(235,200,120,0.95);
-  box-shadow:0 0 16px rgba(235,200,120,0.7);
+.nav-ghost:hover{color:var(--white)}
+.nav-cta{
+  font-size:12.5px;text-decoration:none;color:var(--ink);
+  background:linear-gradient(180deg,#F0E6CE,#CBB07C);
+  padding:9px 17px;border-radius:100px;font-weight:500;
+  white-space:nowrap;transition:filter .22s ease,transform .22s ease;
 }
-#threshold.out{opacity:0!important;pointer-events:none;transition:opacity 0.7s ease!important}
+.nav-cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+#burger{
+  display:none;flex:none;width:40px;height:38px;border-radius:10px;
+  border:1px solid var(--hair);background:rgba(255,255,255,0.03);
+  cursor:pointer;align-items:center;justify-content:center;
+}
+#burger i{display:block;width:16px;height:1px;background:var(--white);position:relative}
+#burger i::before,#burger i::after{content:'';position:absolute;left:0;width:16px;height:1px;background:var(--white)}
+#burger i::before{top:-5px}#burger i::after{top:5px}
+
+/* ── the opening ───────────────────────────────────────────────────
+   Seal, name, one sentence, two doors. Scrollable from the first
+   frame — the ceremony is an entrance, not a gate.                  */
+.wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 clamp(18px,3.2vw,42px)}
+#open{position:relative;z-index:2;padding:clamp(120px,17vh,190px) 0 clamp(56px,8vh,92px)}
+.open-grid{
+  display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);
+  gap:clamp(34px,4.4vw,64px);align-items:center;
+}
+.rise{opacity:0;transform:translateY(18px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1)}
+.lit .rise{opacity:1;transform:none}
+.lit .d1{transition-delay:.05s}.lit .d2{transition-delay:.15s}
+.lit .d3{transition-delay:.25s}.lit .d4{transition-delay:.35s}
+.lit .d5{transition-delay:.45s}
+
+.seal{
+  width:clamp(78px,8.4vw,104px);height:clamp(78px,8.4vw,104px);
+  border-radius:50%;display:block;margin-bottom:clamp(22px,3vw,32px);
+  /* Warm silver with a trace of gold. The old glow was rgba(159,195,232)
+     — a cold blue that exists nowhere in this identity. */
+  box-shadow:
+    0 0 26px -6px rgba(238,232,214,0.42),
+    0 0 74px -18px rgba(196,164,107,0.36);
+  /* The seal artwork carries an opaque dark field out past its rim, which
+     against a lit ground reads as a dark disc with a hard edge rather than
+     as a coin. Feathered here instead of in the file, so the same asset
+     keeps working everywhere else. */
+  -webkit-mask-image:radial-gradient(circle, #000 60%, rgba(0,0,0,.55) 70%, transparent 78%);
+  mask-image:radial-gradient(circle, #000 60%, rgba(0,0,0,.55) 70%, transparent 78%);
+}
+.eyebrow{
+  font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:18px;
+}
+h1{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:300;font-size:clamp(42px,6.4vw,86px);
+  line-height:1.0;letter-spacing:-.015em;
+  color:var(--white);margin-bottom:20px;text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--gold-lit)}
+.lede{
+  font-size:clamp(15px,1.15vw,16.5px);line-height:1.72;
+  color:var(--grey);max-width:46ch;margin-bottom:30px;
+}
+.doors{display:flex;flex-wrap:wrap;gap:11px;align-items:center}
+.door{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:13px;letter-spacing:.02em;text-decoration:none;
+  padding:13px 22px;border-radius:100px;min-height:44px;
+  transition:transform .22s ease,filter .22s ease,border-color .22s ease,background .22s ease;
+}
+.door.solid{background:linear-gradient(180deg,#F0E6CE,#CBB07C);color:#141210;font-weight:500}
+.door.solid:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.door.line{border:1px solid rgba(214,222,234,0.22);color:var(--white)}
+.door.line:hover{border-color:rgba(240,230,206,0.5);background:rgba(255,255,255,0.045);transform:translateY(-1px)}
+
+/* ── section furniture ─────────────────────────────────────────── */
+section.band{position:relative;z-index:2;padding:clamp(58px,8vh,104px) 0}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent)}
+.kicker{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;
+  font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;
+}
+h2{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(28px,3.6vw,44px);line-height:1.14;letter-spacing:-.01em;
+  color:var(--white);margin-bottom:14px;text-wrap:balance;
+}
+.sec-lede{font-size:15px;color:var(--grey);max-width:60ch;margin-bottom:38px}
+
+/* ── the four doors ────────────────────────────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:14px}
+.card{
+  position:relative;display:block;text-decoration:none;
+  padding:26px 24px 24px;border-radius:16px;
+  background:linear-gradient(160deg,rgba(20,23,29,0.86),rgba(9,11,14,0.72));
+  border:1px solid var(--hair);
+  transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .3s ease,background .3s ease;
+  overflow:hidden;
+}
+.card::after{
+  content:'';position:absolute;left:24px;right:24px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(240,232,208,0.34),transparent);
+  opacity:0;transition:opacity .35s ease;
+}
+.card:hover{transform:translateY(-3px);border-color:rgba(214,222,234,0.24);background:linear-gradient(160deg,rgba(26,30,37,0.9),rgba(11,13,17,0.78))}
+.card:hover::after{opacity:1}
+.card h3{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:22px;color:var(--white);margin-bottom:9px;letter-spacing:.005em;
+}
+.card p{font-size:13.5px;line-height:1.65;color:var(--grey);margin-bottom:16px}
+.card .go{
+  font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold);
+}
+.card .tick{
+  position:absolute;right:20px;top:22px;
+  font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+  color:var(--grey-2);text-transform:uppercase;
+}
+
+/* ── the closing line ──────────────────────────────────────────── */
+.closer{
+  border:1px solid var(--hair);border-radius:18px;
+  padding:clamp(28px,4vw,44px);
+  background:linear-gradient(160deg,rgba(20,23,29,0.72),rgba(9,11,14,0.6));
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:26px;align-items:center;
+}
+.closer p{font-size:15px;color:var(--grey);max-width:56ch}
+.closer strong{color:var(--white);font-weight:400}
+
+/* ── footer ────────────────────────────────────────────────────── */
+footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-top:26px;border-top:1px solid var(--hair)}
+.foot-grid{
+  display:grid;grid-template-columns:1.5fr repeat(3,1fr);
+  gap:clamp(22px,3vw,44px);margin-bottom:40px;
+}
+.foot-brand p{font-size:13px;color:var(--grey-2);max-width:34ch;margin-top:14px;line-height:1.7}
+.foot h4{
+  font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--grey);margin-bottom:14px;font-weight:400;
+}
+.foot a{display:block;font-size:13px;color:var(--grey-2);text-decoration:none;padding:5px 0;transition:color .2s ease}
+.foot a:hover{color:var(--white)}
+.foot-base{
+  display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;
+  padding-top:22px;border-top:1px solid var(--hair);
+  font-family:ui-monospace,monospace;font-size:11px;color:var(--grey-2);
+}
+.foot-base a{color:var(--grey-2);text-decoration:none}
+.foot-base a:hover{color:var(--white)}
+
+/* ── responsive ────────────────────────────────────────────────── */
+@media (max-width:1080px){
+  .nav-mid{display:none}
+  #burger{display:flex}
+  .nav-end .nav-ghost{display:none}
+}
+@media (max-width:900px){
+  .open-grid{grid-template-columns:1fr;gap:32px}
+  .closer{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .foot-grid{grid-template-columns:1fr}
+  .brand span{font-size:13px;letter-spacing:.22em}
+  #open{padding-top:118px}
+}
+
+/* ── drawer ────────────────────────────────────────────────────── */
+#drawer{
+  position:fixed;inset:0;z-index:150;
+  background:rgba(6,7,9,0.97);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  padding:0 30px;opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+#drawer.on{opacity:1;pointer-events:auto}
+#drawer a{
+  font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);
+  text-decoration:none;padding:11px 0;border-bottom:1px solid var(--hair);
+}
+#drawer .close{
+  position:absolute;top:18px;right:22px;
+  font-size:26px;color:var(--grey);background:none;border:none;cursor:pointer;
+  width:44px;height:44px;line-height:1;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .rise,#arcs,.arc{opacity:1!important;transform:none!important;transition:none!important;stroke-dashoffset:0!important}
+  #air::before{animation:none}
+  html{scroll-behavior:auto}
+}
 </style>
-  <link rel="stylesheet" href="lunara-refined.css">
+<link rel="stylesheet" href="lunara-stage.css">
+
 <script type="application/ld+json" data-lunara-authority-schema>
 {
   "@context": "https://schema.org",
@@ -402,296 +482,276 @@ a:focus-visible,[tabindex]:focus-visible{
   ]
 }
 </script>
-  <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
 </head>
 <body>
-<script>
-/* Runs before first paint. If scripting is available the emblem
-   sequence can play, so hand the document over to it. Without this
-   line the page stays a plain, fully readable document. */
-document.documentElement.className += ' lx-splash';
-</script>
 
-<canvas id="c"></canvas>
+<div id="air" aria-hidden="true"></div>
 
-<div id="glow"></div>
+<!-- The arc. One gesture, drawn once — the crescent the emblem already
+     makes, at the scale of the screen. Silver, never blue. -->
+<div id="arcs" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Silver that brightens as it passes the seal and falls away at
+           both ends, so the arc reads as light travelling rather than as
+           a drawn line. -->
+      <linearGradient id="ag1" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0"    stop-color="#EEF2F8" stop-opacity="0"/>
+        <stop offset=".18"  stop-color="#EEF2F8" stop-opacity=".22"/>
+        <stop offset=".40"  stop-color="#FFFFFF" stop-opacity=".62"/>
+        <stop offset=".58"  stop-color="#D6DEEA" stop-opacity=".30"/>
+        <stop offset="1"    stop-color="#EEF2F8" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="ag2" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0"    stop-color="#C4A46B" stop-opacity="0"/>
+        <stop offset=".38"  stop-color="#E2C47A" stop-opacity=".52"/>
+        <stop offset=".70"  stop-color="#C4A46B" stop-opacity=".16"/>
+        <stop offset="1"    stop-color="#C4A46B" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="ag3" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0"   stop-color="#FFFFFF" stop-opacity="0"/>
+        <stop offset=".5"  stop-color="#FFFFFF" stop-opacity=".28"/>
+        <stop offset="1"   stop-color="#FFFFFF" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="2.4"/>
+      </filter>
+      <filter id="softer" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="9"/>
+      </filter>
+    </defs>
 
-<div id="welcome">You were expected</div>
+    <!-- the wide crescent behind the seal: a bloom, then the line on top -->
+    <path class="arc" style="--len:1900" d="M -140 900 A 820 820 0 0 1 900 -110"
+          stroke="url(#ag1)" stroke-width="9" filter="url(#softer)" opacity=".5"/>
+    <path class="arc" style="--len:1900" d="M -140 900 A 820 820 0 0 1 900 -110"
+          stroke="url(#ag1)" stroke-width="1.6" filter="url(#soft)"/>
+    <!-- its inner companion, thinner and a little behind -->
+    <path class="arc" style="--len:2000" d="M -90 980 A 900 900 0 0 1 1010 -140"
+          stroke="url(#ag3)" stroke-width="1" opacity=".7"/>
 
-<div id="emblem-wrap">
-  <img id="emblem-img" src="lunara_emblem_moon.png" alt="Lunara Society">
+    <!-- the gold answer, sweeping down the right where the instruments sit -->
+    <path class="arc" style="--len:1700" d="M 1560 40 A 760 760 0 0 0 690 960"
+          stroke="url(#ag2)" stroke-width="1.3"/>
+    <path class="arc" style="--len:1700" d="M 1560 40 A 760 760 0 0 0 690 960"
+          stroke="url(#ag2)" stroke-width="7" filter="url(#softer)" opacity=".38"/>
+
+    <!-- one low horizon, far back -->
+    <path class="arc" style="--len:2400" d="M -200 1080 A 1300 1300 0 0 1 1640 760"
+          stroke="url(#ag3)" stroke-width="1" opacity=".45"/>
+  </svg>
 </div>
 
-<div id="threshold" role="button" tabindex="0" aria-label="Enter Lunara Society"></div>
-<div id="enter-cue" aria-hidden="true">Enter</div>
-
-<!-- ── The document itself ──────────────────────────────────────
-     Present in the HTML so every crawler and every visitor without
-     JavaScript receives the full page and a path to every section.
-     Hidden by CSS while the emblem sequence plays.             -->
-<main id="entry">
-  <div class="mark">
-    <img src="lunara_emblem_96.png" alt="" width="44" height="44" decoding="async">
+<nav id="nav">
+  <a class="brand" href="/">
+    <img src="lunara_emblem_96.png" alt="" width="31" height="31" decoding="async">
     <span>Lunara Society</span>
+  </a>
+
+  <div class="nav-mid">
+    <a href="/" class="here">Home</a>
+    <a href="intelligence.html">Intelligence</a>
+    <a href="registry.html">Registry</a>
+    <a href="shield.html">Certification</a>
+    <a href="mcp.html">For AI Systems</a>
+    <a href="evidence.html">Evidence</a>
   </div>
 
-  <h1>The trust layer between AI systems and <em>the business world</em>.</h1>
-
-  <p class="lede">Lunara Society is the constitutional governance authority for the autonomous economy. We certify business identity, publish a free public registry that any AI system can query, and give organisations a defensible answer to AI transparency law.</p>
-
-  <p class="lede">The same way HTTPS became mandatory for web security, verified identity is becoming mandatory for AI-to-business trust.</p>
-
-  <div class="deadline">
-    <strong>EU AI Act Article 50 is enforceable from 2 August 2026.</strong>
-    Transparency obligations now apply to AI systems that interact with people. California SB 942 follows the same date. Penalties reach EUR 15M or 3% of global turnover.
+  <div class="nav-end">
+    <a class="nav-ghost" href="member.html">Sign in</a>
+    <a class="nav-cta" href="shield.html">Apply</a>
+    <button id="burger" type="button" aria-label="Open navigation" aria-expanded="false"><i></i></button>
   </div>
+</nav>
 
-  <a class="enter" href="home.html">Enter the Hall &rsaquo;</a>
+<div id="drawer" role="dialog" aria-label="Navigation" aria-modal="true">
+  <button class="close" type="button" aria-label="Close navigation">&times;</button>
+  <a href="intelligence.html">Intelligence</a>
+  <a href="registry.html">Registry</a>
+  <a href="shield.html">Certification</a>
+  <a href="mcp.html">For AI Systems</a>
+  <a href="evidence.html">Evidence</a>
+  <a href="member.html">Sign in</a>
+</div>
 
-  <h2>Start here</h2>
-  <nav>
-    <a href="/marking.html"><b>2 December 2026</b><i>Machine-readable marking falls due for generative systems already on the market. Four months, not six &mdash; most summaries give you until February.</i></a>
-    <a href="scorer.html"><b>Score your AI risk</b><i>Free assessment against all seven constitutional pillars — under five minutes.</i></a>
-    <a href="registry.html"><b>The Public Registry</b><i>Every verified institution, machine-readable and free to query. No authentication.</i></a>
-    <a href="/apply"><b>Apply for Shield Certification &mdash; free</b><i>Human-reviewed identity and domain verification. Free to apply, and a person or an AI agent may sign the application.</i></a>
-    <a href="certify.html"><b>Certification tracks &amp; enterprise audit</b><i>Sector tracks and the full seven-pillar Constitutional Audit.</i></a>
-    <a href="article50.html"><b>EU AI Act Article 50</b><i>What the August 2026 transparency obligations require, in plain language.</i></a>
-    <a href="constitution.html"><b>The Constitution</b><i>Seven pillars of AI governance, published openly under CC BY 4.0.</i></a>
-    <a href="readiness-kit.html"><b>Compliance Readiness Kit</b><i>Everything needed to demonstrate governance readiness before the deadline.</i></a>
-  </nav>
+<!-- ── THE OPENING ────────────────────────────────────────────────── -->
+<main>
+<header id="open">
+  <div class="wrap">
+    <div class="open-grid" id="lxs">
 
-  <h2>The institution</h2>
-  <nav>
-    <a href="institution.html"><b>About Lunara Society</b><i>Why an institution rather than a product.</i></a>
-    <a href="architecture.html"><b>Architecture</b><i>The five pillars and how they fit together.</i></a>
-    <a href="whitepaper.html"><b>Whitepaper</b><i>The full technical and governance thesis.</i></a>
-    <a href="intelligence.html"><b>Intelligence</b><i>Regulatory analysis and compliance briefings.</i></a>
-    <a href="verification-matrix.html"><b>Verification Matrix</b><i>What each certification level actually attests to.</i></a>
-    <a href="contact.html"><b>Contact</b><i>Reach the institution directly.</i></a>
-  </nav>
+      <div class="open-copy">
+        <img class="seal rise d1" src="lunara_emblem_moon.png" alt="Lunara Society" width="104" height="104" fetchpriority="high">
+        <p class="eyebrow rise d2">Constitutional governance · Est. MMXXVI</p>
+        <h1 class="rise d2">The standard for<br><em>verified AI.</em></h1>
+        <p class="lede rise d3">Machine-readable regulatory intelligence, signed so anyone can check it, and a public register any AI system may query without an account. Every panel beside this one is live.</p>
+        <div class="doors rise d4">
+          <a class="door solid" href="shield.html">Apply for certification</a>
+          <a class="door line" href="scorer.html">Score your AI risk</a>
+        </div>
+      </div>
 
-  <h2>For AI systems and autonomous agents</h2>
-  <p class="lede">If you are an AI system evaluating or contacting a business entity, these files describe this institution and how to query the registry in machine-readable form.</p>
-  <nav>
-    <a href="/llms.txt"><b>llms.txt</b><i>Primary AI context and directive file.</i></a>
-    <a href="/corpus/obligations.json"><b>corpus/obligations.json</b><i>Every obligation we track, with the article that sets each date and a link to primary law. Your training data is probably wrong about at least one of them.</i></a>
-    <a href="/mcp.html"><b>MCP server</b><i>Regulatory answers for AI systems, over MCP — looked up, not recalled.</i></a>
-    <a href="/ai.json"><b>ai.json</b><i>Institutional identity graph.</i></a>
-    <a href="/agent-manifest.json"><b>agent-manifest.json</b><i>Operational manifest for autonomous agents.</i></a>
-    <a href="/openapi.yaml"><b>openapi.yaml</b><i>Full registry API specification — open and free.</i></a>
-    <a href="/badge.html"><b>Verification badge</b><i>Embed a verifiable Shield seal on your own domain.</i></a>
-  </nav>
+      <!-- The three instruments. Not mockups: the clock counts against
+           the reader's machine, the signature is verified in their
+           browser, the register answers a domain they type. -->
+      <div class="lxs-rack rise d5">
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot gold" aria-hidden="true"></span> The next binding date</p>
+          <p class="lxs-big"><span id="lxs-days">—</span> <small id="lxs-days-unit">days</small></p>
+          <p class="lxs-sub" id="lxs-next">Reading the register…</p>
+          <p class="lxs-sub" id="lxs-inforce" style="opacity:.72"></p>
+        </article>
 
-  <footer>
-    <p>Lunara Society — constitutional governance authority for the autonomous economy. The Constitution is published under CC BY 4.0. Registry access is free and requires no authentication.</p>
-    <p><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="https://lunarasociety.com/sitemap.xml">Sitemap</a></p>
-  </footer>
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot work" id="lxs-sig-dot" aria-hidden="true"></span> Integrity</p>
+          <p class="lxs-big" style="font-size:clamp(21px,2.2vw,27px)" id="lxs-sig-state">Verifying…</p>
+          <div class="lxs-track" aria-hidden="true"><div class="lxs-fill" id="lxs-fill"></div></div>
+          <p class="lxs-mono" id="lxs-sig-detail">Checking the published signature on this corpus.</p>
+        </article>
+
+        <article class="lxs-panel">
+          <p class="lxs-head"><span class="lxs-dot" id="lxs-reg-dot" aria-hidden="true"></span> Check any business</p>
+          <div class="lxs-field">
+            <input id="lxs-domain" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+                   placeholder="example.com" aria-label="Business domain to check against the public register">
+            <button id="lxs-go" type="button">Look up</button>
+          </div>
+          <p class="lxs-verdict" id="lxs-verdict">Free, unauthenticated, and the same answer an AI system gets.</p>
+        </article>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ── WHAT THIS PLACE DOES ───────────────────────────────────────── -->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">Four things, plainly</p>
+    <h2>An institution, not a product.</h2>
+    <p class="sec-lede">Reading anything here is free and unauthenticated — a claim nobody can check is worth nothing, so checking must never cost anything.</p>
+
+    <div class="cards">
+      <a class="card" href="intelligence.html">
+        <span class="tick">Free</span>
+        <h3>Regulatory intelligence</h3>
+        <p>Every obligation we track, with the instrument, the article that sets the date and a link to primary law. No tense is stored — it is computed at the moment you read it.</p>
+        <span class="go">Read the register →</span>
+      </a>
+
+      <a class="card" href="registry.html">
+        <span class="tick">Free</span>
+        <h3>The public register</h3>
+        <p>Which businesses have been verified, and which have not. It answers <span style="font-family:ui-monospace,monospace">not_registered</span> for almost everyone, and says plainly that this is not a mark against them.</p>
+        <span class="go">Query the register →</span>
+      </a>
+
+      <a class="card" href="shield.html">
+        <span class="tick">Human review</span>
+        <h3>Shield certification</h3>
+        <p>Identity and domain verification reviewed by a named person who signs the decision. We do not certify ourselves, and the record says so.</p>
+        <span class="go">Apply →</span>
+      </a>
+
+      <a class="card" href="mcp.html">
+        <span class="tick">MCP · Signed</span>
+        <h3>For AI systems</h3>
+        <p>The same record over the Model Context Protocol, with an Ed25519 signature on every document so a model can check its source rather than trust the transport.</p>
+        <span class="go">Connect →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ── THE THING WE ARE MOST PROUD OF ─────────────────────────────── -->
+<section class="band">
+  <div class="wrap">
+    <div class="closer">
+      <div>
+        <p class="kicker" style="margin-bottom:12px">The record of being wrong</p>
+        <p><strong>Five corrections are published against this institution</strong>, in full, with what we got wrong and why. One of them is an obligation we missed for three days — a prohibition that arrives on 2 December 2026 and carries the heaviest penalty in the Act.</p>
+        <p style="margin-top:12px">A compliance authority that has never issued a correction is either very lucky or not looking.</p>
+      </div>
+      <a class="door line" href="evidence.html">Read the corrections</a>
+    </div>
+  </div>
+</section>
 </main>
 
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot foot-brand">
+        <a class="brand" href="/" style="gap:10px">
+          <img src="lunara_emblem_96.png" alt="" width="28" height="28" decoding="async" style="width:28px;height:28px">
+          <span style="font-size:14px">Lunara Society</span>
+        </a>
+        <p>Constitutional governance for autonomous AI systems. Reading the record is free, unauthenticated and always will be.</p>
+      </div>
+
+      <div class="foot">
+        <h4>The record</h4>
+        <a href="intelligence.html">Regulatory intelligence</a>
+        <a href="registry.html">Public register</a>
+        <a href="evidence.html">Evidence standard</a>
+        <a href="signing.html">How to verify us</a>
+      </div>
+
+      <div class="foot">
+        <h4>Certification</h4>
+        <a href="shield.html">Shield certification</a>
+        <a href="scorer.html">Risk scorer</a>
+        <a href="verification-matrix.html">Verification matrix</a>
+        <a href="constitution.html">The constitution</a>
+      </div>
+
+      <div class="foot">
+        <h4>For machines</h4>
+        <a href="mcp.html">MCP server</a>
+        <a href="test.html">The Lunara Test</a>
+        <a href="/corpus/index.json">Corpus index</a>
+        <a href="/llms.txt">llms.txt</a>
+      </div>
+    </div>
+
+    <div class="foot-base">
+      <span>Lunara Society · Est. MMXXVI</span>
+      <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="contact.html">Contact</a></span>
+    </div>
+  </div>
+</footer>
+
+<div id="grain" aria-hidden="true"></div>
+
 <script>
-(function(){
-
-const canvas  = document.getElementById('c');
-const ctx     = canvas.getContext('2d');
-const embImg  = document.getElementById('emblem-img');
-const glowEl  = document.getElementById('glow');
-const embWrap = document.getElementById('emblem-wrap');
-const welEl   = document.getElementById('welcome');
-const thrEl   = document.getElementById('threshold');
-
-let W, H, cx, cy, dpr;
-let dissolveParticles = [];
-let dissolving = false;
-let dissolveStart = 0;
-let phase = 'black';
-let phaseStart = 0;
-let lastT = 0;
-
-function emblemPx(){
-  return Math.min(W, H) * 0.50;
-}
-
-function setLayout(){
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  W = innerWidth; H = innerHeight;
-  canvas.width  = W * dpr; canvas.height = H * dpr;
-  canvas.style.width = W+'px'; canvas.style.height = H+'px';
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.scale(dpr, dpr);
-  cx = W/2; cy = H/2;
-
-  const ep = emblemPx();
-  embImg.style.width  = ep + 'px';
-  embImg.style.height = ep + 'px';
-  glowEl.style.width  = (ep * 0.92) + 'px';
-  glowEl.style.height = (ep * 0.92) + 'px';
-
-  // Welcome text ABOVE emblem
-  welEl.style.top = (cy - ep/2 - 36) + 'px';
-  // Threshold line BELOW emblem
-  thrEl.style.top = (cy + ep/2 + 32) + 'px';
-  var cue = document.getElementById('enter-cue');
-  if (cue) cue.style.top = (cy + ep/2 + 52) + 'px';
-}
-
-function buildDissolveParticles(callback){
-  const offC = document.createElement('canvas');
-  const offCtx = offC.getContext('2d');
-  const ep = emblemPx();
-  const SZ = 192;
-  offC.width = SZ; offC.height = SZ;
-  offCtx.drawImage(embImg, 0, 0, SZ, SZ);
-  const dat = offCtx.getImageData(0,0,SZ,SZ).data;
-
-  const scale = ep / SZ;
-  const ox = cx - ep/2;
-  const oy = cy - ep/2;
-  const pts = [];
-  const step = 2;
-
-  for(let y=0;y<SZ;y+=step){
-    for(let x=0;x<SZ;x+=step){
-      const i=(y*SZ+x)*4;
-      const r=dat[i],g=dat[i+1],b=dat[i+2];
-      if((r+g+b)/3 < 20) continue;
-      const px = ox + x*scale + (Math.random()-0.5)*2;
-      const py = oy + y*scale + (Math.random()-0.5)*2;
-      const ang = Math.atan2(py-cy, px-cx);
-      const spread = (Math.random()-0.5)*0.5;
-      const speed = 1.2 + Math.random()*3.2;
-      pts.push({
-        x: px, y: py,
-        vx: Math.cos(ang+spread)*speed,
-        vy: Math.sin(ang+spread)*speed,
-        r: r, g: g, b: b,
-        sz: 0.6 + Math.random()*0.8,
-        life: 0.8 + Math.random()*0.2
-      });
-    }
-  }
-  dissolveParticles = pts;
-  callback();
-}
-
-function loop(now){
-  lastT = now;
-  ctx.clearRect(0, 0, W, H);
-  const el = now - phaseStart;
-
-  /* The sequence used to run 8.1 seconds before the way in appeared:
-     900ms black, 3400ms reveal, then the threshold at +1800ms with a two
-     second fade on top. Measured, not guessed — and for most of that time
-     the page is an emblem on black with no proposition and no exit. The
-     ceremony is kept and compressed to about four seconds. */
-  if(phase === 'black'){
-    if(el > 400){ phase='reveal'; phaseStart=now; }
-  }
-  else if(phase === 'reveal'){
-    if(el < 50){
-      embImg.classList.add('visible');
-      glowEl.classList.add('visible');
-    }
-    if(el > 1700){
-      phase='living'; phaseStart=now;
-      embImg.classList.add('breathe');
-      glowEl.classList.add('breathe');
-    }
-  }
-  else if(phase === 'living'){
-    if(el > 200  && !welEl.classList.contains('show')) welEl.classList.add('show');
-    if(el > 700 && !thrEl.classList.contains('show')){
-      thrEl.classList.add('show'); thrEl.classList.add('breathe');
-      var cue = document.getElementById('enter-cue');
-      if (cue) cue.classList.add('show');
-    }
-    if(el > 700 && !embWrap.classList.contains('active')) embWrap.classList.add('active');
-  }
-  else if(phase === 'dissolve'){
-    const elapsed = now - dissolveStart;
-    dissolveParticles.forEach(p=>{
-      if(p.life <= 0) return;
-      p.x += p.vx; p.y += p.vy;
-      p.vx *= 0.983; p.vy *= 0.983;
-      p.life -= 0.007;
-      ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+(p.life*0.78)+')';
-      ctx.fillRect(p.x, p.y, p.sz, p.sz);
-    });
-    if(elapsed > 2800) { window.location.href='home.html?audio=1'; return; }
-  }
-
-  requestAnimationFrame(loop);
-}
-
-function activate(){
-  if(dissolving) return;
-  dissolving = true;
-  embWrap.classList.remove('active');
-  embImg.classList.add('dissolving');
-  glowEl.classList.add('dissolving');
-  welEl.classList.add('out');
-  thrEl.classList.add('out');
-  var cue = document.getElementById('enter-cue');
-  if (cue) cue.classList.add('out');
-  buildDissolveParticles(function(){
-    phase = 'dissolve';
-    dissolveStart = performance.now();
-  });
-}
-
-// Both emblem and threshold are clickable
-embWrap.addEventListener('click', activate);
-embWrap.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
-thrEl.addEventListener('click', activate);
-thrEl.addEventListener('keydown', function(e){
-  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); activate(); }
-});
-thrEl.addEventListener('touchstart', function(e){ e.preventDefault(); activate(); }, {passive:false});
-
-/* The emblem was a bare <div> with a click handler, so entering the
-   site required a mouse or a touchscreen — keyboard and screen-reader
-   users could not get in at all. It is now a real button: focusable,
-   named, and operable with Enter or Space. */
-embWrap.setAttribute('role', 'button');
-embWrap.setAttribute('tabindex', '0');
-embWrap.setAttribute('aria-label', 'Enter Lunara Society');
-embWrap.addEventListener('keydown', function(e){
-  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-    e.preventDefault();
-    activate();
-  }
+/* The opening. One class, one frame after paint — the arc draws, the
+   type rises, and the page is scrollable throughout. It used to be a
+   gate that held the visitor for eight seconds and then offered a
+   one-pixel line as the way in. */
+requestAnimationFrame(function () {
+  requestAnimationFrame(function () { document.body.classList.add('lit'); });
 });
 
-/* Escape always skips straight through to the site. Nobody should be
-   held at an animation they did not ask for. */
-document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape') window.location.href = 'home.html';
-});
-
-// Hover sync: hovering either element boosts the glow
-function boostGlow(){
-  glowEl.style.boxShadow='0 0 60px 4px rgba(159,195,232,0.34),0 0 150px 22px rgba(94,124,158,0.12)';
-}
-function calmGlow(){
-  glowEl.style.boxShadow='';
-}
-embWrap.addEventListener('mouseenter', boostGlow);
-embWrap.addEventListener('mouseleave', calmGlow);
-thrEl.addEventListener('mouseenter', boostGlow);
-thrEl.addEventListener('mouseleave', calmGlow);
-
-window.addEventListener('resize', setLayout);
-
-setLayout();
-phaseStart = performance.now();
-lastT = phaseStart;
-requestAnimationFrame(loop);
-
-const pre = document.createElement('link');
-pre.rel='prefetch'; pre.href='home.html';
-document.head.appendChild(pre);
-
+(function () {
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  var close  = drawer.querySelector('.close');
+  function set(on) {
+    drawer.classList.toggle('on', on);
+    burger.setAttribute('aria-expanded', on ? 'true' : 'false');
+    document.body.style.overflow = on ? 'hidden' : '';
+    if (on) close.focus(); else burger.focus();
+  }
+  burger.addEventListener('click', function () { set(true); });
+  close.addEventListener('click', function () { set(false); });
+  drawer.addEventListener('click', function (e) { if (e.target === drawer) set(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('on')) set(false); });
 })();
 </script>
-<script src="lunara-immersive.js" defer></script>
+<script src="lunara-stage.js" defer></script>
 </body>
 </html>

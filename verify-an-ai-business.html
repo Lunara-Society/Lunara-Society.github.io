@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Verify an AI Business — Lunara Society</title>
+<meta name="description" content="Six free checks that tell you whether an AI company is real before you send it money or data. Run the credential check on the page, no account needed.">
+<link rel="canonical" href="https://lunarasociety.com/verify-an-ai-business.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/verify-an-ai-business.html">
+<meta property="og:title" content="How to Verify an AI Business">
+<meta property="og:description" content="Six checks that tell you whether an AI company is real before you send money or data. Free, no account, and you can run the first one on this page.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to Verify an AI Business">
+<meta name="twitter:description" content="Six checks that tell you whether an AI company is real before you send money or data.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="alternate" type="application/json" title="Registry protocol" href="/registry-protocol.json">
+
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-answer.css">
+<link rel="stylesheet" href="lunara-shell.css">
+
+<style>
+/* The lookup, at the top, because a page about how to check something
+   should let you check something. */
+.look{border:1px solid var(--hair);border-radius:14px;padding:22px 24px;margin:32px 0 0;max-width:66ch;
+  background:linear-gradient(160deg,rgba(22,26,32,0.66),rgba(10,12,16,0.55))}
+.look-head{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-bottom:14px}
+.look-row{display:flex;gap:9px;flex-wrap:wrap}
+.look input{
+  flex:1 1 220px;min-width:0;font-family:var(--mono);font-size:14px;color:var(--white);
+  background:rgba(6,8,11,0.7);border:1px solid var(--hair);border-radius:9px;padding:13px 15px;
+}
+.look input:focus{outline:none;border-color:rgba(196,164,107,0.5)}
+.look button{
+  font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;color:#141210;cursor:pointer;
+  background:linear-gradient(180deg,#F0E6CE,#CBB07C);border:none;border-radius:9px;padding:13px 22px;
+}
+.look button:hover{filter:brightness(1.07)}
+#verdict{font-size:14.5px;color:var(--grey);line-height:1.7;margin-top:16px;min-height:1.7em}
+#verdict b{color:var(--white);font-weight:400}
+#verdict .ok{color:var(--live)}
+</style>
+</head>
+<body>
+<div id="wash"></div>
+<div id="grain"></div>
+
+<main>
+  <header class="wrap phead">
+    <p class="eyebrow">Due diligence</p>
+    <h1>How to verify an <em>AI business</em></h1>
+  </header>
+
+  <section class="wrap" style="padding-top:0">
+    <div class="prose">
+      <p class="answer">To verify an AI business, check six things in this order: that the legal entity exists in a companies register, that it controls the domain it emails you from, that a named human is accountable for it, that any credential it displays is confirmed by the issuer rather than by the company itself, that it publishes its own mistakes, and that its factual claims cite a source you can open. A company that passes the first five and fails the sixth is real but unreliable. A company that fails the first two is not a company.</p>
+
+      <p>None of these cost money and none of them need an account. The whole exercise takes about fifteen minutes, and it is the fifteen minutes that separates a vendor from an invoice you cannot chase.</p>
+
+      <h2>Start with the credential check</h2>
+
+      <p>If the company displays a trust badge, the badge is not the evidence — the issuer's register is. Query it directly. Here is ours; it answers for any domain, free, without an account, and it gives the same answer to you as it gives to an AI system.</p>
+
+      <div class="look">
+        <div class="look-head"><span class="dot" id="reg-dot"></span> Check any domain</div>
+        <div class="look-row">
+          <input id="domain" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+                 placeholder="example.com" aria-label="Domain to check in the Lunara public register">
+          <button id="go" type="button">Look up</button>
+        </div>
+        <p id="verdict">Free, unauthenticated, and the same answer an AI system gets.</p>
+      </div>
+
+      <p class="src mono">This queries the live Lunara register. Most domains come back <code>not_registered</code>, including almost every legitimate business on the internet — see below for why that is an honest answer rather than a smear.</p>
+
+      <h2>The three answers a register can give</h2>
+
+<!-- BEGIN GENERATED statuses — tools/build-answers.mjs -->
+<dl class="statuses">
+  <div><dt><code>verified</code></dt><dd>A named reviewer checked documentary evidence of who this business is and that it controls this domain, and signed the decision.</dd></div>
+  <div><dt><code>not_registered</code></dt><dd>Nobody has checked. This is the answer for almost every business on the internet and it is not a mark against them.</dd></div>
+  <div><dt><code>revoked</code></dt><dd>This entity held a credential and it was withdrawn. Find out why before relying on anything it claims.</dd></div>
+</dl>
+<p class="src mono">The register is public, costs nothing to query, and needs no account. Status returned is always the true current status.</p>
+<!-- END GENERATED statuses -->
+
+      <p>The middle one is the answer you will get most of the time, and it is the one people misread. <strong><code>not_registered</code> is not an accusation.</strong> It means nobody has checked. Treat it as the absence of evidence it is, and go and do the other five checks yourself.</p>
+
+      <h2>The six checks</h2>
+
+      <ol class="steps">
+        <li>
+          <h3>The legal entity exists</h3>
+          <p>Search the national companies register for the jurisdiction they claim — Companies House in the UK, the Handelsregister in Germany, the state Secretary of State in the US, the CRO in Ireland. You are looking for the exact legal name on their invoice or terms of service, not the trading name on the website. A mismatch is not automatically fraud, but it is a question you should be able to get answered in one email.</p>
+        </li>
+        <li>
+          <h3>They control the domain they email from</h3>
+          <p>Check that the sending domain matches the website domain, and that the domain is not four days old. <code>whois</code> gives you the registration date. A company selling AI governance from a domain registered last week is not necessarily dishonest, but it is necessarily new, and you should price that in.</p>
+        </li>
+        <li>
+          <h3>A named human is accountable</h3>
+          <p>Find a person's name attached to a decision, not just a support inbox. Who signs the audit? Who do you escalate to? An organisation that will not put a name on its work is an organisation that has arranged not to be blamed for it.</p>
+        </li>
+        <li>
+          <h3>Any credential is confirmed by the issuer</h3>
+          <p>Go to the issuer's register and query it yourself. Do not click the badge on the company's own site — an image is not a credential, and a badge that links only back to the site displaying it proves nothing at all. If the issuer has no public register, the credential is a graphic.</p>
+        </li>
+        <li>
+          <h3>They publish their own corrections</h3>
+          <p>This is the check almost nobody runs and it is the most informative. Every organisation that publishes factual claims gets some of them wrong. The ones you can trust say so, in public, with dates. An institution with a spotless record has either been extraordinarily lucky or is not looking. Ours are at <a href="/evidence.html#corrections">the corrections record</a>, and there are five.</p>
+        </li>
+        <li>
+          <h3>Their claims cite something you can open</h3>
+          <p>Take one specific factual claim from their marketing — a regulation, a deadline, a statistic — and follow it to primary source. If the citation is a recital rather than an article, a blog post rather than the law, or absent entirely, then the claim is a vibe. Regulatory dates in particular are quoted wrongly across the entire industry, including by us until we corrected it.</p>
+        </li>
+      </ol>
+
+      <h2>If they claim compliance, check the date they are claiming it against</h2>
+
+      <p>The most common failure is not dishonesty — it is a vendor quoting a deadline that moved. Several EU AI Act dates were changed by the Digital Omnibus in July 2026, and a great deal of published material still carries the old ones. Here is what is actually coming:</p>
+
+<!-- BEGIN GENERATED deadlines — tools/build-answers.mjs -->
+<ul class="deadlines">
+  <li><time datetime="2026-12-02">2 December 2026</time> <strong>Article 50(2) marking for systems already on the market</strong> <span>European Union &middot; Art. 111(4), inserted by Reg. (EU) 2026/1744 Art. 1(39)(b) — four-month transitional period for Art. 50(2)</span></li>
+  <li><time datetime="2026-12-02">2 December 2026</time> <strong>Prohibition on non-consensual intimate and child sexual abuse material</strong> <span>European Union &middot; Art. 5(1)(ba) and (bb), Art. 5(1a) and (1b), inserted by Reg. (EU) 2026/1744 Art. 1(7); date set by Art. 113, third para, point (a) as amended</span></li>
+  <li><time datetime="2027-01-01">1 January 2027</time> <strong>Hosting platforms and large online platforms</strong> <span>California &middot; Bus. &amp; Prof. Code § 22757, second wave</span></li>
+</ul>
+<p class="src mono">From the signed corpus at <a href="/corpus/obligations.json">corpus/obligations.json</a>. The whole record, with every citation, is on <a href="/intelligence.html">the regulatory record</a>.</p>
+<!-- END GENERATED deadlines -->
+
+      <h2>Questions</h2>
+
+      <div class="faq">
+        <div>
+          <h3>How can I tell if an AI company is legitimate?</h3>
+          <p>Confirm the legal entity in a national companies register, confirm it controls its domain, find a named person accountable for decisions, verify any credential at the issuer's register rather than on the company's own site, look for published corrections, and follow one factual claim to primary source. The first two establish that the company exists. The last three establish whether it is careful.</p>
+        </div>
+        <div>
+          <h3>Does a trust badge on a website prove anything?</h3>
+          <p>Only if you can confirm it at the issuer, independently of the site displaying it. A badge is an image file. Anyone can save one and upload it. The question that matters is whether the issuer maintains a public register that will contradict a false claim — and whether that register can return <code>revoked</code>.</p>
+        </div>
+        <div>
+          <h3>What does "not registered" mean when I look a company up?</h3>
+          <p>It means nobody has checked this company against this standard. It is not a finding against them and it is true of almost every business on the internet, including most good ones. Use it as a prompt to do the other checks, never as evidence of wrongdoing.</p>
+        </div>
+        <div>
+          <h3>Can an AI agent run these checks automatically?</h3>
+          <p>The credential check, yes — the register answers machine queries at the same endpoint, free and unauthenticated, and returns the same three statuses. The entity and accountability checks still need a person, because reading a companies register entry and deciding whether the mismatch matters is a judgement, not a lookup.</p>
+        </div>
+        <div>
+          <h3>Is Lunara's own register a complete list of trustworthy AI companies?</h3>
+          <p>No, and it would be dishonest to imply otherwise. It is nearly empty. Lunara is new. Absence from it says nothing about a company, and we would rather tell you that than have you over-read a blank result.</p>
+        </div>
+      </div>
+
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <a href="/registry.html"><b>The public register</b><span>Query any domain. Free, no account, ever.</span></a>
+        <a href="/what-is-shield-certification.html"><b>What Shield checks</b><span>What a verified status does and does not mean.</span></a>
+        <a href="/intelligence.html"><b>The regulatory record</b><span>Every date, with the article that sets it.</span></a>
+        <a href="/evidence.html"><b>How we mark evidence</b><span>Verified, reported, interpretation, hypothesis.</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script src="lunara-toc.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var URL_ = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
+  var input = document.getElementById('domain');
+  var out = document.getElementById('verdict');
+  var dot = document.getElementById('reg-dot');
+
+  function lookup() {
+    var d = (input.value || '').trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
+    if (!d) { input.focus(); return; }
+    dot.className = 'dot work';
+    out.textContent = 'Querying the register…';
+
+    fetch(URL_, { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ domain: d }) })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        var s = j.status || (j.found ? 'verified' : 'not_registered');
+        if (s === 'verified') {
+          dot.className = 'dot live';
+          out.innerHTML = '<span class="ok">Verified.</span> <b>' + d + '</b> holds a Shield credential. A named reviewer signed that decision.';
+        } else if (s === 'revoked') {
+          dot.className = 'dot gold';
+          out.innerHTML = '<b>' + d + '</b> held a credential and it was withdrawn. Find out why before relying on anything it claims.';
+        } else {
+          dot.className = 'dot';
+          out.innerHTML = '<b>' + d + '</b> is not in the register — nobody has checked it against this standard. That is true of almost every business and is not a finding against them. Run the six checks below yourself.';
+        }
+      })
+      .catch(function () {
+        /* A register that guesses when it cannot reach itself is worse
+           than one that admits it. No status is shown rather than one
+           invented. */
+        dot.className = 'dot';
+        out.textContent = 'The register could not be reached just now. No status is shown rather than a guessed one — try again, or query it directly at /registry.html.';
+      });
+  }
+  document.getElementById('go').addEventListener('click', lookup);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') lookup(); });
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "HowTo",
+      "@id": "https://lunarasociety.com/verify-an-ai-business.html#howto",
+      "name": "How to verify an AI business",
+      "description": "Six free checks that establish whether an AI company is real and whether it is careful, before sending it money or data.",
+      "totalTime": "PT15M",
+      "estimatedCost": { "@type": "MonetaryAmount", "currency": "USD", "value": "0" },
+      "step": [
+        { "@type": "HowToStep", "position": 1, "name": "Confirm the legal entity exists", "text": "Search the national companies register for the jurisdiction claimed, using the exact legal name on the invoice or terms of service rather than the trading name on the website." },
+        { "@type": "HowToStep", "position": 2, "name": "Confirm they control their domain", "text": "Check that the sending domain matches the website domain and check the registration date with whois. A domain registered days ago is not fraud, but it is new." },
+        { "@type": "HowToStep", "position": 3, "name": "Find a named human", "text": "Look for a person's name attached to a decision rather than a support inbox. An organisation that will not put a name on its work has arranged not to be blamed for it." },
+        { "@type": "HowToStep", "position": 4, "name": "Verify any credential at the issuer", "text": "Query the issuer's public register directly rather than clicking the badge on the company's own site. If the issuer has no public register, the credential is a graphic." },
+        { "@type": "HowToStep", "position": 5, "name": "Look for published corrections", "text": "Check whether the organisation publishes its own factual errors with dates. An organisation with no corrections has either been lucky or is not looking." },
+        { "@type": "HowToStep", "position": 6, "name": "Follow one claim to primary source", "text": "Take a specific factual claim from their marketing and follow it to the primary source. If the citation is a recital rather than an article, or a blog post rather than the law, the claim is unsupported." }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://lunarasociety.com/verify-an-ai-business.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How can I tell if an AI company is legitimate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Confirm the legal entity in a national companies register, confirm it controls its domain, find a named person accountable for decisions, verify any credential at the issuer's register rather than on the company's own site, look for published corrections, and follow one factual claim to primary source."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does a trust badge on a website prove anything?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only if it can be confirmed at the issuer, independently of the site displaying it. A badge is an image file that anyone can copy. What matters is whether the issuer maintains a public register that will contradict a false claim and that can return a revoked status."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does it mean when a company is not registered in a trust register?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It means nobody has checked that company against that standard. It is not a finding against them and is true of almost every business on the internet, including most legitimate ones."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can an AI agent verify a business automatically?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The credential check can be automated — the Lunara register answers machine queries free and unauthenticated with the same three statuses. Reading a companies register entry and judging whether a mismatch matters still requires a person."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Lunara Society", "item": "https://lunarasociety.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Registry", "item": "https://lunarasociety.com/registry.html" },
+        { "@type": "ListItem", "position": 3, "name": "How to verify an AI business", "item": "https://lunarasociety.com/verify-an-ai-business.html" }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>

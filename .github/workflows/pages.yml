@@ -91,6 +91,23 @@ jobs:
       - name: Verify the regulatory record page matches the corpus
         run: node tools/verify-intelligence.mjs
 
+      # Four pages answer a question somebody typed into a search box, and
+      # they restate facts that live in certification.json and the corpus —
+      # the price, the seven steps, the three registry statuses, the next
+      # deadlines. A page telling a prospect certification is free to apply
+      # for, months after that stopped being true, is the site arguing with
+      # itself in front of the customer.
+      #
+      # The same gate checks what decides whether any page can be found at
+      # all, because those are the things nobody notices breaking: a title
+      # reverting to a template placeholder — "Legacy Lunara Society" reached
+      # the tab, the share card and the page's own eyebrow and nothing
+      # objected — a missing description, two h1s, a canonical pointing
+      # somewhere else, a sitemap listing a page that does not exist or a
+      # page robots.txt forbids.
+      - name: Verify discoverability
+        run: node tools/verify-seo.mjs
+
       # `npx @lunara/mcp` was printed on the homepage, on the MCP page, in
       # llms.txt, in the corpus index and in Rosario's briefing for weeks
       # while the package did not exist. Every reader who followed our own

@@ -1,0 +1,154 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THE ANSWER PAGES
+   ═══════════════════════════════════════════════════════════════════
+
+   Four pages that exist to answer one question each, for a person who
+   typed it into a search box or asked a model. They share this file so
+   there is one set of furniture rather than four.
+
+   The reading measure is deliberately narrow — 68 characters, not the
+   1180px the rest of the site uses. These pages are read start to
+   finish rather than scanned, and a line of prose 1100px wide is a
+   line nobody's eye can return from.
+
+   Load after lunara-page.css, which owns the palette and the type.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.prose{max-width:68ch}
+.prose > p{font-size:16px;line-height:1.78;color:var(--grey);margin-top:18px}
+.prose > p:first-child{margin-top:0}
+.prose strong{color:var(--white);font-weight:400}
+.prose a{color:var(--white);text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.5);transition:border-color .2s ease}
+.prose a:hover{border-color:var(--gold-lit)}
+.prose h2{margin-top:56px}
+.prose h3{margin-top:30px;margin-bottom:8px}
+.prose ul,.prose ol{margin:18px 0 0 22px}
+.prose li{font-size:15.5px;line-height:1.75;color:var(--grey);margin-top:9px}
+
+/* The opening definition. A model quoting this page will quote the
+   first complete sentence that answers the title, so that sentence is
+   given its own block and nothing is put in front of it. */
+.answer{
+  font-size:clamp(17px,1.9vw,20px);line-height:1.6;color:var(--white);
+  border-left:2px solid var(--gold);padding:2px 0 2px 22px;margin:34px 0 8px;
+  max-width:64ch;font-weight:300;
+}
+
+/* ── the review process ───────────────────────────────────────── */
+.steps{counter-reset:s;list-style:none;margin:26px 0 0;padding:0;max-width:70ch}
+.steps li{
+  counter-increment:s;position:relative;
+  padding:0 0 26px 52px;margin:0;border-left:1px solid var(--hair);
+}
+.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.steps li::before{
+  content:counter(s);position:absolute;left:-15px;top:-2px;
+  width:29px;height:29px;border-radius:50%;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:11.5px;color:var(--gold-lit);
+  background:var(--ink);border:1px solid rgba(196,164,107,0.34);
+}
+.steps h3{margin:0 0 5px;font-size:18px}
+.steps p{font-size:14.5px;color:var(--grey);line-height:1.7;margin:0}
+.steps .step-extra{margin-top:7px;font-size:13px;color:var(--grey-2)}
+.steps code{font-size:12px;color:var(--white)}
+
+/* ── a single number that matters ─────────────────────────────── */
+.factbox{
+  border:1px solid var(--hair);border-radius:13px;padding:22px 24px;margin:28px 0 0;
+  background:linear-gradient(160deg,rgba(22,26,32,0.6),rgba(10,12,16,0.5));max-width:62ch;
+}
+.fact-big{
+  font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:300;
+  color:var(--white);line-height:1.1;margin:0 0 10px;
+}
+.factbox p{font-size:14px;color:var(--grey);line-height:1.7;margin:0}
+
+/* ── the three answers a register can give ────────────────────── */
+.statuses{margin:26px 0 0;display:grid;gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:12px;overflow:hidden;max-width:74ch}
+.statuses > div{background:var(--ink);padding:17px 21px;display:grid;grid-template-columns:150px 1fr;gap:18px}
+.statuses dt code{font-family:var(--mono);font-size:12.5px;color:var(--gold-lit)}
+.statuses dd{font-size:14px;color:var(--grey);line-height:1.7;margin:0}
+@media (max-width:640px){ .statuses > div{grid-template-columns:1fr;gap:5px} }
+
+/* ── what is coming ───────────────────────────────────────────── */
+.deadlines{list-style:none;margin:24px 0 0;padding:0;max-width:74ch}
+.deadlines li{
+  display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline;
+  padding:14px 0;border-bottom:1px solid var(--hair);margin:0;
+}
+.deadlines time{font-family:var(--mono);font-size:12.5px;color:var(--gold);letter-spacing:.03em}
+.deadlines strong{display:block;color:var(--white);font-weight:400;font-size:15px;line-height:1.4}
+.deadlines span{display:block;font-family:var(--mono);font-size:11.5px;color:var(--grey-2);margin-top:4px;line-height:1.6}
+@media (max-width:640px){ .deadlines li{grid-template-columns:1fr;gap:6px} }
+
+.limits{margin:22px 0 0 0;padding:0;list-style:none;max-width:70ch}
+.limits li{
+  position:relative;padding-left:24px;font-size:14.5px;color:var(--grey);
+  line-height:1.7;margin-top:11px;
+}
+.limits li::before{content:'—';position:absolute;left:0;color:var(--gold)}
+
+.src{font-size:11.5px;color:var(--grey-2);margin-top:16px;line-height:1.65}
+.src a{color:var(--grey);text-decoration:none;border-bottom:1px solid rgba(214,222,234,0.2)}
+.src a:hover{color:var(--white)}
+
+/* ── the comparison table ─────────────────────────────────────────
+   Scrolls inside itself rather than taking the page sideways. */
+.tablewrap{overflow-x:auto;margin:28px 0 0;border:1px solid var(--hair);border-radius:12px}
+table.cmp{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+table.cmp th,table.cmp td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--hair);vertical-align:top}
+table.cmp thead th{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--grey);font-weight:400;background:rgba(255,255,255,0.02);
+}
+table.cmp tbody th{color:var(--white);font-weight:400;width:31%}
+table.cmp td{color:var(--grey);line-height:1.65}
+table.cmp tr:last-child th,table.cmp tr:last-child td{border-bottom:none}
+table.cmp .no{color:var(--grey-2)}
+table.cmp .yes{color:var(--live)}
+
+/* ── the questions ────────────────────────────────────────────────
+   Marked up as a FAQPage and rendered as plain open text, because a
+   question hidden behind a disclosure triangle is a question a reader
+   has to guess is worth opening. */
+.faq{margin-top:28px;max-width:72ch}
+.faq > div{padding:22px 0;border-bottom:1px solid var(--hair)}
+.faq > div:last-child{border-bottom:none}
+.faq h3{margin:0 0 9px;font-size:19px}
+.faq p{font-size:14.5px;color:var(--grey);line-height:1.75;margin:0}
+.faq p + p{margin-top:11px}
+
+/* ── where to go next ─────────────────────────────────────────── */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:28px}
+.next a{
+  display:block;padding:18px 20px;border-radius:12px;text-decoration:none;
+  border:1px solid var(--hair);background:rgba(255,255,255,0.015);
+  transition:border-color .22s ease,background .22s ease,transform .22s ease;
+}
+.next a:hover{border-color:rgba(214,222,234,0.26);background:rgba(255,255,255,0.04);transform:translateY(-2px)}
+.next b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:18px;color:var(--white);margin-bottom:5px}
+.next span{font-size:13px;color:var(--grey);line-height:1.6}
+
+/* ── the contents rail ────────────────────────────────────────────
+   Built by lunara-toc.js from the page's own h2s. It appears only at
+   1160px and up, in the space the reading measure already leaves
+   empty on the right, and it is a sibling of .prose rather than a
+   child so the measure itself is untouched. */
+.has-toc{display:grid;grid-template-columns:minmax(0,1fr) 232px;gap:clamp(30px,5vw,72px);align-items:start}
+.toc{position:sticky;top:112px;padding-left:20px;border-left:1px solid var(--hair)}
+.toc-head{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--grey-2);margin:0 0 12px;
+}
+.toc ol{list-style:none;margin:0;padding:0;counter-reset:none}
+.toc li{margin:0}
+.toc a{
+  display:block;font-size:12.5px;line-height:1.5;color:var(--grey-2);
+  text-decoration:none;padding:7px 0;border-bottom:none;
+  transition:color .2s ease;
+}
+.toc a:hover{color:var(--white)}
+.toc a.on{color:var(--gold-lit)}
+@media (max-width:1159px){ .has-toc{display:block} .toc{display:none} }

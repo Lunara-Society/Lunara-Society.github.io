@@ -125,8 +125,8 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 }
 .lxf-in{max-width:1280px;margin:0 auto}
 .lxf-grid{
-  display:grid;grid-template-columns:1.5fr repeat(3,1fr);
-  gap:clamp(22px,3vw,44px);margin-bottom:40px;
+  display:grid;grid-template-columns:1.35fr repeat(4,1fr);
+  gap:clamp(18px,2.2vw,34px);margin-bottom:40px;
 }
 .lxf-brand p{font-size:13px;color:var(--lx-grey-2);max-width:34ch;margin:14px 0 0;line-height:1.7}
 .lxf h4{
@@ -145,6 +145,7 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 }
 .lxf-base a{color:var(--lx-grey-2);text-decoration:none}
 .lxf-base a:hover{color:var(--lx-white)}
+@media (max-width:1120px){ .lxf-grid{grid-template-columns:1fr 1fr 1fr} }
 @media (max-width:900px){ .lxf-grid{grid-template-columns:1fr 1fr} }
 @media (max-width:560px){ .lxf-grid{grid-template-columns:1fr} }
 

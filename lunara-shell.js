@@ -44,6 +44,12 @@
       ['verification-matrix.html', 'Verification matrix'],
       ['constitution.html',        'The constitution']
     ]},
+    { head: 'Answers', links: [
+      ['what-is-shield-certification.html', 'What is Shield certification?'],
+      ['verify-an-ai-business.html',        'How to verify an AI business'],
+      ['ai-trust-standards.html',           'AI trust standards'],
+      ['trust-badges.html',                 'What a trust badge proves']
+    ]},
     { head: 'For machines', links: [
       ['mcp.html',            'MCP server'],
       ['test.html',           'The Lunara Test'],
@@ -114,7 +120,11 @@
     '</div>';
 
   function install() {
-    var old = document.querySelector('nav');
+    /* The page's own header, if it has one. Not every <nav> is a
+       header: the answer pages carry a contents rail that is correctly
+       marked up as one, and eating it would be a regression nobody
+       would notice until a reader lost their place. */
+    var old = document.querySelector('nav:not(.lxn):not(.toc)');
     var oldFoot = document.querySelector('footer');
 
     document.body.insertBefore(nav, document.body.firstChild);

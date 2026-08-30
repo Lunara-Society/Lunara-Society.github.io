@@ -821,7 +821,7 @@ function renderResults(data, payload) {
   let html = `
     <div class="hero" style="padding-top:60px;padding-bottom:30px">
       <div class="hero-badge">Assessment Complete</div>
-      <h1 style="font-size:32px">${payload.organization}</h1>
+      <h2 style="font-size:32px">${payload.organization}</h2>
       <p style="color:var(--gold-70)">${data.systemsAssessed} system${data.systemsAssessed > 1 ? 's' : ''} assessed · ${data.obligationsIdentified} obligations identified · ${data.gapsFound} gaps found</p>
     </div>
   `;

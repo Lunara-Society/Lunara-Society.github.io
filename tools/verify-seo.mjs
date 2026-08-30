@@ -27,6 +27,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { render, PAGES as ANSWER_PAGES } from './build-answers.mjs';
+import { render as renderGlossary } from './build-glossary.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lunarasociety.com/';
@@ -64,6 +65,24 @@ for (const p of ANSWER_PAGES) {
       `        committed: ${(h[i] ?? '(end)').trim().slice(0, 110)}\n` +
       `        source:    ${(w[i] ?? '(end)').trim().slice(0, 110)}\n` +
       '        fix: node tools/build-answers.mjs');
+  }
+}
+
+/* ═══ the glossary matches glossary.json ══════════════════════════
+   The vocabulary is emitted three times — prose, DefinedTerm schema,
+   and the JSON itself. Three copies of a definition is exactly the
+   arrangement that ends with a site defining "AI certification" one
+   way in its prose and another in its structured data. */
+{
+  const path = join(ROOT, 'glossary.html');
+  if (!existsSync(path)) err('glossary.html', 'is missing');
+  else {
+    const have = readFileSync(path, 'utf8');
+    try {
+      if (have !== renderGlossary(have)) {
+        err('glossary.html', 'does not match glossary.json — fix: node tools/build-glossary.mjs');
+      }
+    } catch (e) { err('glossary.html', String(e.message)); }
   }
 }
 
@@ -131,6 +150,60 @@ for (const loc of locs) {
 
 const listed = new Set(locs.map((l) => l.slice(SITE.length)).map((r) => (r === '' ? 'index.html' : r)));
 for (const f of files) if (!listed.has(f)) warn('sitemap.xml', `does not list ${f}`);
+
+/* ═══ internal links resolve, and nothing is orphaned ═════════════
+   A link to a file that is not there costs a reader the page and
+   costs the site the crawl. A published page nothing links to is a
+   page a crawler reaches only through the sitemap, which is the
+   weakest signal available — four were in that state, including two
+   with real content on them. */
+const inbound = Object.create(null);
+for (const f of files) inbound[f] = 0;
+
+for (const f of files) {
+  const s = readFileSync(join(ROOT, f), 'utf8');
+  const counted = new Set();
+  for (const m of s.matchAll(/href="([^"]+)"/g)) {
+    const raw = m[1];
+    /* Template literals inside scripts are not links. */
+    if (raw.includes('${') || /^(https?:|mailto:|tel:|data:|javascript:|#)/.test(raw)) continue;
+    let t = raw.split('#')[0].split('?')[0].replace(/^\//, '');
+    if (t === '' || t === './') t = 'index.html';
+    if (!existsSync(join(ROOT, t))) { err(f, `links to ${raw}, which does not exist`); continue; }
+    if (t.endsWith('.html') && t !== f && !counted.has(t)) {
+      counted.add(t);
+      if (t in inbound) inbound[t]++;
+    }
+  }
+}
+
+/* The shell injects a header and footer into every page at runtime, so
+   what it links to is linked from everywhere. */
+const shell = readFileSync(join(ROOT, 'lunara-shell.js'), 'utf8');
+for (const m of shell.matchAll(/'([A-Za-z0-9._-]+\.html)'/g)) {
+  if (m[1] in inbound) inbound[m[1]] += files.length;
+}
+
+for (const f of files) {
+  if (f === 'index.html') continue;
+  if (inbound[f] === 0) err(f, 'is an orphan — no page and no navigation links to it');
+}
+
+/* ═══ nothing published is a stub ═════════════════════════════════ */
+for (const f of files) {
+  const s = readFileSync(join(ROOT, f), 'utf8');
+  const text = s
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<[^>]+>/g, ' ');
+  const words = text.split(/\s+/).filter((w) => /[A-Za-z]{2,}/.test(w)).length;
+  /* The shell adds roughly 60 words of navigation and footer to every
+     page, so the floor is set above that: below it there is nothing on
+     the page but the furniture. */
+  if (words < 120) err(f, `has ${words} words of its own — either give it content or Disallow it in robots.txt`);
+  else if (words < 260) warn(f, `is thin at ${words} words`);
+}
 
 /* ═══ structured data parses ══════════════════════════════════════ */
 for (const f of files) {

@@ -11,6 +11,8 @@
      verify-an-ai-business.html          how do I check a company is real
      ai-trust-standards.html             what should a standard require
      trust-badges.html                   what does a trust badge prove
+     ai-agent-verification.html          how does an agent prove who it
+                                         acts for, and what is unsolved
 
    Pages like these rot faster than any others on a site, because the
    facts in them — the price, the steps, the statuses, the next
@@ -40,7 +42,8 @@ const PAGES = [
   'what-is-shield-certification.html',
   'verify-an-ai-business.html',
   'ai-trust-standards.html',
-  'trust-badges.html'
+  'trust-badges.html',
+  'ai-agent-verification.html'
 ];
 
 const esc = (s) => String(s)

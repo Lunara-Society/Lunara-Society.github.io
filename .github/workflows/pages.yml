@@ -107,6 +107,8 @@ jobs:
       # page robots.txt forbids.
       - name: Verify discoverability
         run: node tools/verify-seo.mjs
+        # verify-seo also regenerates glossary.html from glossary.json and
+        # the answer pages from certification.json, and fails on any drift.
 
       # `npx @lunara/mcp` was printed on the homepage, on the MCP page, in
       # llms.txt, in the corpus index and in Rosario's briefing for weeks

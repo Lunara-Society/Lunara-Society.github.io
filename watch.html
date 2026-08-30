@@ -24,6 +24,16 @@
   .cta-btn.primary{border-color:rgba(196,164,107,0.7);background:rgba(196,164,107,0.1);color:#e8d5a3;}
   .footer{text-align:center;}
   .footer a{color:rgba(196, 164, 107, 0.714);font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;}
+
+.about{max-width:640px;margin:clamp(34px,6vh,60px) auto 0;padding:0 22px 40px;text-align:left}
+.about h2{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;font-size:22px;
+  color:rgba(240,234,224,0.95);margin:30px 0 10px;line-height:1.2;
+}
+.about h2:first-child{margin-top:0}
+.about p{font-size:14.5px;line-height:1.75;color:rgba(164,158,147,0.95);margin:0 0 12px}
+.about a{color:#C4A46B;text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.4)}
+.about a:hover{color:#E2C47A}
 </style>
 
 <script type="application/ld+json" id="lunara-schema">{
@@ -240,6 +250,7 @@
   <link rel="alternate" type="application/json" title="AI identity graph" href="/ai.json">
   <link rel="alternate" type="application/json" title="Agent manifest" href="/agent-manifest.json">
   <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
+<link rel="stylesheet" href="lunara-shell.css">
 </head>
 <body>
 <div class="wrap">
@@ -282,6 +293,42 @@
     <a class="cta-btn primary" href="https://lunarasociety.com/shield.html">Get Certified</a>
     <a class="cta-btn" href="https://lunarasociety.com/join.html">Become a Partner</a>
     <a class="cta-btn" href="https://lunarasociety.com/registry.html">View Registry</a>
+  </div>
+
+  <!-- The page was a video, three buttons and sixty-eight words. A
+       visitor who cannot or will not play a video got nothing at all,
+       which is also what a crawler got. What follows is what the video
+       is about, in text, including the part about what she will not
+       answer. -->
+  <div class="about">
+    <h2>Who Rosario is</h2>
+    <p>Rosario is Lunara's guide to AI regulation: a presenter for the institution's published record,
+    not an oracle and not a lawyer. Her answers come from the same signed corpus every other surface here
+    reads &mdash; <a href="https://lunarasociety.com/corpus/obligations.json">corpus/obligations.json</a> &mdash;
+    so a date she gives is a date you can trace to the article that sets it.</p>
+
+    <h2>What she can answer</h2>
+    <p>When an obligation begins to bind, which instrument creates it, which article fixes the date,
+    what penalty tier attaches where the text sets one, and whether something has been amended since
+    it was first published. Those are lookups against a record, and the record is public. The whole of
+    it, with every citation, is on <a href="https://lunarasociety.com/intelligence.html">the regulatory
+    record</a>.</p>
+
+    <h2>What she will not answer</h2>
+    <p>Whether you are compliant. That is a question about your specific deployment, and answering it
+    from a website would be doing you harm dressed as help. Lunara is a private standards body, not a
+    regulator and not a notified body, and nothing here discharges a legal obligation.</p>
+    <p>She also will not answer from memory. Regulatory dates are quoted wrongly across this industry
+    and several changed in July 2026 when the Digital Omnibus moved them &mdash; including in material
+    published by people who ought to know. If the corpus does not carry an answer, the honest response
+    is that the corpus does not carry it, and that is the response you will get.</p>
+
+    <h2>If you would rather read than watch</h2>
+    <p>Everything Rosario covers is published in text and in JSON, free and without an account.
+    Start with <a href="https://lunarasociety.com/intelligence.html">the regulatory record</a> for the
+    dates, <a href="https://lunarasociety.com/glossary.html">the glossary</a> for the vocabulary, or
+    <a href="https://lunarasociety.com/mcp.html">the MCP server</a> if you would like your own AI system
+    to read the corpus directly rather than recall it.</p>
   </div>
   <div class="footer">
     <a href="https://lunarasociety.com">lunarasociety.com</a>
@@ -348,5 +395,6 @@
   </div>
 </footer>
 <script src="lunara-immersive.js" defer></script>
+<script src="lunara-shell.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent Verification and Trust — Lunara Society</title>
+<meta name="description" content="How an autonomous AI agent proves who it acts for and how the other party checks. Agent identity, credentials, accountability — and what is not built yet.">
+<link rel="canonical" href="https://lunarasociety.com/ai-agent-verification.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/ai-agent-verification.html">
+<meta property="og:title" content="AI Agent Verification and Trust">
+<meta property="og:description" content="How an autonomous AI agent proves who it acts for, and how the party it contacts checks. Identity, credentials, accountability, and what is not built yet.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Agent Verification and Trust">
+<meta name="twitter:description" content="How an autonomous AI agent proves who it acts for, and how the other party checks.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="alternate" type="application/json" title="Agent manifest" href="/agent-manifest.json">
+
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-answer.css">
+<link rel="stylesheet" href="lunara-shell.css">
+</head>
+<body>
+<div id="wash"></div>
+<div id="grain"></div>
+
+<main>
+  <header class="wrap phead">
+    <p class="eyebrow">Autonomous agents</p>
+    <h1>AI agent verification <em>and trust</em></h1>
+  </header>
+
+  <section class="wrap" style="padding-top:0">
+    <div class="prose">
+      <p class="answer">AI agent verification is the problem of establishing, at the moment an autonomous system contacts you, three things: which principal it acts for, whether that principal is real, and whether it was authorised to do what it is about to do. Almost none of that is solved today. What exists — and what Lunara operates — is the second part: a free, unauthenticated public register an agent can query about a business before contacting it, and a machine-readable declaration a business publishes on its own domain saying how it wants to be contacted.</p>
+
+      <p>This page is deliberately clear about the gap. There is a great deal of writing about AI agent certification, AI agent trust frameworks and AI agent registries that describes a system nobody has built. What follows separates what is running from what is design.</p>
+
+      <h2>Why agent identity is a different problem</h2>
+
+      <p>When a person contacts a business, identity is carried by a hundred weak signals — an email domain, a LinkedIn profile, a phone number, a face on a call. None of them is strong, but together they cost effort to fake, and effort is the whole defence.</p>
+
+      <p>An autonomous agent removes the effort. It can generate a plausible identity per contact, at no cost, at any volume. So the weak-signal model does not degrade gracefully — it stops working. <strong>What replaces it has to be a claim that can be checked against a source the claimant does not control.</strong> That is the same requirement a certification has, applied to a party that is software.</p>
+
+      <p>Three distinct things get conflated under "agent identity", and separating them is most of the work:</p>
+
+      <div class="tablewrap">
+        <table class="cmp">
+          <thead>
+            <tr><th scope="col">Question</th><th scope="col">What it actually asks</th><th scope="col">State of the art</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Agent identity</th>
+              <td>Is this the same agent I spoke to before, and can it prove it?</td>
+              <td>Cryptographically straightforward — a keypair and a signature. Rarely deployed.</td>
+            </tr>
+            <tr>
+              <th scope="row">Principal identity</th>
+              <td>Which real legal entity does this agent act for, and does that entity exist?</td>
+              <td class="yes">Solvable now. A register the agent can cite and the recipient can query independently.</td>
+            </tr>
+            <tr>
+              <th scope="row">Authorisation</th>
+              <td>Did that principal actually permit this specific action?</td>
+              <td class="no">Unsolved in the general case. Do not accept a claim of authority as evidence of it.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The middle row is where useful work is possible today, and it is the row Lunara operates in. An agent that can name a verified principal, and a recipient who can confirm that independently, is a large improvement over the present situation even though the third row remains open.</p>
+
+      <h2>What an agent can check today, for free</h2>
+
+      <p>Before contacting a business, an agent can query the public register with that business's domain and get one of three answers. No account, no key, no rate limit, and the same answer a person gets.</p>
+
+<!-- BEGIN GENERATED statuses — tools/build-answers.mjs -->
+<dl class="statuses">
+  <div><dt><code>verified</code></dt><dd>A named reviewer checked documentary evidence of who this business is and that it controls this domain, and signed the decision.</dd></div>
+  <div><dt><code>not_registered</code></dt><dd>Nobody has checked. This is the answer for almost every business on the internet and it is not a mark against them.</dd></div>
+  <div><dt><code>revoked</code></dt><dd>This entity held a credential and it was withdrawn. Find out why before relying on anything it claims.</dd></div>
+</dl>
+<p class="src mono">The register is public, costs nothing to query, and needs no account. Status returned is always the true current status.</p>
+<!-- END GENERATED statuses -->
+
+      <p>An agent should treat <code>not_registered</code> as the absence of information it is, and never as a reason to distrust — it is the answer for almost every business on the internet. The full protocol, including which fields are observed rather than specified, is published at <a href="/corpus/registry-protocol.json">corpus/registry-protocol.json</a>.</p>
+
+      <h2>What a business can publish for agents to read</h2>
+
+      <p>A certified institution publishes a small file at a fixed path on its own domain:</p>
+
+<pre class="code"><b>GET</b> https://example.com/.well-known/lunara-verify.json</pre>
+
+      <p>It declares the credential and the entity's stated contact preferences — including whether automated contact is welcome at all, and whether it requires disclosure. This matters more than it sounds. An agent that reads a contact policy before writing is an agent that can be held to it, and a business that publishes one has said, in a machine-readable place, what consent looks like.</p>
+
+      <p>Our own file is published at that path and deliberately carries no credential, because we do not certify ourselves. The schema is at <a href="/.well-known/lunara-verify.schema.json">lunara-verify.schema.json</a>.</p>
+
+      <h2>Rules for an agent acting on someone's behalf</h2>
+
+      <p>Published in <a href="/certification.json">certification.json</a> so an agent reading the machine-readable specification meets the same limits a person reading the site does:</p>
+
+<!-- BEGIN GENERATED limits — tools/build-answers.mjs -->
+<ul class="limits">
+  <li>Obtain certification without human review — no application is approved automatically or by an AI.</li>
+  <li>Obtain certification by payment alone — payment does not influence the decision.</li>
+  <li>Treat a pending application as a verified status.</li>
+  <li>Submit a legal registration number you cannot source. Leave it blank rather than guess.</li>
+</ul>
+<!-- END GENERATED limits -->
+
+      <p>The one worth restating: <strong>a pending application is not a verified status.</strong> An agent that reports "certification in progress" as though it were certification has manufactured a credential out of a queue position.</p>
+
+      <h2>What Lunara has not built</h2>
+
+      <p>Stated plainly, because the gap between what this field describes and what it runs is where its credibility is being spent:</p>
+
+      <ul class="limits">
+        <li>There is no agent credential. Lunara certifies businesses, not the autonomous systems they operate. An agent cannot currently hold a Lunara status of its own.</li>
+        <li>There is no authorisation mechanism. Nothing here establishes that a principal permitted a specific action, and no register can establish that from the outside.</li>
+        <li>There is no agent identity attestation. An agent may cite a verified principal; nothing yet proves it is the agent that principal deployed.</li>
+        <li>The register is nearly empty, so most lookups return nothing useful yet. That is a fact about Lunara's age, not about the design.</li>
+      </ul>
+
+      <p>An agent credential built on top of verified principal identity is the next thing worth building, and it should be built in that order — a credential for a machine acting on behalf of an entity nobody has verified is a credential for nothing.</p>
+
+      <h2>Connect an agent to the record</h2>
+
+      <p>Separate from verification: an agent that answers regulatory questions should read the record rather than recall it. Regulatory dates are quoted wrongly across the industry, including in training data, and several changed in July 2026. Here is what binds next:</p>
+
+<!-- BEGIN GENERATED deadlines — tools/build-answers.mjs -->
+<ul class="deadlines">
+  <li><time datetime="2026-12-02">2 December 2026</time> <strong>Article 50(2) marking for systems already on the market</strong> <span>European Union &middot; Art. 111(4), inserted by Reg. (EU) 2026/1744 Art. 1(39)(b) — four-month transitional period for Art. 50(2)</span></li>
+  <li><time datetime="2026-12-02">2 December 2026</time> <strong>Prohibition on non-consensual intimate and child sexual abuse material</strong> <span>European Union &middot; Art. 5(1)(ba) and (bb), Art. 5(1a) and (1b), inserted by Reg. (EU) 2026/1744 Art. 1(7); date set by Art. 113, third para, point (a) as amended</span></li>
+  <li><time datetime="2027-01-01">1 January 2027</time> <strong>Hosting platforms and large online platforms</strong> <span>California &middot; Bus. &amp; Prof. Code § 22757, second wave</span></li>
+</ul>
+<p class="src mono">From the signed corpus at <a href="/corpus/obligations.json">corpus/obligations.json</a>. The whole record, with every citation, is on <a href="/intelligence.html">the regulatory record</a>.</p>
+<!-- END GENERATED deadlines -->
+
+      <p>An MCP server exposes this corpus to any AI system directly, so a model can cite the article instead of remembering it — see <a href="/mcp.html">the MCP server</a>.</p>
+
+      <h2>Questions</h2>
+
+      <div class="faq">
+        <div>
+          <h3>What is AI agent verification?</h3>
+          <p>Establishing, when an autonomous system makes contact, which principal it acts for, whether that principal is real, and whether the action was authorised. The first two are addressable today with a public register the recipient can query independently. The third is not solved in the general case.</p>
+        </div>
+        <div>
+          <h3>Can an AI agent be certified?</h3>
+          <p>Not by Lunara, and you should be sceptical of anyone claiming otherwise today. Lunara certifies businesses — the legal entities that operate agents. An agent credential is only meaningful on top of a verified principal, because a credential for a machine acting for an unverified entity certifies nothing.</p>
+        </div>
+        <div>
+          <h3>How does an AI agent verify a business before contacting it?</h3>
+          <p>It queries the public register with the business's domain and receives verified, not_registered or revoked. The endpoint needs no account and no key, and returns the same answer to a machine as to a person. It should also read the business's <code>/.well-known/lunara-verify.json</code>, where one exists, for the stated contact policy.</p>
+        </div>
+        <div>
+          <h3>What is an AI agent credential?</h3>
+          <p>A checkable statement that a specific autonomous system is operated by a specific verified principal, and optionally what it is permitted to do. No widely adopted scheme exists. Anything described as one today is either a self-issued token, which proves nothing to a third party, or a design document.</p>
+        </div>
+        <div>
+          <h3>Does the EU AI Act require AI agents to identify themselves?</h3>
+          <p>Article 50 requires that people are informed when they interact with an AI system, and that certain generated content is machine-readably marked — which is related but narrower than agent identity, and applies to the provider rather than to the agent. The dates and the articles are on <a href="/intelligence.html">the regulatory record</a>, each citing the provision that sets it.</p>
+        </div>
+      </div>
+
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <a href="/mcp.html"><b>The MCP server</b><span>Give an agent the signed corpus directly.</span></a>
+        <a href="/registry.html"><b>The public register</b><span>The endpoint an agent queries. No key.</span></a>
+        <a href="/verify-an-ai-business.html"><b>Verify a business</b><span>The human version of the same six checks.</span></a>
+        <a href="/protocol.html"><b>The Lunara Protocol</b><span>How identity is verified and published.</span></a>
+        <a href="/network.html"><b>Reputation, when machines screen</b><span>What changes when an agent picks the vendor.</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script src="lunara-toc.js" defer></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": "https://lunarasociety.com/ai-agent-verification.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is AI agent verification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Establishing, when an autonomous system makes contact, which principal it acts for, whether that principal is real, and whether the action was authorised. The first two are addressable today with a public register the recipient can query independently; the third is not solved in the general case."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can an AI agent be certified?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not by Lunara. Lunara certifies businesses, the legal entities that operate agents. An agent credential is only meaningful on top of a verified principal, because a credential for a machine acting for an unverified entity certifies nothing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does an AI agent verify a business before contacting it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It queries the public register with the business's domain and receives verified, not_registered or revoked. The endpoint requires no account or key and returns the same answer to a machine as to a person."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is an AI agent credential?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A checkable statement that a specific autonomous system is operated by a specific verified principal, and optionally what it is permitted to do. No widely adopted scheme exists today."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "@id": "https://lunarasociety.com/ai-agent-verification.html#article",
+      "headline": "AI Agent Verification and Trust",
+      "description": "How an autonomous AI agent proves who it acts for, how the recipient checks, and which parts of the problem are not solved.",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+      "publisher": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+      "mainEntityOfPage": "https://lunarasociety.com/ai-agent-verification.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Lunara Society", "item": "https://lunarasociety.com/" },
+        { "@type": "ListItem", "position": 2, "name": "For AI systems", "item": "https://lunarasociety.com/mcp.html" },
+        { "@type": "ListItem", "position": 3, "name": "AI agent verification", "item": "https://lunarasociety.com/ai-agent-verification.html" }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>

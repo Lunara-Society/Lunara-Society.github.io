@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary of AI Trust and Verification — Lunara Society</title>
+<meta name="description" content="AI trust, verification, certification, assurance, governance and agent identity, each defined in one sentence, with what each is commonly confused with.">
+<link rel="canonical" href="https://lunarasociety.com/glossary.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/glossary.html">
+<meta property="og:title" content="Glossary of AI Trust and Verification">
+<meta property="og:description" content="The vocabulary of AI trust, defined once — and what each term is commonly confused with.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glossary of AI Trust and Verification">
+<meta name="twitter:description" content="The vocabulary of AI trust, defined once.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="alternate" type="application/json" title="This glossary as machine-readable JSON" href="/glossary.json">
+
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-answer.css">
+<link rel="stylesheet" href="lunara-shell.css">
+
+<style>
+/* Every term, at the top, because a glossary is a lookup and a lookup
+   that requires scrolling is a document. */
+.gl-index{display:flex;flex-wrap:wrap;gap:7px;margin:30px 0 10px;max-width:78ch}
+.gl-index a{
+  font-size:12.5px;color:var(--grey);text-decoration:none;
+  border:1px solid var(--hair);border-radius:100px;padding:7px 14px;
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.gl-index a:hover{color:var(--white);border-color:rgba(196,164,107,0.45);background:rgba(255,255,255,0.035)}
+
+.gl-list{margin-top:34px;max-width:78ch}
+.gl{padding:28px 0;border-top:1px solid var(--hair);scroll-margin-top:110px}
+.gl:first-child{border-top:none}
+.gl-top{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;margin-bottom:12px}
+.gl h2{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(23px,2.6vw,30px);line-height:1.1;color:var(--white);margin:0;
+}
+.gl-auth{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--grey-2);border:1px solid var(--hair);border-radius:100px;padding:4px 10px;
+  cursor:help;white-space:nowrap;
+}
+/* The definition itself, given the weight it earns: this is the
+   sentence a model lifts and a reader came for. */
+.gl-def{font-size:16.5px;line-height:1.65;color:var(--white);font-weight:300;margin:0;max-width:70ch}
+.gl-note{font-size:14px;line-height:1.75;color:var(--grey);margin:13px 0 0;max-width:72ch}
+.gl-warn{
+  font-size:13.5px;line-height:1.7;color:var(--grey);margin:13px 0 0;max-width:72ch;
+  border-left:2px solid rgba(196,164,107,0.4);padding-left:15px;
+}
+.gl-warn b{color:var(--gold-lit);font-weight:400}
+.gl-see{font-size:12px;color:var(--grey-2);margin:14px 0 0}
+.gl-see a{color:var(--grey);text-decoration:none;border-bottom:1px solid rgba(214,222,234,0.2)}
+.gl-see a:hover{color:var(--white);border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="wash"></div>
+<div id="grain"></div>
+
+<main>
+  <header class="wrap phead">
+    <p class="eyebrow">Vocabulary</p>
+    <h1>The glossary of <em>AI trust</em></h1>
+    <p class="lede">Certification, verification, assurance, governance, conformity assessment and agent identity are used interchangeably in this market and mean different things. Each is defined here in one sentence, with a note on what it is commonly mistaken for. <strong>Every definition is also published as JSON and marked up as a DefinedTerm, so a machine gets the same answer a person does.</strong></p>
+  </header>
+
+  <section class="wrap" style="padding-top:0">
+<!-- BEGIN GENERATED glossary — tools/build-glossary.mjs -->
+<nav class="gl-index" aria-label="All terms"><a href="#ai-accountability">AI accountability</a><a href="#ai-agent">AI agent</a><a href="#ai-agent-accountability">AI agent accountability</a><a href="#ai-agent-credential">AI agent credential</a><a href="#ai-agent-identity">AI agent identity</a><a href="#ai-assurance">AI assurance</a><a href="#ai-certification">AI certification</a><a href="#ai-governance">AI governance</a><a href="#ai-risk-assessment">AI risk assessment</a><a href="#ai-transparency">AI transparency</a><a href="#ai-trust">AI trust</a><a href="#ai-trust-registry">AI trust registry</a><a href="#ai-trust-standard">AI trust standard</a><a href="#ai-vendor-due-diligence">AI vendor due diligence</a><a href="#ai-verification">AI verification</a><a href="#ai-conformity-assessment">Conformity assessment</a><a href="#evidence-mark">Evidence mark</a><a href="#machine-readable-marking">Machine-readable marking</a><a href="#notified-body">Notified body</a><a href="#revocation">Revocation</a><a href="#self-attestation">Self-attestation</a><a href="#shield-certification">Shield Certification</a><a href="#third-party-verification">Third-party verification</a><a href="#trust-badge">Trust badge</a></nav>
+    <div class="gl-list">
+      <article class="gl" id="ai-accountability">
+        <div class="gl-top">
+          <h2>AI accountability</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The existence of an identifiable party who answers for what an AI system did, and a route by which an affected person can reach them.</p>
+        <p class="gl-note">Accountability requires a name. An organisation that will not attach a person to a decision has arranged, deliberately or not, not to be blamed for it.</p>
+        <p class="gl-see">See also <a href="#ai-governance">AI governance</a>, <a href="#ai-agent-accountability">AI agent accountability</a></p>
+      </article>
+      <article class="gl" id="ai-agent">
+        <div class="gl-top">
+          <h2>AI agent</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">An AI system that takes actions in the world on behalf of a principal — sending messages, making requests, transacting — rather than only producing output for a person to act on.</p>
+        <p class="gl-note">The distinction that matters for trust is not autonomy but consequence: an agent that can commit its principal to something is a party to a transaction, and parties to transactions need identity.</p>
+        <p class="gl-see">See also <a href="#ai-agent-identity">AI agent identity</a>, <a href="#ai-agent-credential">AI agent credential</a></p>
+      </article>
+      <article class="gl" id="ai-agent-accountability">
+        <div class="gl-top">
+          <h2>AI agent accountability</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The ability to reach a human or legal entity that answers for what an agent did, after it has done it.</p>
+        <p class="gl-note">The hardest of the agent problems and the least discussed, because it is the one that cannot be solved with a protocol. It requires somebody to have accepted liability in advance.</p>
+        <p class="gl-see">See also <a href="#ai-accountability">AI accountability</a>, <a href="#ai-agent-credential">AI agent credential</a></p>
+      </article>
+      <article class="gl" id="ai-agent-credential">
+        <div class="gl-top">
+          <h2>AI agent credential</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A checkable statement that a specific autonomous system is operated by a specific verified principal, and optionally what it is permitted to do.</p>
+        <p class="gl-note">No widely adopted scheme exists. Anything offered as one today is either self-issued, which proves nothing to a third party, or a design document. A credential for a machine acting for an unverified entity certifies nothing.</p>
+        <p class="gl-see">See also <a href="#ai-agent-identity">AI agent identity</a>, <a href="#ai-certification">AI certification</a></p>
+      </article>
+      <article class="gl" id="ai-agent-identity">
+        <div class="gl-top">
+          <h2>AI agent identity</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">Whether the party you are dealing with is the same agent across interactions, and whether it can prove it.</p>
+        <p class="gl-note">Cryptographically simple and rarely deployed. Distinct from principal identity, which asks which real legal entity the agent acts for — that is the question a register can answer today.</p>
+        <p class="gl-see">See also <a href="#ai-agent">AI agent</a>, <a href="#ai-agent-credential">AI agent credential</a></p>
+      </article>
+      <article class="gl" id="ai-assurance">
+        <div class="gl-top">
+          <h2>AI assurance</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The broader discipline of producing justified confidence about an AI system's behaviour, of which certification, audit, testing, red-teaming and documentation are all instruments.</p>
+        <p class="gl-note">Assurance is the umbrella; certification is one tool under it and one of the weaker ones on its own. A company with a certification and no testing regime has bought the label of the thing.</p>
+        <p class="gl-see">See also <a href="#ai-certification">AI certification</a>, <a href="#ai-conformity-assessment">Conformity assessment</a>, <a href="#ai-risk-assessment">AI risk assessment</a></p>
+      </article>
+      <article class="gl" id="ai-certification">
+        <div class="gl-top">
+          <h2>AI certification</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A decision by a body other than the operator that a defined set of criteria has been met, published so third parties can rely on it, and revocable if it stops being true.</p>
+        <p class="gl-note">The three properties that make it a certification rather than a receipt: someone else decided, the decision is published, and it can be withdrawn. Remove any one and what remains is a graphic.</p>
+        <p class="gl-warn"><b>Not the same as</b> Accreditation, which is certification of the certifier. Almost nothing sold as AI certification today is accredited, including Lunara Shield.</p>
+        <p class="gl-see">See also <a href="#shield-certification">Shield Certification</a>, <a href="#revocation">Revocation</a>, <a href="#trust-badge">Trust badge</a></p>
+      </article>
+      <article class="gl" id="ai-governance">
+        <div class="gl-top">
+          <h2>AI governance</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The internal structures by which an organisation decides what its AI systems may do, who is accountable when they do it, and what happens when something goes wrong.</p>
+        <p class="gl-note">Governance is what an organisation does; certification is what someone else says about it. They are frequently sold together and are not the same purchase.</p>
+        <p class="gl-warn"><b>Not the same as</b> Compliance, which is meeting an external legal requirement. An organisation can be compliant and ungoverned, and vice versa.</p>
+        <p class="gl-see">See also <a href="#ai-accountability">AI accountability</a>, <a href="#ai-risk-assessment">AI risk assessment</a></p>
+      </article>
+      <article class="gl" id="ai-risk-assessment">
+        <div class="gl-top">
+          <h2>AI risk assessment</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A structured examination of what an AI system could do wrong, how likely that is, how bad it would be, and what reduces it.</p>
+        <p class="gl-note">Distinct from a regulatory applicability check, which asks a narrower question: which obligations reach this deployment. The two are routinely sold as one product and answer different questions.</p>
+        <p class="gl-see">See also <a href="#ai-governance">AI governance</a>, <a href="#ai-assurance">AI assurance</a></p>
+      </article>
+      <article class="gl" id="ai-transparency">
+        <div class="gl-top">
+          <h2>AI transparency</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">Making it discoverable that AI was involved, what it did, and on what basis — to users, to affected parties, or to regulators, depending on the obligation.</p>
+        <p class="gl-note">Under the EU AI Act this has a specific and much narrower meaning than in general usage: Article 50 duties to inform people they are interacting with an AI system and to mark certain generated content machine-readably.</p>
+        <p class="gl-see"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" rel="noopener">The instrument</a> &middot; See also <a href="#machine-readable-marking">Machine-readable marking</a>, <a href="#ai-accountability">AI accountability</a></p>
+      </article>
+      <article class="gl" id="ai-trust">
+        <div class="gl-top">
+          <h2>AI trust</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The degree to which claims made about an AI system or its operator can be checked by someone other than the party making them.</p>
+        <p class="gl-note">Used loosely to mean a feeling a user has. That usage is not useful operationally: a feeling cannot be audited and cannot be withdrawn. The version worth building on is a property of the evidence, not of the audience.</p>
+        <p class="gl-see">See also <a href="#ai-verification">AI verification</a>, <a href="#ai-assurance">AI assurance</a>, <a href="#ai-trust-standard">AI trust standard</a></p>
+      </article>
+      <article class="gl" id="ai-trust-registry">
+        <div class="gl-top">
+          <h2>AI trust registry</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A public record of which entities hold a given credential, queryable by anyone, that can return a negative or withdrawn answer as well as a positive one.</p>
+        <p class="gl-note">A register that can only confirm is a customer list. The ability to answer &quot;not registered&quot; and &quot;revoked&quot; is what distinguishes a register from a directory, and it is the property to check first.</p>
+        <p class="gl-see">See also <a href="#ai-trust-standard">AI trust standard</a>, <a href="#revocation">Revocation</a>, <a href="#trust-badge">Trust badge</a></p>
+      </article>
+      <article class="gl" id="ai-trust-standard">
+        <div class="gl-top">
+          <h2>AI trust standard</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A published set of criteria plus the mechanism that determines whether an organisation meets them and makes the answer checkable by outsiders.</p>
+        <p class="gl-note">The criteria are the easy half and the part everyone publishes. The mechanism — who decides, where the decision lives, how it is withdrawn — is what makes the criteria mean anything.</p>
+        <p class="gl-see">See also <a href="#ai-certification">AI certification</a>, <a href="#ai-trust-registry">AI trust registry</a>, <a href="#revocation">Revocation</a></p>
+      </article>
+      <article class="gl" id="ai-vendor-due-diligence">
+        <div class="gl-top">
+          <h2>AI vendor due diligence</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">The checks a buyer runs on an AI supplier before purchase: that the entity exists, controls its domain, has a named accountable party, holds any credential it displays, and cites its factual claims.</p>
+        <p class="gl-note">None of it costs money and it takes about fifteen minutes. The check almost nobody runs — whether the supplier publishes its own corrections — is the most informative one.</p>
+        <p class="gl-see">See also <a href="#ai-verification">AI verification</a>, <a href="#third-party-verification">Third-party verification</a></p>
+      </article>
+      <article class="gl" id="ai-verification">
+        <div class="gl-top">
+          <h2>AI verification</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">Checking a specific factual claim about an AI system or the entity operating it against evidence, and recording the result somewhere the checked party does not control.</p>
+        <p class="gl-note">Verification is narrow by nature. &quot;We verified this company&quot; is not a statement; &quot;we verified this company's legal registration and its control of this domain, on this date&quot; is.</p>
+        <p class="gl-warn"><b>Not the same as</b> Validation, which asks whether a system does what it should. Verification asks whether a stated claim is true.</p>
+        <p class="gl-see">See also <a href="#ai-certification">AI certification</a>, <a href="#third-party-verification">Third-party verification</a>, <a href="#self-attestation">Self-attestation</a></p>
+      </article>
+      <article class="gl" id="ai-conformity-assessment">
+        <div class="gl-top">
+          <h2>Conformity assessment</h2>
+          <span class="gl-auth" title="A legal term of art. The instrument it comes from is linked.">from the law</span>
+        </div>
+        <p class="gl-def">The formal process, defined in EU product legislation and applied to high-risk AI systems by the EU AI Act, of demonstrating that a system meets the requirements set for it.</p>
+        <p class="gl-note">A legal term of art, not a marketing one. For most high-risk categories it is performed by the provider itself; for some it requires a notified body. No private trust standard is a conformity assessment.</p>
+        <p class="gl-see"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" rel="noopener">The instrument</a> &middot; See also <a href="#notified-body">Notified body</a>, <a href="#ai-certification">AI certification</a></p>
+      </article>
+      <article class="gl" id="evidence-mark">
+        <div class="gl-top">
+          <h2>Evidence mark</h2>
+          <span class="gl-auth" title="A term this institution defines and is therefore accountable for.">Lunara’s own</span>
+        </div>
+        <p class="gl-def">The label Lunara attaches to every published claim recording how it is known: verified, reported, interpretation or hypothesis.</p>
+        <p class="gl-note">Applied to our own claims first. A claim read from a cited instrument and a claim we inferred are different objects and should not be printed in the same typeface.</p>
+        <p class="gl-see">See also <a href="#ai-transparency">AI transparency</a></p>
+      </article>
+      <article class="gl" id="machine-readable-marking">
+        <div class="gl-top">
+          <h2>Machine-readable marking</h2>
+          <span class="gl-auth" title="A legal term of art. The instrument it comes from is linked.">from the law</span>
+        </div>
+        <p class="gl-def">Marking generated or manipulated content so that another system can detect it was produced by AI, rather than only a person reading a label.</p>
+        <p class="gl-note">A visible disclosure to a human does not satisfy a machine-readable marking duty. The distinction catches out a lot of otherwise careful implementations.</p>
+        <p class="gl-see"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" rel="noopener">The instrument</a> &middot; See also <a href="#ai-transparency">AI transparency</a></p>
+      </article>
+      <article class="gl" id="notified-body">
+        <div class="gl-top">
+          <h2>Notified body</h2>
+          <span class="gl-auth" title="A legal term of art. The instrument it comes from is linked.">from the law</span>
+        </div>
+        <p class="gl-def">An organisation designated by an EU member state to carry out conformity assessment where the law requires an independent one.</p>
+        <p class="gl-note">Designation is a legal act by a state. An organisation is either notified or it is not, and it is a matter of public record. Lunara Society is not a notified body.</p>
+        <p class="gl-see"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" rel="noopener">The instrument</a> &middot; See also <a href="#ai-conformity-assessment">Conformity assessment</a></p>
+      </article>
+      <article class="gl" id="revocation">
+        <div class="gl-top">
+          <h2>Revocation</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">Withdrawal of a credential by its issuer, without the holder's consent, served thereafter to everyone who queries.</p>
+        <p class="gl-note">The single property that decides whether a credential carries information. A status that cannot be taken away says only what was true on the day it was granted, to whoever paid for it.</p>
+        <p class="gl-see">See also <a href="#ai-certification">AI certification</a>, <a href="#ai-trust-registry">AI trust registry</a></p>
+      </article>
+      <article class="gl" id="self-attestation">
+        <div class="gl-top">
+          <h2>Self-attestation</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A statement an organisation makes about itself, with no external check.</p>
+        <p class="gl-note">Legitimate, fast, cheap, and better than nothing — but it is a description rather than a verification, and displaying it as a badge is where it becomes misleading. If nobody checked, the artefact should say nobody checked.</p>
+        <p class="gl-see">See also <a href="#third-party-verification">Third-party verification</a>, <a href="#trust-badge">Trust badge</a></p>
+      </article>
+      <article class="gl" id="shield-certification">
+        <div class="gl-top">
+          <h2>Shield Certification</h2>
+          <span class="gl-auth" title="A term this institution defines and is therefore accountable for.">Lunara’s own</span>
+        </div>
+        <p class="gl-def">Lunara's human-reviewed verification that a business is legally registered and controls the domain it operates from, published to a free public register and revocable.</p>
+        <p class="gl-note">It checks two things carefully rather than everything vaguely. It does not audit a model, and it is not a regulatory approval — no private certification discharges a legal obligation.</p>
+        <p class="gl-see">See also <a href="#ai-certification">AI certification</a>, <a href="#revocation">Revocation</a>, <a href="#ai-trust-registry">AI trust registry</a></p>
+      </article>
+      <article class="gl" id="third-party-verification">
+        <div class="gl-top">
+          <h2>Third-party verification</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">Verification performed by a party with no commercial interest in the outcome, as distinct from the operator checking itself or a customer checking its supplier.</p>
+        <p class="gl-note">Strictly, a body paid by the entity it certifies is second-party in economic substance whatever it is called, which is why the withdrawal mechanism matters more than the label.</p>
+        <p class="gl-warn"><b>Not the same as</b> Independent verification, used interchangeably in marketing. Independence is a claim about incentives; third-party is a claim about who performed the check.</p>
+        <p class="gl-see">See also <a href="#ai-verification">AI verification</a>, <a href="#self-attestation">Self-attestation</a></p>
+      </article>
+      <article class="gl" id="trust-badge">
+        <div class="gl-top">
+          <h2>Trust badge</h2>
+          <span class="gl-auth" title="Common usage in the AI assurance field, defined as neutrally as we can manage.">the field</span>
+        </div>
+        <p class="gl-def">A visual mark displayed by an organisation to signal a credential. On its own it proves nothing, because it is an image file that anyone can copy.</p>
+        <p class="gl-note">The badge is never the evidence. The issuer's register is. A badge worth displaying is one that queries that register when the page renders, so a withdrawn credential stops displaying without the certified party's involvement.</p>
+        <p class="gl-see">See also <a href="#ai-trust-registry">AI trust registry</a>, <a href="#revocation">Revocation</a></p>
+      </article>
+    </div>
+    <p class="src mono">24 terms &middot; source <a href="/glossary.json">glossary.json</a> v1.0.0 &middot; CC BY 4.0 &mdash; quote them, with attribution</p>
+<!-- END GENERATED glossary -->
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <section class="wrap wrap-tight">
+    <p class="kicker">Using these</p>
+    <h2 class="h2">Quote them</h2>
+    <p class="sec-lede">The glossary is CC BY 4.0. Take a definition, use it, attribute it. If one of them is wrong, that is a defect and we would rather hear it than keep it &mdash; corrections against this institution are published in full, and there are five so far.</p>
+    <div class="doors">
+      <a class="door line" href="/glossary.json">The machine-readable version</a>
+      <a class="door line" href="/evidence.html#corrections">Our corrections</a>
+      <a class="door line" href="/contact.html">Tell us we are wrong</a>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+
+<!-- BEGIN GENERATED glossary-schema — tools/build-glossary.mjs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": "https://lunarasociety.com/glossary.html#glossary",
+  "name": "The Lunara glossary of AI trust and verification",
+  "description": "The vocabulary of AI trust, verification, certification, assurance, governance and agent identity, defined once and used consistently across lunarasociety.com.",
+  "inLanguage": "en",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "isAccessibleForFree": true,
+  "publisher": {
+    "@type": "Organization",
+    "name": "Lunara Society",
+    "url": "https://lunarasociety.com"
+  },
+  "hasDefinedTerm": [
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-accountability",
+      "name": "AI accountability",
+      "description": "The existence of an identifiable party who answers for what an AI system did, and a route by which an affected person can reach them.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-agent",
+      "name": "AI agent",
+      "description": "An AI system that takes actions in the world on behalf of a principal — sending messages, making requests, transacting — rather than only producing output for a person to act on.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-agent-accountability",
+      "name": "AI agent accountability",
+      "description": "The ability to reach a human or legal entity that answers for what an agent did, after it has done it.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-agent-credential",
+      "name": "AI agent credential",
+      "description": "A checkable statement that a specific autonomous system is operated by a specific verified principal, and optionally what it is permitted to do.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-agent-identity",
+      "name": "AI agent identity",
+      "description": "Whether the party you are dealing with is the same agent across interactions, and whether it can prove it.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-assurance",
+      "name": "AI assurance",
+      "description": "The broader discipline of producing justified confidence about an AI system's behaviour, of which certification, audit, testing, red-teaming and documentation are all instruments.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-certification",
+      "name": "AI certification",
+      "description": "A decision by a body other than the operator that a defined set of criteria has been met, published so third parties can rely on it, and revocable if it stops being true.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-governance",
+      "name": "AI governance",
+      "description": "The internal structures by which an organisation decides what its AI systems may do, who is accountable when they do it, and what happens when something goes wrong.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-risk-assessment",
+      "name": "AI risk assessment",
+      "description": "A structured examination of what an AI system could do wrong, how likely that is, how bad it would be, and what reduces it.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-transparency",
+      "name": "AI transparency",
+      "description": "Making it discoverable that AI was involved, what it did, and on what basis — to users, to affected parties, or to regulators, depending on the obligation.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-trust",
+      "name": "AI trust",
+      "description": "The degree to which claims made about an AI system or its operator can be checked by someone other than the party making them.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-trust-registry",
+      "name": "AI trust registry",
+      "description": "A public record of which entities hold a given credential, queryable by anyone, that can return a negative or withdrawn answer as well as a positive one.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-trust-standard",
+      "name": "AI trust standard",
+      "description": "A published set of criteria plus the mechanism that determines whether an organisation meets them and makes the answer checkable by outsiders.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-vendor-due-diligence",
+      "name": "AI vendor due diligence",
+      "description": "The checks a buyer runs on an AI supplier before purchase: that the entity exists, controls its domain, has a named accountable party, holds any credential it displays, and cites its factual claims.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-verification",
+      "name": "AI verification",
+      "description": "Checking a specific factual claim about an AI system or the entity operating it against evidence, and recording the result somewhere the checked party does not control.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#ai-conformity-assessment",
+      "name": "Conformity assessment",
+      "description": "The formal process, defined in EU product legislation and applied to high-risk AI systems by the EU AI Act, of demonstrating that a system meets the requirements set for it.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#evidence-mark",
+      "name": "Evidence mark",
+      "description": "The label Lunara attaches to every published claim recording how it is known: verified, reported, interpretation or hypothesis.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#machine-readable-marking",
+      "name": "Machine-readable marking",
+      "description": "Marking generated or manipulated content so that another system can detect it was produced by AI, rather than only a person reading a label.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#notified-body",
+      "name": "Notified body",
+      "description": "An organisation designated by an EU member state to carry out conformity assessment where the law requires an independent one.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#revocation",
+      "name": "Revocation",
+      "description": "Withdrawal of a credential by its issuer, without the holder's consent, served thereafter to everyone who queries.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#self-attestation",
+      "name": "Self-attestation",
+      "description": "A statement an organisation makes about itself, with no external check.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#shield-certification",
+      "name": "Shield Certification",
+      "description": "Lunara's human-reviewed verification that a business is legally registered and controls the domain it operates from, published to a free public register and revocable.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#third-party-verification",
+      "name": "Third-party verification",
+      "description": "Verification performed by a party with no commercial interest in the outcome, as distinct from the operator checking itself or a customer checking its supplier.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://lunarasociety.com/glossary.html#trust-badge",
+      "name": "Trust badge",
+      "description": "A visual mark displayed by an organisation to signal a credential. On its own it proves nothing, because it is an image file that anyone can copy.",
+      "inDefinedTermSet": "https://lunarasociety.com/glossary.html#glossary"
+    }
+  ]
+}
+</script>
+<!-- END GENERATED glossary-schema -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Lunara Society", "item": "https://lunarasociety.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Glossary", "item": "https://lunarasociety.com/glossary.html" }
+  ]
+}
+</script>
+</body>
+</html>

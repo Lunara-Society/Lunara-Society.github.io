@@ -36,7 +36,8 @@
       ['intelligence.html', 'Regulatory intelligence'],
       ['registry.html',     'Public register'],
       ['evidence.html',     'Evidence standard'],
-      ['signing.html',      'How to verify us']
+      ['signing.html',      'How to verify us'],
+      ['glossary.html',     'Glossary']
     ]},
     { head: 'Certification', links: [
       ['shield.html',              'Shield certification'],
@@ -48,7 +49,9 @@
       ['what-is-shield-certification.html', 'What is Shield certification?'],
       ['verify-an-ai-business.html',        'How to verify an AI business'],
       ['ai-trust-standards.html',           'AI trust standards'],
-      ['trust-badges.html',                 'What a trust badge proves']
+      ['trust-badges.html',                 'What a trust badge proves'],
+      ['ai-agent-verification.html',        'AI agent verification'],
+      ['glossary.html',                     'Glossary']
     ]},
     { head: 'For machines', links: [
       ['mcp.html',            'MCP server'],

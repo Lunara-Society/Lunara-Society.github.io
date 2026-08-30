@@ -28,6 +28,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { render, PAGES as ANSWER_PAGES } from './build-answers.mjs';
 import { render as renderGlossary } from './build-glossary.mjs';
+import { PRIORITY } from './build-priority-sitemap.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lunarasociety.com/';
@@ -150,6 +151,26 @@ for (const loc of locs) {
 
 const listed = new Set(locs.map((l) => l.slice(SITE.length)).map((r) => (r === '' ? 'index.html' : r)));
 for (const f of files) if (!listed.has(f)) warn('sitemap.xml', `does not list ${f}`);
+
+/* ═══ the priority sitemap is a subset of the real one ═══════════
+   A short list is only useful if every URL on it is real, indexable,
+   and also in the complete sitemap. A priority sitemap that names a
+   page robots.txt forbids is a contradiction served to a crawler. */
+{
+  const pri = readFileSync(join(ROOT, 'sitemap-priority.xml'), 'utf8');
+  const plocs = [...pri.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  if (new Set(plocs).size !== plocs.length) err('sitemap-priority.xml', 'contains duplicates');
+  if (plocs.length !== PRIORITY.length) {
+    err('sitemap-priority.xml', `has ${plocs.length} URLs but the generator declares ${PRIORITY.length} — fix: node tools/build-priority-sitemap.mjs`);
+  }
+  for (const loc of plocs) {
+    if (!locs.includes(loc)) err('sitemap-priority.xml', `lists ${loc}, which is not in sitemap.xml`);
+    const rel = loc.slice(SITE.length) || 'index.html';
+    if (!existsSync(join(ROOT, rel))) err('sitemap-priority.xml', `lists ${rel}, which does not exist`);
+    if (EXEMPT.has(rel)) err('sitemap-priority.xml', `lists ${rel}, which robots.txt disallows`);
+  }
+  if (!robots.includes('sitemap-priority.xml')) err('robots.txt', 'does not announce sitemap-priority.xml');
+}
 
 /* ═══ internal links resolve, and nothing is orphaned ═════════════
    A link to a file that is not there costs a reader the page and

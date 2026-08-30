@@ -72,7 +72,9 @@ Disallow: /node_modules/
 # Shortcuts
 # /apply  /verify  /score  /spec  /badge  /registry
 
-# Sitemap
+# Sitemaps. The first is the short list — the pages that would still
+# matter if the rest of the site vanished. The second is complete.
+Sitemap: https://lunarasociety.com/sitemap-priority.xml
 Sitemap: https://lunarasociety.com/sitemap.xml
 
 # ─── EXPLICIT AI CRAWLER PERMISSIONS ───

@@ -107,6 +107,9 @@ jobs:
       # page robots.txt forbids.
       - name: Verify discoverability
         run: node tools/verify-seo.mjs
+        # It also checks sitemap-priority.xml — the short list of pages
+        # that would still matter if the rest of the site vanished — is a
+        # real subset of the complete sitemap and is announced in robots.txt.
         # verify-seo also regenerates glossary.html from glossary.json and
         # the answer pages from certification.json, and fails on any drift.
 

@@ -107,6 +107,11 @@ jobs:
       # page robots.txt forbids.
       - name: Verify discoverability
         run: node tools/verify-seo.mjs
+        # And that the five consolidation stubs are still stubs. Each one
+        # replaced a page describing a product that does not exist —
+        # Gateway logging every interaction, a Trust Score that
+        # accumulates. A stub that quietly regrew would put those claims
+        # back in the index.
         # It also checks sitemap-priority.xml — the short list of pages
         # that would still matter if the rest of the site vanished — is a
         # real subset of the complete sitemap and is announced in robots.txt.

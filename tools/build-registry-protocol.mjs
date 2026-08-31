@@ -2,7 +2,7 @@
 /* Emits the registry protocol from registry-protocol.js.
  *
  *   corpus/registry-protocol.json   for machines
- *   registry.html, protocol.html    the example block on each page
+ *   registry.html                   the example block on the page
  *
  * Run after editing registry-protocol.js. CI runs the verifier, which
  * fails the deploy if these have drifted from the source.
@@ -92,9 +92,12 @@ export function splice(html, label) {
   return html.slice(0, a) + block(label) + html.slice(b + MARK.end.length);
 }
 
+/* One surface, not two. The same block used to be emitted to
+   protocol.html as well; that page has been consolidated into
+   registry.html, which is where a reader looking for what a lookup
+   returns was always going to end up. */
 export const PAGES = [
-  { file: 'registry.html', label: 'Registry entry format' },
-  { file: 'protocol.html', label: 'Registry entry format' }
+  { file: 'registry.html', label: 'Registry entry format' }
 ];
 
 if (import.meta.url === 'file://' + process.argv[1]) {

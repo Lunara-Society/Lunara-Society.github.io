@@ -131,7 +131,7 @@ for (const e of ENDPOINTS) {
 }
 
 /* 5 — the retired name */
-for (const f of ['registry.html','protocol.html','openapi.yaml','llms.txt',
+for (const f of ['registry.html','openapi.yaml','llms.txt',
                  'corpus/registry-protocol.json','ai.json','agent-manifest.json']) {
   let s; try { s = read(f); } catch { continue; }
   if (s.includes('LUN-PROTO')) fail.push(f + ' still carries LUN-PROTO; it is ' + PROTOCOL_VERSION);

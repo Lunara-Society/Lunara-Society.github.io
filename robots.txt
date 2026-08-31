@@ -18,6 +18,10 @@ Disallow: /invoice-template.html
 # that says "Welcome to Lunara Society" and stops spends crawl budget to
 # advertise an empty room.
 Disallow: /activation.html
+# A subscribe form. Useful to a person who arrives from the site, worth
+# nothing as a search result, and 138 words of thin page competing for the
+# same crawl budget as the register.
+Disallow: /newsletter.html
 
 # Email artwork and superseded homepages. They are kept in the repository as
 # a record and are no longer part of the published artifact; these lines are

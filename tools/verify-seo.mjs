@@ -29,6 +29,7 @@ import { dirname, join } from 'node:path';
 import { render, PAGES as ANSWER_PAGES } from './build-answers.mjs';
 import { render as renderGlossary } from './build-glossary.mjs';
 import { PRIORITY } from './build-priority-sitemap.mjs';
+import { REDIRECTS, stub } from './build-redirects.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lunarasociety.com/';
@@ -47,7 +48,25 @@ const disallowed = new Set(
 );
 const EXEMPT = new Set([...disallowed, 'googlelgGP5VBX0LX-h5iTGYuTMYFNKbhzvdVHzl8gc2R20b4.html']);
 
-const files = readdirSync(ROOT).filter((f) => f.endsWith('.html') && !EXEMPT.has(f));
+/* Consolidation stubs are redirects wearing an .html extension. They are
+   checked as redirects below, not as pages — a stub has no h1, no
+   description worth writing and fewer than 120 words by design. */
+const STUBS = new Set(Object.keys(REDIRECTS));
+const files = readdirSync(ROOT).filter((f) => f.endsWith('.html') && !EXEMPT.has(f) && !STUBS.has(f));
+
+/* ═══ the stubs really are stubs ══════════════════════════════════
+   Five pages described a product that does not exist — Gateway
+   logging every interaction, a Trust Score that accumulates. They now
+   redirect to the pages that say what is actually running. A stub that
+   quietly regrew into a page, or lost its canonical, would put those
+   claims back in the index. */
+for (const [from, [to]] of Object.entries(REDIRECTS)) {
+  const path = join(ROOT, from);
+  if (!existsSync(path)) { err(from, 'consolidation stub is missing — the URL must keep resolving'); continue; }
+  const have = readFileSync(path, 'utf8');
+  if (have !== stub(from)) err(from, 'is no longer the generated stub — fix: node tools/build-redirects.mjs');
+  if (!existsSync(join(ROOT, to))) err(from, `redirects to ${to}, which does not exist`);
+}
 
 /* ═══ ONE: the answer pages match their sources ═══════════════════ */
 for (const p of ANSWER_PAGES) {
@@ -147,6 +166,7 @@ for (const loc of locs) {
   if (rel === '') continue;
   if (!existsSync(join(ROOT, rel))) err('sitemap.xml', `lists ${rel}, which does not exist`);
   if (EXEMPT.has(rel)) err('sitemap.xml', `lists ${rel}, which robots.txt disallows — pick one`);
+  if (STUBS.has(rel)) err('sitemap.xml', `lists ${rel}, which is a redirect stub`);
 }
 
 const listed = new Set(locs.map((l) => l.slice(SITE.length)).map((r) => (r === '' ? 'index.html' : r)));
@@ -191,6 +211,7 @@ for (const f of files) {
     let t = raw.split('#')[0].split('?')[0].replace(/^\//, '');
     if (t === '' || t === './') t = 'index.html';
     if (!existsSync(join(ROOT, t))) { err(f, `links to ${raw}, which does not exist`); continue; }
+    if (STUBS.has(t)) err(f, `links to ${t}, which is a redirect stub — link to ${REDIRECTS[t][0]} instead`);
     if (t.endsWith('.html') && t !== f && !counted.has(t)) {
       counted.add(t);
       if (t in inbound) inbound[t]++;

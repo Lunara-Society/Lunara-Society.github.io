@@ -68,6 +68,25 @@
 
   var LINK = 'https://www.paypal.com/ncp/payment/';
 
+  /* Where a buyer the payment link cannot serve goes instead.
+
+     PayPal's no-code payment links collect a shipping address for
+     products that do not ship, and the country list on that step is
+     the merchant's, not the buyer's. A customer outside it reaches
+     the card form and finds the country fixed and unchangeable, which
+     is indistinguishable from the card being declined. There is no
+     API setting that turns this off; collect_shipping_address is
+     accepted and then ignored.
+
+     An invoice has no shipping step and asks for a billing country
+     the payer chooses, so it is the route for anyone the link blocks.
+     It cannot replace the link, because an invoice is a document with
+     a balance and is payable exactly once — thirteen invoice URLs on
+     thirteen buy buttons would sell each product once and show the
+     next customer somebody else's receipt. So the link stays, and
+     this sits underneath it for the people it fails. */
+  var INVOICE_TO = 'lunarasociety@gmail.com';
+
   /* Grouped roughly by who the product is for rather than strictly by
      price, since tier is what pages actually filter on. Do not trust
      array order for anything: sort on price at the point of display if
@@ -283,6 +302,31 @@
     return '$' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
+  /* A prefilled request rather than a bare address: the reply has to
+     say which product, at which price, or the invoice gets raised for
+     the wrong thing. Country is asked for because it is the field
+     that caused this. */
+  function invoiceHref(p) {
+    var subject = 'Invoice request — ' + p.name + ' (' + money(p.price) + ')';
+    var body = [
+      'Please send a PayPal invoice for:',
+      '',
+      'Product:   ' + p.name,
+      'Reference: ' + p.id,
+      'Amount:    ' + money(p.price) + ' USD',
+      '',
+      'Business name:',
+      'Country:',
+      'Company or VAT number (if any):',
+      '',
+      'I am requesting an invoice because the card checkout would not',
+      'let me select my country.'
+    ].join('\n');
+    return 'mailto:' + INVOICE_TO +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+  }
+
   function fill() {
     var slots = {
       'data-lx-price': function (p) { return String(p.price); },
@@ -313,6 +357,23 @@
         buys[j].setAttribute('aria-label',
           prod.name + ', ' + money(prod.price) + ' — pay with PayPal');
       }
+
+      /* Once per control, not once per fill(): refresh() re-runs this
+         whole loop and a page that calls it twice would otherwise
+         stack duplicate links under every button. A page that has
+         placed its own can opt out with data-lx-noinvoice. */
+      if (buys[j].hasAttribute('data-lx-invoiced') ||
+          buys[j].hasAttribute('data-lx-noinvoice')) continue;
+      buys[j].setAttribute('data-lx-invoiced', '');
+
+      var alt = document.createElement('a');
+      alt.className = 'lx-invoice';
+      alt.setAttribute('href', invoiceHref(prod));
+      alt.textContent = 'Card declined your country? Request an invoice →';
+      alt.style.cssText =
+        'display:block;margin-top:10px;font-size:12px;line-height:1.5;' +
+        'opacity:.72;text-decoration:underline;text-underline-offset:2px;';
+      buys[j].insertAdjacentElement('afterend', alt);
     }
   }
 
@@ -323,6 +384,7 @@
       get: byId,
       money: money,
       url: function (id) { var p = byId(id); return p ? LINK + p.link : null; },
+      invoiceUrl: function (id) { var p = byId(id); return p ? invoiceHref(p) : null; },
       /* fill() runs once, at boot. A page that writes price slots into
          the DOM afterwards — the scorer builds its recommendations from
          the result — would otherwise render them empty, which is how a

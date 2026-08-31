@@ -134,6 +134,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .coming-soon-title{font-size:18px;color:var(--white-50);margin-bottom:8px}
 .coming-soon-sub{font-size:13px;color:var(--white-30);line-height:1.6}
 
+/* PRIVATE OFFER */
+.offer{position:relative;overflow:hidden;border-radius:12px;padding:26px 28px;margin-bottom:26px;
+  border:1px solid rgba(196,164,107,0.42);
+  background:linear-gradient(150deg,rgba(196,164,107,0.13),rgba(196,164,107,0.03) 62%,transparent)}
+.offer::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(70% 120% at 88% -20%,rgba(226,196,122,0.14),transparent 60%)}
+.offer-tag{position:relative;font-size:10.5px;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px}
+.offer-name{position:relative;font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(24px,3vw,32px);line-height:1.15;color:#EFEAE0;margin:0 0 8px}
+.offer-lede{position:relative;font-size:13.5px;line-height:1.7;color:rgba(255,255,255,0.62);
+  max-width:56ch;margin:0 0 18px}
+.offer-price{position:relative;display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.offer-price b{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;font-size:44px;
+  line-height:1;color:#EFEAE0}
+.offer-price s{font-size:15px;color:rgba(255,255,255,0.3)}
+.offer-clock{position:relative;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px;letter-spacing:.08em;color:var(--gold);margin-bottom:20px}
+.offer-clock.soon{color:#E8B4A6}
+.offer-act{position:relative;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.offer-pay{display:inline-block;padding:13px 30px;border-radius:22px;text-decoration:none;
+  background:linear-gradient(180deg,#F0E6CE,#CBB07C);color:#141210;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase}
+.offer-pay:hover{filter:brightness(1.07)}
+.offer-confirm{position:relative;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin-top:18px;padding-top:18px;border-top:1px solid rgba(196,164,107,0.2)}
+.offer-confirm input{flex:1;min-width:190px;padding:11px 14px;border-radius:6px;
+  border:1px solid rgba(255,255,255,0.13);background:rgba(0,0,0,0.3);
+  color:rgba(255,255,255,0.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.offer-confirm input:focus{outline:none;border-color:rgba(196,164,107,0.6)}
+.offer-confirm button{padding:11px 22px;border-radius:22px;cursor:pointer;
+  border:1px solid var(--gold);background:transparent;color:var(--gold);
+  font-family:'Inter',sans-serif;font-size:12px;letter-spacing:1.2px;text-transform:uppercase}
+.offer-confirm button:hover{background:rgba(196,164,107,0.1)}
+.offer-confirm button[disabled]{opacity:.5;cursor:default}
+.offer-note{position:relative;font-size:11.5px;line-height:1.65;color:rgba(255,255,255,0.4);margin-top:14px;max-width:62ch}
+.offer-msg{position:relative;font-size:12.5px;margin-top:10px;min-height:1.2em;color:rgba(255,255,255,0.55)}
+.offer-msg.ok{color:#7FD7C4}
+.offer-msg.bad{color:#D89B8C}
+.offer.done{border-color:rgba(127,215,196,0.35);background:linear-gradient(150deg,rgba(127,215,196,0.09),transparent 62%)}
+.offer.done .offer-tag{color:#7FD7C4}
+
 /* PROFILE */
 .prof-grid{display:grid;grid-template-columns:232px 1fr;gap:clamp(24px,4vw,52px);align-items:start;max-width:900px}
 .prof-photo{text-align:center}
@@ -793,6 +835,12 @@ p,li,span{
 
     <!-- OVERVIEW -->
     <div class="dash-section active" id="section-overview">
+      <!-- A private offer, if this member holds one. The panel is empty
+           markup until the server says otherwise: the decision about who
+           may see this is made in the edge function against a sealed
+           table, never here, because a check in the page is a check the
+           reader can edit. -->
+      <div id="offer-panel" hidden></div>
       <p class="dash-section-title">Member Dashboard</p>
       <h2 class="dash-section-heading">Your Protected Infrastructure</h2>
       <div id="cert-cta-banner" style="display:none;background:rgba(196,164,107,0.08);border:1px solid rgba(196,164,107,0.3);border-radius:8px;padding:20px 24px;margin-bottom:24px">
@@ -1680,6 +1728,11 @@ async function doRegister(){
 function showDashboard(id, name){
   document.getElementById('view-auth').style.display='none';
   document.getElementById('view-dashboard').style.display='block';
+  // Ask the server whether this member holds an offer. It answers for
+  // the session it was given, so the question cannot be asked about
+  // anyone else.
+  offerLoad();
+  profOpenIfAsked();
   document.getElementById('dash-id').textContent=id;
   document.getElementById('dash-name').textContent=name || id;
   document.getElementById('card-id').textContent=id;
@@ -1789,6 +1842,122 @@ function doLogout(){
     ? 'Your session reached its 24-hour limit and was ended. Sign in to continue.'
     : 'You are signed out.';
 })();
+
+/* ═══ A PRIVATE OFFER ═══════════════════════════════════════════════
+   Rendered only from what the server sends. This page does not decide
+   who is entitled to anything and does not know a target Lunara id —
+   the id is never in this file, so there is nothing here to copy into
+   somebody else's browser storage.
+
+   The clock counts the same deadline the server enforces. When it
+   reaches zero the panel goes, and a redeem attempt after that is
+   refused by the server regardless of what this page shows. */
+
+let offerState = null, offerTick = null;
+
+function offerMoney(cents, currency){
+  try {
+    return new Intl.NumberFormat(undefined, { style:'currency', currency: currency || 'USD' })
+      .format(cents / 100);
+  } catch(e){ return '$' + (cents / 100).toFixed(2); }
+}
+
+function offerLeft(ms){
+  if(ms <= 0) return 'expired';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor(ms % 3600000 / 60000);
+  const sec = Math.floor(ms % 60000 / 1000);
+  return (h ? h + 'h ' : '') + m + 'm ' + String(sec).padStart(2,'0') + 's';
+}
+
+function offerRender(){
+  const box = document.getElementById('offer-panel');
+  if(!box) return;
+  const o = offerState;
+  if(!o){ box.hidden = true; box.innerHTML = ''; if(offerTick) clearInterval(offerTick); return; }
+
+  const left = o.expires_at - Date.now();
+  if(left <= 0 && !o.redeemed){
+    box.hidden = true; box.innerHTML = '';
+    if(offerTick) clearInterval(offerTick);
+    offerState = null;
+    return;
+  }
+
+  box.hidden = false;
+  if(box.dataset.built === o.code){
+    // Only the clock moves after the first paint.
+    const clk = box.querySelector('.offer-clock');
+    if(clk && !o.redeemed){
+      clk.textContent = 'Open for another ' + offerLeft(left);
+      clk.classList.toggle('soon', left < 30 * 60000);
+    }
+    return;
+  }
+  box.dataset.built = o.code;
+
+  const esc = (t) => { const d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
+
+  box.innerHTML =
+    '<div class="offer' + (o.redeemed ? ' done' : '') + '">' +
+      '<p class="offer-tag">' + (o.redeemed ? 'Recorded' : 'Offered to you only') + '</p>' +
+      '<h3 class="offer-name">' + esc(o.name) + '</h3>' +
+      (o.lede ? '<p class="offer-lede">' + esc(o.lede) + '</p>' : '') +
+      '<div class="offer-price"><b>' + esc(offerMoney(o.amount_cents, o.currency)) + '</b></div>' +
+      (o.redeemed
+        ? '<p class="offer-clock">Payment reported. A person reconciles it against PayPal before anything is granted.</p>'
+        : '<p class="offer-clock">Open for another ' + offerLeft(left) + '</p>') +
+      (o.redeemed ? '' :
+        '<div class="offer-act">' +
+          (o.pay_url ? '<a class="offer-pay" href="' + esc(o.pay_url) + '" target="_blank" rel="noopener">Pay with PayPal</a>' : '') +
+        '</div>' +
+        '<div class="offer-confirm">' +
+          '<input id="offer-txn" type="text" inputmode="latin" autocomplete="off" spellcheck="false" ' +
+            'maxlength="64" placeholder="PayPal transaction id from your receipt" ' +
+            'aria-label="PayPal transaction id">' +
+          '<button type="button" id="offer-claim">I have paid</button>' +
+        '</div>') +
+      '<p class="offer-note">Reporting a payment records what you tell us. Nothing here checks PayPal, ' +
+        'so it is a claim until a person reconciles it — the same way an application\'s transaction id is ' +
+        'treated. Certification still goes through human review; paying does not decide the outcome.</p>' +
+      '<p class="offer-msg" id="offer-msg" role="status"></p>' +
+    '</div>';
+
+  const btn = document.getElementById('offer-claim');
+  if(btn) btn.addEventListener('click', offerClaim);
+}
+
+async function offerClaim(){
+  const btn = document.getElementById('offer-claim');
+  const txn = (document.getElementById('offer-txn').value || '').trim();
+  const msg = document.getElementById('offer-msg');
+  const say = (t, k) => { if(msg){ msg.textContent = t; msg.className = 'offer-msg' + (k ? ' ' + k : ''); } };
+
+  if(txn.length < 6) return say('Enter the transaction id from your PayPal receipt.', 'bad');
+  btn.disabled = true; say('Recording…');
+  try{
+    const data = await profCall('redeem', { code: offerState.code, txn });
+    offerState = data.offer;
+    delete document.getElementById('offer-panel').dataset.built;
+    offerRender();
+    say('Recorded. We will reconcile it against PayPal by hand.', 'ok');
+  } catch(e){
+    if(e.message !== 'signed out') say(e.message, 'bad');
+    btn.disabled = false;
+  }
+}
+
+async function offerLoad(){
+  try{
+    const data = await profCall('offer', {});
+    offerState = data.offer || null;
+    offerRender();
+    if(offerState && !offerState.redeemed){
+      if(offerTick) clearInterval(offerTick);
+      offerTick = setInterval(offerRender, 1000);
+    }
+  } catch(e){ /* no offer, or signed out. The dashboard is unaffected. */ }
+}
 
 /* ═══ THE PROFILE ═══════════════════════════════════════════════════
    Reads from and writes to the auth function, which is the only thing

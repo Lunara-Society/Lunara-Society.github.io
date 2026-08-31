@@ -6,6 +6,10 @@
    POST .../signup    { email, password, full_name }    → session
    POST .../login     { identifier, password }          → session
    POST .../session   { session_token }                 → who it is
+   POST .../profile   { session_token, profile? }       → read or write
+   POST .../avatar    { session_token, image | remove } → the photo
+   POST .../offer     { session_token }                 → a private offer
+   POST .../redeem    { session_token, code, txn }      → records a claim
 
    The action may also travel in the body as { action: "login", ... }
    so the whole thing is reachable at a single URL.
@@ -28,8 +32,10 @@
      create(member)         → member
      update(email, patch)   → member
 
-   And, only if avatar uploads are wanted:
+   And, only if the extra surfaces are wanted:
      putAvatar(path, bytes, contentType) → public URL
+     getOffer(lunaraId)                  → offer | null
+     redeemOffer(id, txn)                → offer
 
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -145,7 +151,7 @@ export async function handleAuth(request, url, cfg) {
      code does not control (/functions/v1/lunara-auth/...). The last
      segment decides when it names an action; otherwise the body may
      say so, which keeps the whole thing reachable at one URL. */
-  const ACTIONS = ['google', 'signup', 'login', 'session', 'profile', 'avatar'];
+  const ACTIONS = ['google', 'signup', 'login', 'session', 'profile', 'avatar', 'offer', 'redeem'];
   const last = url.pathname.split('/').filter(Boolean).pop() || '';
   const action = ACTIONS.includes(last) ? last
     : ACTIONS.includes(body.action) ? body.action
@@ -158,6 +164,8 @@ export async function handleAuth(request, url, cfg) {
     case 'session': return authSession(body, cfg);
     case 'profile': return authProfile(body, cfg);
     case 'avatar':  return authAvatar(body, cfg);
+    case 'offer':   return authOffer(body, cfg);
+    case 'redeem':  return authRedeem(body, cfg);
     default:        return json({ success: false, error: 'Unknown route.' }, 404);
   }
 }
@@ -635,4 +643,84 @@ async function authAvatar(body, cfg) {
     avatar_url: url, profile_updated_at: new Date().toISOString()
   });
   return json({ success: true, avatar_url: url, lunara_id: saved.lunara_id });
+}
+
+/* ── private offers ───────────────────────────────────────────────
+   An offer addressed to one member, open for a fixed window,
+   redeemable once.
+
+   Every part of that is decided here, on the server, from a row the
+   browser never sees. The alternative — the page checking a Lunara id
+   it was handed by the page — is a lock whose key is printed on the
+   door: the id is in the JavaScript, and anyone who reads it can put
+   it in their own storage and unlock a price that was never theirs.
+   For a $2 test that is a small thing. For the institution whose
+   entire argument is that a claim should be checkable by someone
+   other than the claimant, it is the wrong shape at any price.
+
+   Nothing here talks to PayPal. Redemption records that a member says
+   they paid, the same way signup records a transaction id it cannot
+   confirm. Reconcile by hand before granting anything. */
+
+function offerFor(offer) {
+  return {
+    code: offer.code,
+    name: offer.name,
+    lede: offer.lede || '',
+    amount_cents: offer.amount_cents,
+    currency: offer.currency || 'USD',
+    pay_url: offer.pay_url || '',
+    product_id: offer.product_id || '',
+    expires_at: new Date(offer.expires_at).getTime(),
+    redeemed: !!offer.redeemed_at
+  };
+}
+
+/* Not found, not yet open, already over, already taken — all of them
+   answer the same way: there is no offer. A member who cannot have one
+   should not be able to learn that one exists, or when it opens. */
+function liveOffer(offer) {
+  if (!offer) return null;
+  const now = Date.now();
+  if (offer.opens_at && new Date(offer.opens_at).getTime() > now) return null;
+  if (new Date(offer.expires_at).getTime() <= now) return null;
+  return offer;
+}
+
+async function authOffer(body, cfg) {
+  const member = await memberFromSession(body, cfg);
+  if (!member) return json({ success: false, error: 'Session expired.' }, 401);
+  if (!cfg.store.getOffer) return json({ success: true, offer: null });
+
+  const offer = liveOffer(await cfg.store.getOffer(member.lunara_id));
+  // A redeemed offer is still shown, so the member sees what they did
+  // rather than a panel that vanishes the moment they use it.
+  return json({ success: true, offer: offer ? offerFor(offer) : null });
+}
+
+async function authRedeem(body, cfg) {
+  const member = await memberFromSession(body, cfg);
+  if (!member) return json({ success: false, error: 'Session expired.' }, 401);
+  if (!cfg.store.getOffer || !cfg.store.redeemOffer) {
+    return json({ success: false, error: 'Offers are not configured.' }, 501);
+  }
+
+  const offer = liveOffer(await cfg.store.getOffer(member.lunara_id));
+  // The code has to match the one this member actually holds, so a
+  // guessed or borrowed code redeems nothing.
+  if (!offer || offer.code !== String(body.code || '')) {
+    return json({ success: false, error: 'That offer is not available.' }, 404);
+  }
+  if (offer.redeemed_at) {
+    return json({ success: false, error: 'That offer has already been used.' }, 409);
+  }
+
+  const txn = String(body.txn || '').trim().slice(0, 64);
+  if (txn.length < 6) {
+    return json({ success: false, error: 'Enter the PayPal transaction id from your receipt.' }, 400);
+  }
+
+  const saved = await cfg.store.redeemOffer(offer.id, txn);
+  console.log('Offer ' + offer.code + ' redeemed by ' + member.lunara_id + ' (txn claimed: ' + txn + ')');
+  return json({ success: true, offer: offerFor(saved || { ...offer, redeemed_at: new Date().toISOString() }) });
 }

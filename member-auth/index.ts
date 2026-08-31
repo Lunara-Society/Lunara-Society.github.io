@@ -64,6 +64,37 @@ const store = {
       body: JSON.stringify(patch)
     }).then(one),
 
+  /* Private offers. Read with the service key and never exposed to the
+     browser: the table has row level security on with no policies, so
+     the anon key in the page cannot see one offer, never mind somebody
+     else's. The newest live row for this member wins. */
+  getOffer: async (lunaraId: string) => {
+    const rows = await fetch(
+      `${SUPABASE_URL}/rest/v1/member_offers` +
+      `?lunara_id=eq.${encodeURIComponent(lunaraId)}` +
+      `&order=created_at.desc&limit=1`,
+      { headers }
+    ).then((r) => (r.ok ? r.json() : Promise.reject(new Error('offers ' + r.status))));
+    return one(rows);
+  },
+
+  /* Conditional on redeemed_at still being null, so two clicks a
+     hundred milliseconds apart cannot both succeed. The database
+     decides, not the order two requests happen to arrive in. */
+  redeemOffer: async (id: string, txn: string) => {
+    const rows = await fetch(
+      `${SUPABASE_URL}/rest/v1/member_offers?id=eq.${encodeURIComponent(id)}&redeemed_at=is.null`,
+      {
+        method: 'PATCH',
+        headers: { ...headers, prefer: 'return=representation' },
+        body: JSON.stringify({ redeemed_at: new Date().toISOString(), redeemed_txn: txn })
+      }
+    ).then((r) => (r.ok ? r.json() : Promise.reject(new Error('redeem ' + r.status))));
+    const row = one(rows);
+    if (!row) throw new Error('offer was already redeemed');
+    return row;
+  },
+
   /* The avatar sink. Uploaded with the service key, which is why the
      bucket has no insert policy at all: the anon key in the page
      cannot write here, only this function can. upsert is off — every

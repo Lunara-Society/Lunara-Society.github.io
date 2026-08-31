@@ -33,6 +33,7 @@ const JWKS_URL = 'https://jwks.test.invalid/certs';
 function memStore() {
   const rows = new Map();
   const uploads = [];
+  const offers = [];
   const clone = (m) => (m ? { ...m } : null);
   return {
     getByEmail: async (email) => clone(rows.get(email)),
@@ -51,6 +52,17 @@ function memStore() {
       rows.set(email, row);
       return clone(row);
     },
+    getOffer: async (lunaraId) => {
+      const o = offers.find((x) => x.lunara_id === lunaraId);
+      return o ? { ...o } : null;
+    },
+    redeemOffer: async (id, txn) => {
+      const o = offers.find((x) => x.id === id);
+      o.redeemed_at = new Date().toISOString();
+      o.redeemed_txn = txn;
+      return { ...o };
+    },
+    _offers: offers,
     putAvatar: async (path, bytes, type) => {
       uploads.push({ path, size: bytes.length, type });
       return 'https://cdn.test.invalid/member-avatars/' + path;
@@ -605,6 +617,83 @@ const read = async (p) => { const r = await p; return { status: r.status, body: 
   r = await read(call('avatar', { session_token: 'forged.token', image: png }, cfg));
   check('a forged token uploads nothing', r.status === 401, 'status=' + r.status);
   check('and still nothing more reached storage', store._uploads.length === 1);
+}
+
+/* ── private offers ─────────────────────────────────────────────── */
+{
+  console.log('\nprivate offers');
+  const store = memStore();
+  const cfg = cfgFor(store);
+  const mine = await read(call('signup', { email: 'me@b.co', password: 'a-long-enough-pass', full_name: 'Me' }, cfg));
+  const other = await read(call('signup', { email: 'you@b.co', password: 'a-long-enough-pass', full_name: 'You' }, cfg));
+  const MINE = mine.body.lunara_id, THEIRS = other.body.lunara_id;
+
+  const HOUR = 3600000;
+  store._offers.push({
+    id: 'off-1', code: 'founder-test', lunara_id: MINE,
+    name: 'Small Business Shield', lede: 'One-off.',
+    amount_cents: 200, currency: 'USD', pay_url: 'https://paypal.me/x/2',
+    product_id: 'shield',
+    opens_at: new Date(Date.now() - 60000).toISOString(),
+    expires_at: new Date(Date.now() + 3 * HOUR).toISOString(),
+    redeemed_at: null
+  });
+
+  let r = await read(call('offer', { session_token: mine.body.session_token }, cfg));
+  check('the addressed member sees the offer', r.body.offer && r.body.offer.code === 'founder-test',
+    JSON.stringify(r.body.offer));
+  check('it is priced in minor units, not a float', r.body.offer.amount_cents === 200);
+
+  r = await read(call('offer', { session_token: other.body.session_token }, cfg));
+  check('NO OTHER MEMBER SEES IT', r.body.offer === null, JSON.stringify(r.body.offer));
+
+  r = await read(call('redeem', { session_token: other.body.session_token, code: 'founder-test', txn: 'TXN123456' }, cfg));
+  check('another member cannot redeem it even knowing the code', r.status === 404, 'status=' + r.status);
+  check('and it stayed unredeemed', !store._offers[0].redeemed_at);
+
+  r = await read(call('offer', { session_token: 'forged.token' }, cfg));
+  check('a forged token sees no offer', r.status === 401, 'status=' + r.status);
+
+  // the window
+  store._offers[0].opens_at = new Date(Date.now() + HOUR).toISOString();
+  r = await read(call('offer', { session_token: mine.body.session_token }, cfg));
+  check('an offer that has not opened yet is invisible', r.body.offer === null);
+  store._offers[0].opens_at = new Date(Date.now() - HOUR).toISOString();
+
+  store._offers[0].expires_at = new Date(Date.now() - 1000).toISOString();
+  r = await read(call('offer', { session_token: mine.body.session_token }, cfg));
+  check('one second past the window it is gone', r.body.offer === null);
+  r = await read(call('redeem', { session_token: mine.body.session_token, code: 'founder-test', txn: 'TXN123456' }, cfg));
+  check('and it cannot be redeemed late', r.status === 404, 'status=' + r.status);
+  store._offers[0].expires_at = new Date(Date.now() + 3 * HOUR).toISOString();
+
+  // redeeming
+  r = await read(call('redeem', { session_token: mine.body.session_token, code: 'founder-test', txn: 'x' }, cfg));
+  check('a too-short transaction id is refused', r.status === 400, 'status=' + r.status);
+  r = await read(call('redeem', { session_token: mine.body.session_token, code: 'wrong-code', txn: 'TXN123456' }, cfg));
+  check('the wrong code redeems nothing', r.status === 404, 'status=' + r.status);
+
+  r = await read(call('redeem', { session_token: mine.body.session_token, code: 'founder-test', txn: 'TXN123456' }, cfg));
+  check('the addressed member can redeem once', r.status === 200 && r.body.offer.redeemed === true,
+    'status=' + r.status);
+  check('the claimed transaction is recorded', store._offers[0].redeemed_txn === 'TXN123456');
+
+  r = await read(call('redeem', { session_token: mine.body.session_token, code: 'founder-test', txn: 'TXN999999' }, cfg));
+  check('it cannot be redeemed twice', r.status === 409, 'status=' + r.status);
+  check('the second attempt did not overwrite the first',
+    store._offers[0].redeemed_txn === 'TXN123456', store._offers[0].redeemed_txn);
+
+  r = await read(call('offer', { session_token: mine.body.session_token }, cfg));
+  check('a used offer still shows, marked used', r.body.offer && r.body.offer.redeemed === true);
+
+  // a store with no offer support must not break the member area
+  const bare = cfgFor(memStore());
+  await read(call('signup', { email: 'bare@b.co', password: 'a-long-enough-pass' }, bare));
+  delete bare.store.getOffer;
+  const b2 = await read(call('signup', { email: 'bare2@b.co', password: 'a-long-enough-pass' }, bare));
+  r = await read(call('offer', { session_token: b2.body.session_token }, bare));
+  check('a store without offers answers "none" rather than failing',
+    r.status === 200 && r.body.offer === null, 'status=' + r.status);
 }
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

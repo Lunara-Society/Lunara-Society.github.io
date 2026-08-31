@@ -62,7 +62,31 @@ const store = {
       method: 'PATCH',
       headers: { prefer: 'return=representation' },
       body: JSON.stringify(patch)
-    }).then(one)
+    }).then(one),
+
+  /* The avatar sink. Uploaded with the service key, which is why the
+     bucket has no insert policy at all: the anon key in the page
+     cannot write here, only this function can. upsert is off — every
+     upload gets a fresh timestamped path, so a stale CDN copy can
+     never be served in place of a new photo. */
+  putAvatar: async (path: string, bytes: Uint8Array, contentType: string) => {
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/member-avatars/${path}`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: SERVICE_KEY!,
+          authorization: `Bearer ${SERVICE_KEY}`,
+          'content-type': contentType,
+          'cache-control': 'public, max-age=31536000, immutable',
+          'x-upsert': 'false'
+        },
+        body: bytes
+      }
+    );
+    if (!res.ok) throw new Error(`avatar upload ${res.status}: ${await res.text()}`);
+    return `${SUPABASE_URL}/storage/v1/object/public/member-avatars/${path}`;
+  }
 };
 
 /* The signing key. If LUNARA_SESSION_SECRET is set it wins; otherwise

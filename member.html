@@ -134,8 +134,50 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .coming-soon-title{font-size:18px;color:var(--white-50);margin-bottom:8px}
 .coming-soon-sub{font-size:13px;color:var(--white-30);line-height:1.6}
 
+/* PROFILE */
+.prof-grid{display:grid;grid-template-columns:232px 1fr;gap:clamp(24px,4vw,52px);align-items:start;max-width:900px}
+.prof-photo{text-align:center}
+.prof-avatar{width:150px;height:150px;margin:0 auto 16px;border-radius:50%;overflow:hidden;
+  display:grid;place-items:center;position:relative;
+  border:1px solid rgba(196,164,107,0.3);background:rgba(196,164,107,0.06)}
+.prof-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.prof-avatar img[hidden]{display:none}
+.prof-avatar span{font-family:'Cormorant Garamond',Georgia,serif;font-size:46px;color:var(--gold);
+  letter-spacing:.04em;line-height:1;user-select:none}
+.prof-avatar.busy{opacity:.5}
+.prof-btn{display:inline-block;padding:9px 18px;margin:0 3px 8px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--gold);color:var(--gold);background:transparent;
+  font-family:'Inter',sans-serif;font-size:12px;letter-spacing:1px;transition:background .18s ease}
+.prof-btn:hover{background:rgba(196,164,107,0.1)}
+.prof-btn.ghost{border-color:rgba(255,255,255,0.16);color:rgba(255,255,255,0.5)}
+.prof-btn.ghost:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8)}
+.prof-note{font-size:11.5px;line-height:1.6;color:rgba(255,255,255,0.38);margin-top:10px;text-align:left}
+.prof-row{margin-bottom:20px;display:flex;flex-direction:column}
+.prof-row label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);margin-bottom:8px}
+.prof-row input,.prof-row textarea{
+  width:100%;box-sizing:border-box;padding:12px 14px;border-radius:6px;
+  border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.92);font-family:'Inter',sans-serif;font-size:14px;
+  transition:border-color .18s ease}
+.prof-row textarea{resize:vertical;line-height:1.6;min-height:96px}
+.prof-row input:focus,.prof-row textarea:focus{outline:none;border-color:rgba(196,164,107,0.6)}
+.prof-row input[aria-invalid="true"]{border-color:rgba(216,155,140,0.7)}
+.prof-hint{font-size:11.5px;color:rgba(255,255,255,0.35);margin-top:7px;line-height:1.55}
+.prof-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:6px}
+.prof-save{padding:12px 30px;border:none;border-radius:20px;cursor:pointer;
+  background:linear-gradient(180deg,#F0E6CE,#CBB07C);color:#141210;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase}
+.prof-save:hover{filter:brightness(1.07)}
+.prof-save[disabled]{opacity:.5;cursor:default;filter:none}
+.prof-msg{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,0.5);min-height:1.2em}
+.prof-msg.ok{color:#7FD7C4}
+.prof-msg.bad{color:#D89B8C}
+@media (max-width:760px){.prof-grid{grid-template-columns:1fr}.prof-photo{text-align:left}
+  .prof-avatar{margin-left:0}}
+
 /* LOGOUT BTN */
-.logout-btn{position:absolute;bottom:24px;left:24px;right:24px;padding:12px;border:1px solid var(--border);background:transparent;color:var(--white-30);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.logout-btn{display:block;width:calc(100% - 48px);margin:28px 24px 24px;padding:12px;border:1px solid var(--border);background:transparent;color:var(--white-30);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
 .logout-btn:hover{color:var(--white-70);border-color:rgba(255,255,255,0.2)}
 
 @media(max-width:768px){
@@ -722,6 +764,7 @@ p,li,span{
     <div class="dash-nav-item" onclick="showSection('shield',this)"><span class="dash-nav-icon">⬡</span>Shield Status</div>
 
     <div class="dash-nav-section">Identity</div>
+    <div class="dash-nav-item" onclick="showSection('profile',this)"><span class="dash-nav-icon">☺</span>Your Profile</div>
     <div class="dash-nav-item" onclick="showSection('comms',this)"><span class="dash-nav-icon">◎</span>Communication Policy</div>
     <div class="dash-nav-item" onclick="showSection('trust',this)"><span class="dash-nav-icon">◇</span>Trust Profile</div>
     <div class="dash-nav-item" onclick="showSection('ai-config',this)"><span class="dash-nav-icon">⊹</span>AI Interaction Prefs</div>
@@ -792,6 +835,84 @@ p,li,span{
     </div>
 
     <!-- REGISTRY -->
+    <!-- ─── PROFILE ─────────────────────────────────────────────
+         A member could sign in and then do nothing except read. This
+         is the first place the account holds anything they put there.
+
+         Everything on it is stated, not verified. A domain typed here
+         is a claim about a domain; proving control of one is what
+         Shield certification does, and the form says so rather than
+         letting the two blur together on a site whose whole argument
+         is that those are different things. -->
+    <div class="dash-section" id="section-profile">
+      <p class="dash-section-title">Identity</p>
+      <h2 class="dash-section-heading">Your Profile</h2>
+      <p class="dash-section-sub" style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;max-width:62ch;margin-bottom:26px">
+        What you tell us about yourself and your organisation. <strong style="color:rgba(255,255,255,0.85);font-weight:400">None of this is verified</strong> —
+        it is your own description of yourself, and it carries no certification claim.
+        Verifying that you control a domain is what <a href="what-is-shield-certification.html" style="color:var(--gold)">Shield certification</a> does.
+      </p>
+
+      <div class="prof-grid">
+        <!-- the photo -->
+        <div class="prof-photo">
+          <div class="prof-avatar" id="prof-avatar" aria-live="polite">
+            <span id="prof-initials">—</span>
+            <img id="prof-img" alt="" hidden>
+          </div>
+          <label class="prof-btn" for="prof-file">Choose a photo</label>
+          <input type="file" id="prof-file" accept="image/jpeg,image/png,image/webp" hidden>
+          <button type="button" class="prof-btn ghost" id="prof-remove" hidden>Remove</button>
+          <p class="prof-note">
+            Resized to 256&nbsp;px in your browser before it is sent, which also
+            strips the location data a phone camera writes into a photo.
+            JPEG, PNG or WebP.
+          </p>
+          <p class="prof-msg" id="prof-photo-msg" role="status"></p>
+        </div>
+
+        <!-- the details -->
+        <form class="prof-form" id="prof-form" autocomplete="on">
+          <div class="prof-row">
+            <label for="pf-name">Your name</label>
+            <input id="pf-name" name="full_name" type="text" maxlength="120" autocomplete="name">
+          </div>
+          <div class="prof-row">
+            <label for="pf-role">Your role</label>
+            <input id="pf-role" name="business_role" type="text" maxlength="100"
+                   autocomplete="organization-title" placeholder="Head of Compliance">
+          </div>
+          <div class="prof-row">
+            <label for="pf-org">Organisation</label>
+            <input id="pf-org" name="business_name" type="text" maxlength="160"
+                   autocomplete="organization" placeholder="Acme Systems Ltd">
+          </div>
+          <div class="prof-row">
+            <label for="pf-domain">Domain</label>
+            <input id="pf-domain" name="business_domain" type="text" maxlength="253"
+                   inputmode="url" autocapitalize="off" spellcheck="false" placeholder="acme.com">
+            <span class="prof-hint">Stated by you. Paste a full URL if it is easier &mdash; it is stored as the bare domain.</span>
+          </div>
+          <div class="prof-row">
+            <label for="pf-country">Country</label>
+            <input id="pf-country" name="business_country" type="text" maxlength="60"
+                   autocomplete="country-name" placeholder="Ireland">
+            <span class="prof-hint">Which regulator reaches you first depends on this.</span>
+          </div>
+          <div class="prof-row">
+            <label for="pf-bio">About</label>
+            <textarea id="pf-bio" name="bio" rows="4" maxlength="600"
+                      placeholder="What your organisation does, in a couple of sentences."></textarea>
+            <span class="prof-hint"><span id="pf-bio-count">0</span>/600</span>
+          </div>
+          <div class="prof-actions">
+            <button type="submit" class="prof-save" id="prof-save">Save</button>
+            <span class="prof-msg" id="prof-msg" role="status"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="dash-section" id="section-registry">
       <p class="dash-section-title">Registry</p>
       <h2 class="dash-section-heading">Your Registry Record</h2>
@@ -1635,8 +1756,16 @@ async function loadRealShieldStatus(){
   }
 }
 
+/* One exit. lunara-member.js owns forgetting a session because it also
+   has to tell Google to stop auto-selecting the account — without that
+   One Tap signs the same person straight back in and the sign-out
+   looks broken. This kept its own copy and did not do that. */
 function doLogout(){
-  localStorage.removeItem('lunara_email');
+  if(window.lunaraSignOut) return window.lunaraSignOut('you');
+
+  // lunara-member.js did not load. Still leave, just less tidily.
+  ['lunara_session_token','lunara_id','lunara_name','lunara_tier',
+   'lunara_email','lunara_expires_at'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   clearSession();
   document.getElementById('view-auth').style.display='flex';
   document.getElementById('view-dashboard').style.display='none';
@@ -1646,12 +1775,221 @@ function doLogout(){
   document.getElementById('nav-status').textContent='MEMBER AREA';
 }
 
+/* Arriving back here after being signed out. Saying which of the two
+   happened matters: "we ended it" and "you ended it" feel completely
+   different to the person reading it. */
+(function signedOutNotice(){
+  const why = new URLSearchParams(location.search).get('signed_out');
+  if(!why) return;
+  history.replaceState(null, '', location.pathname + location.hash);
+  const box = document.getElementById('login-error');
+  if(!box) return;
+  box.style.color = 'rgba(255,255,255,0.6)';
+  box.textContent = why === 'expired'
+    ? 'Your session reached its 24-hour limit and was ended. Sign in to continue.'
+    : 'You are signed out.';
+})();
+
+/* ═══ THE PROFILE ═══════════════════════════════════════════════════
+   Reads from and writes to the auth function, which is the only thing
+   holding a member record. Nothing here trusts localStorage for
+   anything but the token: the values shown are what the server last
+   said, so a stale tab shows stale data rather than wrong data. */
+
+const PROF_FIELDS = {
+  'pf-name': 'full_name', 'pf-role': 'business_role', 'pf-org': 'business_name',
+  'pf-domain': 'business_domain', 'pf-country': 'business_country', 'pf-bio': 'bio'
+};
+
+function profMsg(id, text, kind){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'prof-msg' + (kind ? ' ' + kind : '');
+}
+
+/* Initials when there is no photo. Better than a grey silhouette,
+   and it is the one thing we can always draw from what we know. */
+function profInitials(name, id){
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if(parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return String(id || '').replace('LUNA-','').slice(0,2).toUpperCase() || '—';
+}
+
+function profPaint(data){
+  if(!data) return;
+  for(const [el, key] of Object.entries(PROF_FIELDS)){
+    const node = document.getElementById(el);
+    if(node && key in data) node.value = data[key] || '';
+  }
+  const count = document.getElementById('pf-bio-count');
+  if(count) count.textContent = String((data.bio || '').length);
+
+  const img = document.getElementById('prof-img');
+  const ini = document.getElementById('prof-initials');
+  const rm  = document.getElementById('prof-remove');
+  if(!img || !ini) return;
+  if(data.avatar_url){
+    img.src = data.avatar_url; img.hidden = false; ini.hidden = true;
+    if(rm) rm.hidden = false;
+    /* A photo that fails to load must not leave an empty circle —
+       Google picture URLs do expire. */
+    img.onerror = function(){ img.hidden = true; ini.hidden = false; if(rm) rm.hidden = true; };
+  } else {
+    img.hidden = true; img.removeAttribute('src'); ini.hidden = false;
+    if(rm) rm.hidden = true;
+  }
+  ini.textContent = profInitials(data.full_name, data.lunara_id || localStorage.getItem('lunara_id'));
+}
+
+async function profCall(action, payload){
+  const token = localStorage.getItem('lunara_session_token');
+  if(!token) throw new Error('signed out');
+  const res = await fetch(LUNARA_AUTH + '/' + action, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_token: token, ...payload })
+  });
+  const data = await res.json().catch(() => ({}));
+  if(res.status === 401){
+    // The session ended while this page was open. Say so once, plainly.
+    if(window.lunaraSignOut) window.lunaraSignOut('expired');
+    throw new Error('signed out');
+  }
+  if(!data.success) throw new Error(data.error || 'That did not save.');
+  return data;
+}
+
+async function profLoad(){
+  try { profPaint(await profCall('profile', {})); }
+  catch(e){ if(e.message !== 'signed out') profMsg('prof-msg', 'Could not load your profile.', 'bad'); }
+}
+
+/* ── the photo ────────────────────────────────────────────────────
+   Drawn onto a 256px canvas before it leaves the browser. That
+   downsizes a 4 MB phone photo to about 30 KB, re-encodes it as a
+   format we named rather than one we were handed, and drops the EXIF
+   block — which on a phone photo contains the GPS coordinates of
+   where it was taken. Nobody uploading a headshot means to publish
+   their home address. */
+const AVATAR_PX = 256;
+
+function profResize(file){
+  return new Promise((resolve, reject) => {
+    if(!/^image\/(jpeg|png|webp)$/.test(file.type)) return reject(new Error('Choose a JPEG, PNG or WebP.'));
+    if(file.size > 12 * 1024 * 1024) return reject(new Error('That file is over 12 MB.'));
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      try{
+        // Square crop from the centre, so a portrait does not arrive squashed.
+        const side = Math.min(img.width, img.height);
+        const c = document.createElement('canvas');
+        c.width = c.height = AVATAR_PX;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side,
+                      0, 0, AVATAR_PX, AVATAR_PX);
+        let out = c.toDataURL('image/webp', 0.86);
+        // Older Safari ignores the webp request and hands back a PNG.
+        if(!out.startsWith('data:image/webp')) out = c.toDataURL('image/jpeg', 0.86);
+        resolve(out);
+      } catch(err){ reject(new Error('That image could not be read.')); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file is not an image.')); };
+    img.src = url;
+  });
+}
+
+async function profUpload(file){
+  const av = document.getElementById('prof-avatar');
+  profMsg('prof-photo-msg', 'Preparing…');
+  try{
+    const dataUrl = await profResize(file);
+    if(av) av.classList.add('busy');
+    profMsg('prof-photo-msg', 'Uploading…');
+    const data = await profCall('avatar', { image: dataUrl });
+    profPaint({ ...data, full_name: document.getElementById('pf-name')?.value });
+    profMsg('prof-photo-msg', 'Photo updated.', 'ok');
+  } catch(e){
+    if(e.message !== 'signed out') profMsg('prof-photo-msg', e.message, 'bad');
+  } finally {
+    if(av) av.classList.remove('busy');
+  }
+}
+
+function profWire(){
+  const form = document.getElementById('prof-form');
+  if(!form || form.dataset.wired) return;
+  form.dataset.wired = '1';
+
+  const bio = document.getElementById('pf-bio');
+  const count = document.getElementById('pf-bio-count');
+  if(bio && count) bio.addEventListener('input', () => { count.textContent = String(bio.value.length); });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('prof-save');
+    const profile = {};
+    for(const [el, key] of Object.entries(PROF_FIELDS)){
+      const node = document.getElementById(el);
+      if(node) profile[key] = node.value;
+    }
+    btn.disabled = true;
+    profMsg('prof-msg', 'Saving…');
+    try{
+      const saved = await profCall('profile', { profile });
+      profPaint(saved);
+      // The badge in the nav carries the name; keep it honest.
+      try{ localStorage.setItem('lunara_name', saved.full_name || ''); } catch(err){}
+      profMsg('prof-msg', 'Saved.', 'ok');
+    } catch(err){
+      if(err.message !== 'signed out'){
+        profMsg('prof-msg', err.message, 'bad');
+        // Point at the field the server refused, where it named one.
+        const d = document.getElementById('pf-domain');
+        if(d && /domain/i.test(err.message)){ d.setAttribute('aria-invalid','true'); d.focus(); }
+      }
+    } finally { btn.disabled = false; }
+  });
+
+  const dom = document.getElementById('pf-domain');
+  if(dom) dom.addEventListener('input', () => dom.removeAttribute('aria-invalid'));
+
+  const file = document.getElementById('prof-file');
+  if(file) file.addEventListener('change', () => {
+    if(file.files && file.files[0]) profUpload(file.files[0]);
+    file.value = '';
+  });
+
+  const rm = document.getElementById('prof-remove');
+  if(rm) rm.addEventListener('click', async () => {
+    profMsg('prof-photo-msg', 'Removing…');
+    try{
+      await profCall('avatar', { remove: true });
+      profPaint({ avatar_url: '', full_name: document.getElementById('pf-name')?.value });
+      profMsg('prof-photo-msg', 'Photo removed.', 'ok');
+    } catch(e){ if(e.message !== 'signed out') profMsg('prof-photo-msg', e.message, 'bad'); }
+  });
+}
+
 function showSection(name, el){
   document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.dash-nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('section-'+name).classList.add('active');
-  el.classList.add('active');
+  if(el) el.classList.add('active');
+  if(name === 'profile'){ profWire(); profLoad(); }
 }
+
+/* member.html#profile, from the nav menu on any other page. */
+function profOpenIfAsked(){
+  if(location.hash !== '#profile') return;
+  const item = [...document.querySelectorAll('.dash-nav-item')]
+    .find(n => /showSection\('profile'/.test(n.getAttribute('onclick') || ''));
+  showSection('profile', item);
+}
+window.addEventListener('hashchange', profOpenIfAsked);
 
 // Auto-restore session on page load
 (async function restoreSession(){
@@ -1851,5 +2189,9 @@ function goHome(){
   }, 200);
 })();
 </script>
+<!-- The member mark and, more importantly, the shared sign-out. This page
+     is not on the site shell (robots.txt disallows it), so it loads the
+     script itself. One Tap is off: whoever is here is already signing in. -->
+<script src="lunara-member.js" data-lunara-onetap="off" defer></script>
 </body>
 </html>

@@ -164,6 +164,26 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
-  else install();
+  /* ── the member mark ──────────────────────────────────────────
+     Loaded from here so it reaches every page the shell reaches.
+     Before this it was on exactly one page out of sixty, which meant
+     a signed-in member browsing the site saw "Sign in" in the header
+     everywhere and had no way to sign out at all except from one
+     sidebar button on member.html.
+
+     It loads after the nav exists, because it looks for .lxn-end to
+     hang the badge on. One Tap is left on: it only appears for
+     visitors with no session, and it remembers being dismissed. */
+  function loadMember() {
+    if (document.querySelector('script[src*="lunara-member.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-member.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function boot() { install(); loadMember(); }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

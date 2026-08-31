@@ -10,7 +10,7 @@
  * verification would pass happily while that was true.
  */
 
-import { handleAuth, withCors, _resetJwksCache } from './auth-core.mjs';
+import { handleAuth, withCors, _resetJwksCache, signSession } from './auth-core.mjs';
 
 let pass = 0, fail = 0;
 const check = (name, cond, detail = '') => {
@@ -32,6 +32,7 @@ const JWKS_URL = 'https://jwks.test.invalid/certs';
    lunara_id, and update() patches by email. */
 function memStore() {
   const rows = new Map();
+  const uploads = [];
   const clone = (m) => (m ? { ...m } : null);
   return {
     getByEmail: async (email) => clone(rows.get(email)),
@@ -50,7 +51,12 @@ function memStore() {
       rows.set(email, row);
       return clone(row);
     },
-    _rows: rows
+    putAvatar: async (path, bytes, type) => {
+      uploads.push({ path, size: bytes.length, type });
+      return 'https://cdn.test.invalid/member-avatars/' + path;
+    },
+    _rows: rows,
+    _uploads: uploads
   };
 }
 
@@ -475,6 +481,130 @@ console.log('\nGoogle sign-in');
   check('the session issued by Google sign-in verifies', r.status === 200, 'status=' + r.status);
 
   globalThis.fetch = realFetch;
+}
+
+/* call() yields a Response. These suites want the status and the body
+   together, and a Response body can only be read once. */
+const read = async (p) => { const r = await p; return { status: r.status, body: await r.json() }; };
+
+/* ── sessions expire in a day ───────────────────────────────────── */
+{
+  console.log('\nsession lifetime');
+  const cfg = cfgFor(memStore());
+  await read(call('signup', { email: 'day@b.co', password: 'a-long-enough-pass', full_name: 'Day' }, cfg));
+  const r = await read(call('login', { email: 'day@b.co', password: 'a-long-enough-pass' }, cfg));
+  const hours = (r.body.expires_at - Date.now()) / 3600000;
+
+  check('a session expires in about 24 hours, not 30 days',
+    hours > 23.9 && hours < 24.1, hours.toFixed(2) + 'h');
+  check('the page is told when its session ends',
+    typeof r.body.expires_at === 'number' && r.body.expires_at > Date.now());
+
+  /* The claim inside the token has to agree with what was advertised,
+     or the page ejects at one time and the server at another. */
+  const claims = JSON.parse(
+    new TextDecoder().decode(
+      Uint8Array.from(atob(r.body.session_token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/')),
+        (c) => c.charCodeAt(0))));
+  check('the token agrees with the advertised expiry', claims.exp === r.body.expires_at);
+
+  const stale = await signSession({ email: 'day@b.co', exp: Date.now() - 1000 }, SECRET);
+  const s2 = await read(call('session', { session_token: stale }, cfg));
+  check('a session one second past expiry is refused', s2.status === 401, 'status=' + s2.status);
+
+  const s3 = await read(call('profile', { session_token: stale }, cfg));
+  check('an expired session cannot read a profile', s3.status === 401, 'status=' + s3.status);
+  const s4 = await read(call('avatar', { session_token: stale, remove: true }, cfg));
+  check('an expired session cannot change an avatar', s4.status === 401, 'status=' + s4.status);
+}
+
+/* ── the profile ────────────────────────────────────────────────── */
+{
+  console.log('\nprofile');
+  const store = memStore();
+  const cfg = cfgFor(store);
+  const up = await read(call('signup', { email: 'p@b.co', password: 'a-long-enough-pass', full_name: 'P' }, cfg));
+  const tok = up.body.session_token;
+
+  let r = await read(call('profile', { session_token: tok }, cfg));
+  check('a new member has an empty profile rather than an error',
+    r.status === 200 && r.body.business_name === '', JSON.stringify(r.body.business_name));
+
+  r = await read(call('profile', { session_token: tok, profile: {
+    business_name: '  Acme   Systems  Ltd ', business_domain: 'HTTPS://WWW.Acme.com/about?x=1',
+    business_country: 'Ireland', business_role: 'Head of Compliance', bio: 'We ship things.'
+  } }, cfg));
+  check('a profile saves', r.status === 200, 'status=' + r.status);
+  check('whitespace is collapsed', r.body.business_name === 'Acme Systems Ltd', r.body.business_name);
+  check('a pasted URL is stored as a bare domain',
+    r.body.business_domain === 'acme.com', r.body.business_domain);
+
+  r = await read(call('profile', { session_token: tok, profile: { business_domain: 'not a domain' } }, cfg));
+  check('a non-domain is refused', r.status === 400, 'status=' + r.status);
+  r = await read(call('profile', { session_token: tok }, cfg));
+  check('the refused value was not saved', r.body.business_domain === 'acme.com', r.body.business_domain);
+
+  r = await read(call('profile', { session_token: tok, profile: { bio: 'x'.repeat(601) } }, cfg));
+  check('an over-long field is refused', r.status === 400, 'status=' + r.status);
+  r = await read(call('profile', { session_token: tok, profile: { business_name: 42 } }, cfg));
+  check('a non-string field is refused', r.status === 400, 'status=' + r.status);
+
+  r = await read(call('profile', { session_token: tok, profile: { tier: 'founder' } }, cfg));
+  check('an unknown field cannot be smuggled in', r.status === 400, 'status=' + r.status);
+  check('tier was not changed by the attempt',
+    store._rows.get('p@b.co').tier === 'member', store._rows.get('p@b.co').tier);
+
+  r = await read(call('profile', { session_token: tok, profile: { business_name: '' } }, cfg));
+  check('a field can be cleared', r.status === 200 && r.body.business_name === '');
+
+  r = await read(call('profile', { session_token: 'forged.token' }, cfg));
+  check('a forged token reads no profile', r.status === 401, 'status=' + r.status);
+
+  /* One member must never be able to write another's record. */
+  await read(call('signup', { email: 'q@b.co', password: 'another-long-pass', full_name: 'Q' }, cfg));
+  r = await read(call('profile', { session_token: tok, profile: { business_name: 'Mine' }, email: 'q@b.co' }, cfg));
+  check('a profile write cannot target another member',
+    r.status === 200 && store._rows.get('q@b.co').business_name === undefined,
+    String(store._rows.get('q@b.co').business_name));
+
+  const sess = await read(call('session', { session_token: tok }, cfg));
+  check('the session answer carries the profile', 'business_domain' in sess.body);
+}
+
+/* ── the avatar ─────────────────────────────────────────────────── */
+{
+  console.log('\navatar');
+  const store = memStore();
+  const cfg = cfgFor(store);
+  const up = await read(call('signup', { email: 'a@v.co', password: 'a-long-enough-pass', full_name: 'A' }, cfg));
+  const tok = up.body.session_token;
+  const png = 'data:image/png;base64,' + btoa('x'.repeat(200));
+
+  let r = await read(call('avatar', { session_token: tok, image: png }, cfg));
+  check('an avatar uploads', r.status === 200 && !!r.body.avatar_url, JSON.stringify(r.body));
+  check('it is stored under the Lunara id, never the email',
+    store._uploads[0].path.startsWith(up.body.lunara_id + '/') &&
+    !store._uploads[0].path.includes('@'), store._uploads[0].path);
+  check('the record points at the stored file',
+    store._rows.get('a@v.co').avatar_url === r.body.avatar_url);
+
+  r = await call('avatar', { session_token: tok, image: 'data:image/svg+xml;base64,' + btoa('<svg/>') }, cfg);
+  check('SVG is refused — it is a script container, not a photo', r.status === 400, 'status=' + r.status);
+  r = await call('avatar', { session_token: tok, image: 'data:text/html;base64,' + btoa('<b>x</b>') }, cfg);
+  check('HTML dressed as an image is refused', r.status === 400, 'status=' + r.status);
+  r = await read(call('avatar', { session_token: tok, image: 'https://evil.test/x.png' }, cfg));
+  check('a remote URL is not accepted in place of an image', r.status === 400, 'status=' + r.status);
+  r = await call('avatar', { session_token: tok, image: 'data:image/png;base64,' + btoa('x'.repeat(300000)) }, cfg);
+  check('an oversized image is refused', r.status === 400, 'status=' + r.status);
+  check('no refusal reached storage', store._uploads.length === 1, String(store._uploads.length));
+
+  r = await read(call('avatar', { session_token: tok, remove: true }, cfg));
+  check('an avatar can be removed', r.status === 200 && r.body.avatar_url === '');
+  check('removal cleared the record', !store._rows.get('a@v.co').avatar_url);
+
+  r = await read(call('avatar', { session_token: 'forged.token', image: png }, cfg));
+  check('a forged token uploads nothing', r.status === 401, 'status=' + r.status);
+  check('and still nothing more reached storage', store._uploads.length === 1);
 }
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

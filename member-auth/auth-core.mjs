@@ -28,13 +28,21 @@
      create(member)         → member
      update(email, patch)   → member
 
+   And, only if avatar uploads are wanted:
+     putAvatar(path, bytes, contentType) → public URL
+
    ═══════════════════════════════════════════════════════════════════ */
 
 export const GOOGLE_CLIENT_ID =
   '744926178467-645eltr29q4o3lo8msnlnuqsa782feca.apps.googleusercontent.com';
 export const GOOGLE_JWKS = 'https://www.googleapis.com/oauth2/v3/certs';
 
-const SESSION_DAYS = 30;
+/* Twenty-four hours. A month-long session on an account that will
+   eventually carry a certification decision is a month in which a
+   borrowed laptop is a signed-in member. The cost is that people sign
+   in daily; Google One Tap makes that one click, and the page warns
+   before it happens rather than dropping them mid-form. */
+const SESSION_HOURS = 24;
 const PBKDF2_ITERATIONS = 210000;
 const MIN_PASSWORD = 10;
 
@@ -137,7 +145,7 @@ export async function handleAuth(request, url, cfg) {
      code does not control (/functions/v1/lunara-auth/...). The last
      segment decides when it names an action; otherwise the body may
      say so, which keeps the whole thing reachable at one URL. */
-  const ACTIONS = ['google', 'signup', 'login', 'session'];
+  const ACTIONS = ['google', 'signup', 'login', 'session', 'profile', 'avatar'];
   const last = url.pathname.split('/').filter(Boolean).pop() || '';
   const action = ACTIONS.includes(last) ? last
     : ACTIONS.includes(body.action) ? body.action
@@ -148,6 +156,8 @@ export async function handleAuth(request, url, cfg) {
     case 'signup':  return authSignup(body, cfg);
     case 'login':   return authLogin(body, cfg);
     case 'session': return authSession(body, cfg);
+    case 'profile': return authProfile(body, cfg);
+    case 'avatar':  return authAvatar(body, cfg);
     default:        return json({ success: false, error: 'Unknown route.' }, 404);
   }
 }
@@ -344,17 +354,33 @@ async function findMember(identifier, store) {
 /* The session carries the tier as it stood at sign-in. A page that
    trusted that forever would show a lapsed member as current, so the
    record stays the truth and the session is only a claim of identity. */
+export function publicProfile(member) {
+  return {
+    full_name: member.full_name || '',
+    business_name: member.business_name || '',
+    business_domain: member.business_domain || '',
+    business_country: member.business_country || '',
+    business_role: member.business_role || '',
+    bio: member.bio || '',
+    avatar_url: member.avatar_url || ''
+  };
+}
+
 async function sessionFor(member, cfg, isNew = false) {
-  const exp = Date.now() + SESSION_DAYS * 86400000;
+  const exp = Date.now() + SESSION_HOURS * 3600000;
   const token = await signSession({ email: member.email, exp }, cfg.sessionSecret);
   return {
     success: true,
     session_token: token,
+    /* The page needs this to know when to warn and when to eject.
+       Sending it beats having the page guess a duration that the
+       server could change underneath it. */
+    expires_at: exp,
     lunara_id: member.lunara_id,
-    full_name: member.full_name || '',
     tier: member.tier || 'member',
     email: member.email,
     member_since: member.created_at || null,
+    ...publicProfile(member),
     // The page shows a record being created or a record being
     // recognised, and those are different things to watch. It decides
     // from this rather than from guessing at the absence of a cookie.
@@ -385,6 +411,11 @@ async function authGoogle(body, cfg) {
       lunara_id: await newLunaraId(cfg.store),
       tier: 'member',
       google_sub: claims.sub,
+      /* Google hands us a profile picture in the id_token. Taking it
+         means most members have an avatar without ever uploading one,
+         and an uploaded photo overwrites it. It is a picture, never
+         evidence of who anybody is. */
+      avatar_url: claims.picture || null,
       auth_method: 'google'
     });
     console.log('New member via Google: ' + member.lunara_id);
@@ -394,6 +425,7 @@ async function authGoogle(body, cfg) {
     // creating a duplicate they can never sign back into.
     const patch = { google_sub: claims.sub };
     if (!member.full_name && claims.name) patch.full_name = claims.name;
+    if (!member.avatar_url && claims.picture) patch.avatar_url = claims.picture;
     member = await cfg.store.update(email, patch);
   }
 
@@ -464,4 +496,143 @@ async function authSession(body, cfg) {
   const member = await cfg.store.getByEmail(normalise(claims.email));
   if (!member) return expired();
   return json(await sessionFor(member, cfg));
+}
+
+/* ── the profile ──────────────────────────────────────────────────
+   Everything a member states about themselves. Stated, not verified:
+   typing a domain here proves nothing about controlling it, which is
+   what Shield certification is for, and the field carries no
+   certification claim. Saying so in the store comment and on the form
+   keeps the two from being confused by anybody, us included. */
+
+const FIELDS = {
+  full_name:        { max: 120 },
+  business_name:    { max: 160 },
+  business_domain:  { max: 253, domain: true },
+  business_country: { max: 60 },
+  business_role:    { max: 100 },
+  bio:              { max: 600 }
+};
+
+/* A domain, not a URL and not an email. Accepting "https://x.com/about"
+   and storing it whole would mean a registry lookup on it silently
+   never matches. */
+function cleanDomain(raw) {
+  const d = String(raw).trim().toLowerCase()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/[/?#].*$/, '')
+    .replace(/\.$/, '');
+  if (!d) return '';
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(d)) return null;
+  return d;
+}
+
+async function memberFromSession(body, cfg) {
+  const claims = await readSession(body.session_token, cfg.sessionSecret);
+  if (!claims) return null;
+  return cfg.store.getByEmail(normalise(claims.email));
+}
+
+async function authProfile(body, cfg) {
+  const member = await memberFromSession(body, cfg);
+  if (!member) return json({ success: false, error: 'Session expired.' }, 401);
+
+  // No patch means "tell me what you have".
+  if (!body.profile || typeof body.profile !== 'object') {
+    return json({ success: true, lunara_id: member.lunara_id, ...publicProfile(member) });
+  }
+
+  const patch = {};
+  for (const [key, rule] of Object.entries(FIELDS)) {
+    if (!(key in body.profile)) continue;
+    let v = body.profile[key];
+    if (v === null) { patch[key] = null; continue; }
+    if (typeof v !== 'string') {
+      return json({ success: false, error: `${key} must be text.` }, 400);
+    }
+    v = v.trim().replace(/\s+/g, ' ');
+    if (v.length > rule.max) {
+      return json({ success: false, error: `${key} is longer than ${rule.max} characters.` }, 400);
+    }
+    if (rule.domain && v) {
+      const d = cleanDomain(v);
+      if (d === null) return json({ success: false, error: 'That does not look like a domain.' }, 400);
+      v = d;
+    }
+    patch[key] = v || null;
+  }
+
+  if (!Object.keys(patch).length) {
+    return json({ success: false, error: 'Nothing to update.' }, 400);
+  }
+  patch.profile_updated_at = new Date().toISOString();
+
+  const saved = await cfg.store.update(member.email, patch);
+  return json({ success: true, lunara_id: saved.lunara_id, ...publicProfile(saved) });
+}
+
+/* ── the avatar ───────────────────────────────────────────────────
+   Sent as a data URL because the client has already drawn the image
+   onto a 256px canvas — which downsizes it, strips EXIF, and re-encodes
+   whatever was handed over as a known format. A profile photo should
+   not carry the GPS coordinates of where it was taken, and a file this
+   code never parses cannot carry a decoder exploit either.
+
+   The type is taken from the re-encode, not from the filename, and it
+   is checked against the same allowlist the bucket enforces. Two walls
+   rather than one. */
+
+const AVATAR_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+const AVATAR_MAX = 262144;   // 256 KB, the bucket's own ceiling
+
+export function decodeDataUrl(dataUrl) {
+  const m = /^data:([a-z]+\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)$/i.exec(String(dataUrl || ''));
+  if (!m) return { error: 'Expected a base64 data URL.' };
+  const type = m[1].toLowerCase();
+  if (!AVATAR_TYPES[type]) return { error: 'Only JPEG, PNG or WebP.' };
+  let bin;
+  try { bin = atob(m[2]); } catch { return { error: 'That image did not decode.' }; }
+  if (bin.length > AVATAR_MAX) return { error: 'That image is over 256 KB after resizing.' };
+  if (bin.length < 64) return { error: 'That image is empty.' };
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return { type, ext: AVATAR_TYPES[type], bytes };
+}
+
+async function authAvatar(body, cfg) {
+  const member = await memberFromSession(body, cfg);
+  if (!member) return json({ success: false, error: 'Session expired.' }, 401);
+
+  // Removing a photo is a thing people want to do.
+  if (body.remove === true) {
+    const saved = await cfg.store.update(member.email, {
+      avatar_url: null, profile_updated_at: new Date().toISOString()
+    });
+    return json({ success: true, avatar_url: '', lunara_id: saved.lunara_id });
+  }
+
+  if (!cfg.store.putAvatar) {
+    return json({ success: false, error: 'Avatar storage is not configured.' }, 501);
+  }
+
+  const img = decodeDataUrl(body.image);
+  if (img.error) return json({ success: false, error: img.error }, 400);
+
+  /* Keyed on the Lunara id, not the email — an object path is visible
+     in a public URL and a member's address is not ours to publish.
+     The timestamp busts every cache that held the old one. */
+  const path = `${member.lunara_id}/${Date.now()}.${img.ext}`;
+  let url;
+  try {
+    url = await cfg.store.putAvatar(path, img.bytes, img.type);
+  } catch (err) {
+    console.error('avatar upload failed: ' + (err && err.message || err));
+    return json({ success: false, error: 'That image could not be stored.' }, 502);
+  }
+
+  const saved = await cfg.store.update(member.email, {
+    avatar_url: url, profile_updated_at: new Date().toISOString()
+  });
+  return json({ success: true, avatar_url: url, lunara_id: saved.lunara_id });
 }

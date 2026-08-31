@@ -20,6 +20,18 @@
       deliberately, because a page that could repaint an account
       chooser could forge one.
 
+   3. A way out. The mark opens a small menu carrying the member area
+      and Sign out. Before this, the only sign-out on the whole site
+      was a button in one sidebar on one page, so a member on any
+      other page had no way to leave except clearing their own
+      browser storage.
+
+   4. An end. Sessions last twenty-four hours and the page enforces
+      that itself rather than waiting for the next request to fail.
+      A tab left open overnight ejects on its own, with a warning
+      five minutes before, because being dropped mid-sentence is
+      worse than being told it is coming.
+
    Add data-lunara-onetap="off" to the script tag to load the
    indicator without the prompt.
    ═══════════════════════════════════════════════════════════════════ */
@@ -61,7 +73,43 @@
     '.lun-who{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;',
       'color:rgba(255, 255, 255, 0.472)}',
     '@media (max-width:900px){.lun-who{display:none}}',
-    '@media (prefers-reduced-motion:reduce){.lun-mark{transition:none}.lun-dot{animation:none}}'
+    '@media (prefers-reduced-motion:reduce){.lun-mark{transition:none}.lun-dot{animation:none}}',
+    /* the menu */
+    '.lun-wrap{position:relative;display:inline-flex}',
+    '.lun-mark{cursor:pointer}',
+    '.lun-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:2147483000;',
+      'min-width:212px;padding:6px;border-radius:12px;border:1px solid rgba(214,222,234,0.14);',
+      'background:rgba(10,12,16,0.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);',
+      'box-shadow:0 18px 44px -12px rgba(0,0,0,0.75);font-family:Inter,system-ui,sans-serif;',
+      'opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease}',
+    '.lun-menu.on{opacity:1;transform:none;pointer-events:auto}',
+    '.lun-menu .who{padding:9px 12px 10px;border-bottom:1px solid rgba(214,222,234,0.1);margin-bottom:5px}',
+    '.lun-menu .who b{display:block;font-size:13px;font-weight:400;color:#EFEAE0;',
+      'white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.lun-menu .who span{display:block;font-size:11px;color:#8D887F;margin-top:3px;',
+      'white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.lun-menu a,.lun-menu button{display:block;width:100%;text-align:left;box-sizing:border-box;',
+      'padding:9px 12px;border:none;border-radius:8px;background:none;cursor:pointer;',
+      'font-family:inherit;font-size:13px;color:#A49E93;text-decoration:none;transition:background .15s ease,color .15s ease}',
+    '.lun-menu a:hover,.lun-menu button:hover,.lun-menu a:focus-visible,.lun-menu button:focus-visible{',
+      'background:rgba(255,255,255,0.06);color:#EFEAE0}',
+    '.lun-menu .out{color:#D89B8C}',
+    '.lun-menu .out:hover{background:rgba(216,155,140,0.1);color:#E8B4A6}',
+    '.lun-menu .ends{padding:8px 12px 4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;',
+      'font-size:10px;letter-spacing:.05em;color:#6F6A62}',
+    /* the warning */
+    '.lun-warn{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);z-index:2147483000;',
+      'display:flex;align-items:center;gap:14px;padding:13px 18px;border-radius:12px;',
+      'border:1px solid rgba(196,164,107,0.36);background:rgba(12,14,18,0.97);',
+      '-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);',
+      'box-shadow:0 18px 44px -14px rgba(0,0,0,0.8);font-family:Inter,system-ui,sans-serif;',
+      'font-size:13px;color:#EFEAE0;max-width:calc(100vw - 32px);',
+      'opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease}',
+    '.lun-warn.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}',
+    '.lun-warn b{font-weight:400;color:#E2C47A}',
+    '.lun-warn button{font-family:inherit;font-size:12.5px;font-weight:500;color:#141210;cursor:pointer;',
+      'background:linear-gradient(180deg,#F0E6CE,#CBB07C);border:none;border-radius:100px;padding:8px 16px;flex:none}',
+    '@media (max-width:520px){.lun-warn{flex-direction:column;align-items:flex-start;gap:10px}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -95,20 +143,190 @@
     })();
   }
 
+  /* ── leaving ──────────────────────────────────────────────────
+     One function, because there are now four ways a session ends —
+     the menu, the expiry timer, a server 401, and another tab signing
+     out — and four half-copies of this is how one of them ends up
+     leaving the id behind for the next person at the machine. */
+  var KEYS = ['lunara_session_token','lunara_id','lunara_name','lunara_tier',
+              'lunara_email','lunara_expires_at'];
+
+  function forget(){
+    try { KEYS.forEach(function(k){ localStorage.removeItem(k); }); } catch(e){}
+    /* Google remembers it picked an account for this site. Without
+       this, One Tap silently signs the same person back in and the
+       sign-out looks broken. */
+    try {
+      if(window.google && google.accounts && google.accounts.id){
+        google.accounts.id.disableAutoSelect();
+      }
+    } catch(e){}
+  }
+
+  function signOut(reason){
+    forget();
+    var here = (location.pathname.split('/').pop() || 'index.html');
+    var gated = ['member.html','dashboard.html','kit-access.html','compliance-report-access.html'];
+    if (gated.indexOf(here) >= 0) {
+      // Leaving a gated page means leaving it, not sitting on a shell
+      // of it that still shows the last member's name.
+      location.replace('/member.html?signed_out=' + encodeURIComponent(reason || 'you'));
+    } else {
+      /* Assigning location.href to the URL already showing is a
+         same-document navigation in Chromium — nothing reloads and the
+         badge stays on screen for a session that has ended. reload()
+         is the only one of these that always repaints. */
+      location.reload();
+    }
+  }
+  window.lunaraSignOut = signOut;
+
+  /* ── the clock ────────────────────────────────────────────────
+     The server says when the session ends and the page holds itself
+     to it. Waiting for the next request to fail would leave someone
+     typing into a form that has already stopped being able to save. */
+  var warnEl = null, timers = [];
+
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+
+  function warn(minutes){
+    if(warnEl) return;
+    warnEl = document.createElement('div');
+    warnEl.className = 'lun-warn';
+    warnEl.setAttribute('role','status');
+    warnEl.innerHTML = '<span>Your session ends in about <b></b>. ' +
+      'Anything unsaved will be lost.</span><button type="button">Stay signed in</button>';
+    warnEl.querySelector('b').textContent = minutes + (minutes === 1 ? ' minute' : ' minutes');
+    warnEl.querySelector('button').addEventListener('click', function(){
+      /* Renewing is just asking the server again: /session hands back a
+         fresh token on every call, so a person who is still here keeps
+         working and a laptop nobody is at does not. */
+      var t = null; try { t = localStorage.getItem('lunara_session_token'); } catch(e){}
+      if(!t) return signOut('expired');
+      post('session', { session_token: t }).then(function(d){
+        if(d && d.success){ remember(d); dismissWarn(); schedule(d.expires_at); }
+        else signOut('expired');
+      }).catch(function(){ /* offline: leave the warning up */ });
+    });
+    document.body.appendChild(warnEl);
+    requestAnimationFrame(function(){ warnEl.classList.add('on'); });
+  }
+
+  function dismissWarn(){
+    if(!warnEl) return;
+    var el = warnEl; warnEl = null;
+    el.classList.remove('on');
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 320);
+  }
+
+  function schedule(expiresAt){
+    clearTimers();
+    if(!expiresAt) return;
+    var left = expiresAt - Date.now();
+    if(left <= 0) return signOut('expired');
+    var WARN_AT = 5 * 60000;
+    if(left > WARN_AT){
+      timers.push(setTimeout(function(){ warn(5); }, left - WARN_AT));
+    } else {
+      warn(Math.max(1, Math.round(left / 60000)));
+    }
+    /* setTimeout does not fire reliably across a sleeping laptop, so
+       the deadline is also checked whenever the tab is looked at
+       again. Whichever notices first wins. */
+    timers.push(setTimeout(function(){ signOut('expired'); }, left));
+  }
+
+  function checkDeadline(){
+    var exp = 0;
+    try { exp = Number(localStorage.getItem('lunara_expires_at') || 0); } catch(e){}
+    if(exp && exp <= Date.now()) signOut('expired');
+  }
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) checkDeadline();
+  });
+
+  /* Signing out in one tab signs out in all of them. */
+  window.addEventListener('storage', function(e){
+    if(e.key === 'lunara_session_token' && !e.newValue) location.reload();
+  });
+
+  function remember(data){
+    try{
+      localStorage.setItem('lunara_session_token', data.session_token);
+      localStorage.setItem('lunara_id', data.lunara_id);
+      localStorage.setItem('lunara_name', data.full_name || '');
+      localStorage.setItem('lunara_tier', data.tier || '');
+      if(data.expires_at) localStorage.setItem('lunara_expires_at', String(data.expires_at));
+      if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
+    } catch(e){}
+  }
+
   function mount(data){
     var host = document.querySelector('[data-lunara-mark]')
+            || document.querySelector('.lxn-end')
             || document.querySelector('#top-nav .nav-cta')
             || document.querySelector('#top-nav');
     if(!host) return;
 
-    var a = document.createElement('a');
+    /* The shared nav offers "Sign in". Leaving that next to a badge
+       showing who is already signed in is the site not knowing its own
+       state, which is a poor look on a page about verified identity. */
+    var ghost = document.querySelector('.lxn-ghost');
+    if(ghost && /sign\s*in/i.test(ghost.textContent)) ghost.remove();
+
+    var wrap = document.createElement('div');
+    wrap.className = 'lun-wrap';
+
+    var a = document.createElement('button');
+    a.type = 'button';
     a.className = 'lun-mark';
-    a.href = 'member.html';
+    a.setAttribute('aria-haspopup', 'menu');
+    a.setAttribute('aria-expanded', 'false');
     a.title = 'Signed in as ' + (data.email || data.lunara_id);
     a.innerHTML = '<span class="lun-dot"></span><span class="lun-who"></span><span class="lun-id"></span>';
     a.querySelector('.lun-who').textContent =
       data.full_name ? data.full_name.split(' ')[0] : 'Member';
-    host.insertBefore(a, host.firstChild);
+
+    var menu = document.createElement('div');
+    menu.className = 'lun-menu';
+    menu.setAttribute('role', 'menu');
+    var esc = function(t){ var d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
+    menu.innerHTML =
+      '<div class="who"><b>' + esc(data.full_name || 'Member') + '</b>' +
+        '<span>' + esc(data.email || '') + '</span></div>' +
+      '<a role="menuitem" href="/member.html">Member area</a>' +
+      '<a role="menuitem" href="/member.html#profile">Edit profile</a>' +
+      '<div class="ends"></div>' +
+      '<button role="menuitem" type="button" class="out">Sign out</button>';
+
+    // What "24 hours" actually means, in the reader's own clock.
+    if(data.expires_at){
+      try{
+        menu.querySelector('.ends').textContent = 'Session ends ' +
+          new Date(data.expires_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+      } catch(e){ menu.querySelector('.ends').remove(); }
+    } else { menu.querySelector('.ends').remove(); }
+
+    menu.querySelector('.out').addEventListener('click', function(){ signOut('you'); });
+
+    function open(on){
+      menu.classList.toggle('on', on);
+      a.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+    a.addEventListener('click', function(e){
+      e.stopPropagation();
+      open(!menu.classList.contains('on'));
+    });
+    document.addEventListener('click', function(e){
+      if(!wrap.contains(e.target)) open(false);
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') open(false);
+    });
+
+    wrap.appendChild(a);
+    wrap.appendChild(menu);
+    host.insertBefore(wrap, host.firstChild);
 
     requestAnimationFrame(function(){ a.classList.add('in'); });
     setTimeout(function(){ settle(a.querySelector('.lun-id'), data.lunara_id); }, still ? 0 : 260);
@@ -126,14 +344,9 @@
       callback: function(res){
         post('google', { id_token: res.credential }).then(function(data){
           if(!data.success) return;
-          try{
-            localStorage.setItem('lunara_session_token', data.session_token);
-            localStorage.setItem('lunara_id', data.lunara_id);
-            localStorage.setItem('lunara_name', data.full_name || '');
-            localStorage.setItem('lunara_tier', data.tier || '');
-            if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
-          } catch(e){}
+          remember(data);
           mount(data);
+          schedule(data.expires_at);
         });
       },
       auto_select: false,
@@ -170,6 +383,13 @@
     var token = null;
     try { token = localStorage.getItem('lunara_session_token'); } catch(e){}
 
+    /* If the stored deadline has already passed there is nothing to
+       ask about — clear it here rather than showing a badge for the
+       half second it takes the server to say the same thing. */
+    var exp = 0;
+    try { exp = Number(localStorage.getItem('lunara_expires_at') || 0); } catch(e){}
+    if(token && exp && exp <= Date.now()){ forget(); token = null; }
+
     if(!token){
       // Signed out. Offer the card, once the page has settled.
       setTimeout(function(){ loadGis(oneTap); }, 1400);
@@ -180,11 +400,15 @@
        in localStorage. An expired or invented token gets the visitor
        treated as a stranger, which is what they are. */
     post('session', { session_token: token }).then(function(data){
-      if(data && data.success){ mount(data); return; }
-      try{
-        ['lunara_session_token','lunara_id','lunara_name','lunara_tier']
-          .forEach(function(k){ localStorage.removeItem(k); });
-      } catch(e){}
+      if(data && data.success){
+        remember(data);
+        mount(data);
+        schedule(data.expires_at);
+        return;
+      }
+      /* The server says no. Whatever is in storage is stale or invented,
+         and either way this visitor is a stranger. */
+      forget();
       setTimeout(function(){ loadGis(oneTap); }, 1400);
     }).catch(function(){ /* offline: show nothing rather than a guess */ });
   }

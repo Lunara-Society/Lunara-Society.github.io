@@ -1870,6 +1870,34 @@ function offerLeft(ms){
   return (h ? h + 'h ' : '') + m + 'm ' + String(sec).padStart(2,'0') + 's';
 }
 
+/* Where a paid offer goes next. shield.html prefills its form from the
+   query string and then makes the applicant check and sign it, so this
+   carries across what the profile already holds rather than making
+   somebody retype it. */
+let profCache = null;
+
+function offerApplyUrl(o){
+  const q = new URLSearchParams();
+  /* The form inputs are empty until the profile panel has been opened,
+     so read the record first and fall back to whatever is on screen.
+     Reading the inputs alone shipped a link carrying only an email. */
+  const g = (id, key) => (
+    (document.getElementById(id)?.value || '').trim() ||
+    ((profCache && profCache[key]) || '').trim()
+  );
+  const org = g('pf-org','business_name'), dom = g('pf-domain','business_domain'),
+        country = g('pf-country','business_country'), name = g('pf-name','full_name'),
+        role = g('pf-role','business_role');
+  if(org) q.set('business_name', org);
+  if(dom){ q.set('domain', dom); q.set('website_url', 'https://' + dom); }
+  if(country) q.set('registration_country', country);
+  if(name) q.set('signer_name', name);
+  if(role) q.set('signer_role', role);
+  try{ const e = localStorage.getItem('lunara_email'); if(e) q.set('contact_email', e); } catch(err){}
+  q.set('offer', o.code);
+  return '/shield.html?' + q.toString() + '#apply';
+}
+
 function offerRender(){
   const box = document.getElementById('offer-panel');
   if(!box) return;
@@ -1905,7 +1933,11 @@ function offerRender(){
       (o.lede ? '<p class="offer-lede">' + esc(o.lede) + '</p>' : '') +
       '<div class="offer-price"><b>' + esc(offerMoney(o.amount_cents, o.currency)) + '</b></div>' +
       (o.redeemed
-        ? '<p class="offer-clock">Payment reported. A person reconciles it against PayPal before anything is granted.</p>'
+        ? '<p class="offer-clock">Payment reported. A person reconciles it against PayPal before anything is granted.</p>' +
+          '<div class="offer-act"><a class="offer-pay" href="' + esc(offerApplyUrl(o)) + '">Complete your application &rarr;</a></div>' +
+          '<p class="offer-note">Paying and applying are two separate steps, deliberately: the review needs evidence ' +
+          'that a payment cannot supply. The form is prefilled with what we already know &mdash; check every value ' +
+          'before you sign it, because a link is not allowed to file an application on its own.</p>'
         : '<p class="offer-clock">Open for another ' + offerLeft(left) + '</p>') +
       (o.redeemed ? '' :
         '<div class="offer-act">' +
@@ -1949,6 +1981,11 @@ async function offerClaim(){
 
 async function offerLoad(){
   try{
+    // The application link needs the business details, and the profile
+    // panel may never be opened. Ask once, quietly.
+    if(!profCache){
+      profCache = await profCall('profile', {}).catch(() => null);
+    }
     const data = await profCall('offer', {});
     offerState = data.offer || null;
     offerRender();
@@ -2030,7 +2067,7 @@ async function profCall(action, payload){
 }
 
 async function profLoad(){
-  try { profPaint(await profCall('profile', {})); }
+  try { profCache = await profCall('profile', {}); profPaint(profCache); }
   catch(e){ if(e.message !== 'signed out') profMsg('prof-msg', 'Could not load your profile.', 'bad'); }
 }
 
@@ -2109,6 +2146,7 @@ function profWire(){
     profMsg('prof-msg', 'Saving…');
     try{
       const saved = await profCall('profile', { profile });
+      profCache = saved;
       profPaint(saved);
       // The badge in the nav carries the name; keep it honest.
       try{ localStorage.setItem('lunara_name', saved.full_name || ''); } catch(err){}

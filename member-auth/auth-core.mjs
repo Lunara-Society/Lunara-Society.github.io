@@ -717,7 +717,7 @@ async function authRedeem(body, cfg) {
 
   const txn = String(body.txn || '').trim().slice(0, 64);
   if (txn.length < 6) {
-    return json({ success: false, error: 'Enter the PayPal transaction id from your receipt.' }, 400);
+    return json({ success: false, error: 'Enter the transaction id from your receipt.' }, 400);
   }
 
   const saved = await cfg.store.redeemOffer(offer.id, txn);

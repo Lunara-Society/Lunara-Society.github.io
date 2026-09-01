@@ -1898,6 +1898,17 @@ function offerApplyUrl(o){
   return '/shield.html?' + q.toString() + '#apply';
 }
 
+/* Which processor the offer actually points at. This panel named
+   PayPal in six places, which was true until the $2 offer moved to a
+   Revolut checkout and then it was wrong in six places. The row
+   already knows where the money is taken; read it from there. */
+function offerProvider(url){
+  const h = (String(url || '').match(/^https:\/\/([^/]+)/) || [,''])[1].toLowerCase();
+  if(/(^|\.)paypal\.(com|me)$/.test(h)) return 'PayPal';
+  if(/(^|\.)revolut\.com$/.test(h))     return 'Revolut';
+  return '';
+}
+
 function offerRender(){
   const box = document.getElementById('offer-panel');
   if(!box) return;
@@ -1926,6 +1937,8 @@ function offerRender(){
 
   const esc = (t) => { const d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; };
 
+  const prov = offerProvider(o.pay_url);
+
   box.innerHTML =
     '<div class="offer' + (o.redeemed ? ' done' : '') + '">' +
       '<p class="offer-tag">' + (o.redeemed ? 'Recorded' : 'Offered to you only') + '</p>' +
@@ -1933,7 +1946,7 @@ function offerRender(){
       (o.lede ? '<p class="offer-lede">' + esc(o.lede) + '</p>' : '') +
       '<div class="offer-price"><b>' + esc(offerMoney(o.amount_cents, o.currency)) + '</b></div>' +
       (o.redeemed
-        ? '<p class="offer-clock">Payment reported. A person reconciles it against PayPal before anything is granted.</p>' +
+        ? '<p class="offer-clock">Payment reported. A person reconciles it against ' + (prov || 'the payment record') + ' before anything is granted.</p>' +
           '<div class="offer-act"><a class="offer-pay" href="' + esc(offerApplyUrl(o)) + '">Complete your application &rarr;</a></div>' +
           '<p class="offer-note">Paying and applying are two separate steps, deliberately: the review needs evidence ' +
           'that a payment cannot supply. The form is prefilled with what we already know &mdash; check every value ' +
@@ -1941,15 +1954,15 @@ function offerRender(){
         : '<p class="offer-clock">Open for another ' + offerLeft(left) + '</p>') +
       (o.redeemed ? '' :
         '<div class="offer-act">' +
-          (o.pay_url ? '<a class="offer-pay" href="' + esc(o.pay_url) + '" target="_blank" rel="noopener">Pay with PayPal</a>' : '') +
+          (o.pay_url ? '<a class="offer-pay" href="' + esc(o.pay_url) + '" target="_blank" rel="noopener">' + (prov ? 'Pay with ' + prov : 'Pay ' + esc(offerMoney(o.amount_cents, o.currency))) + '</a>' : '') +
         '</div>' +
         '<div class="offer-confirm">' +
           '<input id="offer-txn" type="text" inputmode="latin" autocomplete="off" spellcheck="false" ' +
-            'maxlength="64" placeholder="PayPal transaction id from your receipt" ' +
-            'aria-label="PayPal transaction id">' +
+            'maxlength="64" placeholder="' + (prov ? prov + ' ' : '') + 'transaction id from your receipt" ' +
+            'aria-label="' + (prov ? prov + ' ' : '') + 'transaction id">' +
           '<button type="button" id="offer-claim">I have paid</button>' +
         '</div>') +
-      '<p class="offer-note">Reporting a payment records what you tell us. Nothing here checks PayPal, ' +
+      '<p class="offer-note">Reporting a payment records what you tell us. Nothing here checks ' + (prov || 'the payment') + ', ' +
         'so it is a claim until a person reconciles it — the same way an application\'s transaction id is ' +
         'treated. Certification still goes through human review; paying does not decide the outcome.</p>' +
       '<p class="offer-msg" id="offer-msg" role="status"></p>' +
@@ -1965,14 +1978,14 @@ async function offerClaim(){
   const msg = document.getElementById('offer-msg');
   const say = (t, k) => { if(msg){ msg.textContent = t; msg.className = 'offer-msg' + (k ? ' ' + k : ''); } };
 
-  if(txn.length < 6) return say('Enter the transaction id from your PayPal receipt.', 'bad');
+  if(txn.length < 6) return say('Enter the transaction id from your receipt.', 'bad');
   btn.disabled = true; say('Recording…');
   try{
     const data = await profCall('redeem', { code: offerState.code, txn });
     offerState = data.offer;
     delete document.getElementById('offer-panel').dataset.built;
     offerRender();
-    say('Recorded. We will reconcile it against PayPal by hand.', 'ok');
+    say('Recorded. We will reconcile it by hand against the payment record.', 'ok');
   } catch(e){
     if(e.message !== 'signed out') say(e.message, 'bad');
     btn.disabled = false;

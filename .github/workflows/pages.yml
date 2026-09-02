@@ -127,6 +127,25 @@ jobs:
       # print its install command except where it says so in the same
       # breath. A registry that cannot be reached is not a failure: the
       # gate reports that it could not check rather than stopping a deploy.
+      # Every page carrying the shell declares a fixed desktop viewport, so
+      # a phone renders the desktop layout without being asked to. That was
+      # a deliberate decision and it is a standing one — a reader who wants
+      # the mobile layout switches in their own browser, which is theirs to
+      # decide rather than ours to decide for them.
+      #
+      # This is a gate rather than a comment because width=device-width is
+      # what every tool, template and habit reaches for. It is the right
+      # default nearly everywhere, which is exactly why it comes back by
+      # accident, and a page that reverts does not look broken. It looks
+      # normal. It just stops doing what was asked.
+      #
+      # The same gate refuses user-scalable=no. At a forced desktop width
+      # text renders near a third of its size and pinch-zoom is the reader's
+      # only way back; forcing the width and blocking the zoom together is
+      # an accessibility failure rather than a preference.
+      - name: Verify the desktop viewport
+        run: node tools/verify-viewport.mjs
+
       - name: Verify install commands resolve
         run: node tools/verify-install-commands.mjs
 

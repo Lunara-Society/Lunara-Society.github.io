@@ -182,7 +182,20 @@
     document.head.appendChild(s);
   }
 
-  function boot() { install(); loadMember(); }
+  /* ── the desktop hint ─────────────────────────────────────────
+     Same reasoning as the member mark: loaded from here so it reaches
+     every page the shell reaches, rather than the one page somebody
+     remembered to paste it into. */
+  function loadHint() {
+    if (window.innerWidth > 820) return;   /* nothing to load for a wide screen */
+    if (document.querySelector('script[src*="lunara-desktop-hint.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-desktop-hint.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function boot() { install(); loadMember(); loadHint(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

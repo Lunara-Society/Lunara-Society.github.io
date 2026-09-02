@@ -273,7 +273,15 @@ h2{
 .sec-lede{font-size:15px;color:var(--grey);max-width:60ch;margin-bottom:38px}
 
 /* ── the four doors ────────────────────────────────────────────── */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:14px}
+/* Four cards, so never three. auto-fit divided the row by a minimum
+   width and landed on three columns between roughly 980 and 1100px,
+   stranding the fourth card alone on a second row beside two empty
+   cells. Explicit steps keep the composition whole: four abreast on a
+   full desktop, a two-by-two block at the widths a phone now renders,
+   and a single column when there is no room for more. */
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1180px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
 .card{
   position:relative;display:block;text-decoration:none;
   padding:26px 24px 24px;border-radius:16px;

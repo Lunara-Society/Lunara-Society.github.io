@@ -79,7 +79,24 @@
 .lxn-burger i::before,.lxn-burger i::after{content:'';position:absolute;left:0;width:16px;height:1px;background:var(--lx-white)}
 .lxn-burger i::before{top:-5px}.lxn-burger i::after{top:5px}
 
-@media (max-width:1080px){
+/* The navigation used to give up at 1080px, hiding all six links behind
+   a burger while more than 600px of the bar sat empty — most visibly in
+   Chrome's own desktop mode, which lays pages out at about 980px. The
+   links do fit at that width; what did not fit was the generous padding
+   around them. So there is now a tier that tightens the chrome and keeps
+   the navigation visible, and the burger waits until the links genuinely
+   cannot fit. */
+@media (max-width:1180px) and (min-width:961px){
+  .lxn{gap:11px;padding:15px clamp(12px,1.8vw,22px)}
+  .lxn-mid{gap:1px;padding:3px}
+  .lxn-mid a{padding:8px 9px;font-size:12px}
+  .lxn-brand img{width:27px;height:27px}
+  .lxn-brand span{font-size:13.5px;letter-spacing:.18em}
+  .lxn-brand{gap:9px}
+  .lxn-end{gap:6px}
+  .lxn-ghost,.lxn-cta{font-size:12px;padding:8px 12px}
+}
+@media (max-width:960px){
   .lxn-mid{display:none}
   .lxn-burger{display:flex}
   .lxn-end .lxn-ghost{display:none}

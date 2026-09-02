@@ -72,7 +72,11 @@
     '.lun-id .s{color:rgba(196, 164, 107, 0.714);padding:0 .1em}',
     '.lun-who{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;',
       'color:rgba(255, 255, 255, 0.472)}',
-    '@media (max-width:900px){.lun-who{display:none}}',
+        /* The signed-in name is the first thing to go. Between 941 and
+       1180 the navigation is at its tightest, and a member who cannot
+       reach Registry or Certification is worse served than one who
+       cannot see their own first name above their id. */
+    '@media (max-width:1180px){.lun-who{display:none}}',
     '@media (prefers-reduced-motion:reduce){.lun-mark{transition:none}.lun-dot{animation:none}}',
     /* the menu */
     '.lun-wrap{position:relative;display:inline-flex}',

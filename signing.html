@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <meta name="viewport" content="width=1120">
 <meta name="description" content="Every machine-readable document we publish carries a detached Ed25519 signature. This page verifies one in your browser, with nothing taken on trust.">
-<title>How to Verify Us — Lunara Society</title>
+<title>How to Verify Us | Lunara Society</title>
 <meta property="og:title" content="Verify it yourself">
 <meta property="og:description" content="A signature you have to take our word for is not a signature. This page checks ours in your browser.">
 <meta property="og:type" content="article">
@@ -113,11 +113,11 @@ footer a{color:rgba(196, 164, 107, 0.714);text-decoration:none}
 
   <div class="eyebrow">Integrity</div>
   <h1>Don't trust this page.<br><em>Check it.</em></h1>
-  <p class="standfirst">Every machine-readable document this institution publishes is signed. The signature can be verified without asking us anything — and the box below does exactly that, in your browser, right now.</p>
+  <p class="standfirst">Every machine-readable document this institution publishes is signed. The signature can be verified without asking us anything, and the box below does exactly that, in your browser, right now.</p>
 
-  <p>An institution that publishes regulatory dates is asking to be believed about facts that carry penalties. The usual answer to “why should I believe this file?” is the padlock in the address bar. That answer is weaker than it looks: HTTPS proves these bytes came from whatever server answered for this domain, at the moment you asked. It proves nothing about the copy — and copies are how a corpus like this actually travels. A mirror. A cached crawl. A vendor's snapshot. A model's training set. In every one of those, a modified <code>obligations.json</code> with one date moved is indistinguishable from ours.</p>
+  <p>An institution that publishes regulatory dates is asking to be believed about facts that carry penalties. The usual answer to “why should I believe this file?” is the padlock in the address bar. That answer is weaker than it looks: HTTPS proves these bytes came from whatever server answered for this domain, at the moment you asked. It proves nothing about the copy, and copies are how a corpus like this actually travels. A mirror. A cached crawl. A vendor's snapshot. A model's training set. In every one of those, a modified <code>obligations.json</code> with one date moved is indistinguishable from ours.</p>
 
-  <p>So each document is published with a <strong>detached assertion</strong>: a short signed statement naming the document, its SHA-256, when it was issued and how long it should be trusted. The signature is Ed25519 over the canonical form of that statement. Checking it needs the public key and nothing else — no call to us, no account, no rate limit, no permission.</p>
+  <p>So each document is published with a <strong>detached assertion</strong>: a short signed statement naming the document, its SHA-256, when it was issued and how long it should be trusted. The signature is Ed25519 over the canonical form of that statement. Checking it needs the public key and nothing else, no call to us, no account, no rate limit, no permission.</p>
 
   <div class="verify" id="verify">
     <div class="verify-head">Live verification</div>
@@ -131,10 +131,10 @@ footer a{color:rgba(196, 164, 107, 0.714);text-decoration:none}
     <div class="verdict" id="verdict">Waiting.</div>
   </div>
 
-  <p>Nothing above is a claim we are making about ourselves. Your browser fetched two files, computed a hash and checked a signature; the only thing we contributed was the maths being hard to forge. If a single byte of the corpus had been altered — by us, by a mirror, by anything between — step four would be red and the page would say so.</p>
+  <p>Nothing above is a claim we are making about ourselves. Your browser fetched two files, computed a hash and checked a signature; the only thing we contributed was the maths being hard to forge. If a single byte of the corpus had been altered, by us, by a mirror, by anything between, step four would be red and the page would say so.</p>
 
   <div class="callout">
-    <p><strong>What a signature proves, and what it does not.</strong> It proves the bytes you hold are the bytes this institution published, and that nobody altered them in transit or in a copy. It proves nothing whatsoever about whether the regulatory claims inside them are <em>correct</em>. That is what the link to primary law on every row is for, and why every row has one. A signed wrong answer is still a wrong answer — every correction this institution has published is on the <a class="inline" href="evidence.html">evidence page</a>, including one issued the day this page went up.</p>
+    <p><strong>What a signature proves, and what it does not.</strong> It proves the bytes you hold are the bytes this institution published, and that nobody altered them in transit or in a copy. It proves nothing whatsoever about whether the regulatory claims inside them are <em>correct</em>. That is what the link to primary law on every row is for, and why every row has one. A signed wrong answer is still a wrong answer, every correction this institution has published is on the <a class="inline" href="evidence.html">evidence page</a>, including one issued the day this page went up.</p>
   </div>
 
   <h2>What is signed</h2>
@@ -181,13 +181,13 @@ console.log("digest:   ", hash ? "matches" : "MISMATCH");
 
   <h2>The key</h2>
 
-  <p>One Ed25519 key is published today, and it is marked <code>status: development</code> in the key document rather than quietly presented as more than it is. It was generated in an ephemeral build container, not on dedicated hardware in someone's custody. That is enough to establish that the copy you hold is the copy we published — which is the entire job it is doing here. It is not enough to hang a legal conclusion on, and the key document says so in the key's own <code>assurance</code> field, where a machine reading it will see it too.</p>
+  <p>One Ed25519 key is published today, and it is marked <code>status: development</code> in the key document rather than quietly presented as more than it is. It was generated in an ephemeral build container, not on dedicated hardware in someone's custody. That is enough to establish that the copy you hold is the copy we published, which is the entire job it is doing here. It is not enough to hang a legal conclusion on, and the key document says so in the key's own <code>assurance</code> field, where a machine reading it will see it too.</p>
 
-  <p>Keys are valid for two years. A superseded key stays published and is marked revoked with a date and a reason, because a key that simply disappears turns every assertion it ever signed into “unknown key” — indistinguishable from a forgery. Revocation with a reason tells a verifier which of those two it is looking at.</p>
+  <p>Keys are valid for two years. A superseded key stays published and is marked revoked with a date and a reason, because a key that simply disappears turns every assertion it ever signed into “unknown key”, indistinguishable from a forgery. Revocation with a reason tells a verifier which of those two it is looking at.</p>
 
   <h2>Why this exists now</h2>
 
-  <p>There is no dramatic reason. Nobody has mirrored this corpus and altered it, as far as we know. It is here because the primitive is the same one that everything after it needs: an identity assertion, an authority credential, a permission scope, a statement that some agent is allowed to act for some organisation — all of them are a signed statement with a subject, a claim, an issuer and a window of validity. The envelope was designed for that and the only thing currently inside it is a hash of a JSON file. That is the right order to build it in. A signing scheme first proved on documents nobody is attacking is a signing scheme that works before it is needed.</p>
+  <p>There is no dramatic reason. Nobody has mirrored this corpus and altered it, as far as we know. It is here because the primitive is the same one that everything after it needs: an identity assertion, an authority credential, a permission scope, a statement that some agent is allowed to act for some organisation, all of them are a signed statement with a subject, a claim, an issuer and a window of validity. The envelope was designed for that and the only thing currently inside it is a hash of a JSON file. That is the right order to build it in. A signing scheme first proved on documents nobody is attacking is a signing scheme that works before it is needed.</p>
 
   <div class="callout">
     <p>If a signature here fails to verify, that is either an attack or our mistake, and we would rather be told about either: <a class="inline" href="mailto:rosario@lunarasociety.com">rosario@lunarasociety.com</a>.</p>

@@ -61,7 +61,7 @@ export function block(label) {
      above a shape the server has never returned. */
   const note = evidence === 'verified'
     ? 'Observed from the live endpoint.'
-    : 'Expected shape &mdash; not yet observed, because no entity has '
+    : 'Expected shape, not yet observed, because no entity has '
       + 'been certified. The registry answers every lookup today with '
       + '<code>not_registered</code>.';
 
@@ -75,7 +75,7 @@ export function block(label) {
     '<p class="registry-provenance" style="font-size:11.5px;line-height:1.7;' +
       'color:rgba(255,255,255,0.62);margin-top:10px;letter-spacing:0.02em">' +
       '<strong style="color:#C4A46B;font-weight:500;text-transform:uppercase;' +
-      'letter-spacing:0.14em;font-size:11px">' + evidence + '</strong> &mdash; ' +
+      'letter-spacing:0.14em;font-size:11px">' + evidence + '</strong>: ' +
       note + '</p>',
     MARK.end
   ].join('\n');

@@ -39,7 +39,7 @@ export const REDIRECTS = {
   'protocol.html': ['registry.html', 'The Lunara Protocol',
     'The protocol is the register. What a lookup returns, and which parts of that have actually been observed, is published with the register itself.'],
   'gateway.html': ['ai-agent-verification.html', 'Gateway',
-    'This page described interaction logging that is not built. What a business can genuinely publish for agents to read — and what remains unsolved — is set out honestly on the agent verification page.'],
+    'This page described interaction logging that is not built. What a business can genuinely publish for agents to read, and what remains unsolved, is set out honestly on the agent verification page.'],
   'network.html': ['ai-agent-verification.html', 'The Reputation Layer',
     'This page described a trust score that does not exist. What can be established about a party today, and what cannot, is on the agent verification page.'],
   'signal.html': ['mcp.html', 'Signal & Visibility',
@@ -63,7 +63,7 @@ export function stub(from) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="0; url=/${esc(to)}">
 <link rel="canonical" href="${SITE}${esc(to)}">
-<title>${esc(title)} — moved — Lunara Society</title>
+<title>${esc(title)}, moved | Lunara Society</title>
 <meta name="description" content="${esc(title)} has moved. ${esc(why)}">
 <meta name="robots" content="noindex, follow">
 <style>

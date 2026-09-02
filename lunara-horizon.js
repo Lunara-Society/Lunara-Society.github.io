@@ -245,7 +245,7 @@
           class: 'lx-h-when' + (inForce ? ' past' : '') + (isNearest ? ' is-next' : '') }));
 
       var title = el('title');
-      title.textContent = o.name + ' — ' + o.instrument + ', ' + o.article;
+      title.textContent = o.name + '. ' + o.instrument + ', ' + o.article;
       g.appendChild(title);
       svg.appendChild(g);
     });

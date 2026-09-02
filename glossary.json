@@ -1,5 +1,5 @@
 {
-  "$comment": "The vocabulary of AI trust, defined once. Every definition here is the definition used everywhere else on lunarasociety.com — glossary.html is generated from this file and tools/verify-seo.mjs fails the deploy if they diverge. Terms marked authority:'lunara' are ours and we say so; terms marked authority:'field' are the field's, defined as neutrally as we can manage; terms marked authority:'legal' come from an instrument and cite it. Where a term is commonly used to mean something it does not mean, that is recorded in confused_with rather than left for the reader to discover.",
+  "$comment": "The vocabulary of AI trust, defined once. Every definition here is the definition used everywhere else on lunarasociety.com. glossary.html is generated from this file and tools/verify-seo.mjs fails the deploy if they diverge. Terms marked authority:'lunara' are ours and we say so; terms marked authority:'field' are the field's, defined as neutrally as we can manage; terms marked authority:'legal' come from an instrument and cite it. Where a term is commonly used to mean something it does not mean, that is recorded in confused_with rather than left for the reader to discover.",
   "version": "1.0.0",
   "updated": "2026-08-29",
   "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -71,7 +71,7 @@
       "term": "AI trust standard",
       "authority": "field",
       "short": "A published set of criteria plus the mechanism that determines whether an organisation meets them and makes the answer checkable by outsiders.",
-      "note": "The criteria are the easy half and the part everyone publishes. The mechanism — who decides, where the decision lives, how it is withdrawn — is what makes the criteria mean anything.",
+      "note": "The criteria are the easy half and the part everyone publishes. The mechanism, who decides, where the decision lives, how it is withdrawn, is what makes the criteria mean anything.",
       "see": ["ai-certification", "ai-trust-registry", "revocation"]
     },
     {
@@ -96,7 +96,7 @@
       "term": "Self-attestation",
       "authority": "field",
       "short": "A statement an organisation makes about itself, with no external check.",
-      "note": "Legitimate, fast, cheap, and better than nothing — but it is a description rather than a verification, and displaying it as a badge is where it becomes misleading. If nobody checked, the artefact should say nobody checked.",
+      "note": "Legitimate, fast, cheap, and better than nothing, but it is a description rather than a verification, and displaying it as a badge is where it becomes misleading. If nobody checked, the artefact should say nobody checked.",
       "see": ["third-party-verification", "trust-badge"]
     },
     {
@@ -127,7 +127,7 @@
       "id": "ai-transparency",
       "term": "AI transparency",
       "authority": "field",
-      "short": "Making it discoverable that AI was involved, what it did, and on what basis — to users, to affected parties, or to regulators, depending on the obligation.",
+      "short": "Making it discoverable that AI was involved, what it did, and on what basis, to users, to affected parties, or to regulators, depending on the obligation.",
       "note": "Under the EU AI Act this has a specific and much narrower meaning than in general usage: Article 50 duties to inform people they are interacting with an AI system and to mark certain generated content machine-readably.",
       "source": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
       "see": ["machine-readable-marking", "ai-accountability"]
@@ -153,7 +153,7 @@
       "id": "ai-agent",
       "term": "AI agent",
       "authority": "field",
-      "short": "An AI system that takes actions in the world on behalf of a principal — sending messages, making requests, transacting — rather than only producing output for a person to act on.",
+      "short": "An AI system that takes actions in the world on behalf of a principal, sending messages, making requests, transacting, rather than only producing output for a person to act on.",
       "note": "The distinction that matters for trust is not autonomy but consequence: an agent that can commit its principal to something is a party to a transaction, and parties to transactions need identity.",
       "see": ["ai-agent-identity", "ai-agent-credential"]
     },
@@ -162,7 +162,7 @@
       "term": "AI agent identity",
       "authority": "field",
       "short": "Whether the party you are dealing with is the same agent across interactions, and whether it can prove it.",
-      "note": "Cryptographically simple and rarely deployed. Distinct from principal identity, which asks which real legal entity the agent acts for — that is the question a register can answer today.",
+      "note": "Cryptographically simple and rarely deployed. Distinct from principal identity, which asks which real legal entity the agent acts for. That is the question a register can answer today.",
       "see": ["ai-agent", "ai-agent-credential"]
     },
     {
@@ -186,7 +186,7 @@
       "term": "AI vendor due diligence",
       "authority": "field",
       "short": "The checks a buyer runs on an AI supplier before purchase: that the entity exists, controls its domain, has a named accountable party, holds any credential it displays, and cites its factual claims.",
-      "note": "None of it costs money and it takes about fifteen minutes. The check almost nobody runs — whether the supplier publishes its own corrections — is the most informative one.",
+      "note": "None of it costs money and it takes about fifteen minutes. The check almost nobody runs, whether the supplier publishes its own corrections, is the most informative one.",
       "see": ["ai-verification", "third-party-verification"]
     },
     {
@@ -194,7 +194,7 @@
       "term": "Shield Certification",
       "authority": "lunara",
       "short": "Lunara's human-reviewed verification that a business is legally registered and controls the domain it operates from, published to a free public register and revocable.",
-      "note": "It checks two things carefully rather than everything vaguely. It does not audit a model, and it is not a regulatory approval — no private certification discharges a legal obligation.",
+      "note": "It checks two things carefully rather than everything vaguely. It does not audit a model, and it is not a regulatory approval, no private certification discharges a legal obligation.",
       "see": ["ai-certification", "revocation", "ai-trust-registry"]
     },
     {

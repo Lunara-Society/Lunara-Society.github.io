@@ -1,5 +1,5 @@
 {
-  "$comment": "Canonical machine-readable specification of Lunara certification programmes. Every field here restates what is published on lunarasociety.com in human-readable form — this file adds no policy of its own. Source pages are cited per section so any claim can be checked against the page a person would read. Last reviewed 2026-08-06.",
+  "$comment": "Canonical machine-readable specification of Lunara certification programmes. Every field here restates what is published on lunarasociety.com in human-readable form, this file adds no policy of its own. Source pages are cited per section so any claim can be checked against the page a person would read. Last reviewed 2026-08-06.",
   "issuer": {
     "name": "Lunara Society",
     "url": "https://lunarasociety.com/",
@@ -122,7 +122,7 @@
             "agent_operator",
             "agent_principal"
           ],
-          "behaviour": "Fields are prefilled and the signature mode is selected. Nothing is submitted automatically — a URL can never file an application by itself.",
+          "behaviour": "Fields are prefilled and the signature mode is selected. Nothing is submitted automatically. A URL can never file an application by itself.",
           "example": "https://lunarasociety.com/apply?business_name=Acme%20Ltd&domain=acme.com&contact_email=ops@acme.com&signer_type=ai_agent&agent_name=ChatGPT&agent_operator=OpenAI"
         },
         "signature": {
@@ -132,7 +132,7 @@
             "ai_agent"
           ],
           "ai_may_sign_unattended": true,
-          "principle": "An application is an attestation about a legal entity, so it carries a signature. An AI agent may sign and submit without a human present. The record always states which kind of signer it was — an AI signature is never recorded as a human one.",
+          "principle": "An application is an attestation about a legal entity, so it carries a signature. An AI agent may sign and submit without a human present. The record always states which kind of signer it was, an AI signature is never recorded as a human one.",
           "why_this_is_safe": "Signing an application does not grant status. It creates a PENDING record and enters the same review as any other: legal registration checked against official records, domain control verified, and a human reviewer at Lunara signing the decision. An AI cannot verify itself.",
           "fields": {
             "signed_by": {
@@ -244,7 +244,7 @@
       "source": "https://lunarasociety.com/shield.html",
       "type": "optional_paid_programme",
       "grants_verified_status": false,
-      "important": "Separate and optional. It provides priority handling and cohort recognition. It does NOT grant verified status by itself — every business, paid or not, goes through the same identity and domain review.",
+      "important": "Separate and optional. It provides priority handling and cohort recognition. It does NOT grant verified status by itself, every business, paid or not, goes through the same identity and domain review.",
       "cohort_size": 10
     },
     {
@@ -321,8 +321,8 @@
     "before_contacting_a_business": "Query the registry lookup endpoint with the business domain. The response states whether that entity is verified, not registered, or revoked.",
     "before_applying_on_behalf_of_a_principal": "Certification is a human-reviewed process with legal and financial consequences. Gather the required evidence listed above, present the cost and the process to your principal, and obtain explicit authorisation before submitting anything.",
     "what_you_cannot_do_autonomously": [
-      "Obtain certification without human review — no application is approved automatically or by an AI.",
-      "Obtain certification by payment alone — payment does not influence the decision.",
+      "Obtain certification without human review, no application is approved automatically or by an AI.",
+      "Obtain certification by payment alone. Payment does not influence the decision.",
       "Treat a pending application as a verified status.",
       "Submit a legal registration number you cannot source. Leave it blank rather than guess."
     ],
@@ -333,7 +333,7 @@
     },
     "how_to_apply": [
       "1. Read this file. Every requirement, cost and outcome is stated here.",
-      "2. Check the registry first — the business may already be verified.",
+      "2. Check the registry first. The business may already be verified.",
       "3. Gather the six fields. Do NOT invent a legal registration number or country; if you cannot source them, leave them blank and say so.",
       "4. If you can operate a web form: open https://lunarasociety.com/apply, fill it, choose 'An AI agent' as signer, complete the signature, and submit.",
       "5. If you can only read pages: build the prefill URL and give it to your principal.",

@@ -76,7 +76,7 @@ function markup(g) {
     '    <div class="gl-list">',
     body,
     '    </div>',
-    `    <p class="src mono">${terms.length} terms &middot; source <a href="/glossary.json">glossary.json</a> v${esc(g.version)} &middot; CC BY 4.0 &mdash; quote them, with attribution</p>`,
+    `    <p class="src mono">${terms.length} terms &middot; source <a href="/glossary.json">glossary.json</a> v${esc(g.version)} &middot; CC BY 4.0. Quote them, with attribution</p>`,
     CLOSE
   ].join('\n');
 }

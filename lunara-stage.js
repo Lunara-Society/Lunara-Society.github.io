@@ -97,7 +97,7 @@
     $('lxs-days-unit').textContent = target === 1 ? 'day' : 'days';
     $('lxs-next').textContent = sameDay.length === 1
       ? next.name + ' \u00b7 ' + longDate(next.applies_from)
-      : sameDay.length + ' obligations bind on ' + longDate(next.applies_from) + ' \u2014 ' +
+      : sameDay.length + ' obligations bind on ' + longDate(next.applies_from) + ': ' +
         sameDay.map(function (o) { return o.name; }).sort().join('; ');
     $('lxs-inforce').textContent = inForce + ' of ' + corpus.obligations.length +
       ' obligation' + (corpus.obligations.length === 1 ? '' : 's') + ' in this register are already in force.';

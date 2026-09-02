@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1120">
-<title>AI Agent Verification and Trust — Lunara Society</title>
-<meta name="description" content="How an autonomous AI agent proves who it acts for and how the other party checks. Agent identity, credentials, accountability — and what is not built yet.">
+<title>AI Agent Verification and Trust | Lunara Society</title>
+<meta name="description" content="How an autonomous AI agent proves who it acts for and how the other party checks. Agent identity, credentials, accountability, and what is not built yet.">
 <link rel="canonical" href="https://lunarasociety.com/ai-agent-verification.html">
 
 <meta property="og:type" content="article">
@@ -44,15 +44,15 @@
 
   <section class="wrap" style="padding-top:0">
     <div class="prose">
-      <p class="answer">AI agent verification is the problem of establishing, at the moment an autonomous system contacts you, three things: which principal it acts for, whether that principal is real, and whether it was authorised to do what it is about to do. Almost none of that is solved today. What exists — and what Lunara operates — is the second part: a free, unauthenticated public register an agent can query about a business before contacting it, and a machine-readable declaration a business publishes on its own domain saying how it wants to be contacted.</p>
+      <p class="answer">AI agent verification is the problem of establishing, at the moment an autonomous system contacts you, three things: which principal it acts for, whether that principal is real, and whether it was authorised to do what it is about to do. Almost none of that is solved today. What exists, and what Lunara operates, is the second part: a free, unauthenticated public register an agent can query about a business before contacting it, and a machine-readable declaration a business publishes on its own domain saying how it wants to be contacted.</p>
 
       <p>This page is deliberately clear about the gap. There is a great deal of writing about AI agent certification, AI agent trust frameworks and AI agent registries that describes a system nobody has built. What follows separates what is running from what is design.</p>
 
       <h2>Why agent identity is a different problem</h2>
 
-      <p>When a person contacts a business, identity is carried by a hundred weak signals — an email domain, a LinkedIn profile, a phone number, a face on a call. None of them is strong, but together they cost effort to fake, and effort is the whole defence.</p>
+      <p>When a person contacts a business, identity is carried by a hundred weak signals, an email domain, a LinkedIn profile, a phone number, a face on a call. None of them is strong, but together they cost effort to fake, and effort is the whole defence.</p>
 
-      <p>An autonomous agent removes the effort. It can generate a plausible identity per contact, at no cost, at any volume. So the weak-signal model does not degrade gracefully — it stops working. <strong>What replaces it has to be a claim that can be checked against a source the claimant does not control.</strong> That is the same requirement a certification has, applied to a party that is software.</p>
+      <p>An autonomous agent removes the effort. It can generate a plausible identity per contact, at no cost, at any volume. So the weak-signal model does not degrade gracefully, it stops working. <strong>What replaces it has to be a claim that can be checked against a source the claimant does not control.</strong> That is the same requirement a certification has, applied to a party that is software.</p>
 
       <p>Three distinct things get conflated under "agent identity", and separating them is most of the work:</p>
 
@@ -65,7 +65,7 @@
             <tr>
               <th scope="row">Agent identity</th>
               <td>Is this the same agent I spoke to before, and can it prove it?</td>
-              <td>Cryptographically straightforward — a keypair and a signature. Rarely deployed.</td>
+              <td>Cryptographically straightforward, a keypair and a signature. Rarely deployed.</td>
             </tr>
             <tr>
               <th scope="row">Principal identity</th>
@@ -96,7 +96,7 @@
 <p class="src mono">The register is public, costs nothing to query, and needs no account. Status returned is always the true current status.</p>
 <!-- END GENERATED statuses -->
 
-      <p>An agent should treat <code>not_registered</code> as the absence of information it is, and never as a reason to distrust — it is the answer for almost every business on the internet. The full protocol, including which fields are observed rather than specified, is published at <a href="/corpus/registry-protocol.json">corpus/registry-protocol.json</a>.</p>
+      <p>An agent should treat <code>not_registered</code> as the absence of information it is, and never as a reason to distrust. It is the answer for almost every business on the internet. The full protocol, including which fields are observed rather than specified, is published at <a href="/corpus/registry-protocol.json">corpus/registry-protocol.json</a>.</p>
 
       <h2>What a business can publish for agents to read</h2>
 
@@ -104,7 +104,7 @@
 
 <pre class="code"><b>GET</b> https://example.com/.well-known/lunara-verify.json</pre>
 
-      <p>It declares the credential and the entity's stated contact preferences — including whether automated contact is welcome at all, and whether it requires disclosure. This matters more than it sounds. An agent that reads a contact policy before writing is an agent that can be held to it, and a business that publishes one has said, in a machine-readable place, what consent looks like.</p>
+      <p>It declares the credential and the entity's stated contact preferences, including whether automated contact is welcome at all, and whether it requires disclosure. This matters more than it sounds. An agent that reads a contact policy before writing is an agent that can be held to it, and a business that publishes one has said, in a machine-readable place, what consent looks like.</p>
 
       <p>Our own file is published at that path and deliberately carries no credential, because we do not certify ourselves. The schema is at <a href="/.well-known/lunara-verify.schema.json">lunara-verify.schema.json</a>.</p>
 
@@ -114,8 +114,8 @@
 
 <!-- BEGIN GENERATED limits — tools/build-answers.mjs -->
 <ul class="limits">
-  <li>Obtain certification without human review — no application is approved automatically or by an AI.</li>
-  <li>Obtain certification by payment alone — payment does not influence the decision.</li>
+  <li>Obtain certification without human review, no application is approved automatically or by an AI.</li>
+  <li>Obtain certification by payment alone. Payment does not influence the decision.</li>
   <li>Treat a pending application as a verified status.</li>
   <li>Submit a legal registration number you cannot source. Leave it blank rather than guess.</li>
 </ul>
@@ -134,7 +134,7 @@
         <li>The register is nearly empty, so most lookups return nothing useful yet. That is a fact about Lunara's age, not about the design.</li>
       </ul>
 
-      <p>An agent credential built on top of verified principal identity is the next thing worth building, and it should be built in that order — a credential for a machine acting on behalf of an entity nobody has verified is a credential for nothing.</p>
+      <p>An agent credential built on top of verified principal identity is the next thing worth building, and it should be built in that order, a credential for a machine acting on behalf of an entity nobody has verified is a credential for nothing.</p>
 
       <h2>Connect an agent to the record</h2>
 
@@ -149,7 +149,7 @@
 <p class="src mono">From the signed corpus at <a href="/corpus/obligations.json">corpus/obligations.json</a>. The whole record, with every citation, is on <a href="/intelligence.html">the regulatory record</a>.</p>
 <!-- END GENERATED deadlines -->
 
-      <p>An MCP server exposes this corpus to any AI system directly, so a model can cite the article instead of remembering it — see <a href="/mcp.html">the MCP server</a>.</p>
+      <p>An MCP server exposes this corpus to any AI system directly, so a model can cite the article instead of remembering it, see <a href="/mcp.html">the MCP server</a>.</p>
 
       <h2>Questions</h2>
 
@@ -160,7 +160,7 @@
         </div>
         <div>
           <h3>Can an AI agent be certified?</h3>
-          <p>Not by Lunara, and you should be sceptical of anyone claiming otherwise today. Lunara certifies businesses — the legal entities that operate agents. An agent credential is only meaningful on top of a verified principal, because a credential for a machine acting for an unverified entity certifies nothing.</p>
+          <p>Not by Lunara, and you should be sceptical of anyone claiming otherwise today. Lunara certifies businesses, the legal entities that operate agents. An agent credential is only meaningful on top of a verified principal, because a credential for a machine acting for an unverified entity certifies nothing.</p>
         </div>
         <div>
           <h3>How does an AI agent verify a business before contacting it?</h3>
@@ -172,7 +172,7 @@
         </div>
         <div>
           <h3>Does the EU AI Act require AI agents to identify themselves?</h3>
-          <p>Article 50 requires that people are informed when they interact with an AI system, and that certain generated content is machine-readably marked — which is related but narrower than agent identity, and applies to the provider rather than to the agent. The dates and the articles are on <a href="/intelligence.html">the regulatory record</a>, each citing the provision that sets it.</p>
+          <p>Article 50 requires that people are informed when they interact with an AI system, and that certain generated content is machine-readably marked, which is related but narrower than agent identity, and applies to the provider rather than to the agent. The dates and the articles are on <a href="/intelligence.html">the regulatory record</a>, each citing the provision that sets it.</p>
         </div>
       </div>
 

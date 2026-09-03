@@ -101,6 +101,13 @@
         sameDay.map(function (o) { return o.name; }).sort().join('; ');
     $('lxs-inforce').textContent = inForce + ' of ' + corpus.obligations.length +
       ' obligation' + (corpus.obligations.length === 1 ? '' : 's') + ' in this register are already in force.';
+
+    /* The homepage counters read from the same parse. Two of the four
+       are answered here; the register and the signature manifest are
+       fetched separately below, because a page that cannot reach them
+       must say so rather than show a stale figure. */
+    put('lx-t-obl', corpus.obligations.length);
+    put('lx-t-force', inForce);
   }
 
   /* ── instrument two: the signature ─────────────────────────────── */
@@ -220,4 +227,56 @@
       $('lxs-sig-detail').textContent = 'The corpus did not load, so there is nothing to verify.';
       fill(100);
     });
+
+  /* ── the counters ──────────────────────────────────────────────────
+     Every figure on the homepage is read at the moment the page loads.
+     None is typed into the HTML, which is the same rule the prices and
+     the dates follow, and for the same reason: a number written by hand
+     is a number that goes stale without anyone noticing.
+
+     When a source cannot be reached the figure is left unknown rather
+     than guessed. On a page whose argument is that claims should be
+     checkable, a placeholder that looks like data is worse than an
+     honest dash. */
+  function put(id, value) {
+    var el = $(id);
+    if (el) el.textContent = String(value);
+  }
+  function unknown(id, why) {
+    var el = $(id);
+    if (el) el.textContent = 'unknown';
+    var note = $(id + 'x');
+    if (note) note.textContent = why;
+  }
+
+  if ($('lx-tally')) {
+    /* The register answers this without an account, which is the whole
+       claim the panel above it makes. Zero is a real answer and is
+       shown as one. */
+    fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList',
+          { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        var n = typeof j.count === 'number' ? j.count
+              : (Array.isArray(j.businesses) ? j.businesses.length : null);
+        if (n === null) throw new Error('no count in the answer');
+        put('lx-t-reg', n);
+        $('lx-t-regx').textContent = n === 0
+          ? 'nobody yet. Query it yourself'
+          : 'queried live, free to anyone';
+      })
+      .catch(function () { unknown('lx-t-reg', 'the register could not be reached'); });
+
+    /* The published manifest of what is signed. Counting its entries
+       rather than stating a number keeps this honest when a document
+       is added or withdrawn. */
+    fetch('/.well-known/assertions.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        if (!Array.isArray(j.assertions)) throw new Error('no assertions list');
+        put('lx-t-sig', j.assertions.length);
+      })
+      .catch(function () { unknown('lx-t-sig', 'the manifest could not be read'); });
+  }
+
 })();

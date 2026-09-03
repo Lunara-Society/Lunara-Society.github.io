@@ -258,7 +258,11 @@ h1 em{font-style:italic;color:var(--gold-lit)}
 .door.line:hover{border-color:rgba(240,230,206,0.5);background:rgba(255,255,255,0.045);transform:translateY(-1px)}
 
 /* ── section furniture ─────────────────────────────────────────── */
-section.band{position:relative;z-index:2;padding:clamp(58px,8vh,104px) 0}
+/* Two bands meeting used to put 160px of nothing between one idea and
+   the next, which on a long page reads as the page having run out
+   rather than as breathing room. Tightened, but not closed: the
+   hairline rules still separate the sections. */
+section.band{position:relative;z-index:2;padding:clamp(44px,5.6vh,72px) 0}
 .rule{height:1px;background:linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent)}
 .kicker{
   font-family:ui-monospace,'SF Mono',Menlo,monospace;
@@ -279,6 +283,99 @@ h2{
    cells. Explicit steps keep the composition whole: four abreast on a
    full desktop, a two-by-two block at the widths a phone now renders,
    and a single column when there is no room for more. */
+/* ── the orbit ─────────────────────────────────────────────────────
+   Drawn rather than photographed. A raster hero would be a download on
+   every page load and, on a site arguing that claims should be
+   checkable, an image nobody can inspect. This is a few hundred bytes
+   of SVG, it scales to any screen, and it is decorative in the strict
+   sense: aria-hidden, behind the content, and nothing is lost if it
+   never paints. */
+.orbit{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.orbit svg{width:min(760px,92%);height:auto;opacity:.5}
+.orbit .ring{fill:none;stroke:var(--hair);stroke-width:1}
+.orbit .arc{fill:none;stroke:rgba(196,164,107,0.34);stroke-width:1;stroke-linecap:round}
+.orbit .node{fill:var(--gold);opacity:.75}
+.orbit .spark{fill:var(--gold-lit)}
+@media (prefers-reduced-motion:no-preference){
+  .orbit .turn{transform-origin:center;animation:orbSpin 240s linear infinite}
+  .orbit .turn.back{animation-duration:360s;animation-direction:reverse}
+}
+@keyframes orbSpin{to{transform:rotate(360deg)}}
+.open-grid{position:relative}
+.open-copy,.lxs-rack{position:relative;z-index:1}
+@media (max-width:900px){ .orbit{display:none} }
+
+/* the three words under the doors */
+.stamp{
+  display:flex;align-items:center;gap:10px;margin-top:20px;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
+}
+.stamp svg{width:13px;height:13px;flex:none;opacity:.85}
+
+/* ── how verification works ───────────────────────────────────────── */
+.steps{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;
+  margin-top:30px;position:relative;
+}
+.step{position:relative;padding:0 14px 0 0}
+/* The connector is drawn on the step rather than under the row so it
+   stops at the last one instead of running off into nothing. */
+.step:not(:last-child)::before{
+  content:'';position:absolute;top:19px;left:44px;right:6px;height:1px;
+  background:linear-gradient(90deg,var(--hair),rgba(196,164,107,0.28),var(--hair));
+}
+.step-n{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;
+  letter-spacing:.14em;color:var(--gold);opacity:.8;margin-bottom:9px;
+}
+.step-dot{
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(196,164,107,0.34);background:rgba(196,164,107,0.06);
+  margin-bottom:14px;position:relative;z-index:1;
+}
+.step-dot svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.4;
+  stroke-linecap:round;stroke-linejoin:round}
+.step h4{
+  font-family:'Inter',system-ui,sans-serif;font-size:11px;font-weight:400;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--white);margin-bottom:8px;
+}
+.step p{font-size:12.5px;line-height:1.62;color:var(--grey-2);margin:0}
+@media (max-width:1180px){
+  .steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 0}
+  .step:nth-child(3)::before{display:none}
+}
+@media (max-width:640px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 0}
+  .step::before{display:none!important}
+}
+
+/* ── the counters ─────────────────────────────────────────────────── */
+.tally{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair);border-radius:14px;overflow:hidden;
+}
+.tally div{background:var(--ink-2);padding:22px 20px}
+.tally b{
+  display:block;font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(26px,3vw,34px);font-weight:300;color:var(--white);line-height:1;
+}
+.tally span{
+  display:block;margin-top:8px;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--grey-2);
+}
+.tally i{display:block;margin-top:5px;font-style:normal;font-size:11.5px;color:var(--grey-2);opacity:.75}
+@media (max-width:820px){ .tally{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+.creed{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;margin-bottom:30px}
+.creed p{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;
+  font-size:clamp(23px,3.1vw,34px);line-height:1.28;color:var(--white);margin:0;max-width:20ch;
+}
+.creed p em{font-style:italic;color:var(--gold)}
+
 .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 @media (max-width:1180px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
@@ -559,6 +656,30 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
   <div class="wrap">
     <div class="open-grid" id="lxs">
 
+      <!-- Decorative only. Every fact on this screen is in the panels. -->
+      <div class="orbit" aria-hidden="true">
+        <svg viewBox="0 0 600 600" role="presentation" focusable="false">
+          <circle class="ring" cx="300" cy="300" r="118"/>
+          <circle class="ring" cx="300" cy="300" r="178"/>
+          <circle class="ring" cx="300" cy="300" r="242"/>
+          <circle class="ring" cx="300" cy="300" r="296"/>
+          <g class="turn">
+            <path class="arc" d="M300 58 a242 242 0 0 1 209 121"/>
+            <circle class="node" cx="300" cy="58" r="3"/>
+            <circle class="spark" cx="509" cy="179" r="2"/>
+          </g>
+          <g class="turn back">
+            <path class="arc" d="M118 300 a182 182 0 0 0 91 158" opacity=".7"/>
+            <circle class="node" cx="122" cy="300" r="2.5"/>
+            <circle class="node" cx="478" cy="300" r="2"/>
+          </g>
+          <g class="turn">
+            <circle class="node" cx="300" cy="122" r="2"/>
+            <circle class="node" cx="300" cy="478" r="2.5"/>
+          </g>
+        </svg>
+      </div>
+
       <div class="open-copy">
         <img class="seal rise d1" src="lunara_emblem_moon.png" alt="Lunara Society" width="104" height="104" fetchpriority="high">
         <p class="eyebrow rise d2">Constitutional governance · Est. MMXXVI</p>
@@ -568,6 +689,10 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
           <a class="door solid" href="shield.html">Apply for certification</a>
           <a class="door line" href="scorer.html">Score your AI risk</a>
         </div>
+        <p class="stamp rise d4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          Verifiable. Open. Independent.
+        </p>
       </div>
 
       <!-- The three instruments. Not mockups: the clock counts against
@@ -646,6 +771,60 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
 
 <div class="wrap"><div class="rule"></div></div>
 
+<!-- ── HOW VERIFICATION WORKS ──────────────────────────────────────────
+     The six steps describe the procedure, which is the same whether it
+     has run once or ten thousand times. Nothing here states a volume;
+     the counters below do that, and they read from the live record
+     rather than from this file. -->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">How verification works</p>
+    <h2>Six steps, and a name against the fourth.</h2>
+    <p class="sec-lede">Every one of them is a step you can check afterwards. That is the only reason the process is worth publishing.</p>
+
+    <div class="steps">
+      <div class="step">
+        <p class="step-n">01</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h4"/></svg></div>
+        <h4>Claim</h4>
+        <p>Something is asserted: about a business, a system, or an obligation in law.</p>
+      </div>
+      <div class="step">
+        <p class="step-n">02</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 14.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M14.5 9.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1-1"/></svg></div>
+        <h4>Source</h4>
+        <p>The primary instrument is attached. The article that sets the date, not a summary of it.</p>
+      </div>
+      <div class="step">
+        <p class="step-n">03</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></div>
+        <h4>Review</h4>
+        <p>A named person examines the evidence and signs the decision. There are no anonymous approvals and no automatic ones.</p>
+      </div>
+      <div class="step">
+        <p class="step-n">04</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6l7-3z"/><path d="M9.5 12l1.9 1.9L15 10"/></svg></div>
+        <h4>Signature</h4>
+        <p>The result is signed with Ed25519, so any later edit to the document breaks the signature.</p>
+      </div>
+      <div class="step">
+        <p class="step-n">05</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="2.8"/><path d="M5 6v6c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6"/><path d="M5 12v6c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8v-6"/></svg></div>
+        <h4>Public record</h4>
+        <p>It is published where anyone can read it. No account, no key, no rate limit.</p>
+      </div>
+      <div class="step">
+        <p class="step-n">06</p>
+        <div class="step-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><path d="M8.4 12.2l2.5 2.5 4.7-4.9"/></svg></div>
+        <h4>Verifiable</h4>
+        <p>You, or any AI system, can recompute the same answer from the same sources and get the same result.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
 <!-- ── THE THING WE ARE MOST PROUD OF ─────────────────────────────── -->
 <section class="band">
   <div class="wrap">
@@ -656,6 +835,34 @@ footer{position:relative;z-index:2;padding:clamp(46px,6vh,74px) 0 46px;margin-to
         <p style="margin-top:12px">A compliance authority that has never issued a correction is either very lucky or not looking.</p>
       </div>
       <a class="door line" href="evidence.html">Read the corrections</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ── WHAT THE RECORD ACTUALLY HOLDS ──────────────────────────────────
+     Four figures, none of them typed into this file. Each is read at
+     the moment the page loads: the obligations from the signed corpus,
+     the register count from the register itself, the signature count
+     from the published assertions manifest.
+
+     The register currently answers zero, and that is what this section
+     will show. An institution whose product is checkable claims cannot
+     put an invented number on its own homepage — the register is one
+     click away and free to query, so the lie would be self-refuting
+     before a reader finished reading it. A zero that moves on its own
+     is worth more than a number nobody can reproduce. -->
+<section class="band">
+  <div class="wrap">
+    <div class="creed">
+      <p>Nothing is trusted merely because Lunara says it is. <em>Check the record.</em></p>
+    </div>
+    <div class="tally" id="lx-tally">
+      <div><b id="lx-t-obl">…</b><span>Obligations tracked</span><i id="lx-t-oblx">from the signed corpus</i></div>
+      <div><b id="lx-t-force">…</b><span>Already in force</span><i>computed as you read this</i></div>
+      <div><b id="lx-t-reg">…</b><span>Businesses in the register</span><i id="lx-t-regx">queried live, free to anyone</i></div>
+      <div><b id="lx-t-sig">…</b><span>Documents signed</span><i>Ed25519, publicly verifiable</i></div>
     </div>
   </div>
 </section>

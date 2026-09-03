@@ -143,6 +143,20 @@ jobs:
       # text renders near a third of its size and pinch-zoom is the reader's
       # only way back; forcing the width and blocking the zoom together is
       # an accessibility failure rather than a preference.
+      # Briefings live in the database and nowhere else. Every file in this
+      # repository is fetchable from lunarasociety.com by anyone who guesses
+      # the path — no link needed, no index required — and a briefing names
+      # competitors, assigns risks to people, and records decisions the
+      # founder has not yet made. Publishing one would be a disclosure.
+      #
+      # The ingest tool already refuses a path inside the tree, but that
+      # only guards the ingest path. This catches a file dropped here by an
+      # editor, a copy made while debugging, or an agent that thought a
+      # fixture would be convenient. Detection is by shape, not filename,
+      # so renaming does not evade it.
+      - name: Verify no briefing content is published
+        run: node tools/verify-no-briefing-content.mjs
+
       - name: Verify the desktop viewport
         run: node tools/verify-viewport.mjs
 

@@ -46,6 +46,7 @@
       ['constitution.html',        'The constitution']
     ]},
     { head: 'Answers', links: [
+      ['governance-and-security.html',      'Governance is not security'],
       ['what-is-shield-certification.html', 'What is Shield certification?'],
       ['verify-an-ai-business.html',        'How to verify an AI business'],
       ['ai-trust-standards.html',           'AI trust standards'],

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Governance Is Not Security | Lunara Society</title>
+<meta name="description" content="Security asks whether a system can be broken. Governance asks whether an action was authorised, by whom, and how anyone else can check. Why the difference matters.">
+<link rel="canonical" href="https://lunarasociety.com/governance-and-security.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/governance-and-security.html">
+<meta property="og:title" content="Governance Is Not Security">
+<meta property="og:description" content="Security asks whether a system can be broken. Governance asks whether an action was authorised, by whom, and how anyone else can check.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Governance Is Not Security">
+<meta name="twitter:description" content="Security asks whether a system can be broken. Governance asks whether an action was authorised, and by whom.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-answer.css">
+<link rel="stylesheet" href="lunara-shell.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Governance is not security",
+  "description": "Security asks whether a system can be broken. Governance asks whether an action was authorised, by whom, and how anyone else can check.",
+  "author": { "@type": "Organization", "name": "Lunara Society" },
+  "publisher": { "@type": "Organization", "name": "Lunara Society" },
+  "mainEntityOfPage": "https://lunarasociety.com/governance-and-security.html",
+  "isAccessibleForFree": true
+}
+</script>
+</head>
+<body>
+<div id="wash"></div>
+<div id="grain"></div>
+
+<main>
+  <header class="wrap phead">
+    <p class="eyebrow">Doctrine</p>
+    <h1>Governance is not <em>security</em>.</h1>
+  </header>
+
+  <section class="wrap" style="padding-top:0">
+    <div class="prose">
+
+      <p class="answer">Security asks whether a system can be made to do something it should not. Governance asks whether the thing it did was authorised in the first place, who authorised it, and how somebody outside the organisation can check that answer afterwards. Both questions matter. Neither one answers the other, and a system can pass the first perfectly while failing the second completely.</p>
+
+      <p>The two words are increasingly used as if they were interchangeable. They are not, and the distinction is about to matter commercially, because software that answers only the first question is being sold to buyers who believe they are also getting the second.</p>
+
+      <h2>Two different questions</h2>
+
+      <p>Put an autonomous system in front of each discipline and they interrogate it differently.</p>
+
+      <p><strong>Security asks about capability.</strong> Can this thing be compromised? Can its instructions be poisoned, its credentials stolen, its tools turned against the organisation that deployed it? Can an attacker reach further through it than they could without it? These are questions about what an adversary can force to happen.</p>
+
+      <p><strong>Governance asks about authority.</strong> Was this action within the mandate the organisation actually granted? Which named person granted it, and when? If it turns out to have been wrong, is there a durable record that survives the people who made it, and can the permission be withdrawn? These are questions about what the organisation itself intended, and whether that intention is recoverable later by somebody who was not in the room.</p>
+
+      <p>An adversary is optional in the second set. That is the whole point. The governance failures worth worrying about mostly involve nobody breaking in at all.</p>
+
+      <h2>The failure each one catches</h2>
+
+      <p>A security failure looks like this: a system was manipulated into doing something outside its intended behaviour, and the organisation did not intend it and did not authorise it.</p>
+
+      <p>A governance failure looks like this: a system did exactly what it was configured to do, at speed, correctly, with no intrusion of any kind, and afterwards nobody could establish who had decided it should be allowed to, on what basis, or how to revoke that permission without breaking something else.</p>
+
+      <p>The second failure produces no alert. There is nothing to detect, because nothing was compromised. It surfaces later, usually when somebody outside the organisation asks a question that ought to have an easy answer and discovers that it does not.</p>
+
+      <h2>Why a secure system can be an ungoverned one</h2>
+
+      <p>Consider an organisation that has done the security work properly. Every automated actor holds its own identity. Credentials are scoped and rotated. Tool access is least-privilege. Traffic is monitored, anomalies are flagged, and no unauthorised party can reach anything.</p>
+
+      <p>Now ask three governance questions about the same organisation.</p>
+
+      <ol class="steps">
+        <li><h3>Who approved this scope?</h3><p>Not which engineer configured it. Which accountable person decided that this class of action was acceptable, and is that decision written down anywhere a successor could find it?</p></li>
+        <li><h3>What was the basis?</h3><p>Was the decision made against a stated standard, or was it made because it was Thursday and the integration needed to ship?</p></li>
+        <li><h3>Can somebody outside check?</h3><p>If a customer, a regulator or a counterparty asks what this system is permitted to do on your behalf, is there an answer they can verify without taking your word for it?</p></li>
+      </ol>
+
+      <p>A well-secured organisation can fail all three. The security controls are real and they are working. They were simply never designed to answer these questions, and there is no reason they should have been.</p>
+
+      <h2>What governance requires that security does not</h2>
+
+      <p>Four things, and none of them is a control in the security sense.</p>
+
+      <div class="limits">
+        <p><strong>Attributable authority.</strong> Every permission traces to a person or body that held the standing to grant it. Configuration is not authorisation. Somebody has to have decided.</p>
+        <p><strong>A named decider.</strong> Anonymous approval is the absence of governance wearing its clothes. If no name attaches to a decision, there is nobody to ask about it later and nobody who was accountable at the time.</p>
+        <p><strong>A durable record.</strong> The decision outlives the meeting, the employee and the vendor. Institutional memory that lives only in the heads of current staff is not a record.</p>
+        <p><strong>External checkability.</strong> The claim can be tested by somebody with no access to your systems and no reason to trust you. This is the hardest of the four and the one most often skipped, because it is the only one that requires giving up control of the answer.</p>
+      </div>
+
+      <p>That last requirement is the load-bearing one. A governance framework that only your own staff can inspect is a policy document. It becomes governance at the moment an outsider can check it and reach a conclusion you did not choose for them.</p>
+
+      <h2>Where Lunara sits, and where it does not</h2>
+
+      <p>This institution takes the governance side of that line, and it is worth being exact about how narrow the work currently is.</p>
+
+      <p>What Lunara does today is verify that a business is legally registered and controls the domain it operates from, have a named person review the evidence and sign the decision, and publish the result to a register that anyone can query for free, without an account, and that Lunara can withdraw. The regulatory obligations it tracks are published as signed, machine-readable data, so a reader can check the signature rather than trust the page. That is the whole of it.</p>
+
+      <div class="limits">
+        <p><strong>Lunara does not secure anything.</strong> It runs no controls in your infrastructure, monitors no traffic, and blocks no action. If you need an adversary kept out, that is a different discipline and a different supplier.</p>
+        <p><strong>Lunara does not audit models.</strong> It reads no code and evaluates no system behaviour. A verification of identity is not a statement about how a system performs.</p>
+        <p><strong>Lunara does not certify compliance.</strong> Nothing here discharges a legal obligation. Lunara is a private standards body, not a regulator and not a notified body under the EU AI Act.</p>
+        <p><strong>Lunara does not govern running systems.</strong> There is no product here that sits in front of an autonomous agent and permits or denies its actions. Saying otherwise would be a claim about software that does not exist, and this institution publishes a record of the times it has been wrong precisely so it does not accumulate claims like that.</p>
+      </div>
+
+      <p>What the four requirements above describe is the standard being argued for. What the register does today is a narrow application of it: one class of claim, checked by a person, published where it can be contradicted, and revocable. The argument is that the same shape scales to harder claims. The demonstration is small, and calling it anything else would be the failure this page is about.</p>
+
+      <h2>How to tell which one you are being sold</h2>
+
+      <p>Four questions separate the categories quickly, whoever is doing the selling.</p>
+
+      <ol class="steps">
+        <li><h3>Does it survive the absence of an attacker?</h3><p>If every failure it describes involves a malicious party, it is security. Governance failures happen on quiet days.</p></li>
+        <li><h3>Is a person named?</h3><p>Governance attaches decisions to people who held the authority to make them. If the answer is a process with no name in it, the accountability is decorative.</p></li>
+        <li><h3>Can somebody outside verify the claim?</h3><p>If checking requires your cooperation, your logs or your dashboard, the claim is internal. That may be fine. It is not external verification, and it should not be described as such.</p></li>
+        <li><h3>Can the status be taken away?</h3><p>A credential that cannot be withdrawn carries no information, because nothing distinguishes an entity that still qualifies from one that no longer does.</p></li>
+      </ol>
+
+      <p>A tool can be excellent and answer none of these. That is not a criticism of the tool. It is a reason not to buy it expecting the other thing.</p>
+
+      <h2>Why this is published</h2>
+
+      <p>Because a boundary that only exists internally is not a boundary. If Lunara holds that governance and security are different disciplines, that position should be written down, dated, and available to be argued with by anyone who thinks it is wrong. A position nobody can quote back at you is not a position, and this institution keeps a public record of its corrections for the same reason.</p>
+
+      <p class="src mono">Position statement. This page makes no claim about any other organisation or product, and cites no figure it cannot support.</p>
+
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <a href="/constitution.html"><b>The constitution</b><span>The document this position derives from.</span></a>
+        <a href="/what-is-shield-certification.html"><b>Shield certification</b><span>The narrow application of the standard that exists today.</span></a>
+        <a href="/registry.html"><b>The public register</b><span>Free to query, and free to find empty.</span></a>
+        <a href="/evidence.html"><b>The evidence standard</b><span>Including the corrections published against this institution.</span></a>
+        <a href="/intelligence.html"><b>The regulatory record</b><span>Signed, so the signature can be checked rather than trusted.</span></a>
+        <a href="/glossary.html"><b>The vocabulary</b><span>Certification, verification and assurance, defined.</span></a>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script src="lunara-toc.js" defer></script>
+</body>
+</html>

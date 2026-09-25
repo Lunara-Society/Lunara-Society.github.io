@@ -32,6 +32,21 @@
       five minutes before, because being dropped mid-sentence is
       worse than being told it is coming.
 
+   5. Away means out. Twelve hours without any activity in any tab
+      ends the session, on the next visit or the moment an open tab is
+      looked at again, whichever comes first. The twenty-four hour
+      limit on the session itself still stands as the outer bound.
+
+   6. Coming back is one tap. New visitors are offered Google's card
+      once per visit. A member whose session ended by itself (twelve
+      hours away, or the twenty-four hour limit) is offered it at once
+      on their next page, with a welcome back beside it, and if
+      Google is holding its card back (it rests the card for a while
+      after someone closes it, and no website can override that) the
+      welcome carries Google's own button instead, so returning is one
+      tap either way. Closing the card is respected for the rest of
+      that visit.
+
    Add data-lunara-onetap="off" to the script tag to load the
    indicator without the prompt.
    ═══════════════════════════════════════════════════════════════════ */
@@ -113,7 +128,19 @@
     '.lun-warn b{font-weight:400;color:#E2C47A}',
     '.lun-warn button{font-family:inherit;font-size:12.5px;font-weight:500;color:#141210;cursor:pointer;',
       'background:linear-gradient(180deg,#F0E6CE,#CBB07C);border:none;border-radius:100px;padding:8px 16px;flex:none}',
-    '@media (max-width:520px){.lun-warn{flex-direction:column;align-items:flex-start;gap:10px}}'
+    '@media (max-width:520px){.lun-warn{flex-direction:column;align-items:flex-start;gap:10px}}',
+    /* the welcome back */
+    '.lun-back{position:fixed;right:22px;bottom:22px;z-index:2147482990;width:340px;max-width:calc(100vw - 32px);',
+      'padding:20px 20px 18px;border-radius:16px;border:1px solid rgba(226,196,122,0.4);',
+      'background:radial-gradient(90% 90% at 100% 0%,rgba(226,196,122,0.16),transparent 60%),rgba(12,14,18,0.97);',
+      '-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 30px 70px -20px rgba(0,0,0,0.85);',
+      'font-family:Inter,system-ui,sans-serif;color:#EFEAE0;opacity:0;transform:translateY(16px);',
+      'transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1)}',
+    '.lun-back.on{opacity:1;transform:none}',
+    '.lun-back h4{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-weight:400;font-size:24px;color:#F2EEE6}',
+    '.lun-back p{margin:6px 0 14px;font-size:13px;line-height:1.55;color:#A9AEB8}',
+    '.lun-back .x{position:absolute;top:10px;right:12px;background:none;border:0;color:#8E949E;font-size:20px;cursor:pointer;line-height:1}',
+    '.lun-back .alt{display:inline-block;margin-top:12px;font-size:12px;color:#E2C47A;text-decoration:none}'
   ].join('');
   document.head.appendChild(css);
 
@@ -153,7 +180,36 @@
      out — and four half-copies of this is how one of them ends up
      leaving the id behind for the next person at the machine. */
   var KEYS = ['lunara_session_token','lunara_id','lunara_name','lunara_tier',
-              'lunara_email','lunara_expires_at'];
+              'lunara_email','lunara_expires_at','lunara_last_active'];
+
+  /* ── away ─────────────────────────────────────────────────────
+     Activity in any tab counts, because the mark lives in
+     localStorage, which every tab of this site shares. Written at
+     most once a minute. */
+  var AWAY_MS = 12 * 3600000;
+  var lastWrite = 0;
+  function touch(){
+    var now = Date.now();
+    if(now - lastWrite < 60000) return;
+    lastWrite = now;
+    try { if(localStorage.getItem('lunara_session_token')) localStorage.setItem('lunara_last_active', String(now)); } catch(e){}
+  }
+  function awayTooLong(){
+    var t = 0;
+    try { t = Number(localStorage.getItem('lunara_last_active') || 0); } catch(e){}
+    return t > 0 && Date.now() - t > AWAY_MS;
+  }
+
+  /* Why the last session ended, kept after everything else is
+     forgotten, so the next page can offer the way back in. Only the
+     reason: no name, no id, nothing for the next person at the
+     machine to read. */
+  function markReturning(reason){
+    try {
+      if(reason === 'expired' || reason === 'away') localStorage.setItem('lunara_returning', reason);
+      else localStorage.removeItem('lunara_returning');
+    } catch(e){}
+  }
 
   function forget(){
     try { KEYS.forEach(function(k){ localStorage.removeItem(k); }); } catch(e){}
@@ -169,6 +225,7 @@
 
   function signOut(reason){
     forget();
+    markReturning(reason);
     var here = (location.pathname.split('/').pop() || 'index.html');
     var gated = ['member.html','dashboard.html','kit-access.html','compliance-report-access.html'];
     if (gated.indexOf(here) >= 0) {
@@ -245,9 +302,20 @@
     try { exp = Number(localStorage.getItem('lunara_expires_at') || 0); } catch(e){}
     if(exp && exp <= Date.now()) signOut('expired');
   }
+  function checkAway(){
+    var t = null; try { t = localStorage.getItem('lunara_session_token'); } catch(e){}
+    if(t && awayTooLong()) signOut('away');
+  }
   document.addEventListener('visibilitychange', function(){
-    if(!document.hidden) checkDeadline();
+    if(document.hidden) return;
+    // Order matters: judge the absence before this return counts as activity.
+    checkAway(); checkDeadline(); touch();
   });
+  ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+    window.addEventListener(ev, touch, { passive: true });
+  });
+  // A tab left open and untouched is noticed without a return visit.
+  setInterval(checkAway, 5 * 60000);
 
   /* Signing out in one tab signs out in all of them. */
   window.addEventListener('storage', function(e){
@@ -257,6 +325,8 @@
   function remember(data){
     try{
       localStorage.setItem('lunara_session_token', data.session_token);
+      localStorage.setItem('lunara_last_active', String(Date.now()));
+      localStorage.removeItem('lunara_returning');
       localStorage.setItem('lunara_id', data.lunara_id);
       localStorage.setItem('lunara_name', data.full_name || '');
       localStorage.setItem('lunara_tier', data.tier || '');
@@ -336,39 +406,108 @@
     setTimeout(function(){ settle(a.querySelector('.lun-id'), data.lunara_id); }, still ? 0 : 260);
   }
 
-  /* ── One Tap ────────────────────────────────────────────────── */
+  /* ── One Tap ──────────────────────────────────────────────────
+     Offered to everyone who is not signed in. It used to be offered
+     until the first time Google reported it "skipped" and then never
+     again on that browser, and Google reports a skip for reasons the
+     visitor never chose (tapping elsewhere on the page, the card
+     timing out, the browser declining to show it), so most visitors
+     lost it without ever turning it down. Now a close is respected
+     for the rest of the visit and forgotten after it. */
 
-  function oneTap(){
+  function signedIn(data){
+    if(!data || !data.success) return false;
+    remember(data);
+    closeBack();
+    mount(data);
+    schedule(data.expires_at);
+    return true;
+  }
+
+  function onCredential(res){
+    post('google', { id_token: res.credential }).then(signedIn).catch(function(){});
+  }
+
+  var backEl = null;
+  function closeBack(){
+    if(!backEl) return;
+    var el = backEl; backEl = null;
+    el.classList.remove('on');
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 450);
+  }
+
+  /* The welcome back: for a member whose session ended by itself.
+     Carries Google's own button, drawn by Google, so it works even
+     while Google is resting its One Tap card. */
+  function welcomeBack(reason){
+    if(backEl || document.querySelector('.lun-mark')) return;
+    backEl = document.createElement('div');
+    backEl.className = 'lun-back';
+    backEl.setAttribute('role', 'dialog');
+    backEl.setAttribute('aria-label', 'Sign back in');
+    backEl.innerHTML = '<button class="x" type="button" aria-label="Close">&times;</button>' +
+      '<h4>Welcome back.</h4><p>' + (reason === 'away'
+        ? 'You were signed out after twelve hours away, to keep your account safe on a shared or forgotten device.'
+        : 'Your session reached its twenty-four hour limit and ended.') +
+      ' One tap and you are back in.</p><div class="g"></div>' +
+      '<a class="alt" href="/member.html">Sign in with a Lunara ID instead →</a>';
+    document.body.appendChild(backEl);
+    backEl.querySelector('.x').addEventListener('click', function(){
+      try { sessionStorage.setItem('lunara_onetap_closed', '1'); localStorage.removeItem('lunara_returning'); } catch(e){}
+      closeBack();
+    });
+    try {
+      google.accounts.id.renderButton(backEl.querySelector('.g'), {
+        theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', width: 300
+      });
+    } catch(e){}
+    requestAnimationFrame(function(){ if(backEl) backEl.classList.add('on'); });
+  }
+
+  function oneTap(returning){
     if(!wantOneTap) return;
-    if(localStorage.getItem('lunara_onetap_dismissed') === '1') return;
     if(!window.google || !google.accounts || !google.accounts.id) return;
+    var closed = false;
+    try { closed = sessionStorage.getItem('lunara_onetap_closed') === '1'; } catch(e){}
+    if(closed && !returning) return;
 
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
-      callback: function(res){
-        post('google', { id_token: res.credential }).then(function(data){
-          if(!data.success) return;
-          remember(data);
-          mount(data);
-          schedule(data.expires_at);
-        });
-      },
+      callback: onCredential,
       auto_select: false,
       cancel_on_tap_outside: true,
       itp_support: true,
+      context: 'signin',
       use_fedcm_for_prompt: true
     });
 
+    var answered = false;
     google.accounts.id.prompt(function(n){
-      // Someone who closes it has answered. Asking again on the next
-      // page view would be pestering, and the whole point of the card
-      // is that it is offered rather than demanded.
       try{
         if(n && typeof n.isSkippedMoment === 'function' && n.isSkippedMoment()){
-          localStorage.setItem('lunara_onetap_dismissed', '1');
+          var why = typeof n.getSkippedReason === 'function' ? n.getSkippedReason() : '';
+          // Only a close the visitor chose counts as an answer.
+          if(why === 'user_cancel' || why === 'tap_outside'){
+            answered = true;
+            try { sessionStorage.setItem('lunara_onetap_closed', '1'); } catch(e){}
+          }
+        }
+        if(n && typeof n.isDismissedMoment === 'function' && n.isDismissedMoment() &&
+           typeof n.getDismissedReason === 'function' && n.getDismissedReason() === 'credential_returned'){
+          answered = true;
         }
       } catch(e){}
     });
+
+    /* A returning member always gets a way back in: the card if
+       Google shows it, and the welcome back beside it, a few seconds
+       later, unless they have already signed in or closed the card. */
+    if(returning){
+      setTimeout(function(){
+        if(answered || document.querySelector('.lun-mark')) return;
+        welcomeBack(returning);
+      }, 2600);
+    }
   }
 
   function loadGis(then){
@@ -392,13 +531,31 @@
        half second it takes the server to say the same thing. */
     var exp = 0;
     try { exp = Number(localStorage.getItem('lunara_expires_at') || 0); } catch(e){}
-    if(token && exp && exp <= Date.now()){ forget(); token = null; }
+    if(token && exp && exp <= Date.now()){ forget(); markReturning('expired'); token = null; }
+
+    /* Twelve hours without activity in any tab ends the session here,
+       before anything is drawn. A gated page leaves for the sign-in
+       page, which says why; any other page simply offers the way back. */
+    if(token && awayTooLong()){
+      var here = (location.pathname.split('/').pop() || 'index.html');
+      if(['member.html','dashboard.html','kit-access.html','compliance-report-access.html'].indexOf(here) >= 0){
+        return signOut('away');
+      }
+      forget(); markReturning('away'); token = null;
+    }
+
+    // An earlier build hid the card for good after one skip. Undo it.
+    try { localStorage.removeItem('lunara_onetap_dismissed'); } catch(e){}
 
     if(!token){
-      // Signed out. Offer the card, once the page has settled.
-      setTimeout(function(){ loadGis(oneTap); }, 1400);
+      var returning = null;
+      try { returning = localStorage.getItem('lunara_returning'); } catch(e){}
+      /* Signed out. Offer the card once the page has settled; at once
+         for someone whose session just ended by itself. */
+      setTimeout(function(){ loadGis(function(){ oneTap(returning); }); }, returning ? 600 : 1400);
       return;
     }
+    touch();
 
     /* The badge is drawn from the server's answer, never from what is
        in localStorage. An expired or invented token gets the visitor
@@ -411,9 +568,10 @@
         return;
       }
       /* The server says no. Whatever is in storage is stale or invented,
-         and either way this visitor is a stranger. */
-      forget();
-      setTimeout(function(){ loadGis(oneTap); }, 1400);
+         and either way this visitor is a stranger, or a member whose
+         session has run out: offer the way back. */
+      forget(); markReturning('expired');
+      setTimeout(function(){ loadGis(function(){ oneTap('expired'); }); }, 600);
     }).catch(function(){ /* offline: show nothing rather than a guess */ });
   }
 

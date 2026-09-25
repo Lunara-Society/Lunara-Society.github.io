@@ -1611,7 +1611,18 @@ function initGoogleSignIn(){
       click_listener: () => rite.waitForGoogle()
     });
   }
+  /* The account list, offered without being asked for, to anyone on
+     this page without a session: new visitors, and members whose
+     session ended. Held back until the stored session, if any, has
+     been checked, so a signed-in member is never offered it. */
+  sessionChecked.then((signedIn) => {
+    if(signedIn) return;
+    try { google.accounts.id.prompt(); } catch(e){}
+  });
 }
+
+let sessionCheckedResolve;
+const sessionChecked = new Promise((r) => { sessionCheckedResolve = r; });
 
 async function handleGoogleCredential(response){
   const err1 = document.getElementById('login-error');
@@ -1657,6 +1668,10 @@ function saveSession(token, id, name, tier){
   localStorage.setItem('lunara_id', id);
   localStorage.setItem('lunara_name', name || '');
   localStorage.setItem('lunara_tier', tier || '');
+  /* A new session starts the twelve-hour away clock afresh, so a stale
+     mark from an earlier session cannot end this one on arrival. */
+  localStorage.setItem('lunara_last_active', String(Date.now()));
+  localStorage.removeItem('lunara_returning');
 }
 
 function clearSession(){
@@ -1664,6 +1679,7 @@ function clearSession(){
   localStorage.removeItem('lunara_id');
   localStorage.removeItem('lunara_name');
   localStorage.removeItem('lunara_tier');
+  localStorage.removeItem('lunara_last_active');
 }
 
 async function doLogin(){
@@ -1839,6 +1855,8 @@ function doLogout(){
   box.style.color = 'rgba(255,255,255,0.6)';
   box.textContent = why === 'expired'
     ? 'Your session reached its 24-hour limit and was ended. Sign in to continue.'
+    : why === 'away'
+    ? 'You were signed out after twelve hours away. Sign in to continue.'
     : 'You are signed out.';
 })();
 
@@ -2213,17 +2231,33 @@ window.addEventListener('hashchange', profOpenIfAsked);
 // Auto-restore session on page load
 (async function restoreSession(){
   const token = localStorage.getItem('lunara_session_token');
-  if(!token) return;
+  if(!token) return sessionCheckedResolve(false);
+  /* Twelve hours away ends the session here too, before the dashboard
+     is drawn. lunara-member.js enforces the same rule on every page. */
+  const last = Number(localStorage.getItem('lunara_last_active') || 0);
+  if(last && Date.now() - last > 12 * 3600000){
+    clearSession();
+    localStorage.removeItem('lunara_expires_at');
+    localStorage.setItem('lunara_returning', 'away');
+    const box = document.getElementById('login-error');
+    if(box){
+      box.style.color = 'rgba(255,255,255,0.6)';
+      box.textContent = 'You were signed out after twelve hours away. Sign in to continue.';
+    }
+    return sessionCheckedResolve(false);
+  }
   try{
     const data = await authPost('session', { session_token: token });
     if(data.success){
       if(data.email) localStorage.setItem('lunara_email', String(data.email).toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
       showDashboard(data.lunara_id, data.full_name);
+      return sessionCheckedResolve(true);
     } else {
       clearSession();
     }
   } catch(e){ /* stay on login screen */ }
+  sessionCheckedResolve(false);
 })();
 
 // Enter key on login / register

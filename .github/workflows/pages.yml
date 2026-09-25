@@ -39,6 +39,13 @@ jobs:
       - name: Verify the regulatory corpus
         run: node tools/verify-corpus.mjs
 
+      # The homepage asks a person the question lunara_applicability
+      # answers for an AI system. Two evaluators of one model are two
+      # answers waiting to happen, so both are run over all 6,561 answer
+      # sets and the deploy stops on the first disagreement.
+      - name: Verify the applicability check agrees with the MCP server
+        run: node tools/verify-applies.mjs
+
       # Every figure on a page must come from the pricing table. This caught
       # a $99 Shield next to a button charging $75, a "$2,599 initial" card
       # above a button charging $7,400, and thirty-three files advertising a

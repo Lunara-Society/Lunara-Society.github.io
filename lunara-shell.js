@@ -75,6 +75,7 @@
   var FOOT = [
     { head: 'The record', links: [
       ['intelligence.html', 'Regulatory intelligence'],
+      ['check.html',        'Does the law reach your AI?'],
       ['registry.html',     'Public register'],
       ['evidence.html',     'Evidence standard'],
       ['signing.html',      'How to verify us'],
@@ -98,6 +99,7 @@
     { head: 'For machines', links: [
       ['mcp.html',            'MCP server'],
       ['test.html',           'The Lunara Test'],
+      ['embed.html',          'Embed the AI Act countdown'],
       ['/corpus/index.json',  'Corpus index'],
       ['/llms.txt',           'llms.txt']
     ]}

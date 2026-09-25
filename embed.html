@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>EU AI Act Countdown Widget, Free to Embed | Lunara Society</title>
+<meta name="description" content="A live countdown to the next binding EU AI Act and California AI deadline, for any website. One line to embed, updates itself from a signed record, no cookies.">
+<link rel="canonical" href="https://lunarasociety.com/embed.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/embed.html">
+<meta property="og:title" content="The AI Act countdown, for your website">
+<meta property="og:description" content="A live countdown to the next binding EU AI Act and California deadline. One line to embed, never goes stale, no cookies.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The AI Act countdown, for your website">
+<meta name="twitter:description" content="A live countdown to the next binding AI regulation deadline. One line to embed.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-shell.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Act countdown widget",
+  "url": "https://lunarasociety.com/embed.html",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "An embeddable live countdown to the next binding EU AI Act and California AI Transparency Act deadline, read from Lunara Society's signed regulatory record.",
+  "publisher": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+  "isBasedOn": "https://lunarasociety.com/corpus/obligations.json"
+}
+</script>
+<style>
+.em-head{padding-top:clamp(120px,14vh,170px)}
+.em-head h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:62px;line-height:1.02;color:#F2EEE6;max-width:15em}
+.em-head h1 em{color:#E2C47A}
+.em-lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;margin-top:10px;align-items:start}
+.em-stage{border-radius:18px;padding:40px 30px;min-height:420px;display:flex;align-items:center;justify-content:center;transition:background .5s ease;
+  background:radial-gradient(70% 70% at 50% 40%,rgba(226,196,122,.10),transparent 70%),repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 12px,transparent 12px 24px),#0B0C10;border:1px solid var(--hair,rgba(214,222,234,.1))}
+.em-stage.light{background:repeating-linear-gradient(45deg,rgba(0,0,0,.025) 0 12px,transparent 12px 24px),#F7F4EE}
+.em-stage > div{width:100%;max-width:520px}
+.em-ctl h3{font:10.5px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:#E2C47A;margin:0 0 10px}
+.em-seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.em-seg button{cursor:pointer;font:13px Inter,system-ui,sans-serif;color:#DCD8D0;background:transparent;border:1px solid rgba(214,222,234,.18);padding:9px 14px;border-radius:999px}
+.em-seg button.on{background:#E2C47A;color:#16130D;border-color:#E2C47A}
+.em-code{font:12px "IBM Plex Mono",monospace;white-space:pre-wrap;word-break:break-all;color:#C9D6E4;background:#07080B;border:1px solid rgba(214,222,234,.12);border-radius:12px;padding:16px 18px;line-height:1.6}
+.em-copy{margin-top:12px;cursor:pointer;border:0;font:600 14px Inter,system-ui,sans-serif;color:#16130D;padding:13px 22px;border-radius:999px;background:linear-gradient(180deg,#F3DA9A,#C9A55E)}
+.em-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:26px}
+.em-list div{padding:22px;border-radius:14px;border:1px solid var(--hair,rgba(214,222,234,.1));background:rgba(12,14,19,.7)}
+.em-list b{display:block;font:10.5px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:#E2C47A;margin-bottom:10px}
+.em-list p{font-size:14.5px;line-height:1.7;color:#A9AEB8}
+</style>
+</head>
+<body>
+<main>
+  <header class="wrap em-head">
+    <p class="kicker">Free to embed · for law firms, newsrooms, AI companies and anyone writing about AI</p>
+    <h1>The AI Act countdown, <em>on your own site.</em></h1>
+    <p class="sec-lede">A live countdown to the next binding EU AI Act or California deadline. It reads the same signed record every date on this site comes from, so when a deadline passes the next one takes its place, on every site that carries it, without anybody editing anything.</p>
+  </header>
+
+  <section class="wrap" aria-label="Build your embed">
+    <div class="em-lab">
+      <div class="em-stage" id="em-stage"><div id="em-preview"></div></div>
+      <div class="em-ctl">
+        <h3>Which deadlines</h3>
+        <div class="em-seg" data-opt="scope"><button type="button" class="on" data-v="all">All</button><button type="button" data-v="eu">EU AI Act</button><button type="button" data-v="california">California</button></div>
+        <h3>Theme</h3>
+        <div class="em-seg" data-opt="theme"><button type="button" class="on" data-v="dark">Dark</button><button type="button" data-v="light">Light</button></div>
+        <h3>Upcoming list</h3>
+        <div class="em-seg" data-opt="list"><button type="button" data-v="0">None</button><button type="button" class="on" data-v="3">Three</button><button type="button" data-v="5">Five</button></div>
+        <h3>Paste this where it should appear</h3>
+        <pre class="em-code" id="em-code"></pre>
+        <button class="em-copy" type="button" id="em-copy">Copy the code</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <p class="kicker">What it does, and what it does not</p>
+    <h2 class="h2">It cannot go out of date, and it cannot follow your readers</h2>
+    <div class="em-list">
+      <div><b>No date in the code</b><p>The widget holds no date. It fetches the obligation record on every load and computes the countdown against the reader's own clock, in UTC, which is when the law says an obligation begins to bind.</p></div>
+      <div><b>No cookies, no tracking</b><p>It sets nothing, reads nothing about the reader and reports nothing back. It is drawn in Shadow DOM, so your stylesheet cannot break it and it cannot restyle your page.</p></div>
+      <div><b>Checkable, like everything here</b><p>Every date carries the article that sets it, and the record behind it is signed with Ed25519. If one is wrong, it is a defect we want to hear about, and the correction reaches every copy at once.</p></div>
+    </div>
+    <p class="sec-lede" style="margin-top:28px">It works anywhere a page can carry a script tag: WordPress, Webflow, Ghost, Squarespace, Notion sites and hand-written HTML alike. If your platform strips scripts, the link inside the tag still points your readers at the same record. Nothing about it is licensed or metered, and nobody needs to ask us first. If you write about AI regulation, it is yours to use, and a newsroom or law firm that wants a variant for its own audience can write to us and describe it.</p>
+    <div class="doors">
+      <a class="door line" href="/intelligence.html">The full regulatory record</a>
+      <a class="door line" href="/check.html">Does the law reach your AI?</a>
+      <a class="door line" href="/badge.html">The certification badge</a>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script>
+(function () {
+  var opt = { scope: 'all', theme: 'dark', list: '3' };
+  var stage = document.getElementById('em-stage'), prev = document.getElementById('em-preview'), code = document.getElementById('em-code');
+  function snippet() {
+    var attrs = (opt.scope !== 'all' ? ' data-scope="' + opt.scope + '"' : '') + (opt.theme !== 'dark' ? ' data-theme="' + opt.theme + '"' : '') + (opt.list !== '3' ? ' data-list="' + opt.list + '"' : '');
+    return '<div data-lunara-countdown' + attrs + '>\n  <a href="https://lunarasociety.com/intelligence.html">EU AI Act deadlines, from the Lunara Society regulatory record</a>\n</div>\n<script src="https://lunarasociety.com/embed.js" async><\/script>';
+  }
+  function draw() {
+    code.textContent = snippet();
+    stage.classList.toggle('light', opt.theme === 'light');
+    prev.innerHTML = '<div data-lunara-countdown data-scope="' + opt.scope + '" data-theme="' + opt.theme + '" data-list="' + opt.list + '"><a href="/intelligence.html">EU AI Act deadlines, from the Lunara Society regulatory record</a></div>';
+    if (window.__lunaraEmbedBoot) window.__lunaraEmbedBoot();
+  }
+  [].forEach.call(document.querySelectorAll('[data-opt]'), function (g) {
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      [].forEach.call(g.querySelectorAll('button'), function (x) { x.classList.toggle('on', x === b); });
+      opt[g.getAttribute('data-opt')] = b.getAttribute('data-v'); draw();
+    });
+  });
+  document.getElementById('em-copy').addEventListener('click', function () {
+    var b = this, t = snippet();
+    var ok = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy the code'; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, function () { prompt('Copy this', t); }); else prompt('Copy this', t);
+  });
+  draw();
+  var s = document.createElement('script'); s.src = '/embed.js'; s.onload = function () { if (window.__lunaraEmbedBoot) window.__lunaraEmbedBoot(); }; document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>

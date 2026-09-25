@@ -302,6 +302,9 @@ h1 em{
 .o-row:hover .o-go{background:var(--gold);border-color:var(--gold);color:#16130D}
 .o-row:hover .o-go svg{transform:rotate(-45deg)}
 
+/* ── II½. DOES IT REACH YOU ───────────────────────────────────── */
+.check{position:relative;padding:40px 0 110px}
+
 /* ── IV. THE CHAIN OF CUSTODY ───────────────────────────────────── */
 .chain{position:relative;padding:40px 0 140px}
 .chain-head{max-width:760px}
@@ -709,6 +712,19 @@ h1 em{
   </div>
 </section>
 
+<!-- ── II½. DOES IT REACH YOU ──────────────────────────────────────
+     The question most visitors arrive with, answered from the signed
+     applicability model by lunara-applies.js. The same model the MCP
+     server evaluates for AI systems; tools/verify-applies.mjs proves
+     the two agree on every possible set of answers. -->
+<section class="check" id="check" aria-label="Does the law reach your AI">
+  <div class="wrap">
+    <div data-lunara-check>
+      <noscript><p class="sec-lede">The check runs in your browser. The decision model it reads is published at <a href="/corpus/applicability.json">/corpus/applicability.json</a>, and <a href="/check.html">has its own page</a>.</p></noscript>
+    </div>
+  </div>
+</section>
+
 <!-- ── III. WHAT THIS PLACE DOES ──────────────────────────────────── -->
 <section class="offer">
   <div class="wrap offer-grid">
@@ -1017,5 +1033,6 @@ requestAnimationFrame(function () {
 <script src="lunara-stage.js" defer></script>
 <script src="lunara-home.js" defer></script>
 <script src="lunara-seal.js" defer></script>
+<script src="lunara-applies.js" defer></script>
 </body>
 </html>

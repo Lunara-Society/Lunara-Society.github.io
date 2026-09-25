@@ -166,7 +166,39 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 @media (max-width:900px){ .lxf-grid{grid-template-columns:1fr 1fr} }
 @media (max-width:560px){ .lxf-grid{grid-template-columns:1fr} }
 
+/* ── the night, carried to every page ──────────────────────────────
+   Three small things from the homepage, so the rest of the site reads
+   as the same place: the bar settles once the page moves, a gold
+   hairline measures how far through a page the reader is, and the
+   footer sits under the same lit horizon, naming tonight's moon. */
+.lxn{transition:background .45s ease,box-shadow .45s ease}
+.lxn.is-scrolled{background:rgba(7,8,10,0.86);box-shadow:0 1px 0 var(--lx-hair)}
+.lxn-progress{
+  position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
+  transform-origin:left center;transform:scaleX(0);
+  background:linear-gradient(90deg,rgba(196,164,107,0),var(--lx-gold) 35%,var(--lx-gold-lit));
+  opacity:.85;
+}
+.lxf::before{
+  content:'';position:absolute;left:50%;top:-1px;width:min(980px,76%);height:1px;transform:translateX(-50%);
+  background:linear-gradient(90deg,rgba(226,196,122,0),rgba(226,196,122,.5) 25%,rgba(255,255,255,.75) 50%,rgba(226,196,122,.5) 75%,rgba(226,196,122,0));
+}
+.lxf::after{
+  content:'';position:absolute;left:50%;top:-70px;width:min(980px,76%);height:140px;transform:translateX(-50%);
+  background:radial-gradient(closest-side,rgba(226,210,170,.07),rgba(226,210,170,0));pointer-events:none;
+}
+/* .lxf-col a is display:block, which stacked the footer's brand mark */
+.lxf-brand .lxn-brand{display:flex}
+.lxf-moon{
+  display:flex;align-items:center;gap:11px;margin-top:20px;
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;line-height:1.5;
+  letter-spacing:.03em;color:var(--lx-grey-2);
+}
+.lxf-moon svg{width:18px;height:18px;flex:none;filter:drop-shadow(0 0 6px rgba(236,232,220,.25))}
+.lxf-moon b{font-weight:400;color:var(--lx-white)}
+
 @media (prefers-reduced-motion:reduce){
   .lxn *,.lxf *{transition:none!important}
+  .lxn-progress{display:none}
 }
 

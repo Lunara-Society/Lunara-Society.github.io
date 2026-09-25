@@ -18,6 +18,47 @@
    with rather than losing navigation altogether.
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ── the moon's phase ─────────────────────────────────────────────
+   Computed, never stored, like every date here. Meeus, Astronomical
+   Algorithms, chapter 48: the phase angle from the mean elongation and
+   the two anomalies, with the six largest periodic terms. Good to a
+   fraction of a percent of illumination, which is finer than the eye
+   can tell and far finer than a calendar that says "full moon" on a
+   day.
+
+   It lives in the shell because the footer of every page names
+   tonight's moon, and the homepage lights its sphere from the same
+   function. One source, so the two can never disagree.            */
+(function () {
+  'use strict';
+  var R = Math.PI / 180;
+  function jd(date) { return date.getTime() / 86400000 + 2440587.5; }
+  function norm(a) { a %= 360; return a < 0 ? a + 360 : a; }
+  function at(date) {
+    var T = (jd(date) - 2451545.0) / 36525;
+    var D  = norm(297.8501921 + 445267.1114034 * T);
+    var M  = norm(357.5291092 + 35999.0502909 * T);
+    var Mp = norm(134.9633964 + 477198.8675055 * T);
+    var i = 180 - D
+      - 6.289 * Math.sin(Mp * R)
+      + 2.100 * Math.sin(M * R)
+      - 1.274 * Math.sin((2 * D - Mp) * R)
+      - 0.658 * Math.sin(2 * D * R)
+      - 0.214 * Math.sin(2 * Mp * R)
+      - 0.110 * Math.sin(D * R);
+    i = norm(i); if (i > 180) i = 360 - i;
+    var k = (1 + Math.cos(i * R)) / 2;
+    var waxing = D < 180;
+    var name;
+    if (k < 0.02) name = 'New moon';
+    else if (k > 0.98) name = 'Full moon';
+    else if (Math.abs(k - 0.5) < 0.035) name = waxing ? 'First quarter' : 'Last quarter';
+    else name = (waxing ? 'Waxing ' : 'Waning ') + (k < 0.5 ? 'crescent' : 'gibbous');
+    return { i: i, k: k, waxing: waxing, name: name, percent: Math.round(k * 100) };
+  }
+  window.LunaraPhase = { at: at };
+})();
+
 (function () {
   'use strict';
 
@@ -148,6 +189,36 @@
     });
 
     document.body.classList.add('lx-shelled');
+
+    /* the bar settles once the page moves, and measures the reading */
+    var bar = document.createElement('i');
+    bar.className = 'lxn-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    nav.appendChild(bar);
+    var ticking = false;
+    function onScroll() {
+      ticking = false;
+      var y = window.scrollY || 0, max = document.documentElement.scrollHeight - window.innerHeight;
+      nav.classList.toggle('is-scrolled', y > 24);
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0).toFixed(4) + ')';
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    onScroll();
+
+    /* tonight's moon, named in the footer of every page */
+    try {
+      var ph = window.LunaraPhase.at(new Date());
+      var r = 8, k = ph.k, rx = Math.abs(1 - 2 * k) * r;
+      var lit = k < 0.02 ? '' :
+        '<path d="M 9 1 A 8 8 0 0 1 9 17 A ' + rx.toFixed(2) + ' 8 0 0 ' + (k > 0.5 ? 1 : 0) + ' 9 1 Z" fill="#E9E4D6"' +
+        (ph.waxing ? '' : ' transform="translate(18 0) scale(-1 1)"') + '/>';
+      var m = document.createElement('p');
+      m.className = 'lxf-moon';
+      m.innerHTML = '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="#1A1D24" stroke="rgba(233,228,214,.25)" stroke-width=".6"/>' + lit + '</svg>' +
+        '<span><b>' + ph.name + '</b> &middot; ' + ph.percent + '% lit<br>tonight, computed as you read this</span>';
+      var brand = foot.querySelector('.lxf-brand');
+      if (brand) brand.appendChild(m);
+    } catch (e) { /* a footer without a moon is still a footer */ }
 
     var burger = nav.querySelector('.lxn-burger');
     var close  = drawer.querySelector('.lxn-x');

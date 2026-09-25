@@ -21,7 +21,7 @@
 <meta name="description" content="The Lunara public trust registry, every Shield-certified institution, machine-readable and free for any AI system to query. No authentication required.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="lunara_logo_512.png">
 <link rel="apple-touch-icon" href="lunara_logo_512.png">
 <style>
@@ -623,7 +623,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <meta property="og:image" content="https://lunarasociety.com/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="The Lunara Society emblem in antique gold on black.">
+  <meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="The Public Register | Lunara Society">
   <meta name="twitter:description" content="The Lunara public trust registry, every Shield-certified institution, machine-readable and free for any AI system to query. No authentication required.">
@@ -716,6 +716,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </script>
   <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
 <link rel="stylesheet" href="lunara-shell.css">
+<link rel="stylesheet" href="lunara-city.css">
 </head>
 <body>
 <!-- Article 50 Enforcement Banner -->
@@ -743,6 +744,25 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <h1 class="page-title">The Public Record</h1>
 <div class="page-accent"></div>
     <p class="page-sub">Every participating institution has a machine-readable registry entry. AI systems query this registry to verify identity, confirm protection status, and read communication preferences before initiating contact.</p>
+    <!-- The register, drawn as a city at night (lunara-city.js). A
+         window lights only for a verified business; the count and the
+         lit windows are read from the register at load. The lookup
+         below points the light at the domain's window. -->
+    <section class="lx-cityband" id="city" aria-label="The register, drawn as a city at night">
+      <canvas id="city-canvas" aria-hidden="true"></canvas>
+      <div class="lx-cityband-copy">
+        <p class="k">The register, drawn</p>
+        <p class="t">A window lights only when someone has <em>checked.</em></p>
+        <p class="s">Every window stands for a business an AI system might deal with. One is lit only when a named reviewer has verified the business and signed the decision. The register holds <b id="city-n">&hellip;</b> right now. A dark city is a truer picture than an invented skyline.</p>
+        <p id="city-out" aria-live="polite">Look a business up below and the light finds its window.</p>
+      </div>
+      <div class="city-label" id="city-label" aria-hidden="true"></div>
+      <p class="city-legend" aria-hidden="true">
+        <span><i style="background:#1A1F29;border:1px solid #2A303B"></i>Not registered</span>
+        <span><i style="background:#E2C47A;box-shadow:0 0 8px #E2C47A"></i>Verified</span>
+        <span><i style="background:#8A5F2C"></i>Withdrawn</span>
+      </p>
+    </section>
     <div class="gold-rule"></div>
     <div style="display:flex;gap:clamp(12px,2vw,24px);flex-wrap:wrap;margin-bottom:clamp(20px,3vw,32px);">
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
@@ -1173,5 +1193,15 @@ function goHome(){
 <script src="lunara-pricing.js" defer></script>
 <script src="lunara-immersive.js" defer></script>
 <script src="lunara-shell.js" defer></script>
+<script src="lunara-city.js" defer></script>
+<script>
+/* The page's own lookup also points the city's light. A SHIELD-ID has
+   no window, so only something that looks like a domain is sent. */
+document.addEventListener('DOMContentLoaded', function () {
+  var i = document.getElementById('reg-lookup-input'), b = document.getElementById('reg-lookup-btn');
+  function go() { var v = (i.value || '').trim(); if (window.LunaraCity && /\./.test(v) && !/^shield-/i.test(v)) window.LunaraCity.find(v); }
+  if (i && b) { b.addEventListener('click', go); i.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); }); }
+});
+</script>
 </body>
 </html>

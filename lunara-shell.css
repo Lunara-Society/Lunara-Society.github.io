@@ -18,6 +18,17 @@
    the per-page CSS that is still in every file.
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ── every page ─────────────────────────────────────────────────────
+   The site is served at a fixed 1120px layout to phones (see
+   verify-viewport.mjs). A phone showing a scaled desktop page inflates
+   the text inside narrow blocks unless told not to, which is how an
+   instrument panel ended up with 22px body copy on an iPhone. And a
+   move between pages cross-fades rather than blinking, in browsers
+   that can. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.32s;animation-timing-function:cubic-bezier(.2,.7,.1,1)}
+
 :root{
   --lx-ink:      #07080A;
   --lx-white:    #EFEAE0;
@@ -200,5 +211,6 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 @media (prefers-reduced-motion:reduce){
   .lxn *,.lxf *{transition:none!important}
   .lxn-progress{display:none}
+  ::view-transition-old(root),::view-transition-new(root){animation:none}
 }
 

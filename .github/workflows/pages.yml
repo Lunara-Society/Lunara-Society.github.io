@@ -266,3 +266,20 @@ jobs:
           # Report progress less often so a slow deployment is not mistaken
           # for a stalled one.
           reporting_interval: 15000
+
+      # Tell the search engines the moment the site changes, instead of
+      # waiting for them to come back on their own schedule. IndexNow is
+      # read by Bing (and through it the AI answer engines that search
+      # with Bing), Yandex, Seznam and Naver; one submission reaches all
+      # of them. The key file lunara2026indexnow.txt has been published at
+      # the root for months and was never used. Every URL in sitemap.xml is
+      # submitted, so a page is announced exactly when it is listed.
+      # Never fails the deploy: the site is already live by this point.
+      - name: Announce the update to search engines (IndexNow)
+        continue-on-error: true
+        run: |
+          urls=$(grep -o '<loc>[^<]*</loc>' sitemap.xml | sed 's#</*loc>##g' | sort -u | python3 -c 'import sys,json;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+          body=$(printf '{"host":"lunarasociety.com","key":"lunara2026indexnow","keyLocation":"https://lunarasociety.com/lunara2026indexnow.txt","urlList":%s}' "$urls")
+          code=$(curl -s -o resp.txt -w '%{http_code}' -m 60 -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' -d "$body")
+          echo "IndexNow answered $code for $(echo "$urls" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)))') URLs"; cat resp.txt || true

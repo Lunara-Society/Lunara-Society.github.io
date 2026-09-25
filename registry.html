@@ -770,7 +770,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         <div class="card-text">Founding period open</div>
       </div>
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
-        <div class="card-num">Verified entries</div><div class="card-title" id="founding-slots-count">Loading…</div>
+        <div class="card-num">Founding places taken</div><div class="card-title" id="founding-slots-count">Loading…</div>
         <div class="card-text">First 10 verified participants are permanent founding members</div>
       </div>
       <div class="card" style="flex:1;min-width:clamp(140px,25vw,200px);">
@@ -1122,27 +1122,10 @@ function goHome(){
 (function(){
   // Animate the founding slots counter
   async function loadRegistry(){
-    // Fetch founding count
-    try{
-      var cr = await fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldFoundingCount",
-        {method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
-      var cd = await cr.json();
-      var slotsEl = document.getElementById("founding-slots-count");
-      if(slotsEl && typeof cd.remaining !== "undefined"){
-        // Animate count down to real number
-        var target = parseInt(cd.remaining);
-        var current = 10;
-        if(!isNaN(target) && target < current){
-          var step = setInterval(function(){
-            if(current <= target){ clearInterval(step); return; }
-            current--;
-            slotsEl.textContent = current;
-          }, 80);
-        } else {
-          slotsEl.textContent = isNaN(target) ? "10" : target;
-        }
-      }
-    }catch(e){}
+    /* The founding count is written once, by the register list above.
+       A second writer here put the number of places remaining under a
+       label that read "Verified entries", so the page said 80 verified
+       beside a sentence saying there were none. */
 
     // Fetch live registry entries
     try{

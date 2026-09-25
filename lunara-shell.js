@@ -254,7 +254,18 @@
     document.head.appendChild(s);
   }
 
-  function boot() { install(); loadMember(); }
+  /* ── the sky ──────────────────────────────────────────────────
+     lunara-cosmos.js, loaded the same way and for the same reason:
+     one tag here reaches every page the shell reaches. */
+  function loadCosmos() {
+    if (document.querySelector('script[src*="lunara-cosmos.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-cosmos.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function boot() { install(); loadMember(); loadCosmos(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

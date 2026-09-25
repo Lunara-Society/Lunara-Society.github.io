@@ -327,15 +327,34 @@
       line.style.width = (centers[centers.length - 1] - centers[0]) + 'px';
       line.style.right = 'auto';
     }
+    var stage = $('chain-stage');
+    function paintStage(idx) {
+      if (!stage) return;
+      for (var j = 0; j < 6; j++) {
+        stage.classList.toggle('k' + j, j <= idx);
+        stage.classList.toggle('cur' + j, j === idx);
+      }
+      var h = $('stg-hash'); if (h && /sha-256/.test(K[5][0])) h.textContent = 'sha-256 ' + K[5][1];
+      var k = $('stg-key'); if (k) k.textContent = K[3][1].replace(/^ed25519 · key (.{12}).*$/, 'ed25519 · $1…');
+      var src = $('stg-src'); if (src) src.textContent = K[1][1].replace(' to primary law', '');
+    }
     function update() {
       var r = chain.getBoundingClientRect();
       var total = chain.offsetHeight - sticky.offsetHeight;
-      var p = Math.min(1, Math.max(0, -r.top / Math.max(1, total)));
+      // The stage is centred rather than pinned to the top, so progress
+      // counts from the moment it sticks, not from the section's edge.
+      var top = parseFloat(getComputedStyle(sticky).top) || 0;
+      var p = Math.min(1, Math.max(0, (top - r.top) / Math.max(1, total)));
       var pos = Math.min(5, p * 5.6);
       var i = Math.floor(pos), f = pos - i;
       var x = i >= 5 ? centers[5] : centers[i] + (centers[i + 1] - centers[i]) * f;
       fill.style.width = (x - centers[0]) + 'px';
-      token.style.left = x + 'px';
+      // Kept inside the track: centred on the first node it hung half
+      // off the left edge of the screen. The arrow still points at x.
+      var half = token.offsetWidth / 2, tw = track.offsetWidth;
+      var cx = Math.max(half, Math.min(tw - half, x));
+      token.style.left = cx + 'px';
+      token.style.setProperty('--ax', (x - cx) + 'px');
       var idx = Math.min(5, Math.floor(pos + 0.001));
       if (idx !== cur) {
         cur = idx;
@@ -343,6 +362,7 @@
         reads.forEach(function (p, j) { p.classList.toggle('on', j === idx); });
         $('tk-k').textContent = K[idx][0];
         $('tk-v').textContent = K[idx][1];
+        paintStage(idx);
       }
     }
     measure(); update();

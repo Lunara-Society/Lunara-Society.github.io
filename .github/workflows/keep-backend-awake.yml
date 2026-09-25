@@ -1,0 +1,49 @@
+name: Keep the member backend awake
+
+# The member area, Google sign-in and the MCP endpoint all run on one
+# Supabase project. On the free plan Supabase pauses a project after a
+# week without database activity, and a paused project answers nothing:
+# Google sign-in fails, email sign-in fails, and the MCP server that
+# llms.txt points AI systems at goes dark. That is what happened in
+# September 2026, and nothing on the site could tell a visitor why.
+#
+# Every two days this makes one request that genuinely reads the
+# members table (a sign-in attempt for an address that can never
+# exist, which answers 401 after the lookup) and one call to the MCP
+# server. A 401 is the healthy answer. A 5xx, a timeout or a 404 on the
+# route means the backend is paused or broken, and the run goes red so
+# somebody is told before a visitor is.
+
+on:
+  schedule:
+    - cron: '17 6 */2 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Sign-in lookup against the members table
+        run: |
+          code=$(curl -s -o body.txt -w '%{http_code}' -m 60 \
+            -X POST https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth/login \
+            -H 'Content-Type: application/json' \
+            -H 'Origin: https://lunarasociety.com' \
+            -d '{"identifier":"keepalive@invalid.lunarasociety.com","password":"not-a-password"}')
+          echo "lunara-auth answered $code: $(cat body.txt)"
+          [ "$code" = "401" ] || { echo "::error::Member sign-in backend answered $code, expected 401. The Supabase project may be paused: restore it in the Supabase dashboard."; exit 1; }
+
+      - name: MCP server lists its tools
+        run: |
+          code=$(curl -s -o body.txt -w '%{http_code}' -m 60 \
+            -X POST https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp \
+            -H 'Content-Type: application/json' \
+            -H 'Accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+          echo "lunara-mcp answered $code"
+          head -c 400 body.txt; echo
+          [ "$code" = "200" ] || { echo "::error::MCP server answered $code, expected 200."; exit 1; }

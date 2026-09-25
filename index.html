@@ -317,8 +317,14 @@ h1 em{
 .chain-read,.token{display:none}
 
 /* scrolly mode, switched on by the script when motion is welcome */
-.chain.scrolly{height:300vh;padding:0}
-.chain.scrolly .chain-sticky{position:sticky;top:0;height:100vh;min-height:760px;max-height:1000px;display:flex;align-items:center}
+/* The scroll length is fixed in pixels rather than in viewports. At
+   300vh a phone showing the fixed 1120px layout is 2100px tall, so
+   the section became 6300px of scrolling past a 1000px stage: three
+   screens of black. The stage is now its own height, centred in the
+   viewport, and the chain takes the same 2600px of scroll on every
+   screen. */
+.chain.scrolly{height:calc(min(100vh,1000px) + 2600px);padding:0}
+.chain.scrolly .chain-sticky{position:sticky;top:max(0px,calc((100vh - 1000px) / 2));height:min(100vh,1000px);min-height:760px;display:flex;align-items:center}
 .chain.scrolly .chain-sticky > .wrap{width:100%}
 .chain.scrolly .track{margin-top:74px}
 .chain.scrolly .track-line{display:block;position:absolute;left:23px;right:calc((100% - 5*26px)/6 - 23px);top:51px;height:1px;background:rgba(214,222,234,.14)}
@@ -337,14 +343,53 @@ h1 em{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--grey);
   box-shadow:0 20px 40px -20px rgba(0,0,0,.8);
 }
-.chain.scrolly .token::before{content:'';position:absolute;top:-6px;left:50%;width:9px;height:9px;transform:translateX(-50%) rotate(45deg);background:rgba(10,12,16,.92);border-left:1px solid rgba(226,196,122,.35);border-top:1px solid rgba(226,196,122,.35)}
+.chain.scrolly .token::before{content:'';position:absolute;top:-6px;left:calc(50% + var(--ax,0px));width:9px;height:9px;transform:translateX(-50%) rotate(45deg);background:rgba(10,12,16,.92);border-left:1px solid rgba(226,196,122,.35);border-top:1px solid rgba(226,196,122,.35)}
 .token .tk-k{color:var(--gold-lit);text-transform:uppercase;letter-spacing:.18em;font-size:9.5px}
 .token .tk-v{color:var(--white)}
-.chain.scrolly .chain-read{display:block;position:relative;margin-top:150px;height:170px;max-width:880px}
+.chain-lower{display:block}
+.chain-stage{display:none}
+.chain.scrolly .chain-lower{display:grid;grid-template-columns:minmax(0,1fr) 470px;gap:44px;align-items:center;margin-top:120px}
+.chain.scrolly .chain-read{display:block;position:relative;height:220px}
+.chain.scrolly .chain-read p{font-size:34px}
+.chain.scrolly .chain-stage{display:block;position:relative;height:376px}
 .chain-read p{position:absolute;inset:0;font-family:var(--serif);font-weight:300;font-size:40px;line-height:1.2;color:var(--white);
   opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s var(--ease);text-wrap:balance}
 .chain-read p.on{opacity:1;transform:none}
 .chain-read p i{font-style:italic;color:var(--gold-lit)}
+
+/* The stage: the same document carried through the six steps. Each
+   step adds what it adds, and nothing is taken away, which is the
+   point: a record accumulates its evidence, it does not replace it. */
+.stg{width:100%;height:100%;overflow:visible}
+.stg *{transition:opacity .8s var(--ease),transform .8s var(--ease),stroke-dashoffset 1.2s var(--ease)}
+.stg .g{opacity:0}
+.stg.k0 .g0,.stg.k1 .g1,.stg.k2 .g2,.stg.k3 .g3,.stg.k4 .g4,.stg.k5 .g5{opacity:1}
+.stg .doc rect{fill:rgba(12,14,19,.92);stroke:rgba(214,222,234,.22)}
+.stg .doc .ln{stroke:rgba(214,222,234,.18);stroke-width:3;stroke-linecap:round}
+.stg .doc .ln.hot{stroke:rgba(226,196,122,.55)}
+.stg .g0{transform:translateY(14px)} .stg.k0 .g0{transform:none}
+.stg .wire{fill:none;stroke:var(--gold-lit);stroke-width:1;stroke-dasharray:4 5;animation:stgflow 1.6s linear infinite}
+@keyframes stgflow{to{stroke-dashoffset:-18}}
+.stg .badge rect{fill:rgba(20,17,10,.95);stroke:rgba(226,196,122,.55)}
+.stg text{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;fill:var(--grey)}
+.stg text.gold{fill:var(--gold-lit)}
+.stg text.big{font-family:var(--serif);font-size:16px;letter-spacing:0;fill:var(--white)}
+.stg .sig{fill:none;stroke:var(--gold-lit);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:260;stroke-dashoffset:260}
+.stg.k2 .sig{stroke-dashoffset:0}
+.stg .seal{transform-origin:258px 212px;transform:scale(1.9);opacity:0}
+.stg.k3 .seal{transform:scale(1);opacity:1}
+.stg .seal circle.o{fill:url(#stgSeal);stroke:rgba(255,230,170,.7)}
+.stg .burst{transform-origin:258px 212px;transform:scale(.4);opacity:0;fill:none;stroke:rgba(226,196,122,.6)}
+.stg.cur3 .burst{animation:stgburst 1.4s var(--ease) both}
+@keyframes stgburst{0%{transform:scale(.5);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.stg .net line{stroke:rgba(226,196,122,.28);stroke-width:1}
+.stg .net circle{fill:var(--ink);stroke:rgba(226,196,122,.6)}
+.stg.k4 .net circle{animation:stgping 2.4s ease-in-out infinite}
+.stg .net circle:nth-of-type(2n){animation-delay:.6s}.stg .net circle:nth-of-type(3n){animation-delay:1.2s}
+@keyframes stgping{50%{fill:rgba(226,196,122,.5)}}
+.stg .ring{fill:none;stroke:#8FD6B8;stroke-width:1.4;stroke-dasharray:190;stroke-dashoffset:190}
+.stg.k5 .ring{stroke-dashoffset:0}
+.stg .hash{font-size:9px;fill:#8FD6B8;letter-spacing:.08em}
 
 /* ── V. BREAK THE SEAL ──────────────────────────────────────────────
    The real record, the real signature, and the reader's own hands on
@@ -770,6 +815,7 @@ h1 em{
         <div class="token" id="chain-token" aria-hidden="true"><span class="tk-k" id="tk-k">claim</span><span class="tk-v" id="tk-v">corpus/obligations.json</span></div>
       </div>
 
+      <div class="chain-lower">
       <div class="chain-read" aria-hidden="true">
         <p>Something is asserted: about a business, a system, or <i>an obligation in law.</i></p>
         <p>The primary instrument is attached. The article that sets the date, <i>not a summary of it.</i></p>
@@ -777,6 +823,50 @@ h1 em{
         <p>The result is signed with Ed25519, so <i>any later edit breaks the signature.</i></p>
         <p>It is published where anyone can read it. <i>No account, no key, no rate limit.</i></p>
         <p>You, or any AI system, can recompute the same answer <i>and get the same result.</i> <span id="chain-yours"></span></p>
+      </div>
+      <div class="chain-stage" aria-hidden="true">
+        <svg class="stg" id="chain-stage" viewBox="0 0 400 320">
+          <defs>
+            <radialGradient id="stgSeal" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#F3DA9A"/><stop offset=".55" stop-color="#C4A46B"/><stop offset="1" stop-color="#6E5526"/></radialGradient>
+          </defs>
+          <g class="g g4 net">
+            <line x1="185" y1="140" x2="34" y2="54"/><line x1="185" y1="140" x2="22" y2="168"/><line x1="185" y1="140" x2="56" y2="276"/>
+            <line x1="185" y1="140" x2="372" y2="150"/><line x1="185" y1="140" x2="364" y2="262"/><line x1="185" y1="140" x2="300" y2="300"/>
+            <circle cx="34" cy="54" r="5"/><circle cx="22" cy="168" r="5"/><circle cx="56" cy="276" r="5"/>
+            <circle cx="372" cy="150" r="5"/><circle cx="364" cy="262" r="5"/><circle cx="300" cy="300" r="5"/>
+            <text x="2" y="30">anyone · any AI system</text>
+          </g>
+          <g class="g g0 doc">
+            <rect x="110" y="40" width="150" height="200" rx="4"/>
+            <path d="M232 40v26h28" fill="none" stroke="rgba(214,222,234,.22)"/>
+            <line class="ln hot" x1="126" y1="74" x2="206" y2="74"/>
+            <line class="ln" x1="126" y1="94" x2="240" y2="94"/><line class="ln" x1="126" y1="108" x2="232" y2="108"/>
+            <line class="ln" x1="126" y1="122" x2="238" y2="122"/><line class="ln hot" x1="126" y1="142" x2="190" y2="142"/>
+            <line class="ln" x1="126" y1="156" x2="226" y2="156"/><line class="ln" x1="126" y1="170" x2="214" y2="170"/>
+          </g>
+          <g class="g g1">
+            <path class="wire" d="M260 76 C 290 76, 286 46, 300 46"/>
+            <g class="badge"><rect x="300" y="26" width="96" height="42" rx="3"/>
+            <text x="310" y="44" class="gold">§ PRIMARY LAW</text><text x="310" y="59" id="stg-src">the article</text></g>
+          </g>
+          <g class="g g2">
+            <path class="sig" d="M124 214c8-14 14-16 16-6s-2 14 4 4 10-18 12-6 2 12 8 2 8-10 12-2 6 8 14-2 10-6 18-4"/>
+            <text x="124" y="192" class="gold">named reviewer</text>
+          </g>
+          <g class="g g5"><circle class="ring" cx="258" cy="212" r="34"/></g>
+          <circle class="burst" cx="258" cy="212" r="26" stroke-width="2"/>
+          <g class="seal">
+            <circle class="o" cx="258" cy="212" r="26"/>
+            <circle cx="258" cy="212" r="19" fill="none" stroke="rgba(60,40,10,.55)" stroke-dasharray="2 3"/>
+            <text x="258" y="218" text-anchor="middle" class="big" style="fill:#3A2A0E;font-weight:600">L</text>
+            <text x="258" y="262" text-anchor="middle" class="gold" id="stg-key">ed25519</text>
+          </g>
+          <g class="g g5">
+            <text x="110" y="296" class="hash" id="stg-hash">sha-256 · recompute it yourself</text>
+            <text x="110" y="312">same bytes → same digest → the seal holds</text>
+          </g>
+        </svg>
+      </div>
       </div>
     </div>
   </div>

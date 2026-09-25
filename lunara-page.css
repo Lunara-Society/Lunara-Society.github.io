@@ -88,6 +88,11 @@ h1 em,.h1 em{font-style:italic;color:var(--gold-lit)}
 
 /* ── section furniture ─────────────────────────────────────────── */
 section{position:relative;z-index:2;padding:clamp(44px,7vh,84px) 0}
+/* A section that is also a .wrap lost its vertical padding to .wrap's
+   "padding:0 …" shorthand, which is more specific than a bare type
+   selector, so every such section sat flush against the rule above it
+   and the buttons of one ran into the kicker of the next. */
+section.wrap{padding-top:clamp(44px,7vh,84px);padding-bottom:clamp(44px,7vh,84px)}
 .rule{height:1px;background:linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent)}
 .kicker{
   font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;

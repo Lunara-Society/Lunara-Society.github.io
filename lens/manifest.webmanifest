@@ -1,0 +1,25 @@
+{
+  "name": "Lunara Lens",
+  "short_name": "Lunara Lens",
+  "description": "Is it real? Check photos, videos, voices and text for AI, protect your images with an invisible Lunara Mark, and get help seeing, reading and translating, by voice.",
+  "id": "/lens/app.html",
+  "start_url": "/lens/app.html",
+  "scope": "/lens/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090B11",
+  "theme_color": "#090B11",
+  "lang": "en",
+  "categories": ["utilities", "productivity", "security"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Check a photo", "url": "/lens/app.html#photo" },
+    { "name": "What's in front of me", "url": "/lens/app.html#describe" },
+    { "name": "Is it a scam?", "url": "/lens/app.html#scam" }
+  ]
+}

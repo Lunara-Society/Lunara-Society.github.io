@@ -43,6 +43,16 @@ What we charge for is being **listed**, being **monitored**, and being
 - Trust badge and machine-readable identity files
 - Revocable, and revocations are published
 
+### Lunara Lens, 12 months — $79
+
+> Is it real? Ask, and hear the answer.
+
+- **Terms:** Twelve months. Renewed by you, never auto-charged.
+- Deep AI analysis of photos, video, voice and text
+- Scam and voice-clone checks
+- Lunara Marks for the images you own
+- Describe, read, translate and converse, by voice
+
 ### Compliance Kit — $95
 
 > Start without an assessment.
@@ -51,6 +61,15 @@ What we charge for is being **listed**, being **monitored**, and being
 - Obligation checklist for Article 50 and SB 942
 - Disclosure and synthetic-marking templates
 - The evidence log an auditor would ask to see
+
+### Lunara Detection API, 1 month — $199
+
+> The same evidence-first answers, as JSON.
+
+- **Terms:** One month per payment. Renewed by you, never auto-charged.
+- Image, video-frame and text detection
+- Keys created in the app, stored only as a fingerprint
+- Includes a Lunara Lens licence
 
 ### Second Opinion — $240
 

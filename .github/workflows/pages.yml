@@ -179,6 +179,14 @@ jobs:
       - name: Verify member authentication
         run: node member-auth/test_auth.mjs
 
+      # Lunara Lens charges people money and spends money on their behalf.
+      # These tests hold the line between the two: no AI call without a
+      # licence, no licence without a completed payment of the right
+      # amount, and no month in which a user can cost more than the
+      # allowance their price was set against.
+      - name: Test the Lunara Lens backend
+        run: node lens-backend/test_lens.mjs
+
       # The WhatsApp Worker has no deploy gate of its own — it is pasted
       # into Cloudflare by hand — so this is the only thing standing between
       # a bad edit and a webhook Meta silently drops.

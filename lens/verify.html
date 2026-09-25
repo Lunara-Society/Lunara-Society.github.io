@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Check a Lunara Mark | Lunara Society</title>
+<meta name="description" content="Check whether an image carries a Lunara Mark, and see who registered it and when. Free, no account, and the image never leaves your device.">
+<link rel="canonical" href="https://lunarasociety.com/lens/verify.html">
+<meta name="theme-color" content="#090B11">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="lens.css">
+</head>
+<body>
+<div class="app" style="padding-bottom:40px">
+  <header class="top"><a class="brand" href="/lens.html"><img src="icon-192.png" alt=""><b>Lunara Lens</b></a></header>
+  <main class="screen">
+    <h1>Whose image <em>is this?</em></h1>
+    <p class="lede">A Lunara Mark is an invisible mark written into an image by its owner, pointing at a public record: who registered it, when, and the fingerprint of the original. Choose an image to check it, or enter a mark id. The image is read on your device and never uploaded.</p>
+    <div class="row">
+      <button class="btn gold" id="pick">Choose an image</button>
+    </div>
+    <label class="f">Mark id<input type="text" id="mid" maxlength="8" placeholder="8 letters and numbers" style="text-transform:uppercase" autocomplete="off"></label>
+    <button class="btn" id="look">Look up</button>
+    <div id="out" class="screen" aria-live="polite"></div>
+    <p class="note">A mark survives re-saving and cropping, but not resizing, rotation or heavy filters. A missing mark does not mean an image is not someone’s. The mark proves nothing by itself; the record does. <a href="/lens.html" style="color:var(--gold-hi)">About Lunara Lens</a></p>
+  </main>
+</div>
+<script src="lens-mark.js"></script>
+<script>
+(function () {
+  var API = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-lens';
+  var out = document.getElementById('out'), mid = document.getElementById('mid');
+  function show(html) { out.innerHTML = html; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function lookup(id) {
+    show('<div class="busy"><div class="spinner"></div><span>Looking up ' + esc(id) + '…</span></div>');
+    fetch(API + '/mark/' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (m) {
+      if (!m.found) return show('<div class="verdict v-info"><div class="src">Mark ' + esc(id) + '</div><div class="v">Not in the register</div><p>Treat any claim based on this mark as unverified.</p></div>');
+      var when = new Date(m.registered_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+      show('<div class="verdict ' + (m.revoked ? 'v-ai' : 'v-human') + '"><div class="src">Lunara Mark ' + esc(m.id) + '</div><div class="v">' + (m.revoked ? 'Revoked by its owner' : esc(m.owner_name)) + '</div>' +
+        '<p>' + (m.title ? '“' + esc(m.title) + '”, ' : '') + 'registered on ' + esc(when) + '.</p>' +
+        '<p class="small muted" style="word-break:break-all">Original fingerprint (SHA-256): <span style="font-family:var(--mono)">' + esc(m.sha256) + '</span></p></div>');
+      try { history.replaceState(null, '', '#' + m.id); } catch (e) {}
+    }).catch(function () { show('<p class="note">The register could not be reached. Check your connection and try again.</p>'); });
+  }
+  document.getElementById('look').onclick = function () { var v = mid.value.trim().toUpperCase(); if (/^[0-9A-Z]{8}$/.test(v)) lookup(v); };
+  document.getElementById('pick').onclick = function () {
+    var i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+    i.onchange = function () {
+      var f = i.files[0]; if (!f) return;
+      show('<div class="busy"><div class="spinner"></div><span>Reading the image…</span></div>');
+      var url = URL.createObjectURL(f), img = new Image();
+      img.onload = function () {
+        var sc = Math.min(1, 4096 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * sc); c.height = Math.round(img.naturalHeight * sc);
+        var x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
+        setTimeout(function () {
+          var r = LensMark.detect(x.getImageData(0, 0, c.width, c.height));
+          URL.revokeObjectURL(url);
+          if (r.found) { mid.value = r.id; lookup(r.id); }
+          else show('<div class="verdict v-info"><div class="v">No Lunara Mark found</div><p>If the image was resized or filtered after marking, the mark may no longer be readable.</p></div>');
+        }, 30);
+      };
+      img.onerror = function () { show('<p class="note">That file could not be opened as an image.</p>'); };
+      img.src = url;
+    };
+    i.click();
+  };
+  var h = (location.hash || '').slice(1).toUpperCase();
+  if (/^[0-9A-Z]{8}$/.test(h)) { mid.value = h; lookup(h); }
+})();
+</script>
+</body>
+</html>

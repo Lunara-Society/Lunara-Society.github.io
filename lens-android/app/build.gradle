@@ -1,0 +1,40 @@
+plugins { id 'com.android.application' }
+
+def host = 'lunarasociety.com'
+def startUrl = '/lens/app.html'
+
+android {
+    namespace 'com.lunarasociety.lens'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.lunarasociety.lens'
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+        manifestPlaceholders = [
+            hostName: host,
+            defaultUrl: "https://${host}${startUrl}",
+            launcherName: 'Lunara Lens',
+            themeColor: '#090B11',
+            backgroundColor: '#090B11'
+        ]
+        resValue 'string', 'asset_statements', """[{ \\"relation\\": [\\"delegate_permission/common.handle_all_urls\\"], \\"target\\": { \\"namespace\\": \\"web\\", \\"site\\": \\"https://${host}\\" } }]"""
+    }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('LENS_KEYSTORE') ?: '../lunara-lens-release.jks')
+            storePassword System.getenv('LENS_KEYSTORE_PASSWORD')
+            keyAlias 'lunaralens'
+            keyPassword System.getenv('LENS_KEYSTORE_PASSWORD')
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}

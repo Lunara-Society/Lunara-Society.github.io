@@ -55,7 +55,9 @@ const PAGE = {
   agent:     'certify.html',
   clinical:  'healthcare-intelligence.html',
   evidence:  'article50.html',
-  vendor:    'certify.html'
+  vendor:    'certify.html',
+  lens:      'lens.html',
+  lensapi:   'lens.html'
 };
 
 export function readProducts() {

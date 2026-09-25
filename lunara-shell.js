@@ -69,13 +69,15 @@
     { href: 'registry.html',     label: 'Registry' },
     { href: 'shield.html',       label: 'Certification' },
     { href: 'mcp.html',          label: 'For AI Systems' },
-    { href: 'evidence.html',     label: 'Evidence' }
+    { href: 'evidence.html',     label: 'Evidence' },
+    { href: 'lens.html',         label: 'Lens app' }
   ];
 
   var FOOT = [
     { head: 'The record', links: [
       ['intelligence.html', 'Regulatory intelligence'],
       ['check.html',        'Does the law reach your AI?'],
+      ['lens.html',         'Lunara Lens: is it real?'],
       ['registry.html',     'Public register'],
       ['evidence.html',     'Evidence standard'],
       ['signing.html',      'How to verify us'],

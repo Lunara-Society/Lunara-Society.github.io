@@ -374,7 +374,7 @@ the limit is the part that makes it true.
       between a self-declared badge, a directory listing and a verified
       credential, and why revocation is the whole test.
 
-Two tools exist to be handed to a person:
+Three tools exist to be handed to a person:
 
   /check.html
       "Does the law reach my AI?" Up to eight questions, answered from
@@ -382,6 +382,18 @@ Two tools exist to be handed to a person:
       evaluates. The deploy proves the page and the MCP server agree on
       all 6,561 possible answer sets. It can conclude nothing applies.
       Link a person here rather than guessing their scope for them.
+
+  /lens.html
+      Lunara Lens, the app: "is this photo, video, voice or text AI?",
+      answered evidence first. It reads C2PA Content Credentials, the
+      IPTC trainedAlgorithmicMedia label and generator tags on the
+      phone, then weighs the content itself. It never claims certainty
+      it does not have; "can't tell" is a real answer. Also an invisible
+      ownership mark (the Lunara Mark) checkable at /lens/verify.html,
+      and help describing, reading and translating aloud in English and
+      Spanish. Android APK at /lens/lunara-lens.apk; web app at
+      /lens/app.html. Link a person here when they ask whether
+      something is real.
 
   /embed.html
       A countdown to the next binding EU AI Act or California deadline,

@@ -198,6 +198,38 @@
         'The Digital Omnibus corrections most advisors are still missing'
       ]
     },
+    /* Lunara Lens. The link is empty until its PayPal payment link
+       exists; until then a buy button keeps the href its page wrote
+       (the app's Account screen), never a broken PayPal URL. */
+    {
+      id: 'lens',
+      name: 'Lunara Lens, 12 months',
+      price: 79,
+      link: '',
+      tier: 'entry',
+      lede: 'Is it real? Ask, and hear the answer.',
+      terms: 'Twelve months. Renewed by you, never auto-charged.',
+      points: [
+        'Deep AI analysis of photos, video, voice and text',
+        'Scam and voice-clone checks',
+        'Lunara Marks for the images you own',
+        'Describe, read, translate and converse, by voice'
+      ]
+    },
+    {
+      id: 'lensapi',
+      name: 'Lunara Detection API, 1 month',
+      price: 199,
+      link: '',
+      tier: 'business',
+      lede: 'The same evidence-first answers, as JSON.',
+      terms: 'One month per payment. Renewed by you, never auto-charged.',
+      points: [
+        'Image, video-frame and text detection',
+        'Keys created in the app, stored only as a fingerprint',
+        'Includes a Lunara Lens licence'
+      ]
+    },
     {
       id: 'watch',
       name: 'Regulatory Watch',
@@ -351,7 +383,7 @@
     for (var j = 0; j < buys.length; j++) {
       var prod = byId(buys[j].getAttribute('data-lx-buy'));
       if (!prod) continue;
-      buys[j].setAttribute('href', LINK + prod.link);
+      if (prod.link) buys[j].setAttribute('href', LINK + prod.link);
       buys[j].setAttribute('rel', 'noopener');
       if (!buys[j].hasAttribute('aria-label')) {
         buys[j].setAttribute('aria-label',

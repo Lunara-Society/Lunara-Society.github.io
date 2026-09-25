@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.lunarasociety.lens",
+    "sha256_cert_fingerprints": ["C9:B6:F4:80:51:C7:60:4F:7B:2E:3D:F3:B1:BF:93:29:EC:D9:BA:F8:93:3F:54:27:2E:C8:69:3D:23:6D:73:2F"]
+  }
+}]

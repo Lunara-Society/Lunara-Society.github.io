@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { handleLens, PLANS, TIERS, PACKS, CREDITS, WELCOME, TASKS, costOf, sha256hex, period, speakCredits } from './lens-core.mjs';
 
 function makeDeps(over = {}) {
-  const t = { licenses: [], usage: [], codes: [], marks: [], keys: [], claims: [], config: {}, wallets: {}, ledger: [], purchases: {}, members: [] };
+  const t = { licenses: [], usage: [], codes: [], marks: [], keys: [], claims: [], config: {}, wallets: {}, ledger: [], purchases: {}, members: [], reports: [] };
   const calls = [];
   const db = {
     licensesFor: async (e) => t.licenses.filter((l) => l.email === e),
@@ -48,6 +48,9 @@ function makeDeps(over = {}) {
     getPurchase: async (ref) => t.purchases[ref] || null,
     recordPurchase: async (row) => { if (t.purchases[row.ref]) return false; t.purchases[row.ref] = row; return true; },
     recentWallets: async () => Object.values(t.wallets),
+    createReport: async (row) => { t.reports.push({ id: t.reports.length + 1, ...row }); },
+    openReports: async () => t.reports.filter((r) => !r.reviewed_at),
+    reviewReport: async (id) => { const r = t.reports.find((x) => x.id === id); if (r) r.reviewed_at = 'now'; },
     deleteAccount: async (e, hash) => {
       delete t.wallets[e]; t.ledger = t.ledger.filter((l) => l.email !== e); t.licenses = t.licenses.filter((l) => l.email !== e);
       t.usage = t.usage.filter((u) => u.email !== e); t.claims = t.claims.filter((c) => c.email !== e);
@@ -447,5 +450,20 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   r = await run(deps, post('/account/delete', { session_token: 'admin', confirm: 'DELETE' }));
   assert.equal(r.status, 403);
   ok('memory, lists and mode reach the model; deleting an account removes the member and their data and revokes their marks');
+}
+{
+  const { deps, t } = makeDeps();
+  let r = await run(deps, post('/report', { session_token: 'good', task: 'rosario', answer: '' }));
+  assert.equal(r.status, 400);
+  r = await run(deps, post('/report', { session_token: 'good', task: 'rosario', answer: 'A rude answer', reason: 'offensive' }));
+  assert.equal(r.body.ok, true); assert.equal(t.reports[0].email, 'buyer@example.com');
+  r = await run(deps, post('/admin/overview', { session_token: 'admin' }));
+  assert.equal(r.body.reports.length, 1);
+  r = await run(deps, post('/admin/report', { session_token: 'good', id: 1 }));
+  assert.equal(r.status, 403);
+  await run(deps, post('/admin/report', { session_token: 'admin', id: 1 }));
+  r = await run(deps, post('/admin/overview', { session_token: 'admin' }));
+  assert.equal(r.body.reports.length, 0);
+  ok('members can report an AI answer, and only the owner reviews reports');
 }
 console.log(`\n${n} passed`);

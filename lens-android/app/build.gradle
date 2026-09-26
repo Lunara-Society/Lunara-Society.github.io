@@ -5,13 +5,13 @@ def startUrl = '/lens/app.html'
 
 android {
     namespace 'com.lunarasociety.lens'
-    compileSdk 35
+    compileSdk 36
     defaultConfig {
         applicationId 'com.lunarasociety.lens'
-        minSdk 21
-        targetSdk 35
-        versionCode 3
-        versionName '2.1.0'
+        minSdk 23
+        targetSdk 36
+        versionCode 4
+        versionName '3.0.0'
         manifestPlaceholders = [
             hostName: host,
             defaultUrl: "https://${host}${startUrl}",
@@ -20,6 +20,22 @@ android {
             backgroundColor: '#000000'
         ]
         resValue 'string', 'asset_statements', """[{ \\"relation\\": [\\"delegate_permission/common.handle_all_urls\\"], \\"target\\": { \\"namespace\\": \\"web\\", \\"site\\": \\"https://${host}\\" } }]"""
+    }
+    /* Two copies of the same app. "play" is uploaded to Google Play: it
+       opens the web app with ?src=play, which sells plans and credits only
+       through Google Play Billing, as Play's payments policy requires.
+       "web" is the copy downloaded from lunarasociety.com, which uses
+       PayPal. */
+    flavorDimensions 'store'
+    productFlavors {
+        play {
+            dimension 'store'
+            manifestPlaceholders = [defaultUrl: "https://${host}${startUrl}?src=play"]
+        }
+        web {
+            dimension 'store'
+            manifestPlaceholders = [defaultUrl: "https://${host}${startUrl}"]
+        }
     }
     signingConfigs {
         release {
@@ -37,4 +53,5 @@ android {
 
 dependencies {
     implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+    implementation 'com.google.androidbrowserhelper:billing:1.2.0'
 }

@@ -273,8 +273,29 @@
       if (me && typeof j.allowance_left_pct === 'number') { me.allowance_left_pct = j.allowance_left_pct; }
       if (me && typeof j.credits === 'number') { me.credits = j.credits; cacheMe(); }
       renderPill();
+      setTimeout(function () { reportButton(task, j.result); }, 400);
       return j.result;
     });
+  }
+  /* Every AI answer can be flagged as offensive, harmful or wrong (Google
+     Play's AI-generated content policy). The answer goes to the owner. */
+  function reportButton(task, r) {
+    if (!r || task === 'intent') return;
+    var old = document.getElementById('report-ai'); if (old) old.remove();
+    var text = r.speech || r.text || r.summary || r.translation || JSON.stringify(r);
+    var box = h('div', { id: 'report-ai', class: 'report-ai' });
+    var open = h('button', { class: 'linkbtn', onclick: function () {
+      fill(box, h('span', { class: 'small muted' }, L('What’s wrong with this answer?', '¿Qué falla en esta respuesta?')),
+        h('div', { class: 'chips' }, [['offensive', L('Offensive', 'Ofensiva')], ['harmful', L('Harmful', 'Dañina')], ['wrong', L('Wrong', 'Incorrecta')], ['other', L('Other', 'Otro')]].map(function (x) {
+          return h('button', { class: 'chip', onclick: function () {
+            call('/report', { task: task, answer: String(text).slice(0, 4000), reason: x[0] }).then(function () {
+              fill(box, h('span', { class: 'small muted' }, L('Thank you. Lunara Society will review it.', 'Gracias. Lunara Society lo revisará.')));
+            }).catch(function (e) { say(aiError(e)); });
+          } }, x[1]);
+        })));
+    } }, '⚑ ' + L('Report this answer', 'Denunciar esta respuesta'));
+    box.appendChild(open);
+    var sc = main.querySelector('section.screen'); if (sc) sc.appendChild(box);
   }
   /* Out of credits: a gentle card, never a wall. */
   function offerShop() {
@@ -1423,7 +1444,7 @@
       var l = Mem.all();
       fill(list, l.length ? l.map(function (m) {
         return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, m.text, h('div', { class: 'small muted' }, new Date(m.at).toLocaleDateString(S.lang === 'es' ? 'es-ES' : 'en-GB'))),
-          h('button', { class: 'btn ghost', onclick: function () { Mem.remove(m.id); draw(); } }, L('Forget', 'Olvidar')));
+          h('button', { class: 'btn ghost', style: 'flex:0 0 auto;width:auto;padding:0 16px', onclick: function () { Mem.remove(m.id); draw(); } }, L('Forget', 'Olvidar')));
       }) : h('p', { class: 'muted' }, L('Nothing yet.', 'Nada todavía.')));
     }
     function save() { if (Mem.add(inp.value)) { say(L('I’ll remember that.', 'Lo recordaré.')); inp.value = ''; draw(); } }
@@ -1837,6 +1858,12 @@
                 h('button', { class: 'btn gold', onclick: function () { call('/admin/claim', { claim_id: c.id }).then(function () { say(S.lang === 'es' ? 'Aprobado.' : 'Approved.'); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_approve')),
                 h('button', { class: 'btn ghost', onclick: function () { call('/admin/claim', { claim_id: c.id, decision: 'reject' }).then(draw); } }, t('od_reject'))));
           }) : h('p', { class: 'muted' }, t('od_none')),
+          h('h2', null, L('Reported answers', 'Respuestas denunciadas') + ' · ' + (o.reports || []).length),
+          (o.reports || []).length ? o.reports.map(function (rp) {
+            return h('div', { class: 'card screen' }, h('div', { class: 'small muted' }, rp.email + ' · ' + rp.task + ' · ' + (rp.reason || '') + ' · ' + new Date(rp.created_at).toLocaleString()),
+              h('div', { style: 'white-space:pre-wrap' }, rp.answer),
+              h('button', { class: 'btn ghost', onclick: function () { call('/admin/report', { id: rp.id }).then(draw); } }, L('Mark reviewed', 'Marcar revisada')));
+          }) : h('p', { class: 'muted' }, L('None.', 'Ninguna.')),
           h('h2', null, L('Give credits or a plan', 'Regalar créditos o un plan')), giftForm(),
           h('h2', null, t('od_codes')), codeForm(),
           h('h2', null, L('Recent accounts', 'Cuentas recientes')),

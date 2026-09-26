@@ -199,3 +199,6 @@ ul.sig li.ai b{background:rgba(242,154,140,.18);color:var(--ai)} ul.sig li.human
 .card.danger[open]{display:grid;gap:10px}
 .item.done span{text-decoration:line-through;color:var(--muted)}
 .item input[type=checkbox]{width:26px;height:26px;accent-color:var(--gold)}
+.card.row > .btn, .card.row > .iconbtn{flex:0 0 auto;width:auto}
+.report-ai{margin-top:14px;display:grid;gap:8px}
+.linkbtn{background:none;border:0;color:var(--faint);font:inherit;font-size:.85em;text-decoration:underline;text-underline-offset:3px;cursor:pointer;justify-self:start;min-height:44px;padding:0}

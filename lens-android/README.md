@@ -11,10 +11,12 @@ Android app.
     export ANDROID_HOME=/path/to/android-sdk
     export LENS_KEYSTORE=/secure/path/lunara-lens-release.jks
     export LENS_KEYSTORE_PASSWORD=...
-    gradle assembleRelease
-    cp app/build/outputs/apk/release/app-release.apk ../lens/lunara-lens.apk
+    gradle bundlePlayRelease     # the .aab for Google Play
+    gradle assembleWebRelease    # the APK offered on lunarasociety.com
 
-Raise `versionCode` in `app/build.gradle` for every release.
+The website APK is published encrypted in `lens/dl/` (see
+`lens/get.html`). Raise `versionCode` in `app/build.gradle` for every
+release. Everything Google Play asks for is in PLAY-STORE.md.
 
 ## The signing key
 

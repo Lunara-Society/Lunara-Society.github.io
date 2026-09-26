@@ -96,6 +96,9 @@ const db = {
   recordPurchase: (row: unknown) => rest('/lens_purchases?on_conflict=ref', {
     method: 'POST', headers: { prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify(row)
   }).then((r) => Array.isArray(r) && r.length === 1),
+  createReport: (row: unknown) => rest('/lens_reports', { method: 'POST', headers: { prefer: 'return=minimal' }, body: JSON.stringify(row) }),
+  openReports: () => rest('/lens_reports?reviewed_at=is.null&order=created_at.desc&limit=30'),
+  reviewReport: (id: number) => rest(`/lens_reports?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ reviewed_at: new Date().toISOString() }) }),
   recentWallets: () => rest('/lens_wallets?select=email,tier,sub_credits,pack_credits,tier_expires_at,tier_source&order=updated_at.desc&limit=30'),
   deleteAccount: async (email: string, hash: string) => {
     const e = q(email);
@@ -106,7 +109,7 @@ const db = {
       await rest(`/lens_usage?license_id=${inList}`, { method: 'DELETE' });
       await rest(`/lens_api_keys?license_id=${inList}`, { method: 'DELETE' });
     }
-    for (const t of ['lens_usage', 'lens_wallets', 'lens_ledger', 'lens_claims', 'lens_licenses']) {
+    for (const t of ['lens_usage', 'lens_wallets', 'lens_ledger', 'lens_claims', 'lens_reports', 'lens_licenses']) {
       await rest(`/${t}?email=ilike.${e}`, { method: 'DELETE' });
     }
     await rest(`/lens_purchases?email=ilike.${e}`, { method: 'PATCH', body: JSON.stringify({ email: hash }) });

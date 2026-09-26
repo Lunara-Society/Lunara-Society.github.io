@@ -17,6 +17,7 @@
      /mark      { session_token, sha256, owner_name, title } → mark id
      GET  /mark/<id>                           public ownership record
      /account/delete { session_token, confirm: "DELETE" }
+     /report    { session_token, task, answer, reason }  flag an AI answer
      /apikey    { session_token, label }       API key, shown once
      /admin/…   the owner's desk
      /v1/detect   Authorization: Bearer lk_…   the paid detection API
@@ -472,6 +473,8 @@ export async function handleLens(req, deps) {
     case '/mark': return mark(email, who, body, deps);
     case '/apikey': return apikey(email, body, deps);
     case '/account/delete': return deleteAccount(email, body, deps);
+    case '/report': return report(email, body, deps);
+    case '/admin/report': return adminReport(email, body, deps);
     case '/admin/codes': return adminCodes(email, body, deps);
     case '/admin/overview': return adminOverview(email, deps);
     case '/admin/claim': return adminClaim(email, body, deps);
@@ -907,10 +910,11 @@ async function apiDetect(req, deps) {
 
 async function adminOverview(email, deps) {
   if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const [stats, claims, licences, wallets] = await Promise.all([
-    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses(), deps.db.recentWallets ? deps.db.recentWallets() : []
+  const [stats, claims, licences, wallets, reports] = await Promise.all([
+    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses(), deps.db.recentWallets ? deps.db.recentWallets() : [],
+    deps.db.openReports ? deps.db.openReports() : []
   ]);
-  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner'), wallets: wallets || [] });
+  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner'), wallets: wallets || [], reports: reports || [] });
 }
 
 async function adminClaim(email, body, deps) {
@@ -964,6 +968,24 @@ async function adminGrant(email, body, deps) {
   const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
   await grant(to, plan, 'admin', null, deps, days);
   return json({ ok: true, email: to, plan, days });
+}
+
+/* ── reporting an answer ────────────────────────────────────────────
+   Google Play asks apps that generate content with AI to let people
+   flag an answer that is offensive, harmful or wrong, from inside the
+   app. The member sends the answer they saw; the owner reviews it. */
+async function report(email, body, deps) {
+  const answer = String(body.answer || '').trim().slice(0, 4000);
+  if (!answer) return json({ error: 'Nothing to report.' }, 400);
+  await deps.db.createReport({ email, task: String(body.task || 'unknown').slice(0, 40), answer, reason: String(body.reason || '').slice(0, 500) });
+  return json({ ok: true });
+}
+async function adminReport(email, body, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  const id = Number(body.id);
+  if (!Number.isInteger(id) || id < 1) return json({ error: 'Which report?' }, 400);
+  await deps.db.reviewReport(id);
+  return json({ ok: true });
 }
 
 /* ── deleting an account ────────────────────────────────────────────

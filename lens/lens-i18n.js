@@ -128,3 +128,52 @@
     }
   };
 })(typeof self !== 'undefined' ? self : this);
+
+/* ── Rosario, v2 ─────────────────────────────────────────────────── */
+(function (root) {
+  'use strict';
+  var add = {
+    en: {
+      rosario: 'Rosario', rosario_sub: 'Your Lunara assistant', tapToTalk: 'Tap to talk to Rosario', handsFree: 'Hands free', handsFreeHint: 'Say “Rosario” and then what you need.',
+      suggest: ['Is this photo real?', 'What’s in front of me?', 'Remind me in 10 minutes', 'Read my notes', 'Is this a scam?', 'Good morning'],
+      g_tools: 'Everything Rosario can do', g_protect2: 'Protect', g_daily: 'Your day',
+      t_remind: 'Reminders & notes', t_brief: 'My briefing', t_emergency: 'Emergency', t_safeword: 'Family safe word', t_qr: 'Scan a QR code', t_link: 'Is this link safe?', t_summ: 'Explain a letter', t_owner: 'Owner desk',
+      welcome_h: 'Meet Rosario.', welcome_p: 'She checks whether photos, videos, voices and messages are real, protects what you own, and helps you see, read and understand the world, by voice, in English and Spanish.', signin_btn: 'Sign in with Google to continue',
+      pay_h: 'Unlock Rosario', pay_p: 'Lunara Lens is a paid app. One payment gives you twelve months of everything, with a monthly AI allowance that renews on the first.', pay_buy: 'Pay with PayPal', pay_paid: 'Already paid?', pay_txn: 'Enter the Transaction ID from your PayPal receipt', pay_send: 'Unlock', pay_code: 'Or enter a code',
+      pend_h: 'Almost there.', pend_p: 'Your payment is waiting for confirmation. This usually takes minutes. Rosario unlocks by herself as soon as it is approved.', pend_check: 'Check again',
+      rem_new: 'New reminder', rem_what: 'What should I remind you?', rem_in: 'In how many minutes?', rem_add: 'Set reminder', rem_none: 'No reminders.', notes_h: 'Notes', note_add: 'Add note', note_ph: 'Type or dictate a note',
+      brief_weather: 'Weather', brief_today: 'Today', emerg_call: 'Call emergency services', emerg_share: 'Share my location', emerg_num: 'Emergency number', emerg_read: 'Read my card',
+      sw_intro: 'Voice cloning lets a scammer sound exactly like someone you love. Agree a safe word with your family, in person. If a “relative” calls asking for money and cannot say it, hang up and call them back on a number you know.', sw_set: 'Your family safe word (kept only on this phone)', sw_show: 'Hold to show',
+      qr_hint: 'Point the camera at a QR code.', qr_unsupported: 'This phone cannot read QR codes in the app yet. Choose a photo of the code instead.', link_ph: 'Paste a link', link_go: 'Check the link',
+      summ_hint: 'Photograph a letter, bill or form, or paste its text. Rosario tells you what it is and what you need to do.', summ_go: 'Explain it',
+      voice_natural: 'Rosario’s natural voice (uses your AI allowance)', owner_badge: 'Owner · no limits',
+      od_h: 'Owner desk', od_month: 'This month', od_spent: 'AI spend', od_calls: 'Calls', od_lic: 'Active licences', od_pending: 'Payments to approve', od_approve: 'Approve', od_reject: 'Reject', od_grant: 'Give someone access', od_email: 'Their email', od_days: 'Days', od_give: 'Give access', od_codes: 'Create codes', od_none: 'Nothing waiting.',
+      time_now: function (d) { return 'It’s ' + d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit' }) + ', ' + d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '.'; }
+    },
+    es: {
+      rosario: 'Rosario', rosario_sub: 'Tu asistente de Lunara', tapToTalk: 'Toca para hablar con Rosario', handsFree: 'Manos libres', handsFreeHint: 'Di “Rosario” y luego lo que necesitas.',
+      suggest: ['¿Esta foto es real?', '¿Qué tengo delante?', 'Recuérdame en 10 minutos', 'Lee mis notas', '¿Es una estafa?', 'Buenos días'],
+      g_tools: 'Todo lo que Rosario puede hacer', g_protect2: 'Proteger', g_daily: 'Tu día',
+      t_remind: 'Recordatorios y notas', t_brief: 'Mi resumen', t_emergency: 'Emergencia', t_safeword: 'Palabra clave familiar', t_qr: 'Escanear un código QR', t_link: '¿Este enlace es seguro?', t_summ: 'Explícame una carta', t_owner: 'Panel del propietario',
+      welcome_h: 'Te presento a Rosario.', welcome_p: 'Comprueba si fotos, vídeos, voces y mensajes son reales, protege lo tuyo y te ayuda a ver, leer y entender el mundo, con la voz, en español e inglés.', signin_btn: 'Inicia sesión con Google para continuar',
+      pay_h: 'Desbloquea a Rosario', pay_p: 'Lunara Lens es una aplicación de pago. Un solo pago te da doce meses de todo, con una asignación mensual de IA que se renueva el día uno.', pay_buy: 'Pagar con PayPal', pay_paid: '¿Ya pagaste?', pay_txn: 'Escribe el ID de transacción de tu recibo de PayPal', pay_send: 'Desbloquear', pay_code: 'O escribe un código',
+      pend_h: 'Ya casi.', pend_p: 'Tu pago está pendiente de confirmación. Suele tardar minutos. Rosario se desbloquea sola en cuanto se apruebe.', pend_check: 'Comprobar otra vez',
+      rem_new: 'Nuevo recordatorio', rem_what: '¿Qué te recuerdo?', rem_in: '¿En cuántos minutos?', rem_add: 'Guardar recordatorio', rem_none: 'Sin recordatorios.', notes_h: 'Notas', note_add: 'Añadir nota', note_ph: 'Escribe o dicta una nota',
+      brief_weather: 'Tiempo', brief_today: 'Hoy', emerg_call: 'Llamar a emergencias', emerg_share: 'Compartir mi ubicación', emerg_num: 'Número de emergencias', emerg_read: 'Leer mi tarjeta',
+      sw_intro: 'La clonación de voz permite a un estafador sonar exactamente como alguien a quien quieres. Acordad en persona una palabra clave familiar. Si un “familiar” llama pidiendo dinero y no sabe decirla, cuelga y llámale tú a un número que conozcas.', sw_set: 'Vuestra palabra clave (solo se guarda en este teléfono)', sw_show: 'Mantén pulsado para verla',
+      qr_hint: 'Apunta la cámara a un código QR.', qr_unsupported: 'Este teléfono aún no puede leer códigos QR en la app. Elige una foto del código.', link_ph: 'Pega un enlace', link_go: 'Revisar el enlace',
+      summ_hint: 'Fotografía una carta, factura o formulario, o pega su texto. Rosario te dice qué es y qué tienes que hacer.', summ_go: 'Explícamelo',
+      voice_natural: 'Voz natural de Rosario (usa tu asignación de IA)', owner_badge: 'Propietario · sin límites',
+      od_h: 'Panel del propietario', od_month: 'Este mes', od_spent: 'Gasto en IA', od_calls: 'Llamadas', od_lic: 'Licencias activas', od_pending: 'Pagos por aprobar', od_approve: 'Aprobar', od_reject: 'Rechazar', od_grant: 'Dar acceso a alguien', od_email: 'Su correo', od_days: 'Días', od_give: 'Dar acceso', od_codes: 'Crear códigos', od_none: 'Nada pendiente.',
+      time_now: function (d) { return 'Son las ' + d.toLocaleTimeString('es-ES', { hour: 'numeric', minute: '2-digit' }) + ', ' + d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) + '.'; }
+    }
+  };
+  ['en', 'es'].forEach(function (l) { for (var k in add[l]) root.LensText[l][k] = add[l][k]; });
+  // Spoken lines that Rosario has recorded clips for: keep the words identical.
+  root.LensText.en.analysing = 'Let me look at this closely.';
+  root.LensText.es.analysing = 'Déjame mirarlo con atención.';
+  root.LensText.en.scanning = 'Checking the file first.';
+  root.LensText.es.scanning = 'Primero reviso el archivo.';
+  root.LensText.en.needLicence = 'This needs an active Lunara Lens plan.';
+  root.LensText.es.needLicence = 'Esto necesita un plan activo de Lunara Lens.';
+})(typeof self !== 'undefined' ? self : this);

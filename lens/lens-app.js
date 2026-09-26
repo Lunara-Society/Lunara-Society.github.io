@@ -23,7 +23,7 @@
   function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
   function raw(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
-  var S = Object.assign({ lang: /^es\b/i.test(navigator.language || '') ? 'es' : 'en', rate: 1, big: false, hc: false, speak: true, haptic: true }, get('lens_settings', {}));
+  var S = Object.assign({ natural: true, handsFree: false, lang: /^es\b/i.test(navigator.language || '') ? 'es' : 'en', rate: 1, big: false, hc: false, speak: true, haptic: true }, get('lens_settings', {}));
   function saveSettings() { put('lens_settings', S); applySettings(); }
   function applySettings() {
     document.documentElement.lang = S.lang;
@@ -80,10 +80,19 @@
     mic: 'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3',
     back: 'M15 18l-6-6 6-6',
     speak: 'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11',
-    lang: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'
+    lang: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+    link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+    qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM18 14h2M14 18v2',
+    summarize: 'M6 3h9l4 4v14H6zM15 3v4h4M9 11h7M9 15h7M9 19h4',
+    reminders: 'M12 8v5l3 2M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM5 3L2 6M19 3l3 3',
+    safeword: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5zM12 15v2',
+    emergency: 'M12 3l9 16H3zM12 9v5M12 17h.01',
+    briefing: 'M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+    owner: 'M3 8l4 3 5-6 5 6 4-3-2 11H5zM5 21h14'
   };
+  ICON.remind = ICON.reminders; ICON.describe = ICON.eye;
   function icon(n) {
-    return h('span', { 'aria-hidden': 'true', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="' + ICON[n] + '"/></svg>' }).firstChild;
+    return h('span', { 'aria-hidden': 'true', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="' + (ICON[n] || ICON.lunara || ICON.mark) + '"/></svg>' }).firstChild;
   }
 
   /* ── speaking and listening ─────────────────────────────────────── */
@@ -101,25 +110,93 @@
     list.sort(function (a, b) { return rank(b) - rank(a); });
     return list[0] || null;
   }
+  /* Rosario's voice, in order of preference:
+       1. a clip Caty recorded for this exact line (free, instant, offline)
+       2. Caty live through the server (metered; licensed users, when on)
+       3. the phone's own voice (free, offline, always there)
+     The rings round her portrait move with whatever is playing. */
+  var CLIPS = { en: {}, es: {} }, CLIP_BY_TEXT = { en: {}, es: {} };
+  ['en', 'es'].forEach(function (l) {
+    fetch('voice/' + l + '/index.json').then(function (r) { return r.json(); }).then(function (idx) {
+      CLIPS[l] = idx; Object.keys(idx).forEach(function (k) { CLIP_BY_TEXT[l][norm(idx[k].t)] = k; });
+    }).catch(function () { });
+  });
+  function norm(x) { return String(x || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); }
+  var voiceEl = new Audio(); voiceEl.preload = 'auto';
+  var actx = null, analyser = null, level = 0, speakingDevice = false, speakQ = Promise.resolve();
+  function wireAnalyser() {
+    if (analyser || !(window.AudioContext || window.webkitAudioContext)) return;
+    try {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      var src = actx.createMediaElementSource(voiceEl); analyser = actx.createAnalyser(); analyser.fftSize = 256;
+      src.connect(analyser); analyser.connect(actx.destination);
+    } catch (e) { analyser = null; }
+  }
+  function voiceLevel() {
+    if (analyser && !voiceEl.paused) {
+      var d = new Uint8Array(analyser.frequencyBinCount); analyser.getByteTimeDomainData(d);
+      var m = 0; for (var i = 0; i < d.length; i++) m = Math.max(m, Math.abs(d[i] - 128));
+      level += (m / 128 - level) * 0.35;
+    } else if (speakingDevice) level += ((0.35 + 0.25 * Math.sin(Date.now() / 90)) - level) * 0.2;
+    else level *= 0.9;
+    return level;
+  }
+  function isSpeaking() { return !voiceEl.paused || speakingDevice; }
+  function playUrl(url) {
+    return new Promise(function (resolve) {
+      wireAnalyser(); if (actx && actx.state === 'suspended') actx.resume();
+      voiceEl.onended = voiceEl.onerror = function () { resolve(true); };
+      voiceEl.src = url; voiceEl.playbackRate = 1;
+      var p = voiceEl.play(); if (p && p.catch) p.catch(function () { resolve(false); });
+    });
+  }
+  function stopVoice() { try { voiceEl.pause(); } catch (e) { } if (window.speechSynthesis) speechSynthesis.cancel(); speakingDevice = false; }
+  function deviceSay(text, l) {
+    return new Promise(function (resolve) {
+      if (!window.speechSynthesis) return resolve();
+      try {
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = l === 'es' ? 'es-ES' : 'en-US';
+        var v = voiceFor(l); if (v) u.voice = v;
+        u.rate = S.rate || 1; speakingDevice = true;
+        u.onend = u.onerror = function () { speakingDevice = false; resolve(); };
+        speechSynthesis.speak(u);
+        setTimeout(function () { speakingDevice = false; resolve(); }, 2500 + text.length * 110);
+      } catch (e) { speakingDevice = false; resolve(); }
+    });
+  }
+  var ttsCache = {};
+  function naturalSay(text, l) {
+    var key = l + '|' + text;
+    var get = ttsCache[key] ? Promise.resolve(ttsCache[key]) : (function () {
+      var tok = session(); if (!tok) return Promise.reject();
+      return fetchT(API + '/speak', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session_token: tok, text: text, lang: l }) }, 20000)
+        .then(function (r) { if (!r.ok || !/audio/.test(r.headers.get('content-type') || '')) throw 0; return r.blob(); })
+        .then(function (b) { var u = URL.createObjectURL(b); var ks = Object.keys(ttsCache); if (ks.length > 30) { URL.revokeObjectURL(ttsCache[ks[0]]); delete ttsCache[ks[0]]; } ttsCache[key] = u; return u; });
+    })();
+    return get.then(playUrl);
+  }
   function say(text, lang, opts) {
     opts = opts || {};
     if (!text) return Promise.resolve();
+    var l = lang || S.lang;
     lastSaid = text; live.textContent = text;
     if (!opts.silentToast) toast(text);
-    if (!S.speak || !window.speechSynthesis) return Promise.resolve();
-    return new Promise(function (resolve) {
-      try {
-        if (!opts.queue) speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(text);
-        var l = lang || S.lang;
-        u.lang = l === 'es' ? 'es-ES' : 'en-US';
-        var v = voiceFor(l); if (v) u.voice = v;
-        u.rate = S.rate || 1;
-        u.onend = u.onerror = function () { resolve(); };
-        speechSynthesis.speak(u);
-        setTimeout(resolve, 2000 + text.length * 120);
-      } catch (e) { resolve(); }
-    });
+    if (opts.transcript !== false && window.RosarioLog) RosarioLog('rosario', text);
+    if (!S.speak) return Promise.resolve();
+    stopVoice();
+    var clip = CLIP_BY_TEXT[l][norm(text)];
+    var run = function () {
+      if (clip) return playUrl('voice/' + l + '/' + clip + '.mp3').then(function (ok) { if (!ok) return deviceSay(text, l); });
+      if (S.natural !== false && licensed() && navigator.onLine !== false) return naturalSay(text, l).catch(function () { return deviceSay(text, l); });
+      return deviceSay(text, l);
+    };
+    return run();
+  }
+  function sayKey(key, lang) {
+    var l = lang || S.lang, c = CLIPS[l][key];
+    return say(c ? c.t : key, l);
   }
   if (window.speechSynthesis) speechSynthesis.onvoiceschanged = function () { };
 
@@ -180,7 +257,7 @@
   function renderPill() {
     var p = document.getElementById('plan');
     if (!p) return;
-    p.textContent = licensed() ? (me.plan === 'api_month' ? 'API' : 'Lens') + ' · ' + me.allowance_left_pct + '%' : (session() ? (S.lang === 'es' ? 'Sin licencia' : 'No licence') : (S.lang === 'es' ? 'Entrar' : 'Sign in'));
+    p.textContent = me && me.owner ? (S.lang === 'es' ? 'Propietario' : 'Owner') : licensed() ? (me.plan === 'api_month' ? 'API' : 'Lens') + ' · ' + me.allowance_left_pct + '%' : (session() ? (S.lang === 'es' ? 'Sin licencia' : 'No licence') : (S.lang === 'es' ? 'Entrar' : 'Sign in'));
   }
 
   function loadScript(src) {
@@ -205,7 +282,7 @@
         } catch (e) { }
         return refreshMe();
       })
-      .then(function () { say((S.lang === 'es' ? 'Sesión iniciada.' : 'Signed in.')); go(current.name === 'account' ? 'account' : current.name, current.arg, true); })
+      .then(function (m) { sayKey('signed_in'); cacheMe(); if (m && m.licensed) enter(); else go(m && m.pending ? 'pending' : 'paywall', null, true); })
       .catch(function () { say(t('err')); });
   }
 
@@ -333,23 +410,65 @@
   function tile(name, key, ic, hero, sub) {
     return h('button', { class: 'tile' + (hero ? ' hero' : ''), onclick: function () { buzz(); go(name); } }, icon(ic), h('span', null, t(key), sub ? h('small', null, sub) : null));
   }
+  /* Rosario's conversation, kept for the session so she has context. */
+  var convo = [];
+  window.RosarioLog = function (role, text) {
+    convo.push({ role: role, text: String(text), at: Date.now() });
+    if (convo.length > 40) convo.shift();
+    var box = document.getElementById('convo'); if (box) drawConvo(box);
+  };
+  function drawConvo(box) {
+    fill(box, convo.slice(-4).map(function (m) { return h('div', { class: 'bubble' + (m.role === 'user' ? ' me' : '') }, m.text); }));
+  }
+  function orb() {
+    var c = h('canvas', { class: 'orb-rings', width: 520, height: 520, 'aria-hidden': 'true' });
+    var wrap = h('button', { class: 'orb', id: 'orb', 'aria-label': t('tapToTalk'), onclick: function () { onMic(); } },
+      c, h('img', { src: 'rosario.jpg', alt: 'Rosario' }));
+    var x = c.getContext('2d'), raf;
+    (function draw() {
+      var lv = voiceLevel(), lis = micBtn.classList.contains('on'), t0 = Date.now() / 1000;
+      x.clearRect(0, 0, 520, 520);
+      for (var i = 0; i < 3; i++) {
+        var r = 188 + i * 22 + lv * (26 + i * 18) + (lis ? Math.sin(t0 * 3 + i) * 6 : Math.sin(t0 * 0.8 + i) * 2);
+        x.beginPath(); x.arc(260, 260, r, 0, Math.PI * 2);
+        x.strokeStyle = 'rgba(' + (i === 0 ? '244,225,171' : '226,196,122') + ',' + (0.55 - i * 0.15 + lv * 0.4) + ')';
+        x.lineWidth = i === 0 ? 2.2 : 1.2; x.shadowColor = 'rgba(226,196,122,.8)'; x.shadowBlur = 18 * (0.4 + lv); x.stroke();
+      }
+      // a slow orbiting spark
+      var ang = t0 * 0.6, sr = 200;
+      x.beginPath(); x.arc(260 + Math.cos(ang) * sr, 260 + Math.sin(ang) * sr, 3.2, 0, 7); x.fillStyle = '#F6E3AE'; x.shadowBlur = 20; x.fill();
+      raf = requestAnimationFrame(draw);
+    })();
+    onLeave(function () { cancelAnimationFrame(raf); });
+    return wrap;
+  }
   screens.home = function (el) {
+    var box = h('div', { class: 'convo', id: 'convo', 'aria-live': 'polite' });
+    var hf = h('input', { type: 'checkbox', id: 'hf', checked: S.handsFree || null, onchange: function () { S.handsFree = hf.checked; saveSettings(); wake(S.handsFree); sayKey(S.handsFree ? 'wake_on' : 'wake_off'); } });
     add(el, [
-      h('h1', null, S.lang === 'es' ? h('span', null, '¿Es ', h('em', null, 'real'), '?') : h('span', null, 'Is it ', h('em', null, 'real'), '?')),
-      h('p', { class: 'lede' }, t('tagline')),
+      h('div', { class: 'hero' },
+        orb(),
+        h('h1', { class: 'rname' }, 'Rosario'),
+        h('p', { class: 'rsub' }, (me && me.owner) ? t('owner_badge') : t('rosario_sub')),
+        box,
+        h('div', { class: 'chips center' }, t('suggest').map(function (q) { return h('button', { class: 'chip', onclick: function () { handle(q); } }, q); })),
+        h('label', { class: 'switch hf', for: 'hf' }, h('span', null, t('handsFree'), h('small', null, t('handsFreeHint'))), hf)),
+      h('h2', null, t('g_real')),
       h('div', { class: 'grid' },
         tile('photo', 't_photo', 'photo', true, S.lang === 'es' ? 'Fotos, capturas y archivos del teléfono' : 'Photos, screenshots and files on your phone'),
         tile('scan', 't_scan', 'scan'), tile('video', 't_video', 'video'), tile('voice', 't_voice', 'voice'),
-        tile('text', 't_text', 'text'), tile('scam', 't_scam', 'scam'), tile('verify', 't_verify', 'verify')),
-      h('h2', null, t('g_protect')),
-      h('div', { class: 'grid' }, tile('mark', 't_mark', 'mark', true, S.lang === 'es' ? 'Marca invisible, registro público' : 'An invisible mark and a public record')),
+        tile('text', 't_text', 'text'), tile('scam', 't_scam', 'scam'), tile('link', 't_link', 'link'), tile('qr', 't_qr', 'qr')),
+      h('h2', null, t('g_protect2')),
+      h('div', { class: 'grid' }, tile('mark', 't_mark', 'mark'), tile('verify', 't_verify', 'verify'), tile('safeword', 't_safeword', 'verify'), tile('emergency', 't_emergency', 'scam')),
       h('h2', null, t('g_see')),
-      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color')),
+      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('summarize', 't_summ', 'text'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color'), tile('remember', 't_remember', 'remember')),
       h('h2', null, t('g_talk')),
       h('div', { class: 'grid' }, tile('converse', 't_converse', 'converse', true, S.lang === 'es' ? 'Habla con cualquiera, en inglés o español' : 'Talk with anyone, in English or Spanish'), tile('translate', 't_translate', 'translate'), tile('replies', 't_replies', 'replies')),
-      h('h2', null, t('g_life')),
-      h('div', { class: 'grid' }, tile('files', 't_files', 'files'), tile('remember', 't_remember', 'remember'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'))
+      h('h2', null, t('g_daily')),
+      h('div', { class: 'grid' }, tile('briefing', 't_brief', 'eye'), tile('reminders', 't_remind', 'remember'), tile('files', 't_files', 'files'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'), tile('account', 't_account', 'account'),
+        me && me.owner ? tile('owner', 't_owner', 'mark') : null)
     ]);
+    drawConvo(box);
   };
 
   /* ── is it real: photo ──────────────────────────────────────────── */
@@ -986,6 +1105,281 @@
       h('button', { class: 'btn', onclick: function () { fill(big, h('dl', { class: 'card big-card' }, fields.filter(function (k) { return data[k]; }).map(function (k) { return [h('dt', null, t(k)), h('dd', null, data[k])]; }))); big.scrollIntoView({ behavior: 'smooth' }); } }, t('card_show'))), big]);
   };
 
+  /* ── protect: is this link safe ─────────────────────────────────
+     Checked on the phone first, with the tricks phishing links use;
+     then, with a licence, weighed by the AI like any other scam. */
+  function linkSigns(raw) {
+    var out = [], u;
+    try { u = new URL(/^https?:\/\//i.test(raw) ? raw : 'https://' + raw); } catch (e) { return { bad: true, signs: [S.lang === 'es' ? 'No es un enlace válido.' : 'That is not a valid link.'] }; }
+    var host = u.hostname.toLowerCase(), es = S.lang === 'es';
+    if (u.protocol === 'http:') out.push(es ? 'No usa conexión segura (https).' : 'It does not use a secure connection (https).');
+    if (/^xn--|\.xn--/.test(host)) out.push(es ? 'Usa letras de otros alfabetos que imitan a las nuestras.' : 'It uses look-alike letters from other alphabets.');
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) out.push(es ? 'Es una dirección numérica, no un nombre.' : 'It is a bare number address, not a name.');
+    if (/(bit\.ly|tinyurl|t\.co|goo\.gl|is\.gd|cutt\.ly|rb\.gy|shorturl)/.test(host)) out.push(es ? 'Es un enlace acortado que oculta el destino.' : 'It is a shortened link that hides where it goes.');
+    if (u.username || /@/.test(u.href.split('?')[0].replace(/^https?:\/\//, ''))) out.push(es ? 'Contiene una @ que puede ocultar el destino real.' : 'It contains an @ that can hide the real destination.');
+    if (host.split('.').length > 4) out.push(es ? 'Tiene muchos subdominios, una táctica común.' : 'It has many subdomains, a common trick.');
+    var brands = ['paypal', 'apple', 'google', 'microsoft', 'amazon', 'netflix', 'bank', 'banco', 'santander', 'bbva', 'chase', 'wellsfargo', 'correos', 'dhl', 'fedex', 'ups', 'usps', 'whatsapp', 'instagram', 'facebook', 'lunarasociety'];
+    var reg = host.split('.').slice(-2).join('.');
+    brands.forEach(function (b) { if (host.indexOf(b) >= 0 && reg.indexOf(b) < 0) out.push((es ? 'Menciona «' : 'It mentions “') + b + (es ? '» pero el dominio real es ' : '” but the real domain is ') + reg + '.'); });
+    if (/(login|verify|secure|update|account|confirm|wallet|gift|prize|premio|verifica|cuenta)/.test(u.pathname + u.search)) out.push(es ? 'Pide iniciar sesión o verificar datos.' : 'It asks you to sign in or verify details.');
+    if (/\.(zip|mov|top|xyz|click|country|gq|tk|ml|cf)$/.test(host)) out.push(es ? 'Usa una terminación de dominio frecuente en estafas.' : 'Its domain ending is common in scams.');
+    return { host: host, reg: reg, signs: out, bad: out.length >= 2 };
+  }
+  function checkLink(out, raw) {
+    var r = linkSigns(raw.trim());
+    fill(out, h('div', { class: 'verdict ' + (r.bad ? 'v-ai' : r.signs.length ? 'v-unsure' : 'v-human') },
+      h('div', { class: 'src' }, t('localOnly')), h('div', { class: 'v' }, r.host || raw),
+      r.signs.length ? signalList(r.signs.map(function (x) { return FX.F(x, 'moderate', 'ai'); })) : null));
+    sayKey(r.bad ? 'link_risky' : 'link_safe');
+    if (licensed()) scamFlow(out, (S.lang === 'es' ? 'Enlace recibido: ' : 'Link received: ') + raw + '\n' + r.signs.join('\n'), null);
+  }
+  screens.link = function (el, arg) {
+    head(el, t('t_link'));
+    var inp = h('input', { type: 'text', id: 'link-in', inputmode: 'url', placeholder: t('link_ph'), value: (arg && arg.text) || '' }), out = h('div', { class: 'screen' });
+    add(el, [inp, h('button', { class: 'btn gold', onclick: function () { if (inp.value.trim()) checkLink(out, inp.value); } }, t('link_go')), out]);
+    if (arg && arg.text) checkLink(out, arg.text);
+  };
+
+  /* ── protect: QR codes ──────────────────────────────────────────── */
+  screens.qr = function (el) {
+    head(el, t('t_qr'));
+    var out = h('div', { class: 'screen' });
+    function found(val) {
+      buzz([20, 40, 20]); sayKey('qr_found');
+      fill(out, h('div', { class: 'card', style: 'word-break:break-all' }, val));
+      if (/^(https?:\/\/|www\.)/i.test(val)) setTimeout(function () { checkLink(out, val); }, 1400);
+    }
+    if (!('BarcodeDetector' in window)) {
+      add(el, [h('p', { class: 'note' }, t('qr_unsupported')), h('button', { class: 'btn gold', onclick: function () { say(t('qr_unsupported')); } }, t('pick')), out]);
+      return;
+    }
+    el.appendChild(h('p', { class: 'lede' }, t('qr_hint')));
+    var cam = viewer(el), det = new BarcodeDetector({ formats: ['qr_code'] }), done = false;
+    var iv = setInterval(function () {
+      if (done || !cam.video.videoWidth) return;
+      det.detect(cam.video).then(function (codes) { if (codes && codes[0] && !done) { done = true; stopCamera(); found(codes[0].rawValue); } }).catch(function () { });
+    }, 350);
+    onLeave(function () { clearInterval(iv); });
+    add(el, [h('button', { class: 'btn', onclick: function () { pickFile('image/*').then(function (f) { if (!f) return; fileImage(f).then(function (img) { return det.detect(img); }).then(function (c) { c && c[0] ? found(c[0].rawValue) : say(S.lang === 'es' ? 'No encontré ningún código.' : 'I found no code.'); }); }); } }, t('pick')), out]);
+  };
+
+  /* ── see: explain a letter ──────────────────────────────────────── */
+  screens.summarize = function (el) {
+    head(el, t('t_summ'));
+    el.appendChild(h('p', { class: 'lede' }, t('summ_hint')));
+    var ta = h('textarea', { id: 'summ-text', placeholder: t('textPlaceholder'), 'aria-label': t('textPlaceholder') }), img = null, thumb = h('div'), out = h('div', { class: 'screen' });
+    function run() {
+      if (!ta.value.trim() && !img) return;
+      var b = busy(out, t('working')); sayKey('reading');
+      ai('summarize', { text: ta.value.trim() || undefined, images: img ? [img] : undefined }).then(function (r) {
+        b.remove();
+        fill(out, h('div', { class: 'verdict v-info' }, h('p', { style: 'margin:0;font-size:1.08em' }, r.speech)),
+          h('div', { class: 'card', style: 'white-space:pre-wrap' }, r.summary),
+          r.actions && r.actions.length ? [h('h2', null, t('advice')), signalList(r.actions.map(function (x) { return FX.F(x, 'moderate', 'neither'); }))] : null,
+          r.deadlines && r.deadlines.length ? [h('h2', null, S.lang === 'es' ? 'Fechas' : 'Dates'), signalList(r.deadlines.map(function (x) { return FX.F(x, 'strong', 'neither'); }))] : null);
+        say(r.speech);
+      }).catch(function (e) { b.remove(); say(aiError(e)); });
+    }
+    add(el, [h('div', { class: 'row' },
+      h('button', { class: 'btn gold', onclick: function () { pickFile('image/*').then(function (f) { if (f) fileImage(f).then(function (i) { img = toCanvas(i, 1800).toDataURL('image/jpeg', 0.88); fill(thumb, shot(h('div'), toCanvas(i, 900))); run(); }); }); } }, icon('photo'), S.lang === 'es' ? 'Foto del documento' : 'Photo of the document')),
+      thumb, ta, h('button', { class: 'btn', onclick: run }, t('summ_go')), out]);
+  };
+
+  /* ── your day: reminders and notes ──────────────────────────────── */
+  var Rem = {
+    all: function () { return get('lens_reminders', []); },
+    save: function (l) { put('lens_reminders', l); },
+    add: function (text, minutes) {
+      var l = Rem.all(); l.push({ id: Date.now(), text: String(text || '').trim() || (S.lang === 'es' ? 'Recordatorio' : 'Reminder'), at: Date.now() + Math.max(1, minutes) * 60000, done: false });
+      Rem.save(l);
+      if (window.Notification && Notification.permission === 'default') try { Notification.requestPermission(); } catch (e) { }
+    },
+    tick: function () {
+      var l = Rem.all(), now = Date.now(), changed = false;
+      l.forEach(function (r) {
+        if (!r.done && r.at <= now) {
+          r.done = true; changed = true; buzz([200, 100, 200, 100, 200]);
+          sayKey('reminder_now').then(function () { return say(r.text); });
+          try { if (window.Notification && Notification.permission === 'granted') new Notification('Rosario', { body: r.text, icon: 'icon-192.png' }); } catch (e) { }
+        }
+      });
+      if (changed) Rem.save(l);
+    }
+  };
+  setInterval(Rem.tick, 10000);
+  var Notes = { all: function () { return get('lens_notes', []); }, add: function (text) { var l = Notes.all(); l.unshift({ id: Date.now(), text: text }); put('lens_notes', l.slice(0, 200)); } };
+  function readNotes() {
+    var l = Notes.all();
+    if (!l.length) return sayKey('no_notes');
+    return say(l.slice(0, 5).map(function (n, i) { return (i + 1) + '. ' + n.text; }).join(' '));
+  }
+  screens.reminders = function (el) {
+    head(el, t('t_remind'));
+    var what = h('input', { type: 'text', id: 'rem-what', placeholder: t('rem_what') }), mins = h('input', { type: 'number', id: 'rem-min', min: 1, value: 10, inputmode: 'numeric' });
+    var list = h('div', { class: 'screen' }), notes = h('div', { class: 'screen' }), nt = h('input', { type: 'text', id: 'note-in', placeholder: t('note_ph') });
+    function draw() {
+      var l = Rem.all().filter(function (r) { return !r.done; }).sort(function (a, b) { return a.at - b.at; });
+      fill(list, l.length ? l.map(function (r) {
+        return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, h('div', null, r.text), h('div', { class: 'small muted' }, new Date(r.at).toLocaleTimeString(S.lang === 'es' ? 'es-ES' : 'en-GB', { hour: '2-digit', minute: '2-digit' }))),
+          h('button', { class: 'btn ghost', onclick: function () { Rem.save(Rem.all().filter(function (x) { return x.id !== r.id; })); draw(); } }, t('files_delete')));
+      }) : h('p', { class: 'muted' }, t('rem_none')));
+      var n = Notes.all();
+      fill(notes, n.length ? n.slice(0, 30).map(function (x) {
+        return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, x.text),
+          h('button', { class: 'iconbtn', 'aria-label': t('again'), onclick: function () { say(x.text); } }, icon('speak')),
+          h('button', { class: 'btn ghost', onclick: function () { put('lens_notes', Notes.all().filter(function (y) { return y.id !== x.id; })); draw(); } }, t('files_delete')));
+      }) : h('p', { class: 'muted' }, t('no_notes') || ''));
+    }
+    add(el, [h('h2', null, t('rem_new')), what, h('label', { class: 'f' }, t('rem_in'), mins),
+      h('button', { class: 'btn gold', onclick: function () { Rem.add(what.value, +mins.value || 10); what.value = ''; sayKey('reminder_set'); draw(); } }, t('rem_add')), list,
+      h('h2', null, t('notes_h')), nt, h('div', { class: 'row' },
+        h('button', { class: 'btn', onclick: function () { listen().then(function (x) { if (x) nt.value = x; }).catch(function () { say(t('noSpeech')); }); } }, icon('mic'), t('dictate')),
+        h('button', { class: 'btn gold', onclick: function () { if (!nt.value.trim()) return; Notes.add(nt.value.trim()); nt.value = ''; sayKey('note_saved'); draw(); } }, t('note_add'))), notes]);
+    draw();
+  };
+
+  /* ── your day: briefing (time, weather, reminders) ──────────────── */
+  var WX = { en: { 0: 'clear sky', 1: 'mostly clear', 2: 'partly cloudy', 3: 'overcast', 45: 'fog', 48: 'fog', 51: 'light drizzle', 53: 'drizzle', 55: 'heavy drizzle', 61: 'light rain', 63: 'rain', 65: 'heavy rain', 71: 'light snow', 73: 'snow', 75: 'heavy snow', 80: 'showers', 81: 'showers', 82: 'heavy showers', 95: 'thunderstorms', 96: 'thunderstorms', 99: 'thunderstorms' },
+    es: { 0: 'cielo despejado', 1: 'casi despejado', 2: 'parcialmente nublado', 3: 'nublado', 45: 'niebla', 48: 'niebla', 51: 'llovizna ligera', 53: 'llovizna', 55: 'llovizna intensa', 61: 'lluvia ligera', 63: 'lluvia', 65: 'lluvia intensa', 71: 'nieve ligera', 73: 'nieve', 75: 'nieve intensa', 80: 'chubascos', 81: 'chubascos', 82: 'chubascos fuertes', 95: 'tormentas', 96: 'tormentas', 99: 'tormentas' } };
+  function weather() {
+    return new Promise(function (resolve) {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(function (p) {
+        fetchT('https://api.open-meteo.com/v1/forecast?latitude=' + p.coords.latitude.toFixed(3) + '&longitude=' + p.coords.longitude.toFixed(3) + '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1', null, 8000)
+          .then(function (r) { return r.json(); }).then(resolve).catch(function () { resolve(null); });
+      }, function () { resolve(null); }, { timeout: 7000, maximumAge: 600000 });
+    });
+  }
+  function briefing(out) {
+    var d = new Date(), es = S.lang === 'es', parts = [t('time_now')(d)];
+    var rem = Rem.all().filter(function (r) { return !r.done && r.at - d < 86400000; });
+    if (out) fill(out, busy(h('div'), t('working')));
+    return weather().then(function (w) {
+      if (w && w.current) {
+        var c = Math.round(w.current.temperature_2m), code = w.current.weather_code, dsc = WX[S.lang][code] || WX[S.lang][Math.floor(code / 10) * 10] || '';
+        var hi = Math.round(w.daily.temperature_2m_max[0]), lo = Math.round(w.daily.temperature_2m_min[0]), pr = w.daily.precipitation_probability_max[0];
+        parts.push(es ? ('Ahora hace ' + c + ' grados, ' + dsc + '. Máxima de ' + hi + ', mínima de ' + lo + (pr >= 30 ? ', con ' + pr + ' por ciento de probabilidad de lluvia.' : '.'))
+          : ('It’s ' + c + ' degrees and ' + dsc + '. A high of ' + hi + ' and a low of ' + lo + (pr >= 30 ? ', with a ' + pr + ' percent chance of rain.' : '.')));
+      }
+      parts.push(rem.length ? (es ? 'Tienes ' + rem.length + ' recordatorio' + (rem.length > 1 ? 's' : '') + ': ' : 'You have ' + rem.length + ' reminder' + (rem.length > 1 ? 's' : '') + ': ') + rem.map(function (r) { return r.text; }).join(', ') + '.' : (es ? 'No tienes recordatorios pendientes.' : 'No reminders waiting.'));
+      if (me && me.licensed && !me.owner) parts.push(es ? 'Te queda el ' + me.allowance_left_pct + ' por ciento de tu asignación del mes.' : 'You have ' + me.allowance_left_pct + ' percent of this month’s allowance left.');
+      var text = parts.join(' ');
+      if (out) fill(out, h('div', { class: 'verdict v-info' }, h('div', { class: 'src' }, t('brief_today')), h('p', { style: 'margin:0;font-size:1.1em' }, text)));
+      return say(text);
+    });
+  }
+  screens.briefing = function (el) { head(el, t('t_brief')); var out = h('div', { class: 'screen' }); el.appendChild(out); briefing(out); };
+
+  /* ── protect: emergency ─────────────────────────────────────────── */
+  screens.emergency = function (el) {
+    head(el, t('t_emergency'));
+    var data = get('lens_card', {}), num = S.emergency || (/^en-US|^es-(US|MX)/.test(navigator.language || '') ? '911' : '112');
+    var fields = ['card_name', 'card_med', 'card_allergy', 'card_meds', 'card_contact', 'card_note'];
+    var text = fields.filter(function (k) { return data[k]; }).map(function (k) { return t(k) + ': ' + data[k]; }).join('. ');
+    var numIn = h('input', { type: 'text', id: 'em-num', value: num, inputmode: 'tel', style: 'max-width:140px', onchange: function () { S.emergency = numIn.value.trim(); saveSettings(); } });
+    add(el, [
+      h('a', { class: 'btn sos', href: 'tel:' + num }, (S.lang === 'es' ? 'Llamar al ' : 'Call ') + num),
+      h('button', { class: 'btn', onclick: function () {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(function (p) {
+          var link = 'https://maps.google.com/?q=' + p.coords.latitude.toFixed(5) + ',' + p.coords.longitude.toFixed(5), msg = (S.lang === 'es' ? 'Necesito ayuda. Estoy aquí: ' : 'I need help. I am here: ') + link;
+          if (navigator.share) navigator.share({ text: msg }).catch(function () { });
+          else if (navigator.clipboard) navigator.clipboard.writeText(msg).then(function () { toast(msg); });
+        }, function () { say(S.lang === 'es' ? 'No pude obtener tu ubicación.' : 'I could not get your location.'); }, { timeout: 8000 });
+      } }, t('emerg_share')),
+      h('dl', { class: 'card big-card' }, fields.filter(function (k) { return data[k]; }).map(function (k) { return [h('dt', null, t(k)), h('dd', null, data[k])]; })),
+      h('button', { class: 'btn', onclick: function () { say(text || t('card_intro')); } }, icon('speak'), t('emerg_read')),
+      h('label', { class: 'f' }, t('emerg_num'), numIn),
+      h('button', { class: 'btn ghost', onclick: function () { go('card'); } }, t('t_card'))]);
+    sayKey('emergency'); buzz([300, 100, 300]);
+  };
+
+  /* ── protect: family safe word ──────────────────────────────────── */
+  screens.safeword = function (el) {
+    head(el, t('t_safeword'));
+    var w = h('input', { type: 'password', id: 'sw', value: get('lens_safeword', ''), autocomplete: 'off', onchange: function () { put('lens_safeword', w.value); } });
+    var show = h('button', { class: 'btn ghost', onpointerdown: function () { w.type = 'text'; }, onpointerup: function () { w.type = 'password'; }, onpointerleave: function () { w.type = 'password'; } }, t('sw_show'));
+    add(el, [h('p', { class: 'lede' }, t('sw_intro')), h('label', { class: 'f' }, t('sw_set'), w), show]);
+    sayKey('safe_word');
+  };
+
+  /* ── the door: sign in, pay, wait ───────────────────────────────── */
+  function gsiButton(host) {
+    gsi().then(function () {
+      google.accounts.id.initialize({ client_id: CLIENT_ID, callback: onGoogle, ux_mode: 'popup', use_fedcm_for_prompt: true });
+      google.accounts.id.renderButton(host, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: S.lang });
+      try { google.accounts.id.prompt(); } catch (e) { }
+    }).catch(function () { host.textContent = t('err'); });
+  }
+  screens.welcome = function (el) {
+    var g = h('div', { id: 'gbtn', class: 'gbtn' });
+    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('welcome_h')), h('p', { class: 'rsub wide' }, t('welcome_p')), h('p', { class: 'small muted' }, t('signin_btn')), g)]);
+    gsiButton(g);
+    setTimeout(function () { sayKey('hello'); }, 600);
+  };
+  screens.paywall = function (el) {
+    var txn = h('input', { type: 'text', id: 'pay-txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
+    var code = h('input', { type: 'text', id: 'pay-code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
+    var buy = h('a', { class: 'btn gold big', 'data-lx-buy': 'lens', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('pay_buy'));
+    function after(m) { me = m; cacheMe(); renderPill(); if (m.licensed) { sayKey('activated'); enter(); } else if (m.pending) { sayKey('pending'); go('pending', null, true); } }
+    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('pay_h')), h('p', { class: 'rsub wide' }, t('pay_p'))),
+      h('div', { class: 'card screen price-card' }, h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$79'), h('div', { class: 'small muted' }, t('buy_app_terms')), buy),
+      h('div', { class: 'card screen' }, h('label', { class: 'f' }, t('pay_paid') + ' ' + t('pay_txn'), txn),
+        h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value }).then(after).catch(function (e) { say(aiError(e)); }); } }, t('pay_send')),
+        h('label', { class: 'f' }, t('pay_code'), code),
+        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(after).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go'))),
+      h('p', { class: 'small muted center' }, t('acc_signed') + ' ' + (raw('lunara_email') || '')),
+      h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
+    if (window.LunaraPricing && LunaraPricing.refresh) LunaraPricing.refresh();
+    setTimeout(function () { sayKey('paywall'); }, 500);
+  };
+  screens.pending = function (el) {
+    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('pend_h')), h('p', { class: 'rsub wide' }, t('pend_p'))),
+      h('button', { class: 'btn gold', onclick: function () { refreshMe().then(function (m) { if (m && m.licensed) { sayKey('activated'); enter(); } else sayKey('pending'); }); } }, t('pend_check')),
+      h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
+    var iv = setInterval(function () { refreshMe().then(function (m) { if (m && m.licensed) { clearInterval(iv); sayKey('activated'); enter(); } }); }, 30000);
+    onLeave(function () { clearInterval(iv); });
+  };
+
+  /* ── the owner's desk ───────────────────────────────────────────── */
+  screens.owner = function (el) {
+    head(el, t('od_h'));
+    if (!me || !me.owner) { el.appendChild(h('p', null, 'Not allowed.')); return; }
+    var box = h('div', { class: 'screen' }); el.appendChild(box);
+    function draw() {
+      fill(box, busy(h('div')));
+      call('/admin/overview').then(function (o) {
+        var st = o.stats || {};
+        fill(box,
+          h('div', { class: 'stats' },
+            [[t('od_spent'), '$' + Number(st.spent_usd || 0).toFixed(2)], [t('od_calls'), st.calls || 0], [t('od_lic'), st.active_licences || 0], [t('od_pending'), st.pending_claims || 0]]
+              .map(function (x) { return h('div', { class: 'stat' }, h('b', null, String(x[1])), h('span', null, x[0])); })),
+          h('h2', null, t('od_pending')),
+          (o.claims || []).length ? o.claims.map(function (c) {
+            return h('div', { class: 'card screen' }, h('div', null, c.email), h('div', { class: 'small muted key' }, c.paypal_txn), h('div', { class: 'small muted' }, new Date(c.created_at).toLocaleString()),
+              h('div', { class: 'row' },
+                h('button', { class: 'btn gold', onclick: function () { call('/admin/claim', { claim_id: c.id }).then(function () { say(S.lang === 'es' ? 'Aprobado.' : 'Approved.'); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_approve')),
+                h('button', { class: 'btn ghost', onclick: function () { call('/admin/claim', { claim_id: c.id, decision: 'reject' }).then(draw); } }, t('od_reject'))));
+          }) : h('p', { class: 'muted' }, t('od_none')),
+          h('h2', null, t('od_grant')), grantForm(),
+          h('h2', null, t('od_codes')), codeForm(),
+          h('h2', null, S.lang === 'es' ? 'Licencias recientes' : 'Recent licences'),
+          (o.licences || []).map(function (l) { return h('div', { class: 'small', style: 'display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2)' }, h('span', null, l.email), h('span', { class: 'muted' }, l.plan + ' · ' + new Date(l.expires_at).toLocaleDateString())); }));
+      }).catch(function (e) { fill(box, h('p', { class: 'note' }, aiError(e))); });
+    }
+    function grantForm() {
+      var em = h('input', { type: 'email', id: 'g-email', placeholder: t('od_email') }), dy = h('input', { type: 'number', id: 'g-days', value: 30, min: 1 });
+      return h('div', { class: 'card screen' }, em, h('label', { class: 'f' }, t('od_days'), dy),
+        h('button', { class: 'btn', onclick: function () { call('/admin/grant', { email: em.value, days: +dy.value, plan: 'comp' }).then(function (r) { toast('✓ ' + r.email); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_give')));
+    }
+    function codeForm() {
+      var n = h('input', { type: 'number', id: 'c-n', value: 3, min: 1, max: 50 }), out = h('div', { class: 'key' });
+      return h('div', { class: 'card screen' }, h('label', { class: 'f' }, S.lang === 'es' ? 'Cuántos (12 meses cada uno)' : 'How many (12 months each)', n),
+        h('button', { class: 'btn', onclick: function () { call('/admin/codes', { count: +n.value, plan: 'app_year' }).then(function (r) { out.textContent = r.codes.join('\n'); }).catch(function (e) { say(aiError(e)); }); } }, t('od_codes')), out);
+    }
+    draw();
+  };
+
   /* ── account and settings ───────────────────────────────────────── */
   screens.account = function (el) {
     head(el, t('t_account'));
@@ -1015,13 +1409,14 @@
             }
           } else fill(planBox, h('p', { style: 'margin:0' }, t('acc_none')));
         });
-        buyBlock(box);
+        if (!licensed()) buyBlock(box);
+        else add(box, h('a', { class: 'btn', href: 'get.html' }, icon('files'), S.lang === 'es' ? 'Descargar la app de Android' : 'Download the Android app'));
         var txn = h('input', { type: 'text', id: 'txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
         var code = h('input', { type: 'text', id: 'code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
         add(box, [h('div', { class: 'card screen' },
           h('label', { class: 'f' }, t('claim'), txn), h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value }).then(function (m) { me = m; renderPill(); say(t('activated')); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('claim_go')),
           h('label', { class: 'f' }, t('redeem'), code), h('button', { class: 'btn', onclick: function () { call('/redeem', { code: code.value }).then(function (m) { me = m; renderPill(); say(t('activated')); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go'))),
-          h('button', { class: 'btn ghost', onclick: function () { ['lunara_session_token', 'lunara_id', 'lunara_name', 'lunara_tier', 'lunara_email', 'lunara_expires_at', 'lunara_last_active'].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) { } }); me = null; renderPill(); draw(); } }, t('acc_out'))]);
+          h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
       }
       settingsBlock(box);
       add(box, h('p', { class: 'note' }, t('privacy')));
@@ -1038,13 +1433,13 @@
   }
   function settingsBlock(box) {
     function sw(key, label) {
-      var i = h('input', { type: 'checkbox', id: 'set-' + key, checked: S[key] || null, onchange: function () { S[key] = i.checked; saveSettings(); } });
+      var i = h('input', { type: 'checkbox', id: 'set-' + key, checked: S[key] || null, onchange: function () { S[key] = i.checked; saveSettings(); if (key === 'handsFree') wake(S.handsFree); } });
       return h('label', { class: 'switch', for: 'set-' + key }, h('span', null, label), i);
     }
     var lang = h('select', { id: 'set-lang', onchange: function () { S.lang = lang.value; saveSettings(); renderPill(); go('account', null, true); } }, ['en', 'es'].map(function (l) { return h('option', { value: l, selected: S.lang === l || null }, l === 'en' ? 'English' : 'Español'); }));
     var rate = h('input', { type: 'range', id: 'set-rate', min: 0.6, max: 1.5, step: 0.1, value: S.rate, onchange: function () { S.rate = +rate.value; saveSettings(); say(S.lang === 'es' ? 'Así sueno ahora.' : 'This is how I sound now.'); } });
     add(box, [h('h2', null, S.lang === 'es' ? 'Ajustes' : 'Settings'), h('label', { class: 'f' }, t('set_lang'), lang), h('label', { class: 'f' }, t('set_rate'), rate),
-      sw('speak', t('set_speak')), sw('big', t('set_big')), sw('hc', t('set_contrast')), sw('haptic', t('set_haptic'))]);
+      sw('speak', t('set_speak')), sw('natural', t('voice_natural')), sw('handsFree', t('handsFree')), sw('big', t('set_big')), sw('hc', t('set_contrast')), sw('haptic', t('set_haptic'))]);
   }
 
   /* ── voice commands ─────────────────────────────────────────────── */
@@ -1056,6 +1451,25 @@
     if ((m = /(?:put|move|organi[sz]e|place|save)\s+(?:the\s+)?(?:last|latest|newest)?\s*(\w+)?\s*(?:photos?|images?|pictures?|pics?)\s+(?:in|into|to)\s+(?:the\s+|a\s+)?(?:folder\s+)?(?:called\s+|named\s+)?(.+)$/.exec(s))) return { action: 'organize', n: num(m[1]) || 1, folder: m[2].replace(/\s+folder$/, '') };
     if ((m = /(?:pon|mueve|guarda|organiza|mete)\s+(?:las\s+|la\s+)?(?:ultimas?\s+)?(\w+)?\s*(?:ultimas?\s+)?(?:fotos?|imagenes?)\s+(?:en|a)\s+(?:la\s+)?(?:carpeta\s+)?(?:llamada\s+)?(.+)$/.exec(s))) return { action: 'organize', n: num(m[1]) || 1, folder: m[2] };
     if ((m = /^(?:translate|traduce|traducir)\s+(.+?)\s+(?:to|into|al|a)\s+(spanish|english|espanol|ingles)$/.exec(s))) return { action: 'translate', text: m[1], to: /span|espan/.test(m[2]) ? 'es' : 'en' };
+    // reminders: "remind me in 10 minutes to call mum" / "recuérdame en 10 minutos llamar a mamá"
+    if ((m = /(?:remind me|set a reminder|reminder)(?:\s+(?:in|for))?\s+(\w+)\s+(minutes?|mins?|hours?)(?:\s+(?:to|that|about)\s+(.+))?$/.exec(s)) ||
+        (m = /(?:recuerdame|recordatorio)(?:\s+en)?\s+(\w+)\s+(minutos?|horas?)(?:\s+(?:que|de|para)?\s*(.+))?$/.exec(s))) {
+      var nn = num(m[1]) || 10; if (/^h/.test(m[2])) nn *= 60;
+      return { action: 'remind', minutes: nn, text: m[3] || '' };
+    }
+    if ((m = /^(?:take a note|note|make a note|write down|anota|apunta|toma nota)[:,]?\s+(?:that\s+|que\s+)?(.+)$/.exec(s))) return { action: 'note', text: m[1] };
+    if (/(read|what are) my notes|lee mis notas|mis notas/.test(s)) return { action: 'notes' };
+    if (/(reminders|recordatorios|notes|notas)$/.test(s)) return { action: 'reminders' };
+    if (/(good morning|briefing|my day|what'?s (the )?weather|weather|buenos dias|mi dia|resumen|que tiempo hace|el tiempo)/.test(s)) return { action: 'briefing' };
+    if (/(what time|what'?s the time|what day|date today|que hora|que dia)/.test(s)) return { action: 'time' };
+    if (/(emergency|help me|i need help|call (an )?ambulance|sos|emergencia|ayuda|socorro|necesito ayuda)/.test(s)) return { action: 'emergency' };
+    if (/(safe word|family word|palabra clave|palabra secreta)/.test(s)) return { action: 'safeword' };
+    if (/(qr|scan (a |the )?code|codigo qr|escanea (el |un )?codigo)/.test(s)) return { action: 'qr' };
+    if ((m = /(?:is (?:this|that) link safe|check (?:this|the) link|link|enlace)\s*(\S+\.\S+)?/.exec(s)) && /link|enlace/.test(s)) return { action: 'link', text: m[1] || '' };
+    if (/(letter|bill|document|form|explain|summari[sz]e|carta|factura|documento|formulario|explicame|resume)/.test(s)) return { action: 'summarize' };
+    if (/(who are you|your name|quien eres|como te llamas)/.test(s)) return { action: 'whoami' };
+    if (/(owner|dashboard|admin|propietario|panel)/.test(s) && me && me.owner) return { action: 'owner' };
+    if (/(hands.?free|manos libres)/.test(s)) return { action: 'handsfree', on: !/(off|stop|desactiva|apaga)/.test(s) };
     if (/scam|fraud|estafa|fraude|timo/.test(s)) return { action: 'scam' };
     if (/(who owns|verify|lunara mark|de quien es|verificar|comprobar la marca)/.test(s)) return { action: 'verify' };
     if (/(watermark|protect|mark my|marca de agua|proteger|marcar mi)/.test(s)) return { action: 'mark' };
@@ -1089,63 +1503,152 @@
     if (/(help|ayuda|what can you do|que puedes hacer)/.test(s)) return { action: 'help' };
     return null;
   }
-  var ACTION_SCREEN = { photo: 'photo', scan: 'scan', video: 'video', voice: 'voice', text: 'text', scam: 'scam', verify: 'verify', mark: 'mark', describe: 'describe', read: 'read', magnify: 'magnify', color: 'color', translate: 'translate', converse: 'converse', replies: 'replies', files: 'files', remember: 'remember', calm: 'calm', card: 'card', account: 'account', home: 'home' };
+  var ACTION_SCREEN = { link: 'link', qr: 'qr', summarize: 'summarize', reminders: 'reminders', briefing: 'briefing', emergency: 'emergency', safeword: 'safeword', owner: 'owner', photo: 'photo', scan: 'scan', video: 'video', voice: 'voice', text: 'text', scam: 'scam', verify: 'verify', mark: 'mark', describe: 'describe', read: 'read', magnify: 'magnify', color: 'color', translate: 'translate', converse: 'converse', replies: 'replies', files: 'files', remember: 'remember', calm: 'calm', card: 'card', account: 'account', home: 'home' };
   function run(cmd) {
     var a = cmd.action;
     if (a === 'organize') return organize(cmd.n, cmd.folder).then(function () { go('files', { folder: cmd.folder.replace(/^\w/, function (c) { return c.toUpperCase(); }) }); });
+    if (a === 'remind') { Rem.add(cmd.text, cmd.minutes || 10); return sayKey('reminder_set'); }
+    if (a === 'note') { if (!cmd.text) return go('reminders'); Notes.add(cmd.text); return sayKey('note_saved'); }
+    if (a === 'notes') return readNotes();
+    if (a === 'briefing') { go('briefing'); return; }
+    if (a === 'time') return say(t('time_now')(new Date()));
+    if (a === 'whoami') return sayKey('hello');
+    if (a === 'handsfree') { S.handsFree = cmd.on; saveSettings(); wake(cmd.on); return sayKey(cmd.on ? 'wake_on' : 'wake_off'); }
+    if (a === 'link' && cmd.text) return go('link', { text: cmd.text });
     if (a === 'repeat') return say(lastSaid);
-    if (a === 'stop') { if (window.speechSynthesis) speechSynthesis.cancel(); return; }
-    if (a === 'help') return say(t('notUnderstood'));
+    if (a === 'stop') { stopVoice(); return; }
+    if (a === 'help') return sayKey('try_saying');
     if (a === 'lang') { S.lang = cmd.lang; saveSettings(); renderPill(); go(current.name, current.arg, true); return say(S.lang === 'es' ? 'Ahora hablo español.' : 'Now speaking English.'); }
     if (a === 'answer') return say(cmd.speech);
-    var scr = ACTION_SCREEN[a]; if (!scr) return say(t('notUnderstood'));
+    var scr = ACTION_SCREEN[a]; if (!scr) return sayKey('not_caught');
     if (a === 'translate' && cmd.text) return go('translate', { text: cmd.text, to: cmd.to });
     go(scr, cmd.arg);
-    var title = { photo: 't_photo', scan: 't_scan', video: 't_video', voice: 't_voice', text: 't_text', scam: 't_scam', verify: 't_verify', mark: 't_mark', describe: 't_describe', read: 't_read', magnify: 't_magnify', color: 't_color', translate: 't_translate', converse: 't_converse', replies: 't_replies', files: 't_files', remember: 't_remember', calm: 't_calm', card: 't_card', account: 't_account' }[a];
-    if (title && a !== 'calm') say(t(title));
+    if (a === 'magnify') return sayKey('magnifier');
+    if (/^(calm|emergency|safeword|briefing)$/.test(a)) return;
+    var title = { photo: 't_photo', scan: 't_scan', video: 't_video', voice: 't_voice', text: 't_text', scam: 't_scam', verify: 't_verify', mark: 't_mark', describe: 't_describe', read: 't_read', color: 't_color', translate: 't_translate', converse: 't_converse', replies: 't_replies', files: 't_files', remember: 't_remember', card: 't_card', account: 't_account', link: 't_link', qr: 't_qr', summarize: 't_summ', reminders: 't_remind', owner: 't_owner' }[a];
+    if (title) say(t(title), null, { transcript: true });
   }
+
+  /* Rosario hears something. Quick things are understood on the phone;
+     everything else goes to her brain on the server, with the
+     conversation so far, so she can answer and follow up. */
+  function handle(q) {
+    q = String(q || '').trim(); if (!q) return;
+    RosarioLog('user', q);
+    var cmd = parse(q);
+    if (cmd) return run(cmd);
+    if (!licensed()) return sayKey('no_licence');
+    var hist = convo.slice(-9, -1).map(function (m) { return { role: m.role, text: m.text }; });
+    var d = new Date();
+    return ai('rosario', { text: q, history: hist, context: 'Local time: ' + d.toString() + '. App language: ' + (S.lang === 'es' ? 'Spanish' : 'English') + '. Current screen: ' + current.name + (me && me.owner ? '. The user is the owner of Lunara Society.' : '') }).then(function (r) {
+      var map = { detect_image: 'photo', detect_text: 'text', detect_audio: 'voice', detect_video: 'video', verify_mark: 'verify', settings: 'account', card: 'card' };
+      var act = map[r.action] || r.action;
+      if (act === 'answer' || act === 'stop') return say(r.speech);
+      if (act === 'organize') return run({ action: 'organize', n: r.arg_number, folder: r.arg_folder });
+      if (act === 'remind') { Rem.add(r.arg_text, r.arg_minutes || 10); return say(r.speech || t('rem_add')); }
+      if (act === 'note') { if (r.arg_text) Notes.add(r.arg_text); return say(r.speech); }
+      if (act === 'notes') return readNotes();
+      if (act === 'translate' && r.arg_text) return run({ action: 'translate', text: r.arg_text, to: /span|espa/i.test(r.arg_language) ? 'es' : 'en' });
+      if (act === 'replies' && r.arg_text) { say(r.speech); return go('replies', { text: r.arg_text }); }
+      if (act === 'link' && r.arg_text) return go('link', { text: r.arg_text });
+      say(r.speech); var sc = ACTION_SCREEN[act]; if (sc) go(sc);
+    }).catch(function (e) { say(aiError(e)); });
+  }
+
   var micBtn = document.getElementById('mic'), micLabel = document.getElementById('miclabel');
   function onMic() {
-    buzz(25);
+    buzz(25); stopVoice(); wakePause(true);
     micBtn.classList.add('on'); micLabel.textContent = t('listening');
     listen().then(function (q) {
-      micBtn.classList.remove('on'); micLabel.textContent = t('micHint');
+      micBtn.classList.remove('on'); micLabel.textContent = t('micHint'); wakePause(false);
       if (!q) return;
-      toast(t('heard') + q, 2500);
-      var cmd = parse(q);
-      if (cmd) return run(cmd);
-      if (licensed()) return ai('intent', { text: q }).then(function (r) {
-        var map = { detect_image: 'photo', detect_text: 'text', detect_audio: 'voice', detect_video: 'video', verify_mark: 'verify', settings: 'account' };
-        var act = map[r.action] || r.action;
-        if (act === 'organize') return run({ action: 'organize', n: r.arg_number, folder: r.arg_folder });
-        if (act === 'translate' && r.arg_text) return run({ action: 'translate', text: r.arg_text, to: /span|espa/i.test(r.arg_language) ? 'es' : 'en' });
-        if (act === 'answer') return say(r.speech);
-        if (act === 'replies' && r.arg_text) return go('replies', { text: r.arg_text });
-        say(r.speech); return run({ action: act });
-      }).catch(function (e) { say(aiError(e)); });
-      say(t('notUnderstood'));
+      handle(q);
     }).catch(function (e) {
-      micBtn.classList.remove('on'); micLabel.textContent = t('micHint');
-      if (e && e.message === 'nospeech') { var q = window.prompt ? null : null; say(t('noSpeech')); typeBox(); }
+      micBtn.classList.remove('on'); micLabel.textContent = t('micHint'); wakePause(false);
+      if (e && e.message === 'nospeech') { say(t('noSpeech')); typeBox(); }
       else if (e && /not-allowed|service-not-allowed/.test(e.message)) say(t('noMic'));
     });
   }
   function typeBox() {
     if (document.getElementById('typecmd')) return;
-    var i = h('input', { type: 'text', id: 'typecmd', placeholder: t('micHint'), 'aria-label': t('micHint'), onkeydown: function (e) { if (e.key === 'Enter' && i.value.trim()) { var c = parse(i.value); c ? run(c) : say(t('notUnderstood')); i.remove(); } } });
+    var i = h('input', { type: 'text', id: 'typecmd', placeholder: t('micHint'), 'aria-label': t('micHint'), onkeydown: function (e) { if (e.key === 'Enter' && i.value.trim()) { handle(i.value); i.remove(); } } });
     main.insertBefore(i, main.firstChild); i.focus();
   }
   micBtn.addEventListener('click', onMic);
 
+  /* Hands free: always listening for her name. "Rosario, is this real?"
+     runs at once; "Rosario" alone makes her ask what you need. She stops
+     listening while she speaks, so she never hears herself. */
+  var wakeRec = null, wakeOn = false, wakeHold = false;
+  function wake(on) {
+    wakeOn = !!on && !!Rec;
+    if (!wakeOn) { if (wakeRec) try { wakeRec.abort(); } catch (e) { } wakeRec = null; return; }
+    startWake();
+  }
+  function wakePause(hold) { wakeHold = hold; if (hold && wakeRec) try { wakeRec.abort(); } catch (e) { } if (!hold && wakeOn) setTimeout(startWake, 400); }
+  function startWake() {
+    if (!wakeOn || wakeHold || wakeRec) return;
+    if (isSpeaking()) { setTimeout(startWake, 500); return; }
+    var r = new Rec(); wakeRec = r;
+    r.lang = S.lang === 'es' ? 'es-ES' : 'en-US'; r.continuous = true; r.interimResults = false;
+    r.onresult = function (e) {
+      var said = e.results[e.results.length - 1][0].transcript || '';
+      var m = /\b(rosario|rosa rio|rosarios)\b[\s,.:]*(.*)$/i.exec(said);
+      if (!m) return;
+      try { r.abort(); } catch (x) { }
+      var rest = (m[2] || '').trim();
+      if (rest.length > 2) handle(rest);
+      else { sayKey('listening').then(function () { onMic(); }); }
+    };
+    r.onend = function () { wakeRec = null; if (wakeOn && !wakeHold) setTimeout(startWake, isSpeaking() ? 800 : 250); };
+    r.onerror = function () { wakeRec = null; };
+    try { r.start(); } catch (e) { wakeRec = null; }
+  }
+  voiceEl.addEventListener('play', function () { if (wakeRec) try { wakeRec.abort(); } catch (e) { } });
+
+  /* ── the door ───────────────────────────────────────────────────────
+     Nothing past sign-in and payment is shown to anyone who has not
+     paid, except the owner. The AI is refused by the server regardless;
+     this keeps the rest of the app behind the same door. */
+  var OPEN = { welcome: 1, paywall: 1, pending: 1 };
+  function cacheMe() { if (me) put('lens_me', { me: me, at: Date.now() }); }
+  function signOut() {
+    ['lunara_session_token', 'lunara_id', 'lunara_name', 'lunara_tier', 'lunara_email', 'lunara_expires_at', 'lunara_last_active'].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) { } });
+    try { localStorage.removeItem('lens_me'); } catch (e) { }
+    me = null; renderPill(); wake(false); go('welcome', null, true);
+  }
+  var entered = false;
+  function enter() {
+    var first = (location.hash || '').slice(1);
+    go(screens[first] && !OPEN[first] ? first : 'home', null, true);
+    if (!entered) {
+      entered = true;
+      var today = new Date().toDateString();
+      if (get('lens_greeted', '') !== today) { put('lens_greeted', today); setTimeout(function () { sayKey(me && me.owner ? 'welcome_owner' : 'hello_back'); }, 700); }
+      if (S.handsFree) wake(true);
+    }
+  }
+  var goInner = go;
+  go = function (name, arg, replace) {
+    if (!OPEN[name] && !licensed()) name = session() ? ((me && me.pending) ? 'pending' : 'paywall') : 'welcome';
+    return goInner(name, arg, replace);
+  };
+  function boot() {
+    if (!session()) { go('welcome', null, true); return; }
+    var cached = get('lens_me', null);
+    if (cached && cached.me && cached.me.licensed && Date.now() - cached.at < 7 * 864e5) { me = cached.me; renderPill(); enter(); }
+    refreshMe().then(function (m) {
+      if (m) { cacheMe(); if (m.licensed) { if (!entered) enter(); } else go(m.pending ? 'pending' : 'paywall', null, true); }
+      else if (!entered) go('paywall', null, true);
+    });
+  }
+
   /* ── start ──────────────────────────────────────────────────────── */
   document.getElementById('plan').addEventListener('click', function () { go('account'); });
-  document.getElementById('langbtn').addEventListener('click', function () { S.lang = other(S.lang); saveSettings(); renderPill(); micLabel.textContent = t('micHint'); go(current.name, current.arg, true); say(S.lang === 'es' ? 'Español.' : 'English.', null, { silentToast: true }); });
+  document.getElementById('langbtn').addEventListener('click', function () { S.lang = other(S.lang); saveSettings(); renderPill(); micLabel.textContent = t('micHint'); go(current.name, current.arg, true); if (wakeOn) { wake(false); wake(true); } say(S.lang === 'es' ? 'Español.' : 'English.', null, { silentToast: true, transcript: false }); });
   applySettings();
   micLabel.textContent = t('micHint');
-  var first = (location.hash || '').slice(1);
-  go(screens[first] ? first : 'home', null, true);
-  try { history.replaceState({ s: current.name }, '', location.hash || '#'); } catch (e) { }
-  refreshMe();
+  boot();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { });
-  window.LensApp = { parse: parse, colorName: colorName, go: go, run: run };
+  window.LensApp = { parse: parse, colorName: colorName, go: function (n, a) { go(n, a); }, run: run, handle: handle, linkSigns: linkSigns, _setMe: function (m) { me = m; renderPill(); enter(); } };
 })();

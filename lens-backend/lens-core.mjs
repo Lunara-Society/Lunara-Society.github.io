@@ -40,8 +40,23 @@
 export const PLANS = {
   app_year:  { days: 365, budget: 4.0,   price: 79,  label: 'Lunara Lens, 12 months' },
   api_month: { days: 31,  budget: 120.0, price: 199, label: 'Lunara Detection API, 1 month' },
-  comp:      { days: 365, budget: 4.0,   price: 0,   label: 'Lunara Lens, complimentary' }
+  comp:      { days: 365, budget: 4.0,   price: 0,   label: 'Lunara Lens, complimentary' },
+  owner:     { days: 36500, budget: 1e9, price: 0,   label: 'Owner · no limits' }
 };
+
+/* The owner is never metered and never asked to pay. Everyone else is.
+   Set LENS_OWNER_EMAILS to change who that is. */
+export function isOwner(email, env) {
+  const list = String((env && env.LENS_OWNER_EMAILS) || 'lunarasociety@gmail.com').toLowerCase().split(/[,\s]+/).filter(Boolean);
+  return list.includes(String(email || '').toLowerCase());
+}
+
+/* ElevenLabs voices for Rosario: Caty in English (Italian accent) and
+   the Venezuelan Caty in Spanish. Speech is metered per character at a
+   deliberately high rate so the allowance can never be undershot. */
+export const VOICES = { en: '5DTSWAtuA2BoWMSMFTRP', es: 'BKwzeEHPemNEGIPoJEI8' };
+export const TTS_MODEL = 'eleven_flash_v2_5';
+export const ttsCost = (chars, env) => chars * Number((env && env.LENS_TTS_USD_PER_CHAR) || 0.0002);
 
 /* Dollars per million tokens, input and output. Output includes any
    thinking the model does, because the API bills it as output. */
@@ -195,6 +210,45 @@ You cannot hear the audio. You receive the device's acoustic measurements (bandw
     },
     system: `You help a person answer someone in a conversation, for Lunara Lens. Given what was said to them, write up to 3 short, natural replies in the REPLY language: one agreeable, one that asks a question or buys time, one that declines politely (when that makes sense). meaning: the same reply in the user's language so they know what they are saying.`
   },
+  rosario: {
+    tier: 'fast', effort: 'low', max_tokens: 900,
+    schema: {
+      type: 'object', additionalProperties: false,
+      required: ['action', 'speech', 'arg_text', 'arg_number', 'arg_folder', 'arg_language', 'arg_minutes'],
+      properties: {
+        action: { type: 'string', enum: ['answer', 'describe', 'read', 'detect_image', 'detect_text', 'detect_audio', 'detect_video', 'scan', 'scam', 'link', 'qr', 'translate', 'converse', 'replies', 'magnify', 'color', 'mark', 'verify_mark', 'files', 'organize', 'remind', 'note', 'notes', 'briefing', 'emergency', 'safe_word', 'calm', 'card', 'summarize', 'settings', 'account', 'help', 'stop'] },
+        speech: { type: 'string' },
+        arg_text: { type: 'string' },
+        arg_number: { type: 'integer' },
+        arg_folder: { type: 'string' },
+        arg_language: { type: 'string' },
+        arg_minutes: { type: 'integer' }
+      }
+    },
+    system: `You are Rosario, the voice assistant inside Lunara Lens, an app by Lunara Society. You speak to the user out loud, so every reply is short, warm and plain: one to three sentences, no lists, no markdown, no emoji. You are calm, capable and a little witty, never gushing.
+
+Lunara Society's standard is that claims must be checkable. So you never pretend to know what you do not: if you are not sure, say so briefly. You cannot browse the web or see live data unless the CONTEXT gives it to you. Never invent facts about the user.
+
+Every turn, choose exactly one action. If the user wants something the app does, pick that action and put a one-sentence spoken confirmation in speech. If they are just talking or asking a question you can answer, use "answer" and answer in speech.
+
+The app's actions: describe (what is in front of me), read (read text aloud), detect_image / detect_text / detect_audio / detect_video (is this real or AI), scan (check a screen or print with the camera), scam (is this message a scam), link (is this link safe, arg_text = the link), qr (scan a QR code), translate (arg_text = what, arg_language = target language), converse (live two-way translation), replies (help me answer, arg_text = what they said), magnify, color (what colour is this), mark (put an invisible Lunara Mark on my photo), verify_mark (who owns this image), files (open my files), organize (arg_number latest images into arg_folder), remind (arg_minutes from now, arg_text = what), note (take a note, arg_text = the note), notes (read my notes), briefing (my day: time, weather, reminders), emergency (I need help), safe_word (family safe word against voice-clone scams), calm (I am stressed), card (my medical card), summarize (summarize a letter or document), settings, account, help, stop.
+
+Unused arguments are "" or 0.`
+  },
+  summarize: {
+    tier: 'fast', effort: 'low', max_tokens: 1800,
+    schema: {
+      type: 'object', additionalProperties: false,
+      required: ['speech', 'summary', 'actions', 'deadlines'],
+      properties: {
+        speech: { type: 'string' },
+        summary: { type: 'string' },
+        actions: { type: 'array', items: { type: 'string' } },
+        deadlines: { type: 'array', items: { type: 'string' } }
+      }
+    },
+    system: `You are Rosario, reading a letter, bill, form or document for the user (the image or text). speech: two to four spoken sentences: who it is from, what it is about, and what, if anything, the user must do and by when. summary: a clear written summary. actions: things the user needs to do. deadlines: dates that matter, with what they are for. If it looks like a scam or a threat to pay urgently, say so plainly.`
+  },
   intent: {
     tier: 'fast', effort: 'low', max_tokens: 600,
     schema: {
@@ -238,6 +292,18 @@ export function randomId(n, alpha = MARK_ALPHA) {
 export async function sha256hex(s) {
   const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return Array.from(new Uint8Array(d), (x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function licenceFor(email, deps) {
+  if (isOwner(email, deps.env)) {
+    const list = await deps.db.licensesFor(email);
+    let own = (list || []).find((l) => l.plan === 'owner');
+    if (!own) {
+      own = await deps.db.createLicense({ email, plan: 'owner', source: 'admin', paypal_txn: null, expires_at: '2099-12-31T00:00:00Z', budget_usd_month: PLANS.owner.budget });
+    }
+    return own;
+  }
+  return activeLicense(await deps.db.licensesFor(email));
 }
 
 function activeLicense(list, now = Date.now()) {
@@ -299,13 +365,24 @@ export async function handleLens(req, deps) {
     case '/mark': return mark(email, who, body, deps);
     case '/apikey': return apikey(email, body, deps);
     case '/admin/codes': return adminCodes(email, body, deps);
+    case '/admin/overview': return adminOverview(email, deps);
+    case '/admin/claim': return adminClaim(email, body, deps);
+    case '/admin/grant': return adminGrant(email, body, deps);
+    case '/speak': return speak(email, body, deps);
+    case '/download': return download(email, deps);
     default: return json({ error: 'No such route.' }, 404);
   }
 }
 
 async function me(email, deps) {
-  const lic = activeLicense(await deps.db.licensesFor(email));
-  if (!lic) return json({ licensed: false, email });
+  const lic = await licenceFor(email, deps);
+  if (!lic) {
+    const pending = deps.db.pendingClaimFor ? await deps.db.pendingClaimFor(email) : null;
+    return json({ licensed: false, email, pending: !!pending });
+  }
+  if (lic.plan === 'owner') {
+    return json({ licensed: true, owner: true, unlimited: true, email, plan: 'owner', label: PLANS.owner.label, expires_at: lic.expires_at, allowance_left_pct: 100, resets: nextMonthStart() });
+  }
   const spent = await deps.db.spent(lic.id, period());
   const budget = Number(lic.budget_usd_month);
   return json({
@@ -352,7 +429,17 @@ async function claim(email, body, deps) {
   }
   if (await deps.db.licenseByTxn(txn)) return json({ error: 'That payment has already been used to activate a licence.' }, 409);
   const cap = await deps.paypalCapture(txn);
-  if (!cap) return json({ error: 'Payments cannot be checked automatically yet. Email lunarasociety@gmail.com with your Transaction ID and we will activate you by hand.' }, 503);
+  if (!cap) {
+    // PayPal cannot be asked automatically: queue it for the owner, who
+    // approves it in the app. Nothing unlocks until they do.
+    if (deps.db.createClaim) {
+      const existing = deps.db.claimByTxn ? await deps.db.claimByTxn(txn) : null;
+      if (existing && existing.status !== 'pending') return json({ error: 'That Transaction ID has already been reviewed.' }, 409);
+      if (!existing) await deps.db.createClaim({ email, paypal_txn: txn, note: String(body.note || '').slice(0, 200) });
+      return json({ licensed: false, pending: true, email, message: 'Thank you. Your payment is waiting for confirmation.' }, 202);
+    }
+    return json({ error: 'Payments cannot be checked automatically yet. Email lunarasociety@gmail.com with your Transaction ID.' }, 503);
+  }
   if (cap.status !== 'COMPLETED') return json({ error: 'PayPal does not show that payment as completed yet. Try again in a few minutes.' }, 400);
   const paid = Number(cap.amount?.value || 0);
   const cur = cap.amount?.currency_code;
@@ -364,6 +451,7 @@ async function claim(email, body, deps) {
 }
 
 async function spend(lic, task, model, body, deps) {
+  if (lic.plan === 'owner') return { budget: Infinity, spent: 0, owner: true };
   const t = TASKS[task];
   const budget = Number(lic.budget_usd_month);
   const spent = await deps.db.spent(lic.id, period());
@@ -384,7 +472,10 @@ function buildContent(task, body) {
   if (task === 'replies') lines.push(`REPLY language: ${LANGS[body.target] || body.target || lang}. The user's language: ${lang}.`);
   if (body.evidence) lines.push('EVIDENCE from the device:\n' + String(body.evidence).slice(0, 4000));
   if (body.text) lines.push('INPUT:\n' + String(body.text).slice(0, 12000));
-  if (body.context) lines.push('CONTEXT: ' + String(body.context).slice(0, 500));
+  if (Array.isArray(body.history) && body.history.length) {
+    lines.push('CONVERSATION SO FAR:\n' + body.history.slice(-8).map((h) => (h.role === 'rosario' ? 'Rosario: ' : 'User: ') + String(h.text || '').slice(0, 400)).join('\n'));
+  }
+  if (body.context) lines.push('CONTEXT: ' + String(body.context).slice(0, 800));
   parts.push({ type: 'text', text: lines.join('\n\n') });
   return parts;
 }
@@ -411,21 +502,21 @@ async function runTask(lic, task, body, route, deps) {
   });
   if (out.refused) return json({ error: 'The model declined this request.', code: 'refused' }, 422);
   if (!out.result) return json({ error: 'The answer came back incomplete. Try again.' }, 502);
-  const left = Math.max(0, Math.round((1 - (room.spent + cost) / room.budget) * 100));
+  const left = room.owner ? 100 : Math.max(0, Math.round((1 - (room.spent + cost) / room.budget) * 100));
   return json({ task, result: out.result, allowance_left_pct: left });
 }
 
 async function ai(email, body, deps) {
   const task = String(body.task || '');
   if (!TASKS[task]) return json({ error: 'Unknown task.' }, 400);
+  const lic = await licenceFor(email, deps);
+  if (!lic) return json({ error: 'This needs an active Lunara Lens plan.', code: 'license' }, 402);
   if (!deps.env.ANTHROPIC_API_KEY) return json({ error: 'The AI service is not switched on yet.', code: 'offline' }, 503);
-  const lic = activeLicense(await deps.db.licensesFor(email));
-  if (!lic) return json({ error: 'This needs a Lunara Lens licence. Everything that runs on your phone is free.', code: 'license' }, 402);
   return runTask(lic, task, body, task, deps);
 }
 
 async function mark(email, who, body, deps) {
-  const lic = activeLicense(await deps.db.licensesFor(email));
+  const lic = await licenceFor(email, deps);
   if (!lic) return json({ error: 'Registering a Lunara Mark needs a licence.', code: 'license' }, 402);
   const sha = String(body.sha256 || '').toLowerCase();
   if (!/^[0-9a-f]{64}$/.test(sha)) return json({ error: 'Missing file fingerprint.' }, 400);
@@ -442,7 +533,8 @@ async function mark(email, who, body, deps) {
 }
 
 async function apikey(email, body, deps) {
-  const lic = activeLicense((await deps.db.licensesFor(email)).filter((l) => l.plan === 'api_month'));
+  const lic = isOwner(email, deps.env) ? await licenceFor(email, deps)
+    : activeLicense((await deps.db.licensesFor(email)).filter((l) => l.plan === 'api_month'));
   if (!lic) return json({ error: 'API keys come with the Detection API plan.', code: 'license' }, 402);
   const key = 'lk_' + randomId(32, 'abcdefghijkmnpqrstuvwxyz23456789');
   await deps.db.createKey({ key_hash: await sha256hex(key), license_id: lic.id, label: String(body.label || '').slice(0, 60), prefix: key.slice(0, 7) });
@@ -450,8 +542,7 @@ async function apikey(email, body, deps) {
 }
 
 async function adminCodes(email, body, deps) {
-  const admins = String(deps.env.LENS_ADMIN_EMAILS || 'lunarasociety@gmail.com').toLowerCase().split(/[,\s]+/);
-  if (!admins.includes(email)) return json({ error: 'Not allowed.' }, 403);
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
   const plan = PLANS[body.plan] ? body.plan : 'app_year';
   const n = Math.min(50, Math.max(1, Number(body.count) || 1));
   const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
@@ -483,4 +574,71 @@ async function apiDetect(req, deps) {
     return json({ error: 'Images must be data URLs: data:image/jpeg;base64,…' }, 400);
   }
   return runTask(lic, task, { images, text: body.text, evidence: body.evidence, lang: body.lang || 'en' }, 'api:' + task, deps);
+}
+
+/* ── the owner's desk ───────────────────────────────────────────── */
+
+async function adminOverview(email, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  const [stats, claims, licences] = await Promise.all([
+    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses()
+  ]);
+  return json({ period: period(), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner') });
+}
+
+async function adminClaim(email, body, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  const c = await deps.db.getClaim(String(body.claim_id || ''));
+  if (!c || c.status !== 'pending') return json({ error: 'That claim is not pending.' }, 400);
+  if (body.decision === 'reject') {
+    await deps.db.updateClaim(c.id, { status: 'rejected', decided_at: new Date().toISOString() });
+    return json({ ok: true, status: 'rejected' });
+  }
+  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_year';
+  if (await deps.db.licenseByTxn(c.paypal_txn)) return json({ error: 'That payment already activated a licence.' }, 409);
+  await grant(c.email, plan, 'paypal', c.paypal_txn, deps);
+  await deps.db.updateClaim(c.id, { status: 'approved', decided_at: new Date().toISOString() });
+  return json({ ok: true, status: 'approved', email: c.email, plan });
+}
+
+async function adminGrant(email, body, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  const to = String(body.email || '').trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return json({ error: 'Enter a valid email address.' }, 400);
+  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'comp';
+  const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
+  await grant(to, plan, 'admin', null, deps, days);
+  return json({ ok: true, email: to, plan, days });
+}
+
+/* ── Rosario's voice ────────────────────────────────────────────── */
+
+async function speak(email, body, deps) {
+  const lic = await licenceFor(email, deps);
+  if (!lic) return json({ error: 'This needs an active Lunara Lens plan.', code: 'license' }, 402);
+  if (!deps.env.ELEVENLABS_API_KEY || !deps.tts) return json({ error: 'The natural voice is not switched on yet.', code: 'offline' }, 503);
+  const text = String(body.text || '').replace(/\s+/g, ' ').trim().slice(0, 700);
+  if (!text) return json({ error: 'Nothing to say.' }, 400);
+  const lang = body.lang === 'es' ? 'es' : 'en';
+  const cost = ttsCost(text.length, deps.env);
+  if (lic.plan !== 'owner') {
+    const spent = await deps.db.spent(lic.id, period());
+    if (spent + cost > Number(lic.budget_usd_month)) return json({ error: 'This month’s allowance is used up.', code: 'allowance' }, 402);
+  }
+  const audio = await deps.tts({ text, voice: VOICES[lang], model: TTS_MODEL });
+  if (!audio) return json({ error: 'The voice service did not answer.', code: 'offline' }, 502);
+  await deps.db.logUsage({ license_id: lic.id, period: period(), route: 'speak', model: TTS_MODEL, input_tokens: text.length, output_tokens: 0, cost_usd: cost });
+  return new Response(audio, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store' } });
+}
+
+/* ── the Android download ───────────────────────────────────────────
+   The APK published on the site is encrypted. Only a licensed account,
+   or the owner, receives the key that opens it. */
+async function download(email, deps) {
+  const lic = await licenceFor(email, deps);
+  if (!lic) return json({ error: 'The app is available after payment.', code: 'license' }, 402);
+  const key = await deps.db.getConfig('apk_key');
+  if (!key) return json({ error: 'The download is not ready yet.' }, 503);
+  const meta = JSON.parse(key);
+  return json({ key: meta.key, iv: meta.iv, url: meta.url, sha256: meta.sha256, name: meta.name || 'Lunara-Lens.apk' });
 }

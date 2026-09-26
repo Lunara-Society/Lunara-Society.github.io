@@ -391,8 +391,8 @@ Three tools exist to be handed to a person:
       it does not have; "can't tell" is a real answer. Also an invisible
       ownership mark (the Lunara Mark) checkable at /lens/verify.html,
       and help describing, reading and translating aloud in English and
-      Spanish. Android APK at /lens/lunara-lens.apk; web app at
-      /lens/app.html. Link a person here when they ask whether
+      Spanish, through Rosario, its voice assistant. Members-only:
+      web app at /lens/app.html, Android app at /lens/get.html. Link a person here when they ask whether
       something is real.
 
   /embed.html

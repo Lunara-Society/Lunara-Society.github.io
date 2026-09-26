@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Download Rosario for Android | Lunara Society</title>
+<meta name="description" content="The Android app of Rosario, the Lunara Lens assistant. Available to Lunara Lens members after payment.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="lens.css">
+</head>
+<body>
+<div class="app" style="padding-bottom:40px">
+  <header class="top"><a class="brand" href="/lens.html"><img src="icon-192.png" alt=""><b>Lunara Lens</b></a></header>
+  <main class="screen">
+    <div class="hero">
+      <div class="orb" style="pointer-events:none"><img src="rosario.jpg" alt="Rosario"></div>
+      <h1 class="rname">Rosario for Android</h1>
+      <p class="rsub wide" id="lede">For Lunara Lens members. Checking your account…</p>
+    </div>
+    <div id="act" class="screen"></div>
+    <ol class="note" style="padding-left:28px">
+      <li>Tap <b>Download</b>. Your phone saves <i>Rosario-Lunara-Lens.apk</i>.</li>
+      <li>Open it. If Android asks, allow your browser to install apps, then tap <b>Install</b>.</li>
+      <li>Open <b>Rosario</b> and sign in with the same Google account.</li>
+    </ol>
+    <p class="small muted center">On iPhone, use the <a href="app.html" style="color:var(--gold-hi)">web app</a> instead: open it in Safari, tap Share, then Add to Home Screen.</p>
+  </main>
+</div>
+<script>
+(function () {
+  var API = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-lens';
+  var act = document.getElementById('act'), lede = document.getElementById('lede');
+  function tok() { try { var t = localStorage.getItem('lunara_session_token'), e = Number(localStorage.getItem('lunara_expires_at') || 0); return t && (!e || Date.now() < e) ? t : null; } catch (x) { return null; } }
+  function btn(label, cls, href) { var a = document.createElement(href ? 'a' : 'button'); a.className = 'btn ' + (cls || ''); a.textContent = label; if (href) a.href = href; return a; }
+  function b64(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+  function hex(buf) { return Array.from(new Uint8Array(buf), function (x) { return x.toString(16).padStart(2, '0'); }).join(''); }
+  var t = tok();
+  if (!t) { lede.textContent = 'Sign in first. The download is for Lunara Lens members.'; act.appendChild(btn('Sign in', 'gold big', 'app.html')); return; }
+  fetch(API + '/download', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session_token: t }) })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j, status: r.status }; }); })
+    .then(function (res) {
+      if (!res.ok) {
+        lede.textContent = res.status === 402 ? 'The Android app is available after payment.' : (res.j.error || 'Something went wrong.');
+        act.appendChild(btn(res.status === 402 ? 'Unlock Rosario' : 'Try again', 'gold big', res.status === 402 ? 'app.html' : 'get.html'));
+        return;
+      }
+      var m = res.j;
+      lede.textContent = 'Your membership includes the Android app.';
+      var d = btn('Download for Android', 'gold big'), st = document.createElement('p'); st.className = 'small muted center';
+      act.appendChild(d); act.appendChild(st);
+      d.onclick = function () {
+        d.disabled = true; st.textContent = 'Preparing your download…';
+        Promise.all([fetch(m.url).then(function (r) { return r.arrayBuffer(); }), crypto.subtle.importKey('raw', b64(m.key), 'AES-GCM', false, ['decrypt'])])
+          .then(function (x) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(m.iv) }, x[1], x[0]); })
+          .then(function (plain) {
+            return crypto.subtle.digest('SHA-256', plain).then(function (h) {
+              if (hex(h) !== m.sha256) throw new Error('check');
+              var url = URL.createObjectURL(new Blob([plain], { type: 'application/vnd.android.package-archive' }));
+              var a = document.createElement('a'); a.href = url; a.download = m.name; document.body.appendChild(a); a.click(); a.remove();
+              st.textContent = 'Downloaded and verified. Open it from your notifications or Downloads.';
+              d.disabled = false;
+            });
+          })
+          .catch(function () { st.textContent = 'The download did not complete. Try again.'; d.disabled = false; });
+      };
+    })
+    .catch(function () { lede.textContent = 'The server could not be reached. Check your connection.'; });
+})();
+</script>
+</body>
+</html>

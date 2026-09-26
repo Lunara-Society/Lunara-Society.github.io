@@ -24,16 +24,60 @@ What we charge for is being **listed**, being **monitored**, and being
 
 ---
 
-### Lunara Lens, 1 month — $25
+### Rosario credits, 500 — $6.99
 
-> Is it real? Ask, and hear the answer.
+> 500 credits that never expire.
 
-- **Terms:** Per month. Renewed by you, never auto-charged.
-- Deep AI analysis of photos, video, voice and text
-- Scam and voice-clone checks
-- Lunara Marks for the images you own
-- Rosario, the voice assistant, and the Android app
-- Describe, read, translate and converse, by voice
+- **Terms:** One payment. Credits never expire.
+- 500 credits
+- Never expire
+- Work with any plan, including Free
+
+### Rosario Starter, 1 month — $7.99
+
+> 800 credits a month for Rosario’s AI.
+
+- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- 800 credits every month (about 80 AI checks or 400 questions)
+- Every Rosario feature
+- Unused monthly credits do not roll over
+
+### Rosario credits, 1,500 — $17.99
+
+> 1,500 credits that never expire.
+
+- **Terms:** One payment. Credits never expire.
+- 1,500 credits
+- Never expire
+- Work with any plan, including Free
+
+### Rosario Pro, 1 month — $19.99
+
+> 2,500 credits a month and Rosario’s natural voice.
+
+- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- 2,500 credits every month
+- Rosario’s natural voice (Caty)
+- Every Rosario feature
+
+### Rosario Luna Max, 1 month — $49.99
+
+> 7,000 credits a month, the deepest AI checks, new features first.
+
+- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- 7,000 credits every month
+- Deepest AI checks
+- Rosario’s natural voice
+- New features first
+
+### Rosario credits, 5,000 — $49.99
+
+> 5,000 credits that never expire.
+
+- **Terms:** One payment. Credits never expire.
+- 5,000 credits
+- Never expire
+- Work with any plan, including Free
 
 ### Article 50 Disclosure Pack — $75
 
@@ -70,7 +114,7 @@ What we charge for is being **listed**, being **monitored**, and being
 - **Terms:** One month per payment. Renewed by you, never auto-charged.
 - Image, video-frame and text detection
 - Keys created in the app, stored only as a fingerprint
-- Includes a Lunara Lens licence
+- Includes Rosario with a monthly AI allowance
 
 ### Second Opinion — $240
 
@@ -177,5 +221,5 @@ explain it is by invitation and route them to maya@lunarasociety.com.
 | "Our agent needs a checkable identity" | AI Entity Verification |
 
 Lead with the smallest thing that solves their actual problem. Selling someone
-a $7,400 engagement when a $25
+a $7,400 engagement when a $6.99
 pack answers their question is how you lose the second sale.

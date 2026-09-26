@@ -135,7 +135,7 @@
   var add = {
     en: {
       rosario: 'Rosario', rosario_sub: 'Your Lunara assistant', tapToTalk: 'Tap to talk to Rosario', handsFree: 'Hands free', handsFreeHint: 'Say “Rosario” and then what you need.',
-      suggest: ['Is this photo real?', 'What’s in front of me?', 'Remind me in 10 minutes', 'Read my notes', 'Is this a scam?', 'Good morning'],
+      suggest: ['Good morning', 'Plan my day', 'Add milk to my shopping list', 'Is this photo real?', 'Someone says they’re from my bank', 'Remember that I parked on level 3'],
       g_tools: 'Everything Rosario can do', g_protect2: 'Protect', g_daily: 'Your day',
       t_remind: 'Reminders & notes', t_brief: 'My briefing', t_emergency: 'Emergency', t_safeword: 'Family safe word', t_qr: 'Scan a QR code', t_link: 'Is this link safe?', t_summ: 'Explain a letter', t_owner: 'Owner desk',
       welcome_h: 'Meet Rosario.', welcome_p: 'She checks whether photos, videos, voices and messages are real, protects what you own, and helps you see, read and understand the world, by voice, in English and Spanish.', signin_btn: 'Sign in with Google to continue',
@@ -152,7 +152,7 @@
     },
     es: {
       rosario: 'Rosario', rosario_sub: 'Tu asistente de Lunara', tapToTalk: 'Toca para hablar con Rosario', handsFree: 'Manos libres', handsFreeHint: 'Di “Rosario” y luego lo que necesitas.',
-      suggest: ['¿Esta foto es real?', '¿Qué tengo delante?', 'Recuérdame en 10 minutos', 'Lee mis notas', '¿Es una estafa?', 'Buenos días'],
+      suggest: ['Buenos días', 'Planifica mi día', 'Añade leche a la lista de la compra', '¿Esta foto es real?', 'Dicen que llaman de mi banco', 'Recuerda que aparqué en la planta 3'],
       g_tools: 'Todo lo que Rosario puede hacer', g_protect2: 'Proteger', g_daily: 'Tu día',
       t_remind: 'Recordatorios y notas', t_brief: 'Mi resumen', t_emergency: 'Emergencia', t_safeword: 'Palabra clave familiar', t_qr: 'Escanear un código QR', t_link: '¿Este enlace es seguro?', t_summ: 'Explícame una carta', t_owner: 'Panel del propietario',
       welcome_h: 'Te presento a Rosario.', welcome_p: 'Comprueba si fotos, vídeos, voces y mensajes son reales, protege lo tuyo y te ayuda a ver, leer y entender el mundo, con la voz, en español e inglés.', signin_btn: 'Inicia sesión con Google para continuar',
@@ -174,6 +174,24 @@
   root.LensText.es.analysing = 'Déjame mirarlo con atención.';
   root.LensText.en.scanning = 'Checking the file first.';
   root.LensText.es.scanning = 'Primero reviso el archivo.';
-  root.LensText.en.needLicence = 'This needs an active Lunara Lens plan.';
-  root.LensText.es.needLicence = 'Esto necesita un plan activo de Lunara Lens.';
+  // Free with credits: the words for plans and credits.
+  var credits = {
+    en: {
+      needLicence: 'Sign in to use Rosario’s AI. Everything on your phone works without it.',
+      allowance: 'You’ve run out of credits. Open Credits to get more; everything on your phone still works.',
+      acc_plan: 'Your plan', acc_none: 'Free plan. Everything that runs on your phone is free.', acc_left: 'Credits', acc_until: 'Renews',
+      buy_app: 'Get credits', activated: 'Done. Your credits are ready. Thank you.',
+      voice_natural: 'Rosario’s natural voice (Pro and Luna Max; uses credits)',
+      privacy: 'On-phone checks never leave your phone. When you use Rosario’s AI, that one image or text is sent to Lunara’s server for the answer and not kept; what is kept is which action you used and its credits. Your memory, lists and notes stay on this phone.'
+    },
+    es: {
+      needLicence: 'Inicia sesión para usar la IA de Rosario. Todo lo del teléfono funciona sin ella.',
+      allowance: 'Te has quedado sin créditos. Abre Créditos para conseguir más; todo lo del teléfono sigue funcionando.',
+      acc_plan: 'Tu plan', acc_none: 'Plan gratuito. Todo lo que funciona en tu teléfono es gratis.', acc_left: 'Créditos', acc_until: 'Se renueva',
+      buy_app: 'Conseguir créditos', activated: 'Listo. Tus créditos ya están disponibles. Gracias.',
+      voice_natural: 'La voz natural de Rosario (Pro y Luna Max; usa créditos)',
+      privacy: 'Las revisiones en el teléfono nunca salen de él. Cuando usas la IA de Rosario, esa imagen o ese texto se envía al servidor de Lunara solo para la respuesta y no se guarda; se guarda qué acción usaste y sus créditos. Tu memoria, tus listas y tus notas se quedan en este teléfono.'
+    }
+  };
+  ['en', 'es'].forEach(function (l) { for (var k in credits[l]) root.LensText[l][k] = credits[l][k]; });
 })(typeof self !== 'undefined' ? self : this);

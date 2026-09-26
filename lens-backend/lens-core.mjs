@@ -7,34 +7,42 @@
 
    Routes (POST unless marked):
      GET  /health                              which secrets are present
-     /me        { session_token }              licence, allowance left
-     /redeem    { session_token, code }        activation code → licence
-     /claim     { session_token, paypal_txn }  PayPal capture → licence
+     /me        { session_token }              plan, credits, what things cost
+     /redeem    { session_token, code }        activation code → plan or credits
+     /claim     { session_token, paypal_txn, product }  PayPal (web) → plan or credits
+     /purchase/play { session_token, product_id, purchase_token }  Google Play
+     /history   { session_token }              the last credit movements
      /ai        { session_token, task, lang, … }   the AI features
+     /speak     { session_token, text, lang }  Caty's voice (Pro and Luna Max)
      /mark      { session_token, sha256, owner_name, title } → mark id
      GET  /mark/<id>                           public ownership record
+     /account/delete { session_token, confirm: "DELETE" }
      /apikey    { session_token, label }       API key, shown once
-     /admin/codes { session_token, plan, count, days }
+     /admin/…   the owner's desk
      /v1/detect   Authorization: Bearer lk_…   the paid detection API
 
    ON MONEY
-   A licence carries a monthly AI allowance in dollars, and every model
-   call is priced from the token counts the API reports and written to
-   lens_usage. A call is refused before it is made if the worst case it
-   could cost (its input estimate plus max_tokens of output) would take
-   the month past the allowance. So no user can ever cost more than
-   their allowance, and the allowance is set well under what they paid:
+   The app is free to download. Every signed-in account has a wallet of
+   credits: 50 welcome credits that never expire, 20 more each month on
+   the free plan, or a paid plan's monthly credits (Starter 800, Pro
+   2,500, Luna Max 7,000). Bought packs never expire; a plan's monthly
+   credits do not roll over. Each AI action costs a fixed number of
+   credits (CREDITS below), taken before the model is called and given
+   back if the call fails, so members always know the price in advance.
 
-     App, $25 a month: $10.00 a month of AI and voice.
-       After PayPal's fee ($25 − 3.49% − $0.49 ≈ $23.64) Lunara keeps
-       at least $13.64 from even the heaviest user.
-     API, $199 a month: $120 a month of AI.
-       After the fee (≈ $191.56) Lunara keeps at least $71.56.
+   The fixed prices are set from what the calls really cost, which is
+   still priced from token counts and written to lens_usage. The
+   cheapest credit Lunara sells is a Luna Max credit ($49.99 / 7,000 ≈
+   $0.0071, ≈ $0.0061 after Google's 15%); every action is priced so
+   its typical cost stays under half of what its credits bring in.
+
+   Accounts that bought the earlier $25 month, or were given a
+   complimentary year, keep that licence and its dollar allowance until
+   it ends; the owner is never metered.
 
    Everything that can run on the phone does: speech in and out,
    magnifier, text recognition, metadata and watermark forensics,
-   Lunara Marks, files. Those cost nothing and need no licence. Only
-   the calls to the model spend the allowance.
+   Lunara Marks, files, reminders, lists, memory. Those cost nothing.
    ═══════════════════════════════════════════════════════════════════ */
 
 export const PLANS = {
@@ -45,6 +53,36 @@ export const PLANS = {
   // Never metered (spend() skips it); the figure only has to fit numeric(10,4).
   owner:     { days: 36500, budget: 100000, price: 0, label: 'Owner · no limits' }
 };
+
+/* The credit plans. Play subscription ids map onto them; on the web a
+   plan bought through PayPal is one month that does not renew. */
+export const TIERS = {
+  free:    { monthly: 20,   price: 0,     voice: false, deep: false, label: 'Free' },
+  starter: { monthly: 800,  price: 7.99,  voice: false, deep: false, label: 'Starter' },
+  pro:     { monthly: 2500, price: 19.99, voice: true,  deep: false, label: 'Pro' },
+  max:     { monthly: 7000, price: 49.99, voice: true,  deep: true,  label: 'Luna Max' }
+};
+export const WELCOME = 50;
+export const PACKS = {
+  credits_500:  { credits: 500,  price: 6.99,  label: '500 credits' },
+  credits_1500: { credits: 1500, price: 17.99, label: '1,500 credits' },
+  credits_5000: { credits: 5000, price: 49.99, label: '5,000 credits' }
+};
+export const PLAY_SUBS = { luna_starter: 'starter', luna_pro: 'pro', luna_max: 'max' };
+export const PLAY_PACKAGE = 'com.lunarasociety.lens';
+
+/* What each action costs, in credits. Detection runs on the deep model;
+   a video check sends six frames, so it costs more. */
+export const CREDITS = {
+  rosario: 2, intent: 1, translate: 2, replies: 2, describe: 4, read: 5,
+  summarize: 5, write: 4, coach: 3, plan_day: 3,
+  detect_image: 10, detect_text: 10, detect_audio: 10, scam: 10, detect_frames: 25
+};
+/* Caty's live voice: one credit per 25 characters, so a typical spoken
+   answer (about 120 characters) is 5. ElevenLabs bills about $0.00011 a
+   character; the recorded lines and the phone's own voice are free. */
+export const SPEAK_CHARS_PER_CREDIT = 25;
+export const speakCredits = (chars) => Math.max(1, Math.ceil(chars / SPEAK_CHARS_PER_CREDIT));
 
 /* The owner is never metered and never asked to pay. Everyone else is.
    Set LENS_OWNER_EMAILS to change who that is. */
@@ -69,10 +107,12 @@ export const PRICES = {
   'claude-haiku-4-5': [1, 5]
 };
 
-export function costOf(model, inTok, outTok) {
+/* Cached instructions: writing the cache costs 1.25× input, reading it 0.1×. */
+export function costOf(model, inTok, outTok, cacheWrite = 0, cacheRead = 0) {
   const p = PRICES[model] || PRICES['claude-opus-5'];
-  return (inTok * p[0] + outTok * p[1]) / 1e6;
+  return (inTok * p[0] + cacheWrite * p[0] * 1.25 + cacheRead * p[0] * 0.1 + outTok * p[1]) / 1e6;
 }
+const callCost = (model, out) => costOf(model, out.input_tokens, out.output_tokens, out.cache_write_tokens || 0, out.cache_read_tokens || 0);
 
 export const period = (d = new Date()) => d.toISOString().slice(0, 7);
 
@@ -218,7 +258,8 @@ You cannot hear the audio. You receive the device's acoustic measurements (bandw
       type: 'object', additionalProperties: false,
       required: ['action', 'speech', 'arg_text', 'arg_number', 'arg_folder', 'arg_language', 'arg_minutes'],
       properties: {
-        action: { type: 'string', enum: ['answer', 'describe', 'read', 'detect_image', 'detect_text', 'detect_audio', 'detect_video', 'scan', 'scam', 'link', 'qr', 'translate', 'converse', 'replies', 'magnify', 'color', 'mark', 'verify_mark', 'files', 'organize', 'remind', 'note', 'notes', 'briefing', 'emergency', 'safe_word', 'calm', 'card', 'summarize', 'settings', 'account', 'help', 'stop'] },
+        action: { type: 'string', enum: ['answer', 'describe', 'read', 'detect_image', 'detect_text', 'detect_audio', 'detect_video', 'scan', 'scam', 'link', 'qr', 'translate', 'converse', 'replies', 'magnify', 'color', 'mark', 'verify_mark', 'files', 'organize', 'remind', 'note', 'notes', 'briefing', 'emergency', 'safe_word', 'calm', 'card', 'summarize', 'settings', 'account', 'help', 'stop',
+          'remember_fact', 'forget_fact', 'memory', 'list_add', 'list_read', 'lists', 'write', 'coach', 'plan_day', 'talk', 'mode', 'shop'] },
         speech: { type: 'string' },
         arg_text: { type: 'string' },
         arg_number: { type: 'integer' },
@@ -233,7 +274,19 @@ Lunara Society's standard is that claims must be checkable. So you never pretend
 
 Every turn, choose exactly one action. If the user wants something the app does, pick that action and put a one-sentence spoken confirmation in speech. If they are just talking or asking a question you can answer, use "answer" and answer in speech.
 
-The app's actions: describe (what is in front of me), read (read text aloud), detect_image / detect_text / detect_audio / detect_video (is this real or AI), scan (check a screen or print with the camera), scam (is this message a scam), link (is this link safe, arg_text = the link), qr (scan a QR code), translate (arg_text = what, arg_language = target language), converse (live two-way translation), replies (help me answer, arg_text = what they said), magnify, color (what colour is this), mark (put an invisible Lunara Mark on my photo), verify_mark (who owns this image), files (open my files), organize (arg_number latest images into arg_folder), remind (arg_minutes from now, arg_text = what), note (take a note, arg_text = the note), notes (read my notes), briefing (my day: time, weather, reminders), emergency (I need help), safe_word (family safe word against voice-clone scams), calm (I am stressed), card (my medical card), summarize (summarize a letter or document), settings, account, help, stop.
+The app's actions: describe (what is in front of me), read (read text aloud), detect_image / detect_text / detect_audio / detect_video (is this real or AI), scan (check a screen or print with the camera), scam (is this message a scam), link (is this link safe, arg_text = the link), qr (scan a QR code), translate (arg_text = what, arg_language = target language), converse (live two-way translation), replies (help me answer, arg_text = what they said), magnify, color (what colour is this), mark (put an invisible Lunara Mark on my photo), verify_mark (who owns this image), files (open my files), organize (arg_number latest images into arg_folder), remind (arg_minutes from now, arg_text = what; work out the minutes from the local time in CONTEXT, e.g. "tomorrow at 9" from 20:00 is 780), note (take a note, arg_text = the note), notes (read my notes), briefing (my day: time, weather, reminders, lists), emergency (I need help), safe_word (family safe word against voice-clone scams), calm (I am stressed), card (my medical card), summarize (explain a letter, bill or document), settings, account, help, stop.
+
+You are also the user's personal assistant, at work and at home:
+- remember_fact (arg_text = the fact, written in the third person, short: "Her daughter is called Ana", "Parks on level 3") when they ask you to remember something about them or their life. forget_fact (arg_text = what to forget). memory (show what you remember).
+- list_add (arg_folder = the list name, e.g. "Shopping", "To do", "Ideas"; arg_text = the items, comma separated). list_read (arg_folder = which list). lists (open all lists).
+- write (arg_text = what to write and to whom: a reply, email, complaint, message or letter).
+- coach (arg_text = the situation) when someone is pressuring them right now: a call from "the bank", a relative asking for money, tech support, a delivery fee. Coach gives them words to say.
+- plan_day (plan my day, what should I do first).
+- talk (let's just talk, conversation mode, keep listening).
+- mode (arg_text = "work" or "home") to switch between their work and home lists.
+- shop (credits, plans, buy, how many credits do I have).
+
+MEMORY in the input is what the user asked you to remember. Use it naturally when it helps ("your daughter Ana"), never recite it unasked, and never claim to remember anything that is not there. MODE says whether they are in work or home mode; LISTS gives their lists.
 
 Unused arguments are "" or 0.`
   },
@@ -241,15 +294,57 @@ Unused arguments are "" or 0.`
     tier: 'fast', effort: 'low', max_tokens: 1800,
     schema: {
       type: 'object', additionalProperties: false,
-      required: ['speech', 'summary', 'actions', 'deadlines'],
+      required: ['speech', 'summary', 'actions', 'deadlines', 'reminders', 'amount_due'],
       properties: {
         speech: { type: 'string' },
         summary: { type: 'string' },
         actions: { type: 'array', items: { type: 'string' } },
-        deadlines: { type: 'array', items: { type: 'string' } }
+        deadlines: { type: 'array', items: { type: 'string' } },
+        reminders: {
+          type: 'array',
+          items: {
+            type: 'object', additionalProperties: false,
+            required: ['text', 'date'],
+            properties: { text: { type: 'string' }, date: { type: 'string' } }
+          }
+        },
+        amount_due: { type: 'string' }
       }
     },
-    system: `You are Rosario, reading a letter, bill, form or document for the user (the image or text). speech: two to four spoken sentences: who it is from, what it is about, and what, if anything, the user must do and by when. summary: a clear written summary. actions: things the user needs to do. deadlines: dates that matter, with what they are for. If it looks like a scam or a threat to pay urgently, say so plainly.`
+    system: `You are Rosario, reading a letter, bill, form, appointment or document for the user (the image or text). speech: two to four spoken sentences: who it is from, what it is about, and what, if anything, the user must do and by when. summary: a clear written summary in plain words. actions: things the user needs to do. deadlines: dates that matter, with what they are for. reminders: one entry per deadline or appointment the user should be reminded of; text is the reminder in a few words ("Pay the water bill, 42.10 €"), date is YYYY-MM-DD (use the local date in CONTEXT to resolve the year), or "" when there is no clear date. amount_due: the amount to pay with its currency, or "". If it looks like a scam or a threat to pay urgently, say so plainly and do not create payment reminders for it.`
+  },
+  write: {
+    tier: 'fast', effort: 'low', max_tokens: 1800,
+    schema: {
+      type: 'object', additionalProperties: false,
+      required: ['subject', 'text', 'speech'],
+      properties: { subject: { type: 'string' }, text: { type: 'string' }, speech: { type: 'string' } }
+    },
+    system: `You are Rosario, writing for the user. KIND says what to write (reply, email, complaint, message or letter), TONE how it should sound, and the INPUT what it is about and to whom; if they pasted a message they received, answer it. Write it ready to send, in the WRITE language, in the user's own voice, plainly and without clichés. Use MEMORY only for facts the text needs (their name, a detail they gave you). Never invent facts, reference numbers or promises: leave [brackets] where the user must fill something in. For a complaint: what happened, what they want, by when. subject: an email subject line, or "" for a message. speech: one sentence, in the user's language, saying what you wrote.`
+  },
+  coach: {
+    tier: 'fast', effort: 'low', max_tokens: 1500,
+    schema: {
+      type: 'object', additionalProperties: false,
+      required: ['risk', 'speech', 'say_this', 'do_not', 'check'],
+      properties: {
+        risk: { type: 'string', enum: ['low', 'medium', 'high'] },
+        speech: { type: 'string' },
+        say_this: { type: 'array', items: { type: 'string' } },
+        do_not: { type: 'array', items: { type: 'string' } },
+        check: { type: 'array', items: { type: 'string' } }
+      }
+    },
+    system: `You are Rosario coaching someone through a call, message or visit that may be a scam, while it is happening. Be calm and brief. The golden rules: a real bank, police force, tax office or company never asks for codes, passwords, gift cards, crypto or a transfer to a "safe account"; urgency and secrecy are the signs; hanging up and calling back on a number you already trust is always allowed. A relative asking for money by voice or message can be a voice clone: ask for the family safe word or call them back. speech: two short spoken sentences, the most important instruction first. say_this: 2-3 exact short sentences the user can say right now. do_not: 2-3 things not to do. check: 1-3 safe ways to verify. Never tell them it is certainly safe.`
+  },
+  plan_day: {
+    tier: 'fast', effort: 'low', max_tokens: 1200,
+    schema: {
+      type: 'object', additionalProperties: false,
+      required: ['speech', 'priorities'],
+      properties: { speech: { type: 'string' }, priorities: { type: 'array', items: { type: 'string' } } }
+    },
+    system: `You are Rosario helping the user plan their day. The INPUT holds the time, the weather, their reminders, their lists and MODE (work or home). priorities: the three to five things to do, in a sensible order, each short and concrete, drawn only from what they gave you (plus obvious timing from the weather, like taking an umbrella). speech: two or three warm spoken sentences with the plan. Do not invent tasks or appointments.`
   },
   intent: {
     tier: 'fast', effort: 'low', max_tokens: 600,
@@ -308,6 +403,10 @@ async function licenceFor(email, deps) {
   return activeLicense(await deps.db.licensesFor(email));
 }
 
+/* The owner's licence, or an earlier paid or complimentary licence
+   that is still running. Everyone else is on credits. */
+const legacyLicence = licenceFor;
+
 function activeLicense(list, now = Date.now()) {
   return (list || [])
     .filter((l) => new Date(l.expires_at).getTime() > now)
@@ -318,7 +417,8 @@ function activeLicense(list, now = Date.now()) {
    cannot cover. Images are sent at most 1024 px on the long edge by
    the app, about 1,400 tokens each; we reserve 1,600. */
 export function estimateInput(task, body) {
-  const text = JSON.stringify(body.text || '') + JSON.stringify(body.evidence || '');
+  const text = JSON.stringify(body.text || '') + JSON.stringify(body.evidence || '') +
+    String(body.memory || '') + String(body.lists || '') + JSON.stringify(body.history || '');
   const images = Array.isArray(body.images) ? body.images.length : 0;
   return 900 + Math.ceil(text.length / 3) + images * 1600;
 }
@@ -336,6 +436,7 @@ export async function handleLens(req, deps) {
       voice: !!deps.env.ELEVENLABS_API_KEY,
       paused: await paused(deps),
       paypal: !!(deps.env.PAYPAL_CLIENT_ID && deps.env.PAYPAL_CLIENT_SECRET),
+      play: !!deps.play,
       models: { deep: deps.model('deep'), fast: deps.model('fast') }
     });
   }
@@ -365,13 +466,17 @@ export async function handleLens(req, deps) {
     case '/me': return me(email, deps);
     case '/redeem': return redeem(email, body, deps);
     case '/claim': return claim(email, body, deps);
+    case '/purchase/play': return purchasePlay(email, body, deps);
+    case '/history': return history(email, deps);
     case '/ai': return ai(email, body, deps);
     case '/mark': return mark(email, who, body, deps);
     case '/apikey': return apikey(email, body, deps);
+    case '/account/delete': return deleteAccount(email, body, deps);
     case '/admin/codes': return adminCodes(email, body, deps);
     case '/admin/overview': return adminOverview(email, deps);
     case '/admin/claim': return adminClaim(email, body, deps);
     case '/admin/grant': return adminGrant(email, body, deps);
+    case '/admin/credits': return adminCredits(email, body, deps);
     case '/admin/pause': return adminPause(email, body, deps);
     case '/speak': return speak(email, body, deps);
     case '/download': return download(email, deps);
@@ -379,23 +484,151 @@ export async function handleLens(req, deps) {
   }
 }
 
+/* The price list the app shows, straight from the constants above. */
+function catalogue() {
+  return {
+    tiers: Object.fromEntries(Object.entries(TIERS).map(([k, v]) => [k, { monthly: v.monthly, price: v.price, voice: v.voice, deep: v.deep, label: v.label }])),
+    packs: PACKS, credits: CREDITS, welcome: WELCOME, speak_chars_per_credit: SPEAK_CHARS_PER_CREDIT,
+    play: { subs: PLAY_SUBS, packs: Object.keys(PACKS) }
+  };
+}
+
 async function me(email, deps) {
-  const lic = await licenceFor(email, deps);
-  if (!lic) {
-    const pending = deps.db.pendingClaimFor ? await deps.db.pendingClaimFor(email) : null;
-    return json({ licensed: false, email, pending: !!pending });
+  const lic = await legacyLicence(email, deps);
+  if (lic && lic.plan === 'owner') {
+    return json({ licensed: true, owner: true, unlimited: true, email, plan: 'owner', tier: 'owner', label: PLANS.owner.label, voice: true, expires_at: lic.expires_at, allowance_left_pct: 100, resets: nextMonthStart(), catalogue: catalogue() });
   }
-  if (lic.plan === 'owner') {
-    return json({ licensed: true, owner: true, unlimited: true, email, plan: 'owner', label: PLANS.owner.label, expires_at: lic.expires_at, allowance_left_pct: 100, resets: nextMonthStart() });
+  const w = await wallet(email, deps);
+  const pending = deps.db.pendingClaimFor ? await deps.db.pendingClaimFor(email) : null;
+  const out = {
+    licensed: true, email, tier: w.tier, label: TIERS[w.tier].label,
+    credits: w.sub_credits + w.pack_credits, sub_credits: w.sub_credits, pack_credits: w.pack_credits,
+    monthly: TIERS[w.tier].monthly, voice: TIERS[w.tier].voice, deep: TIERS[w.tier].deep,
+    source: w.tier_source || null,
+    renews: w.tier === 'free' ? nextMonthStart() : w.tier_expires_at,
+    pending: !!pending, catalogue: catalogue()
+  };
+  if (lic) {
+    // An earlier licence still running: its allowance is used first.
+    const spent = await deps.db.spent(lic.id, period());
+    const budget = Number(lic.budget_usd_month);
+    Object.assign(out, {
+      plan: lic.plan, legacy: { label: PLANS[lic.plan].label, expires_at: lic.expires_at },
+      voice: true, allowance_left_pct: Math.max(0, Math.round((1 - spent / budget) * 100))
+    });
   }
-  const spent = await deps.db.spent(lic.id, period());
-  const budget = Number(lic.budget_usd_month);
-  return json({
-    licensed: true, email, plan: lic.plan, label: PLANS[lic.plan].label,
-    expires_at: lic.expires_at,
-    allowance_left_pct: Math.max(0, Math.round((1 - spent / budget) * 100)),
-    resets: nextMonthStart()
-  });
+  return json(out);
+}
+
+/* ── the wallet ─────────────────────────────────────────────────── */
+
+async function wallet(email, deps) {
+  let w = await deps.db.getWallet(email);
+  if (!w) {
+    const made = await deps.db.createWallet({ email, tier: 'free', sub_credits: TIERS.free.monthly, pack_credits: WELCOME, granted_period: period() });
+    if (made) {
+      await deps.db.addLedger({ email, delta: WELCOME, bucket: 'pack', kind: 'welcome', ref: null });
+      await deps.db.addLedger({ email, delta: TIERS.free.monthly, bucket: 'sub', kind: 'monthly', ref: period() });
+      return made;
+    }
+    w = await deps.db.getWallet(email); // another request made it first
+  }
+  return settle(w, deps);
+}
+
+/* Bring a wallet up to date: a paid plan that has run out is renewed
+   (Google Play) or falls back to Free; Free gets its monthly credits
+   once each calendar month. Monthly credits never roll over. */
+async function settle(w, deps) {
+  if (w.tier !== 'free' && (!w.tier_expires_at || new Date(w.tier_expires_at).getTime() <= Date.now())) {
+    if (w.tier_source === 'play' && w.play_token && deps.play) {
+      const r = await syncPlaySub(w.email, w.play_product, w.play_token, deps).catch(() => null);
+      if (r && r.active) return deps.db.getWallet(w.email);
+    }
+    const patch = { tier: 'free', tier_source: null, tier_expires_at: null, sub_credits: TIERS.free.monthly, granted_period: period() };
+    await deps.db.updateWallet(w.email, patch);
+    await deps.db.addLedger({ email: w.email, delta: TIERS.free.monthly - w.sub_credits, bucket: 'sub', kind: 'plan_ended', ref: w.tier });
+    return { ...w, ...patch };
+  }
+  if (w.tier === 'free' && w.granted_period !== period()) {
+    const patch = { sub_credits: TIERS.free.monthly, granted_period: period() };
+    await deps.db.updateWallet(w.email, patch);
+    await deps.db.addLedger({ email: w.email, delta: TIERS.free.monthly - w.sub_credits, bucket: 'sub', kind: 'monthly', ref: period() });
+    return { ...w, ...patch };
+  }
+  return w;
+}
+
+async function setTier(email, tier, source, expiresAt, deps, extra = {}) {
+  // Read, not settle: settling could itself be what called us.
+  const w = (await deps.db.getWallet(email)) || await wallet(email, deps);
+  const patch = { tier, tier_source: source, tier_expires_at: expiresAt, sub_credits: TIERS[tier].monthly, granted_period: period(), ...extra };
+  await deps.db.updateWallet(email, patch);
+  await deps.db.addLedger({ email, delta: TIERS[tier].monthly - w.sub_credits, bucket: 'sub', kind: 'plan', ref: tier + ':' + source });
+}
+
+async function addPack(email, product, kind, ref, deps) {
+  await wallet(email, deps);
+  return deps.db.addCredits(email, 'pack', PACKS[product].credits, kind, ref);
+}
+
+const outOfCredits = (need, w) => json({
+  error: `This needs ${need} credits and you have ${w.sub + w.pack}. Get more credits or a plan to carry on. Everything that runs on your phone still works.`,
+  code: 'credits', need, credits: w.sub + w.pack
+}, 402);
+
+async function history(email, deps) {
+  const rows = await deps.db.ledgerFor(email);
+  return json({ rows: (rows || []).map((r) => ({ delta: r.delta, kind: r.kind, ref: r.ref, at: r.created_at })) });
+}
+
+/* ── Google Play ────────────────────────────────────────────────────
+   The Android app sells plans and packs through Google Play Billing
+   (Digital Goods API). The app sends the purchase token; Google is
+   asked whether it is real and paid, the credits are granted once per
+   order, and the purchase is acknowledged (plans) or consumed (packs)
+   so Google does not refund it after three days. The first account to
+   present a token owns it. */
+async function purchasePlay(email, body, deps) {
+  if (!deps.play) return json({ error: 'Google Play purchases are not switched on yet.', code: 'offline' }, 503);
+  const product = String(body.product_id || '');
+  const token = String(body.purchase_token || '');
+  if (!token || token.length > 4096) return json({ error: 'Missing purchase token.' }, 400);
+  if (!PLAY_SUBS[product] && !PACKS[product]) return json({ error: 'Unknown product.' }, 400);
+  const bindRef = 'playtoken:' + await sha256hex(token);
+  const bound = await deps.db.getPurchase(bindRef);
+  if (bound && bound.email !== email) return json({ error: 'That purchase belongs to another account.' }, 409);
+  if (!bound) await deps.db.recordPurchase({ ref: bindRef, email, product, source: 'play' });
+  if (PLAY_SUBS[product]) {
+    const r = await syncPlaySub(email, product, token, deps);
+    if (!r.active) return json({ error: 'Google Play does not show that plan as active.', code: 'play' }, 402);
+  } else {
+    const p = await deps.play.getProduct(product, token);
+    if (!p || p.purchaseState !== 0) return json({ error: 'Google Play does not show that purchase as paid yet.', code: 'play' }, 402);
+    const ref = 'play:' + (p.orderId || bindRef);
+    if (await deps.db.recordPurchase({ ref, email, product, source: 'play' })) await addPack(email, product, 'pack', ref, deps);
+    if (p.consumptionState === 0) await deps.play.consume(product, token);
+  }
+  return me(email, deps);
+}
+
+/* Ask Google for a plan's state; grant a new month once per order id
+   (each renewal is a new order), keep the expiry current. */
+async function syncPlaySub(email, product, token, deps) {
+  const s = await deps.play.getSub(token);
+  const ok = s && ['SUBSCRIPTION_STATE_ACTIVE', 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD'].includes(s.subscriptionState);
+  if (!ok) return { active: false };
+  const line = (s.lineItems || []).find((l) => PLAY_SUBS[l.productId]) || null;
+  if (!line) return { active: false };
+  const tier = PLAY_SUBS[line.productId];
+  const orderRef = 'play:' + (s.latestOrderId || line.latestSuccessfulOrderId || token.slice(0, 40));
+  if (await deps.db.recordPurchase({ ref: orderRef, email, product: line.productId, source: 'play' })) {
+    await setTier(email, tier, 'play', line.expiryTime, deps, { play_token: token, play_product: line.productId });
+  } else {
+    await deps.db.updateWallet(email, { tier, tier_source: 'play', tier_expires_at: line.expiryTime, play_token: token, play_product: line.productId });
+  }
+  if (s.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_PENDING') await deps.play.ackSub(line.productId, token).catch(() => null);
+  return { active: true, tier };
 }
 
 function nextMonthStart(d = new Date()) {
@@ -420,19 +653,41 @@ async function redeem(email, body, deps) {
   if (!row || row.redeemed_at) return json({ error: 'That code is not valid or has already been used.' }, 400);
   const ok = await deps.db.markCodeRedeemed(code, email);
   if (!ok) return json({ error: 'That code has already been used.' }, 409);
-  await grant(email, row.plan, 'code', null, deps, row.days);
+  await fulfil(email, row.plan, 'code', 'code:' + code, deps, row.days);
   return me(email, deps);
 }
+
+/* Deliver what was bought or given: a credit plan for a number of days,
+   a pack of credits, or one of the earlier dollar-allowance licences. */
+async function fulfil(email, product, source, ref, deps, days) {
+  if (TIERS[product] && product !== 'free') {
+    const w = await wallet(email, deps);
+    // Buying the same plan again extends it from the end of what is left.
+    const from = w.tier === product && w.tier_expires_at && new Date(w.tier_expires_at) > new Date() ? new Date(w.tier_expires_at) : new Date();
+    const until = new Date(from.getTime() + (days || 31) * 86400e3).toISOString();
+    if (w.tier === product && from > new Date()) {
+      await deps.db.updateWallet(email, { tier_expires_at: until });
+      return deps.db.addCredits(email, 'sub', TIERS[product].monthly, 'plan', ref);
+    }
+    return setTier(email, product, source, until, deps);
+  }
+  if (PACKS[product]) return addPack(email, product, source === 'code' ? 'gift' : 'pack', ref, deps);
+  if (PLANS[product] && product !== 'owner') return grant(email, product, source, source === 'paypal' ? ref.replace(/^paypal:/, '') : null, deps, days);
+  throw new Error('unknown product ' + product);
+}
+const PRODUCT_PRICE = (p) => TIERS[p] ? TIERS[p].price : PACKS[p] ? PACKS[p].price : PLANS[p] ? PLANS[p].price : null;
 
 /* A PayPal capture id is the "Transaction ID" on the buyer's receipt.
    PayPal is asked directly whether it is a completed payment of the
    right amount; the id can be claimed once, ever. */
 async function claim(email, body, deps) {
   const txn = String(body.paypal_txn || '').trim().toUpperCase();
+  const product = String(body.product || '');
+  if (product && (!PRODUCT_PRICE(product) || product === 'owner' || product === 'free')) return json({ error: 'Choose what you bought.' }, 400);
   if (!/^[0-9A-Z]{12,20}$/.test(txn)) {
     return json({ error: 'Enter the Transaction ID from your PayPal receipt. It is 17 letters and numbers.' }, 400);
   }
-  if (await deps.db.licenseByTxn(txn)) return json({ error: 'That payment has already been used to activate a licence.' }, 409);
+  if (await deps.db.licenseByTxn(txn) || await deps.db.getPurchase('paypal:' + txn)) return json({ error: 'That payment has already been used.' }, 409);
   const cap = await deps.paypalCapture(txn);
   if (!cap) {
     // PayPal cannot be asked automatically: queue it for the owner, who
@@ -440,7 +695,7 @@ async function claim(email, body, deps) {
     if (deps.db.createClaim) {
       const existing = deps.db.claimByTxn ? await deps.db.claimByTxn(txn) : null;
       if (existing && existing.status !== 'pending') return json({ error: 'That Transaction ID has already been reviewed.' }, 409);
-      if (!existing) await deps.db.createClaim({ email, paypal_txn: txn, note: String(body.note || '').slice(0, 200) });
+      if (!existing) await deps.db.createClaim({ email, paypal_txn: txn, product: product || null, note: String(body.note || '').slice(0, 200) });
       return json({ licensed: false, pending: true, email, message: 'Thank you. Your payment is waiting for confirmation.' }, 202);
     }
     return json({ error: 'Payments cannot be checked automatically yet. Email lunarasociety@gmail.com with your Transaction ID.' }, 503);
@@ -448,6 +703,12 @@ async function claim(email, body, deps) {
   if (cap.status !== 'COMPLETED') return json({ error: 'PayPal does not show that payment as completed yet. Try again in a few minutes.' }, 400);
   const paid = Number(cap.amount?.value || 0);
   const cur = cap.amount?.currency_code;
+  if (product) {
+    if (cur !== 'USD' || paid + 0.001 < PRODUCT_PRICE(product)) return json({ error: `That payment was ${paid} ${cur}, which does not match what you chose.` }, 400);
+    if (!(await deps.db.recordPurchase({ ref: 'paypal:' + txn, email, product, source: 'paypal' }))) return json({ error: 'That payment has already been used.' }, 409);
+    await fulfil(email, product, 'paypal', 'paypal:' + txn, deps);
+    return me(email, deps);
+  }
   const plan = cur === 'USD' && paid >= PLANS.api_month.price ? 'api_month'
     : cur === 'USD' && paid >= PLANS.app_month.price ? 'app_month' : null;
   if (!plan) return json({ error: `That payment was ${paid} ${cur}, which does not match a Lunara Lens plan.` }, 400);
@@ -475,6 +736,15 @@ function buildContent(task, body) {
   const lines = [`Respond in ${lang}. Every text field, including speech, must be in ${lang}.`];
   if (task === 'translate') lines.push(`TARGET language: ${LANGS[body.target] || body.target || 'English'}.`);
   if (task === 'replies') lines.push(`REPLY language: ${LANGS[body.target] || body.target || lang}. The user's language: ${lang}.`);
+  if (task === 'write') {
+    lines.push(`WRITE language: ${LANGS[body.target] || lang}. The user's language: ${lang}.`);
+    lines.push(`KIND: ${String(body.kind || 'message').slice(0, 30)}. TONE: ${String(body.tone || 'friendly').slice(0, 30)}.`);
+  }
+  // The member's own memory, lists and mode live on their phone; they
+  // come with the request so Rosario can use them, and are not stored.
+  if (body.memory) lines.push('MEMORY:\n' + String(body.memory).slice(0, 2500));
+  if (body.lists) lines.push('LISTS:\n' + String(body.lists).slice(0, 2000));
+  if (body.mode) lines.push('MODE: ' + (body.mode === 'work' ? 'work' : 'home'));
   if (body.evidence) lines.push('EVIDENCE from the device:\n' + String(body.evidence).slice(0, 4000));
   if (body.text) lines.push('INPUT:\n' + String(body.text).slice(0, 12000));
   if (Array.isArray(body.history) && body.history.length) {
@@ -511,7 +781,7 @@ async function runTask(lic, task, body, route, deps) {
     model, system: t.system, max_tokens: t.max_tokens, effort: t.effort,
     schema: t.schema, content: buildContent(task, body)
   });
-  const cost = costOf(model, out.input_tokens, out.output_tokens);
+  const cost = callCost(model, out);
   await deps.db.logUsage({
     // Which action the model chose is logged beside what it cost, so an
     // oversight review can see what the assistant decided, not only spend.
@@ -528,15 +798,52 @@ async function runTask(lic, task, body, route, deps) {
 async function ai(email, body, deps) {
   const task = String(body.task || '');
   if (!TASKS[task]) return json({ error: 'Unknown task.' }, 400);
-  const lic = await licenceFor(email, deps);
-  if (!lic) return json({ error: 'This needs an active Lunara Lens plan.', code: 'license' }, 402);
   if (!deps.env.ANTHROPIC_API_KEY) return json({ error: 'The AI service is not switched on yet.', code: 'offline' }, 503);
-  return runTask(lic, task, body, task, deps);
+  const lic = await legacyLicence(email, deps);
+  if (lic) {
+    // The earlier licence pays while its allowance lasts, then credits do.
+    const res = await runTask(lic, task, body, task, deps);
+    if (res.status !== 402 || lic.plan === 'owner') return res;
+  }
+  return runCredits(email, task, body, deps);
+}
+
+/* One AI action on credits: priced in advance, taken before the call,
+   returned if the call does not produce an answer. */
+async function runCredits(email, task, body, deps) {
+  if (await paused(deps)) return PAUSED();
+  const t = TASKS[task];
+  const w = await wallet(email, deps);
+  const deep = TIERS[w.tier].deep && t.tier === 'deep';
+  const price = CREDITS[task] || 2;
+  const ref = task + ':' + randomId(10);
+  const paid = await deps.db.spendCredits(email, price, ref);
+  if (!paid || !paid.ok) return outOfCredits(price, paid || { sub: 0, pack: 0 });
+  const refund = () => deps.db.addCredits(email, 'pack', price, 'refund', ref).catch(() => null);
+  const model = deps.model(t.tier);
+  let out;
+  try {
+    out = await deps.callModel({
+      model, system: t.system, schema: t.schema, content: buildContent(task, body),
+      // Luna Max: the detection model thinks harder and may write more.
+      max_tokens: deep ? Math.round(t.max_tokens * 1.6) : t.max_tokens, effort: deep ? 'high' : t.effort
+    });
+  } catch (e) { await refund(); throw e; }
+  await deps.db.logUsage({
+    license_id: null, email, period: period(),
+    route: out.result && typeof out.result.action === 'string' ? `${task}:${out.result.action}`.slice(0, 60) : task, model,
+    input_tokens: out.input_tokens + (out.cache_write_tokens || 0) + (out.cache_read_tokens || 0), output_tokens: out.output_tokens, cost_usd: callCost(model, out)
+  });
+  if (out.refused || !out.result) {
+    await refund();
+    return out.refused ? json({ error: 'The model declined this request. No credits were used.', code: 'refused' }, 422)
+      : json({ error: 'The answer came back incomplete. No credits were used; try again.' }, 502);
+  }
+  return json({ task, result: out.result, credits: paid.sub + paid.pack, spent: price, deep });
 }
 
 async function mark(email, who, body, deps) {
-  const lic = await licenceFor(email, deps);
-  if (!lic) return json({ error: 'Registering a Lunara Mark needs a licence.', code: 'license' }, 402);
+  // Free for every account: it is a record, not a model call.
   const sha = String(body.sha256 || '').toLowerCase();
   if (!/^[0-9a-f]{64}$/.test(sha)) return json({ error: 'Missing file fingerprint.' }, 400);
   const owner = String(body.owner_name || who.full_name || '').trim().slice(0, 80);
@@ -562,9 +869,10 @@ async function apikey(email, body, deps) {
 
 async function adminCodes(email, body, deps) {
   if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_month';
+  const want = String(body.plan || 'pro');
+  const plan = (TIERS[want] && want !== 'free') || PACKS[want] || (PLANS[want] && want !== 'owner') ? want : 'pro';
   const n = Math.min(50, Math.max(1, Number(body.count) || 1));
-  const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
+  const days = Math.min(400, Math.max(1, Number(body.days) || (PLANS[plan] ? PLANS[plan].days : 31)));
   const codes = [];
   for (let i = 0; i < n; i++) {
     const code = `LENS-${randomId(4)}-${randomId(4)}`;
@@ -599,10 +907,10 @@ async function apiDetect(req, deps) {
 
 async function adminOverview(email, deps) {
   if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const [stats, claims, licences] = await Promise.all([
-    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses()
+  const [stats, claims, licences, wallets] = await Promise.all([
+    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses(), deps.db.recentWallets ? deps.db.recentWallets() : []
   ]);
-  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner') });
+  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner'), wallets: wallets || [] });
 }
 
 async function adminClaim(email, body, deps) {
@@ -613,9 +921,12 @@ async function adminClaim(email, body, deps) {
     await deps.db.updateClaim(c.id, { status: 'rejected', decided_at: new Date().toISOString() });
     return json({ ok: true, status: 'rejected' });
   }
-  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_month';
+  // What the member said they bought, unless the owner decides otherwise.
+  const want = String(body.plan || c.product || 'app_month');
+  const plan = PRODUCT_PRICE(want) !== null && want !== 'owner' && want !== 'free' ? want : 'app_month';
   if (await deps.db.licenseByTxn(c.paypal_txn)) return json({ error: 'That payment already activated a licence.' }, 409);
-  await grant(c.email, plan, 'paypal', c.paypal_txn, deps);
+  if (!(await deps.db.recordPurchase({ ref: 'paypal:' + c.paypal_txn, email: c.email, product: plan, source: 'paypal' }))) return json({ error: 'That payment has already been used.' }, 409);
+  await fulfil(c.email, plan, 'paypal', 'paypal:' + c.paypal_txn, deps);
   await deps.db.updateClaim(c.id, { status: 'approved', decided_at: new Date().toISOString() });
   return json({ ok: true, status: 'approved', email: c.email, plan });
 }
@@ -625,6 +936,24 @@ async function adminPause(email, body, deps) {
   if (typeof body.paused !== 'boolean') return json({ error: 'Send paused: true or false.' }, 400);
   await deps.db.setConfig('ai_paused', String(body.paused));
   return json({ ok: true, paused: body.paused });
+}
+
+/* A gift of credits, or a plan for some days, from the owner's desk. */
+async function adminCredits(email, body, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  const to = String(body.email || '').trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return json({ error: 'Enter a valid email address.' }, 400);
+  if (body.tier) {
+    if (!TIERS[body.tier] || body.tier === 'free') return json({ error: 'Choose Starter, Pro or Luna Max.' }, 400);
+    const days = Math.min(400, Math.max(1, Number(body.days) || 31));
+    await fulfil(to, body.tier, 'admin', 'admin:' + randomId(8), deps, days);
+    return json({ ok: true, email: to, tier: body.tier, days });
+  }
+  const n = Math.round(Number(body.credits) || 0);
+  if (n < 1 || n > 100000) return json({ error: 'Enter between 1 and 100,000 credits.' }, 400);
+  await wallet(to, deps);
+  await deps.db.addCredits(to, 'pack', n, 'gift', 'admin:' + email);
+  return json({ ok: true, email: to, credits: n });
 }
 
 async function adminGrant(email, body, deps) {
@@ -637,33 +966,58 @@ async function adminGrant(email, body, deps) {
   return json({ ok: true, email: to, plan, days });
 }
 
+/* ── deleting an account ────────────────────────────────────────────
+   Google Play requires that an account made in the app can be deleted
+   from the app and from the web. This removes the member and everything
+   Lens holds about them. Two things stay, without the email address:
+   the fact that a payment was used (so it cannot be claimed twice) and
+   the public Lunara Mark records, which are revoked, because other
+   people may rely on them to see that an image's mark is no longer
+   vouched for. */
+async function deleteAccount(email, body, deps) {
+  if (body.confirm !== 'DELETE') return json({ error: 'Send confirm: "DELETE".' }, 400);
+  if (isOwner(email, deps.env)) return json({ error: 'The owner account cannot be deleted from the app.' }, 403);
+  await deps.db.deleteAccount(email, await sha256hex('deleted:' + email));
+  return json({ ok: true, deleted: true });
+}
+
 /* ── Rosario's voice ────────────────────────────────────────────── */
 
 async function speak(email, body, deps) {
-  const lic = await licenceFor(email, deps);
-  if (!lic) return json({ error: 'This needs an active Lunara Lens plan.', code: 'license' }, 402);
   if (!deps.env.ELEVENLABS_API_KEY || !deps.tts) return json({ error: 'The natural voice is not switched on yet.', code: 'offline' }, 503);
   if (await paused(deps)) return PAUSED();
   const text = String(body.text || '').replace(/\s+/g, ' ').trim().slice(0, 700);
   if (!text) return json({ error: 'Nothing to say.' }, 400);
   const lang = body.lang === 'es' ? 'es' : 'en';
   const cost = ttsCost(text.length, deps.env);
-  if (lic.plan !== 'owner') {
-    const spent = await deps.db.spent(lic.id, period());
-    if (spent + cost > Number(lic.budget_usd_month)) return json({ error: 'This month’s allowance is used up.', code: 'allowance' }, 402);
+  const lic = await legacyLicence(email, deps);
+  let onLicence = false, ref = null, price = 0;
+  if (lic && lic.plan === 'owner') onLicence = true;
+  else if (lic && (await deps.db.spent(lic.id, period())) + cost <= Number(lic.budget_usd_month)) onLicence = true;
+  if (!onLicence) {
+    // Caty's live voice comes with Pro and Luna Max; everyone has her
+    // recorded lines and the phone's own voice for free.
+    const w = await wallet(email, deps);
+    if (!TIERS[w.tier].voice) return json({ error: 'Rosario’s natural voice comes with Pro and Luna Max.', code: 'voice_plan' }, 402);
+    price = speakCredits(text.length); ref = 'speak:' + randomId(10);
+    const paid = await deps.db.spendCredits(email, price, ref);
+    if (!paid || !paid.ok) return outOfCredits(price, paid || { sub: 0, pack: 0 });
   }
-  const audio = await deps.tts({ text, voice: VOICES[lang], model: TTS_MODEL });
-  if (!audio) return json({ error: 'The voice service did not answer.', code: 'offline' }, 502);
-  await deps.db.logUsage({ license_id: lic.id, period: period(), route: 'speak', model: TTS_MODEL, input_tokens: text.length, output_tokens: 0, cost_usd: cost });
+  const audio = await deps.tts({ text, voice: VOICES[lang], model: TTS_MODEL }).catch(() => null);
+  if (!audio) {
+    if (ref) await deps.db.addCredits(email, 'pack', price, 'refund', ref).catch(() => null);
+    return json({ error: 'The voice service did not answer.', code: 'offline' }, 502);
+  }
+  await deps.db.logUsage({ license_id: onLicence ? lic.id : null, email, period: period(), route: 'speak', model: TTS_MODEL, input_tokens: text.length, output_tokens: 0, cost_usd: cost });
   return new Response(audio, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store' } });
 }
 
 /* ── the Android download ───────────────────────────────────────────
-   The APK published on the site is encrypted. Only a licensed account,
-   or the owner, receives the key that opens it. */
+   The APK published on the site is encrypted, and the key that opens it
+   is given to any signed-in account. (It was paid-only before the app
+   went free with credits.) */
 async function download(email, deps) {
-  const lic = await licenceFor(email, deps);
-  if (!lic) return json({ error: 'The app is available after payment.', code: 'license' }, 402);
+  // The app is free; the key still only goes to a signed-in account.
   const key = await deps.db.getConfig('apk_key');
   if (!key) return json({ error: 'The download is not ready yet.' }, 503);
   const meta = JSON.parse(key);

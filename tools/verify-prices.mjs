@@ -68,7 +68,7 @@ export function auditFile(rel, text, prices) {
   // Blank out anything inside a pricing slot: the module owns those, and
   // build-offers keeps their static text correct.
   masked = masked.replace(
-    /<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?data-lx-(?:amount|price|name|terms|lede)="[a-z0-9]+"[^>]*>[^<]*<\/\1>/g,
+    /<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?data-lx-(?:amount|price|name|terms|lede)="[a-z0-9_-]+"[^>]*>[^<]*<\/\1>/g,
     (m) => ' '.repeat(m.length)
   );
 

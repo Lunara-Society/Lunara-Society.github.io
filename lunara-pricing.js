@@ -198,24 +198,73 @@
         'The Digital Omnibus corrections most advisors are still missing'
       ]
     },
-    /* Lunara Lens. The link is empty until its PayPal payment link
-       exists; until then a buy button keeps the href its page wrote
-       (the app's Account screen), never a broken PayPal URL. */
+    /* Lunara Lens (Rosario). The app is free; AI actions use credits.
+       On the web a plan is one month per payment (PayPal links cannot
+       subscribe); in the Google Play app the same plans renew monthly
+       through Google Play. Links are empty until each PayPal payment
+       link exists; until then a buy button keeps the href its page
+       wrote, never a broken PayPal URL. Prices must match TIERS and
+       PACKS in lens-backend/lens-core.mjs, which the server checks
+       payments against. */
     {
-      id: 'lens',
-      name: 'Lunara Lens, 1 month',
-      price: 25,
+      id: 'lens_starter',
+      name: 'Rosario Starter, 1 month',
+      price: 7.99,
       link: '',
       tier: 'entry',
-      lede: 'Is it real? Ask, and hear the answer.',
-      terms: 'Per month. Renewed by you, never auto-charged.',
-      points: [
-        'Deep AI analysis of photos, video, voice and text',
-        'Scam and voice-clone checks',
-        'Lunara Marks for the images you own',
-        'Rosario, the voice assistant, and the Android app',
-        'Describe, read, translate and converse, by voice'
-      ]
+      lede: '800 credits a month for Rosario’s AI.',
+      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      points: ['800 credits every month (about 80 AI checks or 400 questions)', 'Every Rosario feature', 'Unused monthly credits do not roll over']
+    },
+    {
+      id: 'lens_pro',
+      name: 'Rosario Pro, 1 month',
+      price: 19.99,
+      link: '',
+      tier: 'entry',
+      lede: '2,500 credits a month and Rosario’s natural voice.',
+      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      points: ['2,500 credits every month', 'Rosario’s natural voice (Caty)', 'Every Rosario feature']
+    },
+    {
+      id: 'lens_max',
+      name: 'Rosario Luna Max, 1 month',
+      price: 49.99,
+      link: '',
+      tier: 'entry',
+      lede: '7,000 credits a month, the deepest AI checks, new features first.',
+      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      points: ['7,000 credits every month', 'Deepest AI checks', 'Rosario’s natural voice', 'New features first']
+    },
+    {
+      id: 'lens_credits_500',
+      name: 'Rosario credits, 500',
+      price: 6.99,
+      link: '',
+      tier: 'entry',
+      lede: '500 credits that never expire.',
+      terms: 'One payment. Credits never expire.',
+      points: ['500 credits', 'Never expire', 'Work with any plan, including Free']
+    },
+    {
+      id: 'lens_credits_1500',
+      name: 'Rosario credits, 1,500',
+      price: 17.99,
+      link: '',
+      tier: 'entry',
+      lede: '1,500 credits that never expire.',
+      terms: 'One payment. Credits never expire.',
+      points: ['1,500 credits', 'Never expire', 'Work with any plan, including Free']
+    },
+    {
+      id: 'lens_credits_5000',
+      name: 'Rosario credits, 5,000',
+      price: 49.99,
+      link: '',
+      tier: 'entry',
+      lede: '5,000 credits that never expire.',
+      terms: 'One payment. Credits never expire.',
+      points: ['5,000 credits', 'Never expire', 'Work with any plan, including Free']
     },
     {
       id: 'lensapi',
@@ -228,7 +277,7 @@
       points: [
         'Image, video-frame and text detection',
         'Keys created in the app, stored only as a fingerprint',
-        'Includes a Lunara Lens licence'
+        'Includes Rosario with a monthly AI allowance'
       ]
     },
     {

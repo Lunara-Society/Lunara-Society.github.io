@@ -56,7 +56,8 @@ const PAGE = {
   clinical:  'healthcare-intelligence.html',
   evidence:  'article50.html',
   vendor:    'certify.html',
-  lens:      'lens.html',
+  lens_starter: 'lens.html', lens_pro: 'lens.html', lens_max: 'lens.html',
+  lens_credits_500: 'lens.html', lens_credits_1500: 'lens.html', lens_credits_5000: 'lens.html',
   lensapi:   'lens.html'
 };
 

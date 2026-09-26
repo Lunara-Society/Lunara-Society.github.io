@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Download Rosario for Android | Lunara Society</title>
-<meta name="description" content="The Android app of Rosario, the Lunara Lens assistant. Available to Lunara Lens members after payment.">
+<meta name="description" content="The Android app of Rosario, the Lunara Lens assistant. Free: sign in with Google to download.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="icon-192.png">
@@ -20,7 +20,7 @@
     <div class="hero">
       <div class="orb" style="pointer-events:none"><img src="rosario.jpg?v=2" alt="Rosario"></div>
       <h1 class="rname">Rosario for Android</h1>
-      <p class="rsub wide" id="lede">For Lunara Lens members. Checking your account…</p>
+      <p class="rsub wide" id="lede">Free. Checking your account…</p>
     </div>
     <div id="act" class="screen"></div>
     <ol class="note" style="padding-left:28px">
@@ -40,17 +40,17 @@
   function b64(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
   function hex(buf) { return Array.from(new Uint8Array(buf), function (x) { return x.toString(16).padStart(2, '0'); }).join(''); }
   var t = tok();
-  if (!t) { lede.textContent = 'Sign in first. The download is for Lunara Lens members.'; act.appendChild(btn('Sign in', 'gold big', 'app.html')); return; }
+  if (!t) { lede.textContent = 'Sign in with Google first. The app is free.'; act.appendChild(btn('Sign in', 'gold big', 'app.html')); return; }
   fetch(API + '/download', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session_token: t }) })
     .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j, status: r.status }; }); })
     .then(function (res) {
       if (!res.ok) {
-        lede.textContent = res.status === 402 ? 'The Android app is available after payment.' : (res.j.error || 'Something went wrong.');
-        act.appendChild(btn(res.status === 402 ? 'Unlock Rosario' : 'Try again', 'gold big', res.status === 402 ? 'app.html' : 'get.html'));
+        lede.textContent = res.j.error || 'Something went wrong.';
+        act.appendChild(btn(res.status === 401 ? 'Sign in' : 'Try again', 'gold big', res.status === 401 ? 'app.html' : 'get.html'));
         return;
       }
       var m = res.j;
-      lede.textContent = 'Your membership includes the Android app.';
+      lede.textContent = 'Ready. Rosario is free to install.';
       var d = btn('Download for Android', 'gold big'), st = document.createElement('p'); st.className = 'small muted center';
       act.appendChild(d); act.appendChild(st);
       d.onclick = function () {

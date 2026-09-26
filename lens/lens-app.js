@@ -32,6 +32,21 @@
   }
   function t(k) { var v = TX[S.lang][k]; return v === undefined ? TX.en[k] : v; }
   var other = function (l) { return l === 'es' ? 'en' : 'es'; };
+  function L(en, es) { return S.lang === 'es' ? es : en; }
+  function fmt(n) { return Number(n || 0).toLocaleString(S.lang === 'es' ? 'es-ES' : 'en-US'); }
+
+  /* The copy installed from Google Play opens with ?src=play. Inside it,
+     plans and credits are sold only through Google Play: no PayPal, no
+     links out to pay elsewhere (Play's payments policy). The copy
+     downloaded from the website and the web app use PayPal. Kept for
+     this tab only, so the website in Chrome is never mistaken for it. */
+  function isPlay() {
+    try {
+      if (/[?&]src=play\b/.test(location.search)) sessionStorage.setItem('lens_play', '1');
+      return sessionStorage.getItem('lens_play') === '1';
+    } catch (e) { return false; }
+  }
+  isPlay();
   var langName = function (l) { return { en: S.lang === 'es' ? 'Inglés' : 'English', es: S.lang === 'es' ? 'Español' : 'Spanish' }[l]; };
   function buzz(p) { if (S.haptic && navigator.vibrate) try { navigator.vibrate(p || 18); } catch (e) { } }
 
@@ -189,7 +204,7 @@
     var clip = CLIP_BY_TEXT[l][norm(text)];
     var run = function () {
       if (clip) return playUrl('voice/' + l + '/' + clip + '.mp3').then(function (ok) { if (!ok) return deviceSay(text, l); });
-      if (S.natural !== false && licensed() && navigator.onLine !== false) return naturalSay(text, l).catch(function () { return deviceSay(text, l); });
+      if (S.natural !== false && me && me.voice && navigator.onLine !== false) return naturalSay(text, l).catch(function () { return deviceSay(text, l); });
       return deviceSay(text, l);
     };
     return run();
@@ -239,26 +254,42 @@
     if (!session()) { me = null; renderPill(); return Promise.resolve(null); }
     return call('/me').then(function (j) { me = j; renderPill(); return j; }).catch(function (e) { me = null; renderPill(); if (e && e.code === 'signin') { signOut(); } return null; });
   }
-  function licensed() { return !!(me && me.licensed); }
+  /* Everyone signed in can use everything; the server prices each AI
+     action in credits and says so when a balance runs out. */
+  function licensed() { return !!session(); }
+  function credits() { return me && typeof me.credits === 'number' ? me.credits : null; }
   function aiError(e) {
     var c = e && e.code;
     if (c === 'license') return t('needLicence');
     if (c === 'offline') return t('offline');
     if (c === 'paused') return S.lang === 'es' ? 'La IA de Rosario está en pausa por ahora. Todo lo que funciona en tu teléfono sigue funcionando.' : 'Rosario\u2019s AI is paused for now. Everything that runs on your phone still works.';
-    if (c === 'allowance') return t('allowance');
+    if (c === 'allowance' || c === 'credits') { setTimeout(offerShop, 50); return t('allowance'); }
+    if (c === 'voice_plan') return L('Rosario’s natural voice comes with Pro and Luna Max.', 'La voz natural de Rosario viene con Pro y Luna Max.');
     if (c === 'signin') return t('signin_first');
     return (e && e.error) || t('err');
   }
   function ai(task, body) {
     return call('/ai', Object.assign({ task: task, lang: S.lang }, body)).then(function (j) {
-      if (me && typeof j.allowance_left_pct === 'number') { me.allowance_left_pct = j.allowance_left_pct; renderPill(); }
+      if (me && typeof j.allowance_left_pct === 'number') { me.allowance_left_pct = j.allowance_left_pct; }
+      if (me && typeof j.credits === 'number') { me.credits = j.credits; cacheMe(); }
+      renderPill();
       return j.result;
     });
+  }
+  /* Out of credits: a gentle card, never a wall. */
+  function offerShop() {
+    if (document.getElementById('shop-offer') || current.name === 'shop') return;
+    var card = h('div', { class: 'card screen', id: 'shop-offer', role: 'status' },
+      h('b', null, L('You’re out of credits', 'Te has quedado sin créditos')),
+      h('p', { class: 'small muted', style: 'margin:0' }, L('Plans start at a few dollars a month. Everything on your phone keeps working for free.', 'Los planes empiezan en unos pocos dólares al mes. Todo lo del teléfono sigue siendo gratis.')),
+      h('button', { class: 'btn gold', onclick: function () { card.remove(); go('shop'); } }, L('See plans and credits', 'Ver planes y créditos')));
+    var sc = main.querySelector('.screen'); if (sc) sc.appendChild(card);
   }
   function renderPill() {
     var p = document.getElementById('plan');
     if (!p) return;
-    p.textContent = me && me.owner ? (S.lang === 'es' ? 'Propietario' : 'Owner') : licensed() ? (me.plan === 'api_month' ? 'API' : 'Lens') + ' · ' + me.allowance_left_pct + '%' : (session() ? (S.lang === 'es' ? 'Sin licencia' : 'No licence') : (S.lang === 'es' ? 'Entrar' : 'Sign in'));
+    p.textContent = me && me.owner ? L('Owner', 'Propietario') : credits() !== null ? '✦ ' + fmt(credits()) : (session() ? '✦ …' : L('Sign in', 'Entrar'));
+    p.setAttribute('aria-label', me && me.owner ? L('Owner', 'Propietario') : credits() !== null ? fmt(credits()) + ' ' + L('credits', 'créditos') : L('Sign in', 'Entrar'));
   }
 
   function loadScript(src) {
@@ -283,7 +314,7 @@
         } catch (e) { }
         return refreshMe();
       })
-      .then(function (m) { sayKey('signed_in'); cacheMe(); if (m && m.licensed) enter(); else go(m && m.pending ? 'pending' : 'paywall', null, true); })
+      .then(function () { sayKey('signed_in'); cacheMe(); enter(); })
       .catch(function () { say(t('err')); });
   }
 
@@ -409,7 +440,7 @@
 
   /* ── home ───────────────────────────────────────────────────────── */
   function tile(name, key, ic, hero, sub) {
-    return h('button', { class: 'tile' + (hero ? ' hero' : ''), onclick: function () { buzz(); go(name); } }, icon(ic), h('span', null, t(key), sub ? h('small', null, sub) : null));
+    return h('button', { class: 'tile' + (hero ? ' hero' : ''), onclick: function () { buzz(); go(name); } }, icon(ic), h('span', null, TX.en[key] !== undefined ? t(key) : key, sub ? h('small', null, sub) : null));
   }
   /* Rosario's conversation, kept for the session so she has context. */
   var convo = [];
@@ -458,7 +489,15 @@
         box,
         h('div', { class: 'chips center' }, t('suggest').map(function (q) { return h('button', { class: 'chip', onclick: function () { handle(q); } }, q); })),
         h('label', { class: 'switch hf', for: 'hf' }, h('span', null, t('handsFree'), h('small', null, t('handsFreeHint'))), hf),
+        modeSwitch(),
+        me && !me.owner && credits() !== null ? h('button', { class: 'chip credits-chip', onclick: function () { go('shop'); } }, '✦ ' + fmt(credits()) + ' ' + L('credits', 'créditos') + ' · ' + ((cat().tiers[me.tier] || {}).label || '')) : null,
         inAndroidApp() ? null : h('a', { class: 'btn gold', href: 'get.html', style: 'margin-top:14px' }, icon('files'), S.lang === 'es' ? 'Descargar la app de Android' : 'Download the Android app')),
+      h('h2', null, L('Your assistant', 'Tu asistente') + ' · ' + (S.mode === 'work' ? L('at work', 'en el trabajo') : L('at home', 'en casa'))),
+      h('div', { class: 'grid' },
+        tile('talk', L('Talk with Rosario', 'Habla con Rosario'), 'converse', true, L('Hands-free conversation: ask, plan, remember', 'Conversación sin manos: pregunta, planifica, recuerda')),
+        tile('briefing', L('My day', 'Mi día'), 'briefing'), tile('lists', L('Lists', 'Listas'), 'text'), tile('memory', L('Memory', 'Memoria'), 'remember'),
+        tile('write', L('Write for me', 'Escribe por mí'), 'replies'), tile('summarize', 't_summ', 'summarize'), tile('coach', L('Scam coach', 'Antiestafas'), 'safeword'),
+        tile('reminders', 't_remind', 'reminders')),
       h('h2', null, t('g_real')),
       h('div', { class: 'grid' },
         tile('photo', 't_photo', 'photo', true, S.lang === 'es' ? 'Fotos, capturas y archivos del teléfono' : 'Photos, screenshots and files on your phone'),
@@ -467,11 +506,11 @@
       h('h2', null, t('g_protect2')),
       h('div', { class: 'grid' }, tile('mark', 't_mark', 'mark'), tile('verify', 't_verify', 'verify'), tile('safeword', 't_safeword', 'safeword'), tile('emergency', 't_emergency', 'emergency')),
       h('h2', null, t('g_see')),
-      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('summarize', 't_summ', 'summarize'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color'), tile('remember', 't_remember', 'remember')),
+      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color'), tile('remember', 't_remember', 'remember')),
       h('h2', null, t('g_talk')),
       h('div', { class: 'grid' }, tile('converse', 't_converse', 'converse', true, S.lang === 'es' ? 'Habla con cualquiera, en inglés o español' : 'Talk with anyone, in English or Spanish'), tile('translate', 't_translate', 'translate'), tile('replies', 't_replies', 'replies')),
       h('h2', null, t('g_daily')),
-      h('div', { class: 'grid' }, tile('briefing', 't_brief', 'briefing'), tile('reminders', 't_remind', 'reminders'), tile('files', 't_files', 'files'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'), tile('account', 't_account', 'account'),
+      h('div', { class: 'grid' }, tile('files', 't_files', 'files'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'), tile('shop', L('Credits', 'Créditos'), 'mark'), tile('account', 't_account', 'account'),
         me && me.owner ? tile('owner', 't_owner', 'owner') : null)
     ]);
     drawConvo(box);
@@ -863,19 +902,30 @@
     var mine = S.lang, theirs = other(S.lang);
     el.appendChild(h('p', { class: 'lede' }, t('conv_hint')));
     var log = h('div', { class: 'bubbles', 'aria-live': 'polite' }), repl = h('div', { class: 'screen' });
+    var auto = false, silent = 0;
     function turn(speakerLang, isMe) {
       if (!licensed()) { say(t('needLicence')); return; }
-      buzz(); say(t('listening'), speakerLang, { silentToast: true }).then(function () { return listen(speakerLang); }).then(function (x) {
-        if (!x) return;
+      buzz(); return say(t('listening'), speakerLang, { silentToast: true }).then(function () { return listen(speakerLang); }).then(function (x) {
+        if (!x) { if (auto && ++silent < 3 && current.name === 'converse') return turn(speakerLang, isMe); return; }
+        silent = 0;
         var target = speakerLang === mine ? theirs : mine;
         return ai('translate', { text: x, target: target }).then(function (r) {
           log.appendChild(h('div', { class: 'bubble' + (isMe ? ' me' : '') }, x, h('small', null, r.translation)));
-          say(r.translation, target);
           repl.innerHTML = '';
           if (!isMe) repl.appendChild(h('button', { class: 'btn', onclick: function () { suggest(x); } }, icon('replies'), t('conv_replies')));
+          return say(r.translation, target).then(function () {
+            // Automatic turns: after one person speaks, it is the other's go.
+            if (auto && current.name === 'converse') return turn(isMe ? theirs : mine, !isMe);
+          });
         });
-      }).catch(function (e) { say(e && e.message === 'nospeech' ? t('noSpeech') : aiError(e)); });
+      }).catch(function (e) { auto = false; say(e && e.message === 'nospeech' ? t('noSpeech') : aiError(e)); });
     }
+    var autoBtn = h('button', { class: 'btn ghost', 'aria-pressed': 'false', onclick: function () {
+      auto = !auto; autoBtn.setAttribute('aria-pressed', String(auto));
+      autoBtn.textContent = auto ? L('Automatic turns: on (tap to stop)', 'Turnos automáticos: sí (toca para parar)') : L('Automatic turns', 'Turnos automáticos');
+      if (auto) { silent = 0; turn(mine, true); }
+    } }, L('Automatic turns', 'Turnos automáticos'));
+    onLeave(function () { auto = false; });
     function suggest(heard) {
       var b = busy(repl, t('working'));
       ai('replies', { text: heard, target: theirs }).then(function (r) {
@@ -888,7 +938,7 @@
     }
     add(el, [h('div', { class: 'conv' },
       h('button', { class: 'btn gold', onclick: function () { turn(mine, true); } }, icon('mic'), t('conv_me') + ' · ' + langName(mine)),
-      h('button', { class: 'btn', onclick: function () { turn(theirs, false); } }, icon('mic'), t('conv_them') + ' · ' + langName(theirs))), log, repl]);
+      h('button', { class: 'btn', onclick: function () { turn(theirs, false); } }, icon('mic'), t('conv_them') + ' · ' + langName(theirs))), autoBtn, log, repl]);
   };
 
   /* ── talk: help me reply ────────────────────────────────────────── */
@@ -1177,12 +1227,23 @@
     function run() {
       if (!ta.value.trim() && !img) return;
       var b = busy(out, t('working')); sayKey('reading');
-      ai('summarize', { text: ta.value.trim() || undefined, images: img ? [img] : undefined }).then(function (r) {
+      ai('summarize', { text: ta.value.trim() || undefined, images: img ? [img] : undefined, context: 'Local date: ' + new Date().toDateString() }).then(function (r) {
         b.remove();
         fill(out, h('div', { class: 'verdict v-info' }, h('p', { style: 'margin:0;font-size:1.08em' }, r.speech)),
           h('div', { class: 'card', style: 'white-space:pre-wrap' }, r.summary),
           r.actions && r.actions.length ? [h('h2', null, t('advice')), signalList(r.actions.map(function (x) { return FX.F(x, 'moderate', 'neither'); }))] : null,
-          r.deadlines && r.deadlines.length ? [h('h2', null, S.lang === 'es' ? 'Fechas' : 'Dates'), signalList(r.deadlines.map(function (x) { return FX.F(x, 'strong', 'neither'); }))] : null);
+          r.deadlines && r.deadlines.length ? [h('h2', null, S.lang === 'es' ? 'Fechas' : 'Dates'), signalList(r.deadlines.map(function (x) { return FX.F(x, 'strong', 'neither'); }))] : null,
+          r.amount_due ? h('p', null, h('b', null, L('To pay: ', 'A pagar: ') + r.amount_due)) : null,
+          (r.reminders || []).filter(function (x) { return x.text; }).length ? [h('h2', null, L('Reminders', 'Recordatorios')), (r.reminders || []).filter(function (x) { return x.text; }).map(function (x) {
+            var when = /^\d{4}-\d{2}-\d{2}$/.test(x.date) ? new Date(x.date + 'T09:00:00') : null;
+            // The day before at nine, so there is time to act; on the day if that has passed.
+            var at = when ? new Date(when.getTime() - 864e5) : null; if (at && at < new Date()) at = when; if (at && at < new Date()) at = null;
+            var b = h('button', { class: 'btn', onclick: function () {
+              if (at) Rem.addAt(x.text, at.getTime()); else Rem.add(x.text, 60 * 24);
+              b.disabled = true; b.textContent = '✓ ' + L('Reminder set', 'Recordatorio puesto'); sayKey('reminder_set');
+            } }, icon('reminders'), x.text + (at ? ' · ' + at.toLocaleDateString(S.lang === 'es' ? 'es-ES' : 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) : L(' · tomorrow', ' · mañana')));
+            return b;
+          })] : null);
         say(r.speech);
       }).catch(function (e) { b.remove(); say(aiError(e)); });
     }
@@ -1195,8 +1256,9 @@
   var Rem = {
     all: function () { return get('lens_reminders', []); },
     save: function (l) { put('lens_reminders', l); },
-    add: function (text, minutes) {
-      var l = Rem.all(); l.push({ id: Date.now(), text: String(text || '').trim() || (S.lang === 'es' ? 'Recordatorio' : 'Reminder'), at: Date.now() + Math.max(1, minutes) * 60000, done: false });
+    add: function (text, minutes) { return Rem.addAt(text, Date.now() + Math.max(1, minutes) * 60000); },
+    addAt: function (text, at) {
+      var l = Rem.all(); l.push({ id: Date.now() + Math.random(), text: String(text || '').trim() || (S.lang === 'es' ? 'Recordatorio' : 'Reminder'), at: at, done: false, mode: S.mode });
       Rem.save(l);
       if (window.Notification && Notification.permission === 'default') try { Notification.requestPermission(); } catch (e) { }
     },
@@ -1226,7 +1288,7 @@
     function draw() {
       var l = Rem.all().filter(function (r) { return !r.done; }).sort(function (a, b) { return a.at - b.at; });
       fill(list, l.length ? l.map(function (r) {
-        return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, h('div', null, r.text), h('div', { class: 'small muted' }, new Date(r.at).toLocaleTimeString(S.lang === 'es' ? 'es-ES' : 'en-GB', { hour: '2-digit', minute: '2-digit' }))),
+        return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, h('div', null, r.text), h('div', { class: 'small muted' }, new Date(r.at).toLocaleString(S.lang === 'es' ? 'es-ES' : 'en-GB', new Date(r.at).toDateString() === new Date().toDateString() ? { hour: '2-digit', minute: '2-digit' } : { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))),
           h('button', { class: 'btn ghost', onclick: function () { Rem.save(Rem.all().filter(function (x) { return x.id !== r.id; })); draw(); } }, t('files_delete')));
       }) : h('p', { class: 'muted' }, t('rem_none')));
       var n = Notes.all();
@@ -1268,13 +1330,244 @@
           : ('It’s ' + c + ' degrees and ' + dsc + '. A high of ' + hi + ' and a low of ' + lo + (pr >= 30 ? ', with a ' + pr + ' percent chance of rain.' : '.')));
       }
       parts.push(rem.length ? (es ? 'Tienes ' + rem.length + ' recordatorio' + (rem.length > 1 ? 's' : '') + ': ' : 'You have ' + rem.length + ' reminder' + (rem.length > 1 ? 's' : '') + ': ') + rem.map(function (r) { return r.text; }).join(', ') + '.' : (es ? 'No tienes recordatorios pendientes.' : 'No reminders waiting.'));
-      if (me && me.licensed && !me.owner) parts.push(es ? 'Te queda el ' + me.allowance_left_pct + ' por ciento de tu asignación del mes.' : 'You have ' + me.allowance_left_pct + ' percent of this month’s allowance left.');
+      var lists = Lists.mine().map(function (x) { return [x.name, x.items.filter(function (i) { return !i.done; }).length]; }).filter(function (x) { return x[1]; });
+      if (lists.length) parts.push(lists.map(function (x) { return (es ? 'En ' + x[0] + ' tienes ' + x[1] + (x[1] > 1 ? ' cosas' : ' cosa') : x[0] + ': ' + x[1] + (x[1] > 1 ? ' things' : ' thing')); }).join(', ') + '.');
+      if (credits() !== null && !(me && me.owner)) parts.push(es ? 'Te quedan ' + fmt(credits()) + ' créditos.' : 'You have ' + fmt(credits()) + ' credits.');
       var text = parts.join(' ');
-      if (out) fill(out, h('div', { class: 'verdict v-info' }, h('div', { class: 'src' }, t('brief_today')), h('p', { style: 'margin:0;font-size:1.1em' }, text)));
+      if (out) {
+        var plan = h('div', { class: 'screen' });
+        fill(out, h('div', { class: 'verdict v-info' }, h('div', { class: 'src' }, t('brief_today') + ' · ' + (S.mode === 'work' ? L('work', 'trabajo') : L('home', 'casa'))), h('p', { style: 'margin:0;font-size:1.1em' }, text)),
+          h('button', { class: 'btn gold', onclick: function () { planDay(plan, text); } }, L('Plan my day with Rosario', 'Planifica mi día con Rosario') + ' · ✦ ' + (cat().credits.plan_day || 3)), plan);
+        briefing.last = text;
+      }
       return say(text);
     });
   }
-  screens.briefing = function (el) { head(el, t('t_brief')); var out = h('div', { class: 'screen' }); el.appendChild(out); briefing(out); };
+  function planDay(out, today) {
+    var b = busy(out, t('working'));
+    var rem = Rem.all().filter(function (r) { return !r.done && r.at - Date.now() < 86400000; }).map(function (r) { return new Date(r.at).toLocaleTimeString(S.lang === 'es' ? 'es-ES' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' ' + r.text; });
+    return ai('plan_day', Object.assign({ text: today + '\nReminders today: ' + (rem.join('; ') || 'none') + '\nLocal time: ' + new Date().toString() }, personal())).then(function (r) {
+      b.remove();
+      fill(out, h('ol', { class: 'plan-list' }, (r.priorities || []).map(function (x) { return h('li', null, x); })));
+      say(r.speech);
+    }).catch(function (e) { b.remove(); say(aiError(e)); });
+  }
+  screens.briefing = function (el, arg) {
+    head(el, t('t_brief')); el.appendChild(modeSwitch());
+    var out = h('div', { class: 'screen' }); el.appendChild(out);
+    briefing(out).then(function () { if (arg && arg.plan) { var p = out.querySelector('.screen'); if (p) planDay(p, briefing.last || ''); } });
+  };
+
+  /* ── the assistant: memory, lists, modes ────────────────────────
+     All of it lives on this phone. It travels with a question to
+     Rosario so she can use it, and the server does not keep it. */
+  var Mem = {
+    all: function () { return get('lens_memory', []); },
+    add: function (text) {
+      text = String(text || '').trim().replace(/^(that|que)\s+/i, '').slice(0, 220); if (!text) return null;
+      var l = Mem.all(); if (l.some(function (m) { return norm(m.text) === norm(text); })) return null;
+      var m = { id: Date.now(), text: text.charAt(0).toUpperCase() + text.slice(1), at: Date.now() };
+      l.unshift(m); put('lens_memory', l.slice(0, 150)); return m;
+    },
+    remove: function (id) { put('lens_memory', Mem.all().filter(function (m) { return m.id !== id; })); },
+    forget: function (q) {
+      var words = norm(q).split(' ').filter(function (w) { return w.length > 2; }), best = null, score = 0;
+      Mem.all().forEach(function (m) { var n = norm(m.text), sc = words.filter(function (w) { return n.indexOf(w) >= 0; }).length; if (sc > score) { score = sc; best = m; } });
+      if (best) Mem.remove(best.id); return best;
+    },
+    text: function () { return Mem.all().slice(0, 60).map(function (m) { return '- ' + m.text; }).join('\n'); }
+  };
+  if (!S.mode) S.mode = 'home';
+  function setMode(m) {
+    S.mode = /work|trabaj|oficina|office/i.test(m || '') ? 'work' : 'home'; saveSettings();
+    say(S.mode === 'work' ? L('Work mode. Your work lists are ready.', 'Modo trabajo. Tus listas del trabajo están listas.') : L('Home mode. Your home lists are ready.', 'Modo casa. Tus listas de casa están listas.'));
+    if (/^(home|lists)$/.test(current.name)) go(current.name, current.arg, true);
+  }
+  var Lists = {
+    all: function () { return get('lens_lists', []); },
+    save: function (l) { put('lens_lists', l); },
+    mine: function () { return Lists.all().filter(function (x) { return (x.mode || 'home') === S.mode; }); },
+    defaultName: function () { return S.mode === 'work' ? L('To do', 'Tareas') : L('Shopping', 'Compras'); },
+    key: function (n) { return norm(n).replace(/\b(list|lista|de|the|my|mi|la)\b/g, '').replace(/s\b/g, '').trim(); },
+    find: function (name, create) {
+      name = String(name || '').trim() || Lists.defaultName();
+      var all = Lists.all(), k = Lists.key(name);
+      var hit = all.find(function (x) { return (x.mode || 'home') === S.mode && Lists.key(x.name) === k; });
+      if (!hit && create) { hit = { id: Date.now(), name: name.charAt(0).toUpperCase() + name.slice(1), mode: S.mode, items: [] }; all.push(hit); Lists.save(all); }
+      return hit || null;
+    },
+    update: function (list) { var all = Lists.all().map(function (x) { return x.id === list.id ? list : x; }); Lists.save(all); },
+    add: function (name, items) {
+      var list = Lists.find(name, true);
+      var parts = String(items || '').split(/\s*(?:,|;|\n|\band\b|\by\b)\s*/i).map(function (x) { return x.trim(); }).filter(Boolean);
+      parts.forEach(function (x) { list.items.push({ id: Date.now() + Math.random(), text: x, done: false }); });
+      Lists.update(list); return { list: list, added: parts };
+    },
+    text: function () { return Lists.mine().map(function (x) { var open = x.items.filter(function (i) { return !i.done; }); return x.name + ': ' + (open.length ? open.map(function (i) { return i.text; }).join(', ') : '(empty)'); }).join('\n'); }
+  };
+  function readList(name) {
+    var list = Lists.find(name, false) || (Lists.mine().length === 1 ? Lists.mine()[0] : null);
+    if (!list) return say(L('I don’t have a list called ' + (name || 'that') + '.', 'No tengo una lista llamada ' + (name || 'así') + '.'));
+    var open = list.items.filter(function (i) { return !i.done; });
+    return say(open.length ? list.name + ': ' + open.map(function (i) { return i.text; }).join(', ') + '.' : L('Your ' + list.name + ' list is empty.', 'Tu lista ' + list.name + ' está vacía.'));
+  }
+  /* What Rosario is told about you with a question. */
+  function personal() { return { memory: Mem.text() || undefined, lists: Lists.text() || undefined, mode: S.mode }; }
+
+  screens.memory = function (el) {
+    head(el, L('What Rosario remembers', 'Lo que Rosario recuerda'));
+    el.appendChild(h('p', { class: 'lede' }, L('Tell her things worth remembering: names, birthdays, where you parked, your doctor, how you like things. It stays on this phone and goes with your questions so she can use it. Say “Rosario, remember that…”.',
+      'Cuéntale lo que vale la pena recordar: nombres, cumpleaños, dónde aparcaste, tu médico, cómo te gustan las cosas. Se queda en este teléfono y va con tus preguntas para que pueda usarlo. Di «Rosario, recuerda que…».')));
+    var inp = h('input', { type: 'text', id: 'mem-in', placeholder: L('My daughter is called Ana', 'Mi hija se llama Ana') }), list = h('div', { class: 'screen' });
+    function draw() {
+      var l = Mem.all();
+      fill(list, l.length ? l.map(function (m) {
+        return h('div', { class: 'card row', style: 'align-items:center' }, h('div', { style: 'flex:1' }, m.text, h('div', { class: 'small muted' }, new Date(m.at).toLocaleDateString(S.lang === 'es' ? 'es-ES' : 'en-GB'))),
+          h('button', { class: 'btn ghost', onclick: function () { Mem.remove(m.id); draw(); } }, L('Forget', 'Olvidar')));
+      }) : h('p', { class: 'muted' }, L('Nothing yet.', 'Nada todavía.')));
+    }
+    function save() { if (Mem.add(inp.value)) { say(L('I’ll remember that.', 'Lo recordaré.')); inp.value = ''; draw(); } }
+    add(el, [inp, h('div', { class: 'row' },
+      h('button', { class: 'btn', onclick: function () { listen().then(function (x) { if (x) { inp.value = x; save(); } }).catch(function () { say(t('noSpeech')); }); } }, icon('mic'), t('dictate')),
+      h('button', { class: 'btn gold', onclick: save }, L('Remember', 'Recordar'))), list,
+      h('button', { class: 'btn ghost', onclick: function () { if (confirm(L('Forget everything?', '¿Olvidarlo todo?'))) { put('lens_memory', []); draw(); } } }, L('Forget everything', 'Olvidarlo todo'))]);
+    draw();
+  };
+
+  function modeSwitch() {
+    var b = h('div', { class: 'chips center', role: 'group', 'aria-label': L('Mode', 'Modo') },
+      ['home', 'work'].map(function (m) { return h('button', { class: 'chip' + (S.mode === m ? ' on' : ''), 'aria-pressed': String(S.mode === m), onclick: function () { if (S.mode !== m) setMode(m); } }, m === 'home' ? L('At home', 'En casa') : L('At work', 'En el trabajo')); }));
+    return b;
+  }
+  screens.lists = function (el, arg) {
+    head(el, L('Lists', 'Listas'));
+    el.appendChild(modeSwitch());
+    var cur = arg && arg.name ? Lists.find(arg.name, true) : (Lists.mine()[0] || Lists.find(Lists.defaultName(), true));
+    var chips = h('div', { class: 'chips' }), items = h('div', { class: 'screen' });
+    var inp = h('input', { type: 'text', id: 'list-in', placeholder: L('Add something (milk, bread…)', 'Añade algo (leche, pan…)'), onkeydown: function (e) { if (e.key === 'Enter') addItems(); } });
+    function addItems() { if (!inp.value.trim()) return; Lists.add(cur.name, inp.value); inp.value = ''; cur = Lists.find(cur.name); draw(); buzz(); }
+    function draw() {
+      fill(chips, Lists.mine().map(function (x) { return h('button', { class: 'chip' + (x.id === cur.id ? ' on' : ''), onclick: function () { cur = x; draw(); } }, x.name + ' · ' + x.items.filter(function (i) { return !i.done; }).length); }),
+        h('button', { class: 'chip', onclick: function () { var n = prompt(L('Name of the new list', 'Nombre de la nueva lista')); if (n && n.trim()) { cur = Lists.find(n.trim(), true); draw(); } } }, '+ ' + L('New list', 'Nueva lista')));
+      fill(items, cur.items.length ? cur.items.map(function (i) {
+        var cb = h('input', { type: 'checkbox', checked: i.done || null, onchange: function () { i.done = cb.checked; Lists.update(cur); draw(); } });
+        return h('label', { class: 'card row item' + (i.done ? ' done' : ''), style: 'align-items:center;gap:12px' }, cb, h('span', { style: 'flex:1' }, i.text),
+          h('button', { class: 'iconbtn', 'aria-label': t('files_delete'), onclick: function (e) { e.preventDefault(); cur.items = cur.items.filter(function (x) { return x !== i; }); Lists.update(cur); draw(); } }, '×'));
+      }) : h('p', { class: 'muted' }, L('Empty. Add something, or say “Rosario, add eggs to my shopping list”.', 'Vacía. Añade algo, o di «Rosario, añade huevos a mi lista de la compra».')));
+    }
+    add(el, [chips, inp, h('div', { class: 'row' },
+      h('button', { class: 'btn gold', onclick: addItems }, L('Add', 'Añadir')),
+      h('button', { class: 'btn', onclick: function () { listen().then(function (x) { if (x) { inp.value = x; addItems(); } }).catch(function () { say(t('noSpeech')); }); } }, icon('mic'), t('dictate')),
+      h('button', { class: 'btn', onclick: function () { readList(cur.name); } }, icon('speak'), L('Read', 'Leer'))), items,
+      h('div', { class: 'row' },
+        h('button', { class: 'btn ghost', onclick: function () { cur.items = cur.items.filter(function (i) { return !i.done; }); Lists.update(cur); draw(); } }, L('Clear ticked', 'Quitar marcados')),
+        h('button', { class: 'btn ghost', onclick: function () { if (confirm(L('Delete this list?', '¿Borrar esta lista?'))) { Lists.save(Lists.all().filter(function (x) { return x.id !== cur.id; })); cur = Lists.mine()[0] || Lists.find(Lists.defaultName(), true); draw(); } } }, L('Delete list', 'Borrar lista')),
+        navigator.share ? h('button', { class: 'btn ghost', onclick: function () { navigator.share({ text: cur.name + ':\n' + cur.items.filter(function (i) { return !i.done; }).map(function (i) { return '• ' + i.text; }).join('\n') }).catch(function () { }); } }, t('share')) : null)]);
+    draw();
+  };
+
+  function bullets(arr, kind) {
+    return h('ul', { class: 'bullets ' + (kind || '') }, (arr || []).map(function (x) { return h('li', null, x); }));
+  }
+
+  /* ── the assistant: talk mode ───────────────────────────────────── */
+  screens.talk = function (el) {
+    head(el, L('Talk with Rosario', 'Habla con Rosario'));
+    el.appendChild(h('p', { class: 'lede' }, L('Just talk. She listens, answers and listens again, hands-free. Say “stop” when you’re done.', 'Habla sin más. Ella escucha, responde y vuelve a escuchar, sin manos. Di «para» cuando termines.')));
+    var box = h('div', { class: 'convo', id: 'convo', 'aria-live': 'polite' }), on = false, misses = 0;
+    var state = h('p', { class: 'center muted', role: 'status' }, '');
+    var btn = h('button', { class: 'btn gold big', onclick: function () { on ? stop(true) : start(); } }, icon('mic'), L('Start talking', 'Empezar a hablar'));
+    function quiet() { return new Promise(function (res) { (function chk() { if (!isSpeaking()) return setTimeout(res, 350); setTimeout(chk, 250); })(); }); }
+    function start() { on = true; misses = 0; wakePause(true); btn.lastChild.textContent = L('Stop', 'Parar'); say(L('I’m listening.', 'Te escucho.')).then(loop); }
+    function stop(spoken) { on = false; wakePause(false); btn.lastChild.textContent = L('Start talking', 'Empezar a hablar'); state.textContent = ''; micBtn.classList.remove('on'); if (spoken) say(L('Okay. I’m here when you need me.', 'Vale. Aquí estoy cuando me necesites.')); }
+    function loop() {
+      if (!on || current.name !== 'talk') return;
+      state.textContent = t('listening'); micBtn.classList.add('on');
+      listen().then(function (q) {
+        micBtn.classList.remove('on'); state.textContent = '';
+        if (!on) return;
+        if (!q) { if (++misses >= 3) return stop(true); return loop(); }
+        misses = 0;
+        if (/^(stop|para|parar|adios|adiós|bye|goodbye|that'?s all|eso es todo|gracias,? eso es todo)\b/i.test(q.trim())) return stop(true);
+        state.textContent = t('working');
+        return Promise.resolve(handle(q)).then(quiet).then(loop);
+      }).catch(function () { stop(false); say(t('noSpeech')); });
+    }
+    onLeave(function () { on = false; wakePause(false); });
+    add(el, [box, state, btn]);
+    drawConvo(box);
+  };
+
+  /* ── the assistant: write for me ────────────────────────────────── */
+  screens.write = function (el, arg) {
+    head(el, L('Write for me', 'Escribe por mí'));
+    var KINDS = [['reply', L('Reply', 'Respuesta')], ['email', L('Email', 'Correo')], ['complaint', L('Complaint', 'Reclamación')], ['message', L('Message', 'Mensaje')], ['letter', L('Letter', 'Carta')]];
+    var TONES = [['friendly', L('Friendly', 'Cercano')], ['formal', L('Formal', 'Formal')], ['firm', L('Firm', 'Firme')], ['short', L('Short', 'Breve')]];
+    var kind = 'email', tone = 'friendly';
+    function chipset(list, getv, setv) {
+      var box = h('div', { class: 'chips' });
+      function draw() { fill(box, list.map(function (x) { return h('button', { class: 'chip' + (getv() === x[0] ? ' on' : ''), 'aria-pressed': String(getv() === x[0]), onclick: function () { setv(x[0]); draw(); } }, x[1]); })); }
+      draw(); return box;
+    }
+    var lang = langSelect('w-lang', S.lang);
+    var ta = h('textarea', { id: 'w-text', placeholder: L('What should it say, and to whom? Or paste the message you got.', '¿Qué debe decir y a quién? O pega el mensaje que recibiste.'), 'aria-label': L('What to write', 'Qué escribir') }, (arg && arg.text) || '');
+    var out = h('div', { class: 'screen' });
+    function run() {
+      if (!ta.value.trim()) { ta.focus(); return; }
+      var b = busy(out, t('working'));
+      ai('write', Object.assign({ text: ta.value.trim(), kind: kind, tone: tone, target: lang.value }, personal())).then(function (r) {
+        b.remove();
+        var body = h('textarea', { id: 'w-out', style: 'min-height:220px' }, r.text);
+        var subj = r.subject ? h('input', { type: 'text', id: 'w-subj', value: r.subject }) : null;
+        fill(out, subj ? h('label', { class: 'f' }, L('Subject', 'Asunto'), subj) : null, body, h('div', { class: 'row' },
+          h('button', { class: 'btn gold', onclick: function () { (navigator.clipboard ? navigator.clipboard.writeText(body.value) : Promise.reject()).then(function () { toast(L('Copied.', 'Copiado.')); }).catch(function () { body.select(); }); } }, L('Copy', 'Copiar')),
+          navigator.share ? h('button', { class: 'btn', onclick: function () { navigator.share({ title: subj ? subj.value : '', text: body.value }).catch(function () { }); } }, t('share')) : null,
+          kind === 'email' || kind === 'complaint' ? h('a', { class: 'btn', href: 'mailto:?subject=' + encodeURIComponent(subj ? subj.value : '') + '&body=' + encodeURIComponent(body.value) }, L('Open in email', 'Abrir en el correo')) : null,
+          h('button', { class: 'btn', onclick: function () { say(body.value, lang.value); } }, icon('speak'), L('Read it', 'Léelo'))),
+          h('p', { class: 'small muted' }, L('Check it before sending: fill in anything in [brackets].', 'Revísalo antes de enviarlo: completa lo que esté entre [corchetes].')));
+        say(r.speech);
+      }).catch(function (e) { b.remove(); say(aiError(e)); });
+    }
+    add(el, [chipset(KINDS, function () { return kind; }, function (v) { kind = v; }), chipset(TONES, function () { return tone; }, function (v) { tone = v; }),
+      h('label', { class: 'f' }, L('Write in', 'Escribir en'), lang), ta,
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', onclick: function () { listen().then(function (x) { if (x) ta.value += (ta.value ? ' ' : '') + x; }).catch(function () { say(t('noSpeech')); }); } }, icon('mic'), t('dictate')),
+        h('button', { class: 'btn gold', onclick: run }, L('Write it', 'Escríbelo') + ' · ✦ ' + (cat().credits.write || 4))), out]);
+    if (arg && arg.text) run();
+  };
+
+  /* ── the assistant: scam coach ──────────────────────────────────── */
+  screens.coach = function (el, arg) {
+    head(el, L('Scam coach', 'Entrenador antiestafas'));
+    var rules = h('div', { class: 'verdict v-unsure' }, h('div', { class: 'v' }, L('You can always hang up.', 'Siempre puedes colgar.')),
+      h('p', { style: 'margin:.5em 0 0' }, L('No real bank, police or company will ask for a code, a password, gift cards, crypto or a transfer to a “safe account”. Hang up and call back on a number you already trust.',
+        'Ningún banco, policía o empresa de verdad te pedirá un código, una contraseña, tarjetas regalo, criptomonedas o una transferencia a una «cuenta segura». Cuelga y llama tú a un número que ya conozcas.')));
+    var SIT = [L('Someone says they’re from my bank', 'Dicen que llaman de mi banco'), L('A family member urgently needs money', 'Un familiar necesita dinero urgente'), L('Tech support says my computer has a virus', 'El soporte técnico dice que mi ordenador tiene un virus'),
+      L('A text asks me to pay a delivery fee', 'Un SMS me pide pagar un envío'), L('Someone wants a code sent to my phone', 'Alguien quiere un código que me ha llegado'), L('The police or tax office says I owe money', 'La policía o Hacienda dice que debo dinero')];
+    var ta = h('textarea', { id: 'coach-text', placeholder: L('What’s happening?', '¿Qué está pasando?'), 'aria-label': L('What’s happening?', '¿Qué está pasando?') }, (arg && arg.text) || '');
+    var out = h('div', { class: 'screen' });
+    function run() {
+      if (!ta.value.trim()) { ta.focus(); return; }
+      var b = busy(out, t('working'));
+      ai('coach', Object.assign({ text: ta.value.trim() }, personal())).then(function (r) {
+        b.remove();
+        var cls = r.risk === 'high' ? 'v-ai' : r.risk === 'medium' ? 'v-unsure' : 'v-info';
+        fill(out, h('div', { class: 'verdict ' + cls }, h('div', { class: 'v' }, { high: L('This looks like a scam', 'Esto parece una estafa'), medium: L('Be careful', 'Ten cuidado'), low: L('Probably fine, but check', 'Seguramente bien, pero compruébalo') }[r.risk]), h('p', { style: 'margin:.5em 0 0' }, r.speech)),
+          h('h2', null, L('Say this', 'Di esto')), (r.say_this || []).map(function (x) { return h('div', { class: 'card big-card', style: 'font-size:1.2em' }, '“' + x + '”'); }),
+          h('h2', null, L('Don’t', 'No hagas')), bullets(r.do_not, 'no'),
+          h('h2', null, L('How to check', 'Cómo comprobarlo')), bullets(r.check, 'yes'),
+          /familia|family|hij|son|daughter|nieto|grand|mum|mom|dad|madre|padre/i.test(ta.value) ? h('button', { class: 'btn', onclick: function () { go('safeword'); } }, t('t_safeword')) : null);
+        say(r.speech + ' ' + (r.say_this && r.say_this[0] ? L('You can say: ', 'Puedes decir: ') + r.say_this[0] : ''));
+        buzz(r.risk === 'high' ? [80, 60, 80] : 30);
+      }).catch(function (e) { b.remove(); say(aiError(e)); });
+    }
+    add(el, [rules, h('div', { class: 'chips' }, SIT.map(function (x) { return h('button', { class: 'chip', onclick: function () { ta.value = x; run(); } }, x); })), ta,
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', onclick: function () { listen().then(function (x) { if (x) { ta.value = x; run(); } }).catch(function () { say(t('noSpeech')); }); } }, icon('mic'), t('dictate')),
+        h('button', { class: 'btn gold', onclick: run }, L('Help me', 'Ayúdame') + ' · ✦ ' + (cat().credits.coach || 3))), out]);
+    say(L('You can always hang up. Tell me what’s happening.', 'Siempre puedes colgar. Cuéntame qué está pasando.'));
+    if (arg && arg.text) run();
+  };
 
   /* ── protect: emergency ─────────────────────────────────────────── */
   screens.emergency = function (el) {
@@ -1319,32 +1612,197 @@
   }
   screens.welcome = function (el) {
     var g = h('div', { id: 'gbtn', class: 'gbtn' });
-    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('welcome_h')), h('p', { class: 'rsub wide' }, t('welcome_p')), h('p', { class: 'small muted' }, t('signin_btn')), g)]);
+    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('welcome_h')), h('p', { class: 'rsub wide' }, t('welcome_p')),
+      h('p', { class: 'rsub wide', style: 'color:var(--gold)' }, L('Free to use. You start with 70 credits for Rosario’s AI, and get 20 more every month.', 'Gratis. Empiezas con 70 créditos para la IA de Rosario y recibes 20 más cada mes.')),
+      h('p', { class: 'small muted' }, t('signin_btn')), g,
+      h('p', { class: 'small muted', style: 'margin-top:18px' }, h('a', { href: 'privacy.html', target: '_blank', rel: 'noopener' }, L('Privacy policy', 'Política de privacidad'))))]);
     gsiButton(g);
     setTimeout(function () { sayKey('hello'); }, 600);
   };
-  screens.paywall = function (el) {
-    var txn = h('input', { type: 'text', id: 'pay-txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
-    var code = h('input', { type: 'text', id: 'pay-code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
-    var buy = h('a', { class: 'btn gold big', 'data-lx-buy': 'lens', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('pay_buy'));
-    function after(m) { me = m; cacheMe(); renderPill(); if (m.licensed) { sayKey('activated'); enter(); } else if (m.pending) { sayKey('pending'); go('pending', null, true); } }
-    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('pay_h')), h('p', { class: 'rsub wide' }, t('pay_p'))),
-      h('div', { class: 'card screen price-card' }, h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$25'), h('div', { class: 'small muted' }, t('buy_app_terms')), buy),
-      h('div', { class: 'card screen' }, h('label', { class: 'f' }, t('pay_paid') + ' ' + t('pay_txn'), txn),
-        h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value }).then(after).catch(function (e) { say(aiError(e)); }); } }, t('pay_send')),
-        h('label', { class: 'f' }, t('pay_code'), code),
-        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(after).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go'))),
-      h('p', { class: 'small muted center' }, t('acc_signed') + ' ' + (raw('lunara_email') || '')),
-      h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
-    if (window.LunaraPricing && LunaraPricing.refresh) LunaraPricing.refresh();
-    setTimeout(function () { sayKey('paywall'); }, 500);
+  /* ── Google Play Billing (the Play copy only) ─────────────────────
+     Plans and packs are bought through Google Play with the Digital
+     Goods and Payment Request APIs that the Android app provides. The
+     server checks each purchase with Google, grants it once, and
+     acknowledges or consumes it. */
+  var PLAY_SKU = { starter: 'luna_starter', pro: 'luna_pro', max: 'luna_max', credits_500: 'credits_500', credits_1500: 'credits_1500', credits_5000: 'credits_5000' };
+  var Play = (function () {
+    var svc = null, details = {};
+    function service() {
+      if (!isPlay() || !('getDigitalGoodsService' in window)) return Promise.resolve(null);
+      if (svc) return Promise.resolve(svc);
+      return window.getDigitalGoodsService('https://play.google.com/billing').then(function (x) { svc = x; return x; }).catch(function () { return null; });
+    }
+    function load() {
+      return service().then(function (x) {
+        if (!x) return details;
+        return x.getDetails(Object.keys(PLAY_SKU).map(function (k) { return PLAY_SKU[k]; }))
+          .then(function (list) { (list || []).forEach(function (d) { details[d.itemId] = d; }); return details; })
+          .catch(function () { return details; });
+      });
+    }
+    function price(product) {
+      var d = details[PLAY_SKU[product]];
+      if (!d || !d.price) return null;
+      try { return new Intl.NumberFormat(S.lang === 'es' ? 'es-ES' : 'en-US', { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); }
+      catch (e) { return d.price.value + ' ' + d.price.currency; }
+    }
+    function report(sku, token) {
+      return call('/purchase/play', { product_id: sku, purchase_token: token }).then(function (m) { me = m; cacheMe(); renderPill(); return m; });
+    }
+    function buy(product) {
+      var sku = PLAY_SKU[product];
+      return service().then(function (x) {
+        if (!x || !window.PaymentRequest) throw { error: L('Google Play purchases are not available on this device.', 'Las compras de Google Play no están disponibles en este dispositivo.') };
+        var req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: sku } }],
+          { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } });
+        return req.show().then(function (res) {
+          return report(sku, res.details.purchaseToken)
+            .then(function (m) { res.complete('success'); return m; }, function (e) { res.complete('fail'); throw e; });
+        });
+      });
+    }
+    /* Anything bought but not yet credited (the app closed mid-purchase,
+       the network dropped) is handed to the server again. Harmless to
+       repeat: the server grants each order once. */
+    function restore() {
+      return service().then(function (x) {
+        if (!x || !x.listPurchases) return 0;
+        return x.listPurchases().then(function (list) {
+          return Promise.all((list || []).map(function (p) { return report(p.itemId, p.purchaseToken).then(function () { return 1; }, function () { return 0; }); }))
+            .then(function (r) { return r.reduce(function (a, b) { return a + b; }, 0); });
+        });
+      }).catch(function () { return 0; });
+    }
+    return { available: function () { return service().then(Boolean); }, load: load, price: price, buy: buy, restore: restore };
+  })();
+
+  /* ── credits and plans ──────────────────────────────────────────── */
+  var DEFAULT_CAT = {
+    tiers: { free: { monthly: 20, price: 0, label: 'Free' }, starter: { monthly: 800, price: 7.99, label: 'Starter' }, pro: { monthly: 2500, price: 19.99, voice: true, label: 'Pro' }, max: { monthly: 7000, price: 49.99, voice: true, deep: true, label: 'Luna Max' } },
+    packs: { credits_500: { credits: 500, price: 6.99 }, credits_1500: { credits: 1500, price: 17.99 }, credits_5000: { credits: 5000, price: 49.99 } },
+    credits: { rosario: 2, detect_image: 10, detect_frames: 25, describe: 4, summarize: 5, write: 4, coach: 3, translate: 2 }, speak_chars_per_credit: 25
   };
-  screens.pending = function (el) {
-    add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('pend_h')), h('p', { class: 'rsub wide' }, t('pend_p'))),
-      h('button', { class: 'btn gold', onclick: function () { refreshMe().then(function (m) { if (m && m.licensed) { sayKey('activated'); enter(); } else sayKey('pending'); }); } }, t('pend_check')),
-      h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
-    var iv = setInterval(function () { refreshMe().then(function (m) { if (m && m.licensed) { clearInterval(iv); sayKey('activated'); enter(); } }); }, 30000);
-    onLeave(function () { clearInterval(iv); });
+  function cat() { return (me && me.catalogue) || DEFAULT_CAT; }
+  /* Credits in words a person can picture. */
+  function approx(n) {
+    var c = cat().credits;
+    return L('about ', 'unas ') + fmt(Math.floor(n / c.detect_image)) + L(' AI checks, or ', ' revisiones de IA, o ') + fmt(Math.floor(n / c.rosario)) + L(' questions to Rosario', ' preguntas a Rosario');
+  }
+  function usd(n) { return '$' + Number(n).toFixed(2); }
+  function planPrice(product, perMonth) {
+    var p = isPlay() && Play.price(product);
+    var base = cat().tiers[product] ? cat().tiers[product].price : cat().packs[product].price;
+    return (p || usd(base)) + (perMonth ? L(' / month', ' / mes') : '');
+  }
+  var PLAN_POINTS = {
+    starter: function () { return [L('Every Rosario feature', 'Todas las funciones de Rosario')]; },
+    pro: function () { return [L('Rosario’s natural voice', 'La voz natural de Rosario'), L('Every Rosario feature', 'Todas las funciones de Rosario')]; },
+    max: function () { return [L('Deepest AI checks', 'Las revisiones de IA más profundas'), L('Rosario’s natural voice', 'La voz natural de Rosario'), L('New features first', 'Novedades antes que nadie')]; }
+  };
+  screens.shop = function (el) {
+    head(el, L('Credits and plans', 'Créditos y planes'));
+    var box = h('div', { class: 'screen' }); el.appendChild(box);
+    var play = isPlay();
+    function done(m) { buzz([30, 60, 30]); sayKey('activated'); draw(); return m; }
+    function buyBtn(product, label, cls) {
+      var b = h('button', { class: 'btn ' + (cls || 'gold'), onclick: function () {
+        if (play) {
+          b.disabled = true;
+          Play.buy(product).then(done).catch(function (e) { b.disabled = false; if (e && e.name === 'AbortError') return; say(aiError(e)); });
+        } else webBuy(product);
+      } }, label);
+      return b;
+    }
+    function draw() {
+      fill(box, busy(h('div')));
+      Promise.all([refreshMe(), play ? Play.load() : null]).then(function () {
+        var m = me || {}, tiers = cat().tiers, packs = cat().packs, es = S.lang === 'es';
+        var cur = m.owner ? 'owner' : (m.tier || 'free');
+        var bal = h('div', { class: 'card screen balance' },
+          h('div', { class: 'small muted' }, m.owner ? L('Owner', 'Propietario') : (L('Your plan: ', 'Tu plan: ') + (tiers[cur] ? tiers[cur].label : cur))),
+          m.owner ? h('div', { class: 'price' }, L('No limits', 'Sin límites')) : [
+            h('div', { class: 'price' }, '✦ ' + fmt(m.credits || 0), h('small', { class: 'muted' }, ' ' + L('credits', 'créditos'))),
+            h('p', { style: 'margin:.2em 0 0' }, approx(m.credits || 0)),
+            h('p', { class: 'small muted', style: 'margin:.4em 0 0' },
+              fmt(m.sub_credits || 0) + L(' monthly', ' del mes') + ' · ' + fmt(m.pack_credits || 0) + L(' bought or welcome (never expire)', ' comprados o de bienvenida (no caducan)') +
+              (m.renews ? ' · ' + (cur === 'free' ? L('20 more on ', '20 más el ') : L('Renews ', 'Se renueva el ')) + new Date(m.renews).toLocaleDateString(es ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long' }) : '')),
+            m.legacy ? h('p', { class: 'small muted', style: 'margin:.4em 0 0' }, m.legacy.label + ' · ' + L('until ', 'hasta ') + new Date(m.legacy.expires_at).toLocaleDateString(es ? 'es-ES' : 'en-GB') + L(' (used first)', ' (se usa primero)')) : null,
+            m.pending ? h('p', { class: 'small', style: 'margin:.4em 0 0;color:var(--gold)' }, L('A payment is waiting for confirmation.', 'Hay un pago esperando confirmación.')) : null
+          ]);
+        var plans = ['starter', 'pro', 'max'].map(function (k) {
+          var tr = tiers[k], mine = cur === k;
+          return h('div', { class: 'card plan' + (k === 'pro' ? ' featured' : '') },
+            k === 'pro' ? h('div', { class: 'tag' }, L('Most chosen', 'El más elegido')) : null,
+            h('h3', null, tr.label), h('div', { class: 'price' }, planPrice(k, true)),
+            h('p', { style: 'margin:.2em 0' }, h('b', null, fmt(tr.monthly) + L(' credits every month', ' créditos cada mes'))),
+            h('p', { class: 'small muted', style: 'margin:0 0 .4em' }, approx(tr.monthly)),
+            h('ul', { class: 'small' }, PLAN_POINTS[k]().map(function (x) { return h('li', null, x); })),
+            mine ? h('div', { class: 'btn ghost', 'aria-disabled': 'true' }, L('Your plan', 'Tu plan')) : buyBtn(k, (play ? L('Subscribe', 'Suscribirme') : L('Buy one month', 'Comprar un mes')), k === 'pro' ? 'gold' : ''));
+        });
+        var packCards = Object.keys(packs).map(function (k) {
+          return h('div', { class: 'card pack' }, h('b', null, '✦ ' + fmt(packs[k].credits)), h('div', { class: 'price small' }, planPrice(k)),
+            h('p', { class: 'small muted', style: 'margin:.2em 0 .5em' }, approx(packs[k].credits)), buyBtn(k, L('Buy', 'Comprar'), ''));
+        });
+        var c = cat().credits;
+        var prices = [[L('A question to Rosario', 'Una pregunta a Rosario'), c.rosario], [L('Translate a sentence', 'Traducir una frase'), c.translate],
+          [L('Describe what the camera sees', 'Describir lo que ve la cámara'), c.describe], [L('Explain a letter or bill', 'Explicar una carta o factura'), c.summarize],
+          [L('Write an email or message', 'Escribir un correo o mensaje'), c.write], [L('Scam coach', 'Entrenador antiestafas'), c.coach],
+          [L('AI check of a photo, text, voice or message', 'Revisión de IA de una foto, texto, voz o mensaje'), c.detect_image], [L('AI check of a video', 'Revisión de IA de un vídeo'), c.detect_frames],
+          [L('Rosario speaking in her natural voice', 'Rosario hablando con su voz natural'), L('1 per ' + (cat().speak_chars_per_credit || 25) + ' letters (about 5 an answer)', '1 cada ' + (cat().speak_chars_per_credit || 25) + ' letras (unos 5 por respuesta)')]];
+        fill(box, bal,
+          h('h2', null, L('Plans', 'Planes')),
+          h('p', { class: 'small muted' }, play ? L('Billed monthly by Google Play. Cancel any time in Google Play → Subscriptions. Unused monthly credits don’t roll over.', 'Google Play lo cobra cada mes. Cancela cuando quieras en Google Play → Suscripciones. Los créditos del mes que no uses no se acumulan.')
+            : L('On the web, each payment is one month and never renews by itself. Unused monthly credits don’t roll over.', 'En la web, cada pago es un mes y nunca se renueva solo. Los créditos del mes que no uses no se acumulan.')),
+          h('div', { class: 'plans' }, plans),
+          h('h2', null, L('Top up', 'Recargar')),
+          h('p', { class: 'small muted' }, L('Bought credits never expire and work with any plan, including Free.', 'Los créditos comprados no caducan y sirven con cualquier plan, también el gratuito.')),
+          h('div', { class: 'packs' }, packCards),
+          h('h2', null, L('What things cost', 'Lo que cuesta cada cosa')),
+          h('div', { class: 'card' }, h('dl', { class: 'costs' }, prices.map(function (x) { return [h('dt', null, x[0]), h('dd', null, typeof x[1] === 'number' ? '✦ ' + x[1] : x[1])]; }))),
+          h('p', { class: 'small muted' }, L('Free, always: everything that runs on your phone — reading text aloud, the magnifier, colours, QR and link checks, file checks, invisible Lunara Marks, reminders, lists, notes, memory, the safe word and the emergency screen. Rosario’s recorded voice and your phone’s voice are free too.',
+            'Gratis, siempre: todo lo que funciona en tu teléfono — leer texto en voz alta, la lupa, los colores, revisar códigos QR y enlaces, revisar archivos, las Lunara Marks invisibles, recordatorios, listas, notas, memoria, la palabra clave y la pantalla de emergencia. La voz grabada de Rosario y la voz de tu teléfono también son gratis.')),
+          play ? h('button', { class: 'btn ghost', onclick: function () { Play.restore().then(function (n) { say(n ? t('activated') : L('No purchases to restore.', 'No hay compras que restaurar.')); draw(); }); } }, L('Restore purchases', 'Restaurar compras')) : webExtras(),
+          h('button', { class: 'btn ghost', onclick: function () { go('history'); } }, L('Credit history', 'Historial de créditos')));
+        if (!play && window.LunaraPricing && LunaraPricing.refresh) LunaraPricing.refresh();
+      });
+    }
+    /* The web: PayPal, then the Transaction ID from the receipt. */
+    var chosen = h('select', { id: 'claim-product' }, ['starter', 'pro', 'max', 'credits_500', 'credits_1500', 'credits_5000'].map(function (k) {
+      var tr = cat().tiers[k], pk = cat().packs[k];
+      return h('option', { value: k }, tr ? tr.label + ' · ' + usd(tr.price) : fmt(pk.credits) + L(' credits · ', ' créditos · ') + usd(pk.price));
+    }));
+    function webBuy(product) {
+      var url = window.LunaraPricing && LunaraPricing.get('lens_' + product) && LunaraPricing.get('lens_' + product).link ? LunaraPricing.url('lens_' + product) : null;
+      chosen.value = product;
+      if (url) { window.open(url, '_blank', 'noopener'); say(L('After paying, enter the Transaction ID from your PayPal receipt below.', 'Después de pagar, escribe abajo el identificador de la transacción de tu recibo de PayPal.')); }
+      else { location.href = 'mailto:lunarasociety@gmail.com?subject=' + encodeURIComponent('Rosario ' + product) + '&body=' + encodeURIComponent(L('I would like to buy: ', 'Quiero comprar: ') + product + '\n' + (raw('lunara_email') || '')); }
+      var f = document.getElementById('claim-box'); if (f) f.scrollIntoView({ behavior: 'smooth' });
+    }
+    function webExtras() {
+      var txn = h('input', { type: 'text', id: 'txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
+      var code = h('input', { type: 'text', id: 'code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
+      return h('div', { class: 'card screen', id: 'claim-box' },
+        h('b', null, L('Paid with PayPal?', '¿Pagaste con PayPal?')),
+        h('label', { class: 'f' }, L('What you bought', 'Lo que compraste'), chosen),
+        h('label', { class: 'f' }, t('pay_txn'), txn),
+        h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value, product: chosen.value }).then(function (m) { me = m; cacheMe(); renderPill(); if (m.pending) { say(L('Thank you. Your payment is waiting for confirmation.', 'Gracias. Tu pago está esperando confirmación.')); } else done(m); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('pay_send')),
+        h('label', { class: 'f' }, t('pay_code'), code),
+        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')));
+    }
+    draw();
+  };
+  screens.history = function (el) {
+    head(el, L('Credit history', 'Historial de créditos'));
+    var box = h('div', { class: 'screen' }, busy(h('div'))); el.appendChild(box);
+    var KIND = { welcome: L('Welcome', 'Bienvenida'), monthly: L('Monthly credits', 'Créditos del mes'), plan: L('Plan', 'Plan'), plan_ended: L('Plan ended', 'Plan terminado'), pack: L('Credits bought', 'Créditos comprados'), gift: L('Gift', 'Regalo'), refund: L('Returned (no answer)', 'Devueltos (sin respuesta)'), spend: L('Used', 'Usados') };
+    call('/history').then(function (r) {
+      fill(box, (r.rows || []).length ? r.rows.map(function (x) {
+        var what = x.kind === 'spend' ? String(x.ref || '').split(':')[0] : '';
+        return h('div', { class: 'row small', style: 'justify-content:space-between;border-bottom:1px solid var(--line-2);padding:8px 0' },
+          h('span', null, (KIND[x.kind] || x.kind) + (what ? ' · ' + what.replace(/_/g, ' ') : ''), h('span', { class: 'muted', style: 'display:block' }, new Date(x.at).toLocaleString(S.lang === 'es' ? 'es-ES' : 'en-GB'))),
+          h('b', { style: 'color:' + (x.delta < 0 ? 'var(--muted)' : 'var(--gold)') }, (x.delta > 0 ? '+' : '') + fmt(x.delta)));
+      }) : h('p', { class: 'muted' }, L('Nothing yet.', 'Nada todavía.')));
+    }).catch(function (e) { fill(box, h('p', { class: 'note' }, aiError(e))); });
   };
 
   /* ── the owner's desk ───────────────────────────────────────────── */
@@ -1369,30 +1827,43 @@
         fill(box,
           stop,
           h('div', { class: 'stats' },
-            [[t('od_spent'), '$' + Number(st.spent_usd || 0).toFixed(2)], [t('od_calls'), st.calls || 0], [t('od_lic'), st.active_licences || 0], [t('od_pending'), st.pending_claims || 0]]
+            [[t('od_spent'), '$' + Number(st.spent_usd || 0).toFixed(2)], [t('od_calls'), st.calls || 0], [L('Accounts', 'Cuentas'), st.accounts || 0], [L('Paying', 'De pago'), st.paying || 0],
+              [L('Credits used', 'Créditos usados'), fmt(st.credits_spent || 0)], [L('Purchases', 'Compras'), st.purchases || 0], [t('od_lic'), st.active_licences || 0], [t('od_pending'), st.pending_claims || 0]]
               .map(function (x) { return h('div', { class: 'stat' }, h('b', null, String(x[1])), h('span', null, x[0])); })),
           h('h2', null, t('od_pending')),
           (o.claims || []).length ? o.claims.map(function (c) {
-            return h('div', { class: 'card screen' }, h('div', null, c.email), h('div', { class: 'small muted key' }, c.paypal_txn), h('div', { class: 'small muted' }, new Date(c.created_at).toLocaleString()),
+            return h('div', { class: 'card screen' }, h('div', null, c.email), h('div', { class: 'small muted key' }, c.paypal_txn), h('div', { class: 'small' }, L('Says they bought: ', 'Dice que compró: ') + (c.product || L('the earlier $25 month', 'el antiguo mes de 25 $'))), h('div', { class: 'small muted' }, new Date(c.created_at).toLocaleString()),
               h('div', { class: 'row' },
                 h('button', { class: 'btn gold', onclick: function () { call('/admin/claim', { claim_id: c.id }).then(function () { say(S.lang === 'es' ? 'Aprobado.' : 'Approved.'); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_approve')),
                 h('button', { class: 'btn ghost', onclick: function () { call('/admin/claim', { claim_id: c.id, decision: 'reject' }).then(draw); } }, t('od_reject'))));
           }) : h('p', { class: 'muted' }, t('od_none')),
-          h('h2', null, t('od_grant')), grantForm(),
+          h('h2', null, L('Give credits or a plan', 'Regalar créditos o un plan')), giftForm(),
           h('h2', null, t('od_codes')), codeForm(),
+          h('h2', null, L('Recent accounts', 'Cuentas recientes')),
+          (o.wallets || []).map(function (w) { return h('div', { class: 'small', style: 'display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2)' }, h('span', null, w.email), h('span', { class: 'muted' }, w.tier + ' · ✦ ' + fmt(w.sub_credits + w.pack_credits))); }),
           h('h2', null, S.lang === 'es' ? 'Licencias recientes' : 'Recent licences'),
           (o.licences || []).map(function (l) { return h('div', { class: 'small', style: 'display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2)' }, h('span', null, l.email), h('span', { class: 'muted' }, l.plan + ' · ' + new Date(l.expires_at).toLocaleDateString())); }));
       }).catch(function (e) { fill(box, h('p', { class: 'note' }, aiError(e))); });
     }
-    function grantForm() {
-      var em = h('input', { type: 'email', id: 'g-email', placeholder: t('od_email') }), dy = h('input', { type: 'number', id: 'g-days', value: 30, min: 1 });
-      return h('div', { class: 'card screen' }, em, h('label', { class: 'f' }, t('od_days'), dy),
-        h('button', { class: 'btn', onclick: function () { call('/admin/grant', { email: em.value, days: +dy.value, plan: 'comp' }).then(function (r) { toast('✓ ' + r.email); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_give')));
+    function productSelect(id) {
+      return h('select', { id: id }, [['pro', 'Pro · 1 ' + L('month', 'mes')], ['starter', 'Starter · 1 ' + L('month', 'mes')], ['max', 'Luna Max · 1 ' + L('month', 'mes')],
+        ['credits_500', '500 ' + L('credits', 'créditos')], ['credits_1500', '1,500 ' + L('credits', 'créditos')], ['credits_5000', '5,000 ' + L('credits', 'créditos')]].map(function (x) { return h('option', { value: x[0] }, x[1]); }));
+    }
+    function giftForm() {
+      var em = h('input', { type: 'email', id: 'g-email', placeholder: t('od_email') }), what = productSelect('g-what');
+      var n = h('input', { type: 'number', id: 'g-credits', value: 100, min: 1 });
+      return h('div', { class: 'card screen' }, em, h('label', { class: 'f' }, L('Plan or pack', 'Plan o paquete'), what),
+        h('button', { class: 'btn', onclick: function () {
+          var v = what.value, body = /^credits_/.test(v) ? { email: em.value, credits: +v.split('_')[1] } : { email: em.value, tier: v, days: 31 };
+          call('/admin/credits', body).then(function (r) { toast('✓ ' + r.email); draw(); }).catch(function (e) { say(aiError(e)); });
+        } }, t('od_give')),
+        h('label', { class: 'f' }, L('Or any number of credits', 'O cualquier número de créditos'), n),
+        h('button', { class: 'btn ghost', onclick: function () { call('/admin/credits', { email: em.value, credits: +n.value }).then(function (r) { toast('✓ ' + r.email + ' +' + r.credits); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_give')));
     }
     function codeForm() {
-      var n = h('input', { type: 'number', id: 'c-n', value: 3, min: 1, max: 50 }), out = h('div', { class: 'key' });
-      return h('div', { class: 'card screen' }, h('label', { class: 'f' }, S.lang === 'es' ? 'Cuántos (1 mes cada uno)' : 'How many (1 month each)', n),
-        h('button', { class: 'btn', onclick: function () { call('/admin/codes', { count: +n.value, plan: 'app_month' }).then(function (r) { out.textContent = r.codes.join('\n'); }).catch(function (e) { say(aiError(e)); }); } }, t('od_codes')), out);
+      var n = h('input', { type: 'number', id: 'c-n', value: 3, min: 1, max: 50 }), what = productSelect('c-what'), out = h('div', { class: 'key' });
+      return h('div', { class: 'card screen' }, h('label', { class: 'f' }, L('What each code gives', 'Qué da cada código'), what), h('label', { class: 'f' }, L('How many', 'Cuántos'), n),
+        h('button', { class: 'btn', onclick: function () { call('/admin/codes', { count: +n.value, plan: what.value, days: 31 }).then(function (r) { out.textContent = r.codes.join('\n'); }).catch(function (e) { say(aiError(e)); }); } }, t('od_codes')), out);
     }
     draw();
   };
@@ -1406,47 +1877,56 @@
       if (!session()) {
         var gbtn = h('div', { id: 'gbtn', style: 'min-height:44px' });
         add(box, [h('p', { class: 'lede' }, t('acc_signin')), gbtn]);
-        gsi().then(function () {
-          google.accounts.id.initialize({ client_id: CLIENT_ID, callback: onGoogle, ux_mode: 'popup', use_fedcm_for_prompt: true });
-          google.accounts.id.renderButton(gbtn, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: S.lang });
-        }).catch(function () { gbtn.textContent = t('err'); });
+        gsiButton(gbtn);
       } else {
         add(box, h('p', { class: 'small muted' }, t('acc_signed') + ' ' + (raw('lunara_email') || raw('lunara_name') || raw('lunara_id') || '')));
-        var planBox = h('div', { class: 'card' }, h('div', { class: 'busy' }, h('div', { class: 'spinner' })));
+        var planBox = h('button', { class: 'card', style: 'text-align:left;width:100%', onclick: function () { go('shop'); } }, h('div', { class: 'busy' }, h('div', { class: 'spinner' })));
         box.appendChild(planBox);
         refreshMe().then(function (m) {
-          if (m && m.licensed) {
-            fill(planBox, h('div', { class: 'small muted' }, t('acc_plan')), h('div', { class: 'price', style: 'font-size:1.5em' }, m.label),
-              h('div', { class: 'meter' }, h('i', { style: 'width:' + m.allowance_left_pct + '%;background:var(--gold)' })),
-              h('div', { class: 'small muted' }, t('acc_left') + ': ' + m.allowance_left_pct + '% · ' + t('acc_until') + ' ' + new Date(m.expires_at).toLocaleDateString(S.lang === 'es' ? 'es-ES' : 'en-GB')));
-            if (m.plan === 'api_month') {
-              var keyOut = h('div');
-              planBox.appendChild(h('button', { class: 'btn', style: 'margin-top:12px', onclick: function () { call('/apikey', { label: 'app' }).then(function (k) { fill(keyOut, h('div', { class: 'key' }, k.key), h('p', { class: 'small muted' }, t('apikey_note'))); }).catch(function (e) { say(aiError(e)); }); } }, t('apikey')));
-              planBox.appendChild(keyOut);
-            }
-          } else fill(planBox, h('p', { style: 'margin:0' }, t('acc_none')));
+          if (!m) { fill(planBox, h('p', { style: 'margin:0' }, t('err'))); return; }
+          if (m.owner) { fill(planBox, h('div', { class: 'small muted' }, t('acc_plan')), h('div', { class: 'price', style: 'font-size:1.5em' }, t('owner_badge'))); return; }
+          var tier = cat().tiers[m.tier] || { label: m.tier };
+          fill(planBox, h('div', { class: 'small muted' }, t('acc_plan') + ': ' + tier.label),
+            h('div', { class: 'price', style: 'font-size:1.6em' }, '✦ ' + fmt(m.credits) + ' ', h('small', { class: 'muted' }, L('credits', 'créditos'))),
+            h('div', { class: 'small muted' }, approx(m.credits)),
+            h('div', { class: 'small', style: 'margin-top:8px;color:var(--gold)' }, L('Plans and credits →', 'Planes y créditos →')));
+          if (m.plan === 'api_month') {
+            var keyOut = h('div');
+            box.insertBefore(h('div', { class: 'card screen' }, h('button', { class: 'btn', onclick: function () { call('/apikey', { label: 'app' }).then(function (k) { fill(keyOut, h('div', { class: 'key' }, k.key), h('p', { class: 'small muted' }, t('apikey_note'))); }).catch(function (e) { say(aiError(e)); }); } }, t('apikey')), keyOut), planBox.nextSibling);
+          }
         });
-        if (!licensed()) buyBlock(box);
-        else add(box, h('a', { class: 'btn', href: 'get.html' }, icon('files'), S.lang === 'es' ? 'Descargar la app de Android' : 'Download the Android app'));
-        var txn = h('input', { type: 'text', id: 'txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
-        var code = h('input', { type: 'text', id: 'code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
-        add(box, [h('div', { class: 'card screen' },
-          h('label', { class: 'f' }, t('claim'), txn), h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value }).then(function (m) { me = m; renderPill(); say(t('activated')); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('claim_go')),
-          h('label', { class: 'f' }, t('redeem'), code), h('button', { class: 'btn', onclick: function () { call('/redeem', { code: code.value }).then(function (m) { me = m; renderPill(); say(t('activated')); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go'))),
-          h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out'))]);
+        if (!inAndroidApp()) add(box, h('a', { class: 'btn', href: 'get.html' }, icon('files'), L('Download the Android app', 'Descargar la app de Android')));
+        add(box, h('button', { class: 'btn ghost', onclick: signOut }, t('acc_out')));
       }
       settingsBlock(box);
-      add(box, h('p', { class: 'note' }, t('privacy')));
+      add(box, h('p', { class: 'note' }, t('privacy')), h('a', { class: 'small', href: 'privacy.html', target: '_blank', rel: 'noopener' }, L('Privacy policy', 'Política de privacidad')));
+      if (session()) deleteBlock(box);
     }
     draw();
   };
-  function buyBlock(box) {
-    add(box, h('div', { class: 'grid', style: 'grid-template-columns:1fr' },
-      h('div', { class: 'card' }, h('div', { class: 'small muted' }, t('buy_app')), h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$25'), h('p', { class: 'small muted' }, t('buy_app_terms')),
-        h('a', { class: 'btn gold', 'data-lx-buy': 'lens', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('buy_app'))),
-      h('div', { class: 'card' }, h('div', { class: 'small muted' }, t('buy_api')), h('div', { class: 'price', 'data-lx-amount': 'lensapi' }, '$199'), h('p', { class: 'small muted' }, t('buy_api_terms')),
-        h('a', { class: 'btn', 'data-lx-buy': 'lensapi', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('buy_api')))));
-    if (window.LunaraPricing && LunaraPricing.refresh) LunaraPricing.refresh();
+
+  /* Deleting the account, as Google Play requires: from inside the app,
+     with the consequences said plainly and a typed confirmation. */
+  screens.deleteaccount = function (el) { current.arg = 'delete'; screens.account(el); };
+  function deleteBlock(box) {
+    var inp = h('input', { type: 'text', id: 'del-confirm', autocomplete: 'off', placeholder: L('Type DELETE', 'Escribe DELETE') });
+    var btn = h('button', { class: 'btn sos', onclick: function () {
+      if (inp.value.trim().toUpperCase() !== 'DELETE') { say(L('Type DELETE to confirm.', 'Escribe DELETE para confirmar.')); inp.focus(); return; }
+      btn.disabled = true;
+      call('/account/delete', { confirm: 'DELETE' }).then(function () {
+        wipeLocal().then(function () { say(L('Your account has been deleted.', 'Tu cuenta se ha eliminado.')); signOut(); });
+      }).catch(function (e) { btn.disabled = false; say(aiError(e)); });
+    } }, L('Delete my account', 'Eliminar mi cuenta'));
+    add(box, h('details', { class: 'card danger', id: 'delete-account' },
+      h('summary', null, L('Delete my account', 'Eliminar mi cuenta')),
+      h('p', { class: 'small' }, L('This deletes your Lunara account and everything Rosario keeps for it: credits, plan, history, and the memory, lists, notes, reminders and files on this phone. Any Lunara Marks you made are revoked. It cannot be undone. A Google Play subscription must also be cancelled in Google Play, or it will keep charging.',
+        'Esto elimina tu cuenta de Lunara y todo lo que Rosario guarda de ella: créditos, plan, historial, y la memoria, las listas, notas, recordatorios y archivos de este teléfono. Las Lunara Marks que hiciste quedan revocadas. No se puede deshacer. Una suscripción de Google Play también hay que cancelarla en Google Play, o seguirá cobrando.')),
+      inp, btn));
+    if (current.arg === 'delete' || location.hash === '#deleteaccount') setTimeout(function () { var d = document.getElementById('delete-account'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth' }); } }, 300);
+  }
+  function wipeLocal() {
+    try { Object.keys(localStorage).filter(function (k) { return /^(lens_|lunara_)/.test(k); }).forEach(function (k) { localStorage.removeItem(k); }); } catch (e) { }
+    return new Promise(function (res) { try { var r = indexedDB.deleteDatabase('lunara-lens'); r.onsuccess = r.onerror = r.onblocked = function () { res(); }; } catch (e) { res(); } });
   }
   function settingsBlock(box) {
     function sw(key, label) {
@@ -1465,6 +1945,24 @@
   function parse(q) {
     var s = q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[¿?¡!.,]/g, ' ').replace(/\s+/g, ' ').trim();
     var m;
+    var raw0 = String(q).trim().replace(/[.!?¡¿]+$/, '');
+    // The personal assistant: understood on the phone, free.
+    if ((m = /^(?:please\s+)?(?:remember|don'?t forget)\s+(?:that\s+)(.+)$/i.exec(raw0)) || (m = /^(?:por favor\s+)?recuerda\s+que\s+(.+)$/i.exec(raw0))) return { action: 'remember_fact', text: m[1] };
+    if ((m = /^(?:forget|olvida)\s+(?:that\s+|que\s+|lo de\s+)?(.+)$/i.exec(raw0)) && !/everything|todo/i.test(m[1])) return { action: 'forget_fact', text: m[1] };
+    if (/(what do you (remember|know) about me|what have i told you|que recuerdas|que sabes de mi|mi memoria)/.test(s)) return { action: 'memory' };
+    // Lists keep their commas: "milk, bread and eggs" is three things.
+    var sc = q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[¿?¡!.]/g, ' ').replace(/\s+/g, ' ').trim();
+    if ((m = /^(?:add|put)\s+(.+?)\s+(?:to|on)\s+(?:my\s+|the\s+)?list$/.exec(sc))) return { action: 'list_add', text: m[1], list: '' };
+    if ((m = /^(?:add|put)\s+(.+?)\s+(?:to|on)\s+(?:my\s+|the\s+)(.+?)\s+list$/.exec(sc)) || (m = /^(?:add|put)\s+(.+?)\s+(?:to|on)\s+(.+?)\s+list$/.exec(sc))) return { action: 'list_add', text: m[1], list: m[2] };
+    if ((m = /^(?:anade|agrega|apunta|pon|mete)\s+(.+?)\s+(?:a|en)\s+(?:la\s+|mi\s+)?lista(?:\s+de(?:\s+la)?\s+(.+))?$/.exec(sc))) return { action: 'list_add', text: m[1], list: m[2] || '' };
+    if ((m = /(?:what'?s|what is|read)\s+(?:on\s+)?(?:my\s+|the\s+)?(.+?)\s+list/.exec(s)) || (m = /(?:que hay en|lee|leeme)\s+(?:mi\s+|la\s+)?lista(?:\s+de(?:\s+la)?\s+(.+))?/.exec(s))) return { action: 'list_read', list: m[1] || '' };
+    if (/^(my lists|lists|mis listas|listas)$/.test(s)) return { action: 'lists' };
+    if ((m = /\b(work|home|trabajo|casa)\s+mode\b|\bmodo\s+(trabajo|casa)\b/.exec(s))) return { action: 'mode', text: m[1] || m[2] };
+    if (/(plan my day|what should i do (first|today)|planifica mi dia|organiza mi dia|que hago hoy)/.test(s)) return { action: 'plan_day' };
+    if (/(let'?s talk|let'?s chat|conversation mode|talk mode|keep listening|hablemos|modo conversacion|charlemos)/.test(s)) return { action: 'talk' };
+    if (/(credits|creditos|buy (more )?credits|comprar creditos|my plan|mi plan|subscription|suscripcion|luna max|upgrade)/.test(s)) return { action: 'shop' };
+    if (/(someone is calling|they say (they'?re|they are) from|says? (they'?re|they are|he'?s|she'?s|it'?s) from|says (he|she|they)'?s? from (my|the) bank|asking for (a|my) code|me (esta|estan) llamando|dicen que (son|llaman) de|me piden (un|el) codigo)/.test(s)) return { action: 'coach', text: raw0 };
+    if (/^(write|draft|escribe|redacta)\b/.test(s)) return { action: 'write', text: raw0.replace(/^(write|draft|escribe|redacta)\s*(me\s+|me\s+un\s+|un\s+|una\s+|an?\s+)?/i, '') };
     if ((m = /(?:put|move|organi[sz]e|place|save)\s+(?:the\s+)?(?:last|latest|newest)?\s*(\w+)?\s*(?:photos?|images?|pictures?|pics?)\s+(?:in|into|to)\s+(?:the\s+|a\s+)?(?:folder\s+)?(?:called\s+|named\s+)?(.+)$/.exec(s))) return { action: 'organize', n: num(m[1]) || 1, folder: m[2].replace(/\s+folder$/, '') };
     if ((m = /(?:pon|mueve|guarda|organiza|mete)\s+(?:las\s+|la\s+)?(?:ultimas?\s+)?(\w+)?\s*(?:ultimas?\s+)?(?:fotos?|imagenes?)\s+(?:en|a)\s+(?:la\s+)?(?:carpeta\s+)?(?:llamada\s+)?(.+)$/.exec(s))) return { action: 'organize', n: num(m[1]) || 1, folder: m[2] };
     if ((m = /^(?:translate|traduce|traducir)\s+(.+?)\s+(?:to|into|al|a)\s+(spanish|english|espanol|ingles)$/.exec(s))) return { action: 'translate', text: m[1], to: /span|espan/.test(m[2]) ? 'es' : 'en' };
@@ -1520,7 +2018,7 @@
     if (/(help|ayuda|what can you do|que puedes hacer)/.test(s)) return { action: 'help' };
     return null;
   }
-  var ACTION_SCREEN = { link: 'link', qr: 'qr', summarize: 'summarize', reminders: 'reminders', briefing: 'briefing', emergency: 'emergency', safeword: 'safeword', owner: 'owner', photo: 'photo', scan: 'scan', video: 'video', voice: 'voice', text: 'text', scam: 'scam', verify: 'verify', mark: 'mark', describe: 'describe', read: 'read', magnify: 'magnify', color: 'color', translate: 'translate', converse: 'converse', replies: 'replies', files: 'files', remember: 'remember', calm: 'calm', card: 'card', account: 'account', home: 'home' };
+  var ACTION_SCREEN = { memory: 'memory', lists: 'lists', talk: 'talk', shop: 'shop', write: 'write', coach: 'coach', link: 'link', qr: 'qr', summarize: 'summarize', reminders: 'reminders', briefing: 'briefing', emergency: 'emergency', safeword: 'safeword', owner: 'owner', photo: 'photo', scan: 'scan', video: 'video', voice: 'voice', text: 'text', scam: 'scam', verify: 'verify', mark: 'mark', describe: 'describe', read: 'read', magnify: 'magnify', color: 'color', translate: 'translate', converse: 'converse', replies: 'replies', files: 'files', remember: 'remember', calm: 'calm', card: 'card', account: 'account', home: 'home' };
   function run(cmd) {
     var a = cmd.action;
     if (a === 'organize') return organize(cmd.n, cmd.folder).then(function () { go('files', { folder: cmd.folder.replace(/^\w/, function (c) { return c.toUpperCase(); }) }); });
@@ -1537,6 +2035,13 @@
     if (a === 'help') return sayKey('try_saying');
     if (a === 'lang') { S.lang = cmd.lang; saveSettings(); renderPill(); go(current.name, current.arg, true); return say(S.lang === 'es' ? 'Ahora hablo español.' : 'Now speaking English.'); }
     if (a === 'answer') return say(cmd.speech);
+    if (a === 'remember_fact') { var mm = Mem.add(cmd.text); return say(mm ? L('I’ll remember that.', 'Lo recordaré.') : L('I already knew that.', 'Eso ya lo sabía.')); }
+    if (a === 'forget_fact') { var fm = Mem.forget(cmd.text); return say(fm ? L('Forgotten: ', 'Olvidado: ') + fm.text : L('I don’t remember anything like that.', 'No recuerdo nada parecido.')); }
+    if (a === 'list_add') { var ra = Lists.add(cmd.list, cmd.text); buzz(); return say(L('Added to ', 'Añadido a ') + ra.list.name + ': ' + ra.added.join(', ') + '.'); }
+    if (a === 'list_read') return readList(cmd.list);
+    if (a === 'mode') return setMode(cmd.text);
+    if (a === 'plan_day') { go('briefing', { plan: true }); return; }
+    if (a === 'coach' || a === 'write') { go(a, { text: cmd.text }); return; }
     var scr = ACTION_SCREEN[a]; if (!scr) return sayKey('not_caught');
     if (a === 'translate' && cmd.text) return go('translate', { text: cmd.text, to: cmd.to });
     go(scr, cmd.arg);
@@ -1544,6 +2049,9 @@
     if (/^(calm|emergency|safeword|briefing)$/.test(a)) return;
     var title = { photo: 't_photo', scan: 't_scan', video: 't_video', voice: 't_voice', text: 't_text', scam: 't_scam', verify: 't_verify', mark: 't_mark', describe: 't_describe', read: 't_read', color: 't_color', translate: 't_translate', converse: 't_converse', replies: 't_replies', files: 't_files', remember: 't_remember', card: 't_card', account: 't_account', link: 't_link', qr: 't_qr', summarize: 't_summ', reminders: 't_remind', owner: 't_owner' }[a];
     if (title) say(t(title), null, { transcript: true });
+    else if (a === 'lists') say(L('Your lists.', 'Tus listas.'));
+    else if (a === 'memory') say(Mem.all().length ? L('Here is what I remember.', 'Esto es lo que recuerdo.') : L('I don’t remember anything yet. Say “remember that…”.', 'Aún no recuerdo nada. Di «recuerda que…».'));
+    else if (a === 'shop') say(me && !me.owner && credits() !== null ? L('You have ', 'Tienes ') + fmt(credits()) + L(' credits.', ' créditos.') : L('Credits and plans.', 'Créditos y planes.'));
   }
 
   /* Rosario hears something. Quick things are understood on the phone;
@@ -1557,7 +2065,7 @@
     if (!licensed()) return sayKey('no_licence');
     var hist = convo.slice(-9, -1).map(function (m) { return { role: m.role, text: m.text }; });
     var d = new Date();
-    return ai('rosario', { text: q, history: hist, context: 'Local time: ' + d.toString() + '. App language: ' + (S.lang === 'es' ? 'Spanish' : 'English') + '. Current screen: ' + current.name + (me && me.owner ? '. The user is the owner of Lunara Society.' : '') }).then(function (r) {
+    return ai('rosario', Object.assign({ text: q, history: hist, context: 'Local time: ' + d.toString() + '. App language: ' + (S.lang === 'es' ? 'Spanish' : 'English') + '. Current screen: ' + current.name + (me && me.owner ? '. The user is the owner of Lunara Society.' : '') }, personal())).then(function (r) {
       var map = { detect_image: 'photo', detect_text: 'text', detect_audio: 'voice', detect_video: 'video', verify_mark: 'verify', settings: 'account', card: 'card' };
       var act = map[r.action] || r.action;
       if (act === 'answer' || act === 'stop') return say(r.speech);
@@ -1576,6 +2084,15 @@
       if (act === 'translate' && r.arg_text) return run({ action: 'translate', text: r.arg_text, to: /span|espa/i.test(r.arg_language) ? 'es' : 'en' });
       if (act === 'replies' && r.arg_text) { say(r.speech); return go('replies', { text: r.arg_text }); }
       if (act === 'link' && r.arg_text) return go('link', { text: r.arg_text });
+      if (act === 'remember_fact') { Mem.add(r.arg_text); return say(r.speech || L('I’ll remember that.', 'Lo recordaré.')); }
+      if (act === 'forget_fact') { Mem.forget(r.arg_text); return say(r.speech); }
+      if (act === 'list_add') { var ra = Lists.add(r.arg_folder, r.arg_text); return say(r.speech || (L('Added to ', 'Añadido a ') + ra.list.name + '.')); }
+      if (act === 'list_read') return readList(r.arg_folder);
+      if (act === 'mode') return setMode(r.arg_text);
+      if (act === 'plan_day') { say(r.speech); return go('briefing', { plan: true }); }
+      if ((act === 'write' || act === 'coach') && r.arg_text) { say(r.speech); return go(act, { text: r.arg_text }); }
+      // In talk mode the conversation stays on screen; she only speaks.
+      if (current.name === 'talk' && /^(briefing|notes|help|calm|safe_word)$/.test(act)) return say(r.speech);
       say(r.speech); var sc = ACTION_SCREEN[act]; if (sc) go(sc);
     }).catch(function (e) { say(aiError(e)); });
   }
@@ -1632,10 +2149,9 @@
   voiceEl.addEventListener('play', function () { if (wakeRec) try { wakeRec.abort(); } catch (e) { } });
 
   /* ── the door ───────────────────────────────────────────────────────
-     Nothing past sign-in and payment is shown to anyone who has not
-     paid, except the owner. The AI is refused by the server regardless;
-     this keeps the rest of the app behind the same door. */
-  var OPEN = { welcome: 1, paywall: 1, pending: 1 };
+     The app is free: signing in is the only door, because credits and
+     marks belong to an account. The server prices every AI action. */
+  var OPEN = { welcome: 1 };
   function cacheMe() { if (me) put('lens_me', { me: me, at: Date.now() }); }
   function signOut() {
     ['lunara_session_token', 'lunara_id', 'lunara_name', 'lunara_tier', 'lunara_email', 'lunara_expires_at', 'lunara_last_active'].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) { } });
@@ -1655,19 +2171,18 @@
   }
   var goInner = go;
   go = function (name, arg, replace) {
-    if (!OPEN[name] && !licensed()) name = session() ? ((me && me.pending) ? 'pending' : 'paywall') : 'welcome';
+    if (!OPEN[name] && !session()) name = 'welcome';
+    if (name === 'paywall' || name === 'pending') name = 'shop';
     return goInner(name, arg, replace);
   };
   function boot() {
     if (!session()) { go('welcome', null, true); return; }
     var cached = get('lens_me', null);
-    if (cached && cached.me && cached.me.licensed && Date.now() - cached.at < 7 * 864e5) { me = cached.me; renderPill(); enter(); }
+    if (cached && cached.me && Date.now() - cached.at < 30 * 864e5) { me = cached.me; renderPill(); }
+    enter();
     refreshMe().then(function (m) {
-      if (m) { cacheMe(); if (m.licensed) { if (!entered) enter(); } else go(m.pending ? 'pending' : 'paywall', null, true); }
-      else if (!entered) {
-        toast(S.lang === 'es' ? 'No pude comprobar tu cuenta. Lo intento de nuevo…' : 'Could not check your account. Trying again…');
-        if ((boot.tries = (boot.tries || 0) + 1) < 4) setTimeout(boot, 5000 * boot.tries); else go('paywall', null, true);
-      }
+      if (m) { cacheMe(); if (current.name === 'home') go('home', null, true); Play.restore(); }
+      else if (session() && (boot.tries = (boot.tries || 0) + 1) < 4) setTimeout(function () { refreshMe(); }, 5000 * boot.tries);
     });
   }
 

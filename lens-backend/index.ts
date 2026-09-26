@@ -15,8 +15,13 @@
      ANTHROPIC_API_KEY      required for every AI feature
      PAYPAL_CLIENT_ID       optional; lets buyers activate themselves
      PAYPAL_CLIENT_SECRET     with their PayPal Transaction ID
-     LENS_MODEL_DEEP        optional; default claude-opus-5
-     LENS_MODEL_FAST        optional; default claude-opus-5
+     LENS_MODEL_DEEP        optional; default claude-opus-5-5 (detection)
+     LENS_MODEL_FAST        optional; default claude-sonnet-5 (assistant)
+     GOOGLE_PLAY_SERVICE_ACCOUNT  the JSON key of a Google Cloud service
+                            account invited to Play Console with the
+                            "View financial data" and "Manage orders and
+                            subscriptions" permissions; checks and
+                            acknowledges purchases made in the Android app
      ELEVENLABS_API_KEY     optional; Rosario speaks with Caty's voice
      LENS_OWNER_EMAILS      optional; default lunarasociety@gmail.com
    ═══════════════════════════════════════════════════════════════════ */
@@ -72,6 +77,49 @@ const db = {
   recentLicenses: () => rest('/lens_licenses?select=email,plan,source,expires_at,created_at&order=created_at.desc&limit=30'),
   stats: (period: string) => rest('/rpc/lens_month_stats', { method: 'POST', body: JSON.stringify({ p_period: period }) }),
   getConfig: (key: string) => rest(`/lens_config?key=eq.${q(key)}&limit=1`).then(one).then((r) => (r ? r.value : null)),
+  // Credits
+  getWallet: (email: string) => rest(`/lens_wallets?email=eq.${q(email)}&limit=1`).then(one),
+  createWallet: (row: unknown) => rest('/lens_wallets?on_conflict=email', {
+    method: 'POST', headers: { prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify(row)
+  }).then(one),
+  updateWallet: (email: string, patch: Record<string, unknown>) => rest(`/lens_wallets?email=eq.${q(email)}`, {
+    method: 'PATCH', headers: { prefer: 'return=minimal' }, body: JSON.stringify({ ...patch, updated_at: new Date().toISOString() })
+  }),
+  addLedger: (row: unknown) => rest('/lens_ledger', { method: 'POST', headers: { prefer: 'return=minimal' }, body: JSON.stringify(row) }),
+  ledgerFor: (email: string) => rest(`/lens_ledger?email=eq.${q(email)}&order=created_at.desc&limit=30`),
+  spendCredits: (email: string, n: number, ref: string) =>
+    rest('/rpc/lens_spend', { method: 'POST', body: JSON.stringify({ p_email: email, p_credits: n, p_ref: ref }) }),
+  addCredits: (email: string, bucket: string, n: number, kind: string, ref: string) =>
+    rest('/rpc/lens_add', { method: 'POST', body: JSON.stringify({ p_email: email, p_bucket: bucket, p_credits: n, p_kind: kind, p_ref: ref }) }),
+  getPurchase: (ref: string) => rest(`/lens_purchases?ref=eq.${q(ref)}&limit=1`).then(one),
+  // true only for the request that wrote it: a purchase is granted once.
+  recordPurchase: (row: unknown) => rest('/lens_purchases?on_conflict=ref', {
+    method: 'POST', headers: { prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify(row)
+  }).then((r) => Array.isArray(r) && r.length === 1),
+  recentWallets: () => rest('/lens_wallets?select=email,tier,sub_credits,pack_credits,tier_expires_at,tier_source&order=updated_at.desc&limit=30'),
+  deleteAccount: async (email: string, hash: string) => {
+    const e = q(email);
+    const lics = await rest(`/lens_licenses?email=ilike.${e}&select=id`);
+    const ids = (lics || []).map((l: { id: string }) => l.id);
+    if (ids.length) {
+      const inList = `in.(${ids.join(',')})`;
+      await rest(`/lens_usage?license_id=${inList}`, { method: 'DELETE' });
+      await rest(`/lens_api_keys?license_id=${inList}`, { method: 'DELETE' });
+    }
+    for (const t of ['lens_usage', 'lens_wallets', 'lens_ledger', 'lens_claims', 'lens_licenses']) {
+      await rest(`/${t}?email=ilike.${e}`, { method: 'DELETE' });
+    }
+    await rest(`/lens_purchases?email=ilike.${e}`, { method: 'PATCH', body: JSON.stringify({ email: hash }) });
+    await rest(`/lens_codes?redeemed_by=ilike.${e}`, { method: 'PATCH', body: JSON.stringify({ redeemed_by: hash }) });
+    await rest(`/lens_marks?owner_email=ilike.${e}`, { method: 'PATCH', body: JSON.stringify({ owner_email: hash, owner_name: 'Account deleted', revoked_at: new Date().toISOString() }) });
+    const members = await rest(`/members?email=ilike.${e}&select=lunara_id,avatar_url`);
+    for (const m of members || []) {
+      const path = /\/member-avatars\/(.+)$/.exec(String(m.avatar_url || '').split('?')[0]);
+      if (path) await fetch(`${env.SUPABASE_URL}/storage/v1/object/member-avatars/${path[1]}`, { method: 'DELETE', headers: H }).catch(() => null);
+      if (m.lunara_id) await rest(`/member_offers?lunara_id=eq.${q(m.lunara_id)}`, { method: 'DELETE' });
+    }
+    await rest(`/members?email=ilike.${e}`, { method: 'DELETE' });
+  },
   setConfig: (key: string, value: string) => rest('/lens_config?on_conflict=key', {
     method: 'POST', headers: { prefer: 'resolution=merge-duplicates,return=minimal' },
     body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
@@ -104,15 +152,22 @@ async function whoIs(token: unknown) {
 
 const anthropic = env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }) : null;
 const model = (tier: string) =>
-  (tier === 'deep' ? env.LENS_MODEL_DEEP : env.LENS_MODEL_FAST) || 'claude-opus-5';
+  (tier === 'deep' ? env.LENS_MODEL_DEEP || 'claude-opus-5-5' : env.LENS_MODEL_FAST || 'claude-sonnet-5');
 
 async function callModel({ model, system, max_tokens, effort, schema, content }) {
   const res = await anthropic.messages.create({
-    model, max_tokens, system,
+    model, max_tokens,
+    // Each task's instructions are the same on every call: cached, they
+    // are billed at a tenth after the first call in five minutes.
+    system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
     output_config: { effort, format: { type: 'json_schema', schema } },
     messages: [{ role: 'user', content }]
   });
-  const usage = { input_tokens: res.usage?.input_tokens || 0, output_tokens: res.usage?.output_tokens || 0 };
+  const u = res.usage || {};
+  const usage = {
+    input_tokens: u.input_tokens || 0, output_tokens: u.output_tokens || 0,
+    cache_write_tokens: u.cache_creation_input_tokens || 0, cache_read_tokens: u.cache_read_input_tokens || 0
+  };
   if (res.stop_reason === 'refusal') return { ...usage, refused: true };
   const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
   let result = null;
@@ -141,11 +196,54 @@ async function paypalCapture(id: string) {
   return r.ok ? r.json() : null;
 }
 
+/* ── Google Play ─────────────────────────────────────────────────────
+   A service account signs a short JWT (RS256, WebCrypto) for an access
+   token to the Android Publisher API, cached for its hour. */
+const PLAY_PKG = 'com.lunarasociety.lens';
+const PLAY_API = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PLAY_PKG}/purchases`;
+const b64url = (b: Uint8Array) => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+let gTok = { v: '', until: 0 };
+async function googleToken() {
+  if (Date.now() < gTok.until) return gTok.v;
+  const sa = JSON.parse(env.GOOGLE_PLAY_SERVICE_ACCOUNT);
+  const now = Math.floor(Date.now() / 1000), te = new TextEncoder();
+  const part = (o: unknown) => b64url(te.encode(JSON.stringify(o)));
+  const unsigned = part({ alg: 'RS256', typ: 'JWT' }) + '.' + part({
+    iss: sa.client_email, scope: 'https://www.googleapis.com/auth/androidpublisher',
+    aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600
+  });
+  const der = Uint8Array.from(atob(String(sa.private_key).replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), (c) => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  const sig = new Uint8Array(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, te.encode(unsigned)));
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + unsigned + '.' + b64url(sig)
+  });
+  if (!r.ok) throw new Error('google token ' + r.status);
+  const t = await r.json();
+  gTok = { v: t.access_token, until: Date.now() + (t.expires_in - 120) * 1000 };
+  return gTok.v;
+}
+async function gcall(url: string, method = 'GET') {
+  const r = await fetch(url, { method, headers: { authorization: 'Bearer ' + await googleToken(), 'content-type': 'application/json' }, body: method === 'POST' ? '{}' : undefined });
+  if (r.status === 400 || r.status === 404 || r.status === 410) return null;
+  if (!r.ok) throw new Error('play ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : {};
+}
+const et = encodeURIComponent;
+const play = env.GOOGLE_PLAY_SERVICE_ACCOUNT ? {
+  getSub: (token: string) => gcall(`${PLAY_API}/subscriptionsv2/tokens/${et(token)}`),
+  getProduct: (id: string, token: string) => gcall(`${PLAY_API}/products/${et(id)}/tokens/${et(token)}`),
+  consume: (id: string, token: string) => gcall(`${PLAY_API}/products/${et(id)}/tokens/${et(token)}:consume`, 'POST'),
+  ackSub: (id: string, token: string) => gcall(`${PLAY_API}/subscriptions/${et(id)}/tokens/${et(token)}:acknowledge`, 'POST')
+} : null;
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleLens(req, { env, db, whoIs, model, callModel, paypalCapture, tts });
+    const res = await handleLens(req, { env, db, whoIs, model, callModel, paypalCapture, tts, play });
     return withCors(res, origin);
   } catch (e) {
     console.error(e);

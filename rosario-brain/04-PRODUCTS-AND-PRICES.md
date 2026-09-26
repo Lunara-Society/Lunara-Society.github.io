@@ -24,6 +24,17 @@ What we charge for is being **listed**, being **monitored**, and being
 
 ---
 
+### Lunara Lens, 1 month — $25
+
+> Is it real? Ask, and hear the answer.
+
+- **Terms:** Per month. Renewed by you, never auto-charged.
+- Deep AI analysis of photos, video, voice and text
+- Scam and voice-clone checks
+- Lunara Marks for the images you own
+- Rosario, the voice assistant, and the Android app
+- Describe, read, translate and converse, by voice
+
 ### Article 50 Disclosure Pack — $75
 
 > The obligation that is in force today, solved.
@@ -42,16 +53,6 @@ What we charge for is being **listed**, being **monitored**, and being
 - Public register entry anyone can query without an account
 - Trust badge and machine-readable identity files
 - Revocable, and revocations are published
-
-### Lunara Lens, 12 months — $79
-
-> Is it real? Ask, and hear the answer.
-
-- **Terms:** Twelve months. Renewed by you, never auto-charged.
-- Deep AI analysis of photos, video, voice and text
-- Scam and voice-clone checks
-- Lunara Marks for the images you own
-- Describe, read, translate and converse, by voice
 
 ### Compliance Kit — $95
 
@@ -176,5 +177,5 @@ explain it is by invitation and route them to maya@lunarasociety.com.
 | "Our agent needs a checkable identity" | AI Entity Verification |
 
 Lead with the smallest thing that solves their actual problem. Selling someone
-a $7,400 engagement when a $75
+a $7,400 engagement when a $25
 pack answers their question is how you lose the second sale.

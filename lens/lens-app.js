@@ -237,7 +237,7 @@
   }
   function refreshMe() {
     if (!session()) { me = null; renderPill(); return Promise.resolve(null); }
-    return call('/me').then(function (j) { me = j; renderPill(); return j; }).catch(function () { me = null; renderPill(); return null; });
+    return call('/me').then(function (j) { me = j; renderPill(); return j; }).catch(function (e) { me = null; renderPill(); if (e && e.code === 'signin') { signOut(); } return null; });
   }
   function licensed() { return !!(me && me.licensed); }
   function aiError(e) {
@@ -442,6 +442,10 @@
     onLeave(function () { cancelAnimationFrame(raf); });
     return wrap;
   }
+  /* Inside the installed Android app the page is opened by the app itself. */
+  function inAndroidApp() {
+    try { if (/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('lens_twa', '1'); return sessionStorage.getItem('lens_twa') === '1'; } catch (e) { return false; }
+  }
   screens.home = function (el) {
     var box = h('div', { class: 'convo', id: 'convo', 'aria-live': 'polite' });
     var hf = h('input', { type: 'checkbox', id: 'hf', checked: S.handsFree || null, onchange: function () { S.handsFree = hf.checked; saveSettings(); wake(S.handsFree); sayKey(S.handsFree ? 'wake_on' : 'wake_off'); } });
@@ -452,21 +456,22 @@
         h('p', { class: 'rsub' }, (me && me.owner) ? t('owner_badge') : t('rosario_sub')),
         box,
         h('div', { class: 'chips center' }, t('suggest').map(function (q) { return h('button', { class: 'chip', onclick: function () { handle(q); } }, q); })),
-        h('label', { class: 'switch hf', for: 'hf' }, h('span', null, t('handsFree'), h('small', null, t('handsFreeHint'))), hf)),
+        h('label', { class: 'switch hf', for: 'hf' }, h('span', null, t('handsFree'), h('small', null, t('handsFreeHint'))), hf),
+        inAndroidApp() ? null : h('a', { class: 'btn gold', href: 'get.html', style: 'margin-top:14px' }, icon('files'), S.lang === 'es' ? 'Descargar la app de Android' : 'Download the Android app')),
       h('h2', null, t('g_real')),
       h('div', { class: 'grid' },
         tile('photo', 't_photo', 'photo', true, S.lang === 'es' ? 'Fotos, capturas y archivos del teléfono' : 'Photos, screenshots and files on your phone'),
         tile('scan', 't_scan', 'scan'), tile('video', 't_video', 'video'), tile('voice', 't_voice', 'voice'),
         tile('text', 't_text', 'text'), tile('scam', 't_scam', 'scam'), tile('link', 't_link', 'link'), tile('qr', 't_qr', 'qr')),
       h('h2', null, t('g_protect2')),
-      h('div', { class: 'grid' }, tile('mark', 't_mark', 'mark'), tile('verify', 't_verify', 'verify'), tile('safeword', 't_safeword', 'verify'), tile('emergency', 't_emergency', 'scam')),
+      h('div', { class: 'grid' }, tile('mark', 't_mark', 'mark'), tile('verify', 't_verify', 'verify'), tile('safeword', 't_safeword', 'safeword'), tile('emergency', 't_emergency', 'emergency')),
       h('h2', null, t('g_see')),
-      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('summarize', 't_summ', 'text'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color'), tile('remember', 't_remember', 'remember')),
+      h('div', { class: 'grid' }, tile('describe', 't_describe', 'eye'), tile('read', 't_read', 'read'), tile('summarize', 't_summ', 'summarize'), tile('magnify', 't_magnify', 'magnify'), tile('color', 't_color', 'color'), tile('remember', 't_remember', 'remember')),
       h('h2', null, t('g_talk')),
       h('div', { class: 'grid' }, tile('converse', 't_converse', 'converse', true, S.lang === 'es' ? 'Habla con cualquiera, en inglés o español' : 'Talk with anyone, in English or Spanish'), tile('translate', 't_translate', 'translate'), tile('replies', 't_replies', 'replies')),
       h('h2', null, t('g_daily')),
-      h('div', { class: 'grid' }, tile('briefing', 't_brief', 'eye'), tile('reminders', 't_remind', 'remember'), tile('files', 't_files', 'files'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'), tile('account', 't_account', 'account'),
-        me && me.owner ? tile('owner', 't_owner', 'mark') : null)
+      h('div', { class: 'grid' }, tile('briefing', 't_brief', 'briefing'), tile('reminders', 't_remind', 'reminders'), tile('files', 't_files', 'files'), tile('calm', 't_calm', 'calm'), tile('card', 't_card', 'card'), tile('account', 't_account', 'account'),
+        me && me.owner ? tile('owner', 't_owner', 'owner') : null)
     ]);
     drawConvo(box);
   };
@@ -1323,7 +1328,7 @@
     var buy = h('a', { class: 'btn gold big', 'data-lx-buy': 'lens', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('pay_buy'));
     function after(m) { me = m; cacheMe(); renderPill(); if (m.licensed) { sayKey('activated'); enter(); } else if (m.pending) { sayKey('pending'); go('pending', null, true); } }
     add(el, [h('div', { class: 'hero' }, orb(), h('h1', { class: 'rname' }, t('pay_h')), h('p', { class: 'rsub wide' }, t('pay_p'))),
-      h('div', { class: 'card screen price-card' }, h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$79'), h('div', { class: 'small muted' }, t('buy_app_terms')), buy),
+      h('div', { class: 'card screen price-card' }, h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$25'), h('div', { class: 'small muted' }, t('buy_app_terms')), buy),
       h('div', { class: 'card screen' }, h('label', { class: 'f' }, t('pay_paid') + ' ' + t('pay_txn'), txn),
         h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value }).then(after).catch(function (e) { say(aiError(e)); }); } }, t('pay_send')),
         h('label', { class: 'f' }, t('pay_code'), code),
@@ -1374,8 +1379,8 @@
     }
     function codeForm() {
       var n = h('input', { type: 'number', id: 'c-n', value: 3, min: 1, max: 50 }), out = h('div', { class: 'key' });
-      return h('div', { class: 'card screen' }, h('label', { class: 'f' }, S.lang === 'es' ? 'Cuántos (12 meses cada uno)' : 'How many (12 months each)', n),
-        h('button', { class: 'btn', onclick: function () { call('/admin/codes', { count: +n.value, plan: 'app_year' }).then(function (r) { out.textContent = r.codes.join('\n'); }).catch(function (e) { say(aiError(e)); }); } }, t('od_codes')), out);
+      return h('div', { class: 'card screen' }, h('label', { class: 'f' }, S.lang === 'es' ? 'Cuántos (1 mes cada uno)' : 'How many (1 month each)', n),
+        h('button', { class: 'btn', onclick: function () { call('/admin/codes', { count: +n.value, plan: 'app_month' }).then(function (r) { out.textContent = r.codes.join('\n'); }).catch(function (e) { say(aiError(e)); }); } }, t('od_codes')), out);
     }
     draw();
   };
@@ -1425,7 +1430,7 @@
   };
   function buyBlock(box) {
     add(box, h('div', { class: 'grid', style: 'grid-template-columns:1fr' },
-      h('div', { class: 'card' }, h('div', { class: 'small muted' }, t('buy_app')), h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$79'), h('p', { class: 'small muted' }, t('buy_app_terms')),
+      h('div', { class: 'card' }, h('div', { class: 'small muted' }, t('buy_app')), h('div', { class: 'price', 'data-lx-amount': 'lens' }, '$25'), h('p', { class: 'small muted' }, t('buy_app_terms')),
         h('a', { class: 'btn gold', 'data-lx-buy': 'lens', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('buy_app'))),
       h('div', { class: 'card' }, h('div', { class: 'small muted' }, t('buy_api')), h('div', { class: 'price', 'data-lx-amount': 'lensapi' }, '$199'), h('p', { class: 'small muted' }, t('buy_api_terms')),
         h('a', { class: 'btn', 'data-lx-buy': 'lensapi', href: '/lens.html#pricing', target: '_blank', rel: 'noopener' }, t('buy_api')))));
@@ -1639,7 +1644,10 @@
     if (cached && cached.me && cached.me.licensed && Date.now() - cached.at < 7 * 864e5) { me = cached.me; renderPill(); enter(); }
     refreshMe().then(function (m) {
       if (m) { cacheMe(); if (m.licensed) { if (!entered) enter(); } else go(m.pending ? 'pending' : 'paywall', null, true); }
-      else if (!entered) go('paywall', null, true);
+      else if (!entered) {
+        toast(S.lang === 'es' ? 'No pude comprobar tu cuenta. Lo intento de nuevo…' : 'Could not check your account. Trying again…');
+        if ((boot.tries = (boot.tries || 0) + 1) < 4) setTimeout(boot, 5000 * boot.tries); else go('paywall', null, true);
+      }
     });
   }
 

@@ -36,9 +36,9 @@ function makeDeps(over = {}) {
     tts: async () => new Uint8Array([1, 2, 3]),
     model: () => 'claude-opus-5',
     callModel: async (a) => { calls.push(a); return { input_tokens: 2000, output_tokens: 400, result: { speech: 'ok', verdict: 'uncertain' } }; },
-    paypalCapture: async (id) => ({ '11111111111111111': { status: 'COMPLETED', amount: { value: '79.00', currency_code: 'USD' } },
+    paypalCapture: async (id) => ({ '11111111111111111': { status: 'COMPLETED', amount: { value: '25.00', currency_code: 'USD' } },
       '22222222222222222': { status: 'COMPLETED', amount: { value: '199.00', currency_code: 'USD' } },
-      '33333333333333333': { status: 'COMPLETED', amount: { value: '25.00', currency_code: 'USD' } } }[id] || { status: 'NOT_FOUND', amount: {} }),
+      '33333333333333333': { status: 'COMPLETED', amount: { value: '10.00', currency_code: 'USD' } } }[id] || { status: 'NOT_FOUND', amount: {} }),
     ...over
   };
   return { deps, t, calls };
@@ -53,10 +53,12 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 
 { // the allowance can never exceed what a user paid, net of PayPal's fee
   const net = (p) => p - p * 0.0349 - 0.49;
-  assert.ok(PLANS.app_year.budget * 12 < net(PLANS.app_year.price) * 0.7);
+  assert.ok(PLANS.app_month.budget < net(PLANS.app_month.price) * 0.5);
   assert.ok(PLANS.api_month.budget < net(PLANS.api_month.price) * 0.7);
   assert.equal(costOf('claude-opus-5', 1e6, 0), 5);
   assert.equal(costOf('claude-opus-5', 0, 1e6), 25);
+  // lens_licenses.budget_usd_month is numeric(10,4): every budget must fit, the owner's included.
+  for (const p of Object.values(PLANS)) assert.ok(p.budget < 1e6, 'budget fits the column');
   ok('allowances leave Lunara a margin on the heaviest user');
 }
 {
@@ -70,7 +72,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 {
   const { deps, t } = makeDeps();
   let r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
-  assert.equal(r.status, 200); assert.equal(r.body.plan, 'app_year'); assert.equal(t.licenses[0].email, 'buyer@example.com');
+  assert.equal(r.status, 200); assert.equal(r.body.plan, 'app_month'); assert.equal(t.licenses[0].email, 'buyer@example.com');
   r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
   assert.equal(r.status, 409);
   r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '33333333333333333' }));
@@ -101,8 +103,8 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   }
   assert.ok(refused); assert.equal(refused.body.code, 'allowance');
   const spent = t.usage.filter((u) => u.period === period()).reduce((a, u) => a + u.cost_usd, 0);
-  assert.ok(spent <= PLANS.app_year.budget, `spent ${spent}`);
-  ok(`metered calls stop at the allowance (${t.usage.length} calls, $${spent.toFixed(2)} of $${PLANS.app_year.budget})`);
+  assert.ok(spent <= PLANS.app_month.budget, `spent ${spent}`);
+  ok(`metered calls stop at the allowance (${t.usage.length} calls, $${spent.toFixed(2)} of $${PLANS.app_month.budget})`);
 }
 {
   const { deps } = makeDeps();
@@ -190,7 +192,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   r = await run(deps, post('/admin/claim', { session_token: 'admin', claim_id: 'C1' }));
   assert.equal(r.body.status, 'approved');
   r = await run(deps, post('/me', { session_token: 'good' }));
-  assert.equal(r.body.licensed, true); assert.equal(r.body.plan, 'app_year');
+  assert.equal(r.body.licensed, true); assert.equal(r.body.plan, 'app_month');
   r = await run(deps, post('/admin/claim', { session_token: 'admin', claim_id: 'C1' }));
   assert.equal(r.status, 400);
   ok('unverifiable payments wait in a queue only the owner can approve');
@@ -220,7 +222,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   }
   assert.ok(refused);
   const spent = t.usage.reduce((a, u) => a + u.cost_usd, 0);
-  assert.ok(spent <= 4, `spent ${spent}`);
+  assert.ok(spent <= PLANS.app_month.budget, `spent ${spent}`);
   ok('Rosario\'s natural voice is metered against the same allowance');
 }
 {

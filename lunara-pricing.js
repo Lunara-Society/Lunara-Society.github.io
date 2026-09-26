@@ -203,16 +203,17 @@
        (the app's Account screen), never a broken PayPal URL. */
     {
       id: 'lens',
-      name: 'Lunara Lens, 12 months',
-      price: 79,
+      name: 'Lunara Lens, 1 month',
+      price: 25,
       link: '',
       tier: 'entry',
       lede: 'Is it real? Ask, and hear the answer.',
-      terms: 'Twelve months. Renewed by you, never auto-charged.',
+      terms: 'Per month. Renewed by you, never auto-charged.',
       points: [
         'Deep AI analysis of photos, video, voice and text',
         'Scam and voice-clone checks',
         'Lunara Marks for the images you own',
+        'Rosario, the voice assistant, and the Android app',
         'Describe, read, translate and converse, by voice'
       ]
     },

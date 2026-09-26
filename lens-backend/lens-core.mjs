@@ -25,9 +25,9 @@
    the month past the allowance. So no user can ever cost more than
    their allowance, and the allowance is set well under what they paid:
 
-     App, $79 a year:  $4.00 a month of AI  = $48 a year at most.
-       After PayPal's fee ($79 − 3.49% − $0.49 ≈ $75.75) Lunara keeps
-       at least $27.75 from even the heaviest user.
+     App, $25 a month: $10.00 a month of AI and voice.
+       After PayPal's fee ($25 − 3.49% − $0.49 ≈ $23.64) Lunara keeps
+       at least $13.64 from even the heaviest user.
      API, $199 a month: $120 a month of AI.
        After the fee (≈ $191.56) Lunara keeps at least $71.56.
 
@@ -38,10 +38,12 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 export const PLANS = {
-  app_year:  { days: 365, budget: 4.0,   price: 79,  label: 'Lunara Lens, 12 months' },
+  app_month: { days: 31,  budget: 10.0,  price: 25,  label: 'Lunara Lens, 1 month' },
+  app_year:  { days: 365, budget: 4.0,   price: 79,  label: 'Lunara Lens, 12 months' }, // earlier buyers keep it
   api_month: { days: 31,  budget: 120.0, price: 199, label: 'Lunara Detection API, 1 month' },
   comp:      { days: 365, budget: 4.0,   price: 0,   label: 'Lunara Lens, complimentary' },
-  owner:     { days: 36500, budget: 1e9, price: 0,   label: 'Owner · no limits' }
+  // Never metered (spend() skips it); the figure only has to fit numeric(10,4).
+  owner:     { days: 36500, budget: 100000, price: 0, label: 'Owner · no limits' }
 };
 
 /* The owner is never metered and never asked to pay. Everyone else is.
@@ -331,6 +333,7 @@ export async function handleLens(req, deps) {
     return json({
       ok: true,
       ai: !!deps.env.ANTHROPIC_API_KEY,
+      voice: !!deps.env.ELEVENLABS_API_KEY,
       paypal: !!(deps.env.PAYPAL_CLIENT_ID && deps.env.PAYPAL_CLIENT_SECRET),
       models: { deep: deps.model('deep'), fast: deps.model('fast') }
     });
@@ -444,7 +447,7 @@ async function claim(email, body, deps) {
   const paid = Number(cap.amount?.value || 0);
   const cur = cap.amount?.currency_code;
   const plan = cur === 'USD' && paid >= PLANS.api_month.price ? 'api_month'
-    : cur === 'USD' && paid >= PLANS.app_year.price ? 'app_year' : null;
+    : cur === 'USD' && paid >= PLANS.app_month.price ? 'app_month' : null;
   if (!plan) return json({ error: `That payment was ${paid} ${cur}, which does not match a Lunara Lens plan.` }, 400);
   await grant(email, plan, 'paypal', txn, deps);
   return me(email, deps);
@@ -543,7 +546,7 @@ async function apikey(email, body, deps) {
 
 async function adminCodes(email, body, deps) {
   if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const plan = PLANS[body.plan] ? body.plan : 'app_year';
+  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_month';
   const n = Math.min(50, Math.max(1, Number(body.count) || 1));
   const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
   const codes = [];
@@ -594,7 +597,7 @@ async function adminClaim(email, body, deps) {
     await deps.db.updateClaim(c.id, { status: 'rejected', decided_at: new Date().toISOString() });
     return json({ ok: true, status: 'rejected' });
   }
-  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_year';
+  const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'app_month';
   if (await deps.db.licenseByTxn(c.paypal_txn)) return json({ error: 'That payment already activated a licence.' }, 409);
   await grant(c.email, plan, 'paypal', c.paypal_txn, deps);
   await deps.db.updateClaim(c.id, { status: 'approved', decided_at: new Date().toISOString() });

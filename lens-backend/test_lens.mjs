@@ -27,7 +27,8 @@ function makeDeps(over = {}) {
     updateClaim: async (id, patch) => Object.assign(t.claims.find((c) => c.id === id), patch),
     recentLicenses: async () => t.licenses.slice(-20),
     stats: async () => ({ spent_usd: t.usage.reduce((a, u) => a + u.cost_usd, 0), calls: t.usage.length }),
-    getConfig: async (k) => t.config[k] || null
+    getConfig: async (k) => t.config[k] || null,
+    setConfig: async (k, v) => { t.config[k] = v; }
   };
   const deps = {
     env: { ANTHROPIC_API_KEY: 'x' },
@@ -236,5 +237,29 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   r = await run(deps, post('/download', { session_token: 'good' }));
   assert.equal(r.body.key, 'K');
   ok('the Android download key goes only to paying users and the owner');
+}
+{
+  const { deps, t, calls } = makeDeps({ env: { ANTHROPIC_API_KEY: 'x', ELEVENLABS_API_KEY: 'y' } });
+  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  let r = await run(deps, post('/admin/pause', { session_token: 'good', paused: true }));
+  assert.equal(r.status, 403);
+  r = await run(deps, post('/admin/pause', { session_token: 'admin', paused: true }));
+  assert.equal(r.body.paused, true);
+  const before = calls.length;
+  r = await run(deps, post('/ai', { session_token: 'good', task: 'describe', images: [] }));
+  assert.equal(r.status, 503); assert.equal(r.body.code, 'paused');
+  r = await run(deps, post('/ai', { session_token: 'admin', task: 'describe', images: [] }));
+  assert.equal(r.body.code, 'paused', 'the owner is not exempt from the stop');
+  const sp = await handleLens(post('/speak', { session_token: 'good', text: 'hi' }), deps);
+  assert.equal(sp.status, 503);
+  assert.equal(calls.length, before, 'no model call while paused');
+  r = await run(deps, post('/admin/overview', { session_token: 'admin' }));
+  assert.equal(r.body.paused, true);
+  await run(deps, post('/admin/pause', { session_token: 'admin', paused: false }));
+  deps.callModel = async () => ({ input_tokens: 10, output_tokens: 10, result: { action: 'describe', speech: 'ok' } });
+  r = await run(deps, post('/ai', { session_token: 'good', task: 'rosario', text: 'what is this' }));
+  assert.equal(r.status, 200);
+  assert.equal(t.usage.at(-1).route, 'rosario:describe');
+  ok('the owner can stop every AI and voice call at once, and the log records what Rosario chose');
 }
 console.log(`\n${n} passed`);

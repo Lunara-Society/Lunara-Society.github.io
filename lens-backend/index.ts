@@ -71,7 +71,11 @@ const db = {
   updateClaim: (id: string, patch: unknown) => rest(`/lens_claims?id=eq.${q(id)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   recentLicenses: () => rest('/lens_licenses?select=email,plan,source,expires_at,created_at&order=created_at.desc&limit=30'),
   stats: (period: string) => rest('/rpc/lens_month_stats', { method: 'POST', body: JSON.stringify({ p_period: period }) }),
-  getConfig: (key: string) => rest(`/lens_config?key=eq.${q(key)}&limit=1`).then(one).then((r) => (r ? r.value : null))
+  getConfig: (key: string) => rest(`/lens_config?key=eq.${q(key)}&limit=1`).then(one).then((r) => (r ? r.value : null)),
+  setConfig: (key: string, value: string) => rest('/lens_config?on_conflict=key', {
+    method: 'POST', headers: { prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+  })
 };
 
 /* Rosario's voice, through ElevenLabs. Returns mp3 bytes or null. */

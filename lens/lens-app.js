@@ -244,6 +244,7 @@
     var c = e && e.code;
     if (c === 'license') return t('needLicence');
     if (c === 'offline') return t('offline');
+    if (c === 'paused') return S.lang === 'es' ? 'La IA de Rosario está en pausa por ahora. Todo lo que funciona en tu teléfono sigue funcionando.' : 'Rosario\u2019s AI is paused for now. Everything that runs on your phone still works.';
     if (c === 'allowance') return t('allowance');
     if (c === 'signin') return t('signin_first');
     return (e && e.error) || t('err');
@@ -1355,7 +1356,18 @@
       fill(box, busy(h('div')));
       call('/admin/overview').then(function (o) {
         var st = o.stats || {};
+        var es = S.lang === 'es';
+        /* The stop. Halts every AI and voice call for every member at once. */
+        var stop = h('div', { class: 'card screen', style: o.paused ? 'border-color:#c0504d' : '' },
+          h('b', null, o.paused ? (es ? 'La IA de Rosario está DETENIDA' : 'Rosario\u2019s AI is STOPPED') : (es ? 'La IA de Rosario está activa' : 'Rosario\u2019s AI is running')),
+          h('p', { class: 'small muted' }, es ? 'Detiene al instante toda llamada de IA y voz para todos los miembros. Lo que funciona en el teléfono sigue funcionando.' : 'Stops every AI and voice call for every member at once. Everything that runs on the phone keeps working.'),
+          h('button', { class: 'btn ' + (o.paused ? 'gold' : 'sos'), onclick: function () {
+            var next = !o.paused;
+            if (next && !confirm(es ? '¿Detener toda la IA ahora?' : 'Stop all AI now?')) return;
+            call('/admin/pause', { paused: next }).then(function () { say(next ? (es ? 'IA detenida.' : 'AI stopped.') : (es ? 'IA reanudada.' : 'AI resumed.')); draw(); }).catch(function (e) { say(aiError(e)); });
+          } }, o.paused ? (es ? 'Reanudar la IA' : 'Resume AI') : (es ? 'Detener toda la IA' : 'Stop all AI')));
         fill(box,
+          stop,
           h('div', { class: 'stats' },
             [[t('od_spent'), '$' + Number(st.spent_usd || 0).toFixed(2)], [t('od_calls'), st.calls || 0], [t('od_lic'), st.active_licences || 0], [t('od_pending'), st.pending_claims || 0]]
               .map(function (x) { return h('div', { class: 'stat' }, h('b', null, String(x[1])), h('span', null, x[0])); })),
@@ -1549,7 +1561,15 @@
       var map = { detect_image: 'photo', detect_text: 'text', detect_audio: 'voice', detect_video: 'video', verify_mark: 'verify', settings: 'account', card: 'card' };
       var act = map[r.action] || r.action;
       if (act === 'answer' || act === 'stop') return say(r.speech);
-      if (act === 'organize') return run({ action: 'organize', n: r.arg_number, folder: r.arg_folder });
+      /* The one action that changes the member's files. When the model
+         chose it, a person confirms before anything moves. */
+      if (act === 'organize') {
+        var n = Math.max(1, Math.min(50, r.arg_number || 1)), f = String(r.arg_folder || '').slice(0, 40) || 'Rosario';
+        var q2 = S.lang === 'es' ? '¿Mover las ' + n + ' imágenes más recientes a la carpeta «' + f + '»?' : 'Move the latest ' + n + ' images into the folder "' + f + '"?';
+        say(q2);
+        if (!confirm(q2)) return say(S.lang === 'es' ? 'De acuerdo, no muevo nada.' : 'Okay, nothing moved.');
+        return run({ action: 'organize', n: n, folder: f });
+      }
       if (act === 'remind') { Rem.add(r.arg_text, r.arg_minutes || 10); return say(r.speech || t('rem_add')); }
       if (act === 'note') { if (r.arg_text) Notes.add(r.arg_text); return say(r.speech); }
       if (act === 'notes') return readNotes();

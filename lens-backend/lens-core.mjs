@@ -334,6 +334,7 @@ export async function handleLens(req, deps) {
       ok: true,
       ai: !!deps.env.ANTHROPIC_API_KEY,
       voice: !!deps.env.ELEVENLABS_API_KEY,
+      paused: await paused(deps),
       paypal: !!(deps.env.PAYPAL_CLIENT_ID && deps.env.PAYPAL_CLIENT_SECRET),
       models: { deep: deps.model('deep'), fast: deps.model('fast') }
     });
@@ -371,6 +372,7 @@ export async function handleLens(req, deps) {
     case '/admin/overview': return adminOverview(email, deps);
     case '/admin/claim': return adminClaim(email, body, deps);
     case '/admin/grant': return adminGrant(email, body, deps);
+    case '/admin/pause': return adminPause(email, body, deps);
     case '/speak': return speak(email, body, deps);
     case '/download': return download(email, deps);
     default: return json({ error: 'No such route.' }, 404);
@@ -483,7 +485,18 @@ function buildContent(task, body) {
   return parts;
 }
 
+/* The owner's stop. One switch, checked before every model or voice
+   call, so every AI feature for every member halts at once and nothing
+   already running can start another call. Everything on the phone
+   keeps working. The owner is not exempt: a stop that exempts the
+   person pressing it is not a stop. */
+async function paused(deps) {
+  return deps.db.getConfig ? (await deps.db.getConfig('ai_paused')) === 'true' : false;
+}
+const PAUSED = () => json({ error: 'Rosario\u2019s AI is paused by Lunara Society. Everything that runs on your phone still works.', code: 'paused' }, 503);
+
 async function runTask(lic, task, body, route, deps) {
+  if (await paused(deps)) return PAUSED();
   const t = TASKS[task];
   const model = deps.model(t.tier);
   const room = await spend(lic, task, model, body, deps);
@@ -500,7 +513,10 @@ async function runTask(lic, task, body, route, deps) {
   });
   const cost = costOf(model, out.input_tokens, out.output_tokens);
   await deps.db.logUsage({
-    license_id: lic.id, period: period(), route, model,
+    // Which action the model chose is logged beside what it cost, so an
+    // oversight review can see what the assistant decided, not only spend.
+    license_id: lic.id, period: period(),
+    route: out.result && typeof out.result.action === 'string' ? `${route}:${out.result.action}`.slice(0, 60) : route, model,
     input_tokens: out.input_tokens, output_tokens: out.output_tokens, cost_usd: cost
   });
   if (out.refused) return json({ error: 'The model declined this request.', code: 'refused' }, 422);
@@ -586,7 +602,7 @@ async function adminOverview(email, deps) {
   const [stats, claims, licences] = await Promise.all([
     deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses()
   ]);
-  return json({ period: period(), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner') });
+  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner') });
 }
 
 async function adminClaim(email, body, deps) {
@@ -602,6 +618,13 @@ async function adminClaim(email, body, deps) {
   await grant(c.email, plan, 'paypal', c.paypal_txn, deps);
   await deps.db.updateClaim(c.id, { status: 'approved', decided_at: new Date().toISOString() });
   return json({ ok: true, status: 'approved', email: c.email, plan });
+}
+
+async function adminPause(email, body, deps) {
+  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
+  if (typeof body.paused !== 'boolean') return json({ error: 'Send paused: true or false.' }, 400);
+  await deps.db.setConfig('ai_paused', String(body.paused));
+  return json({ ok: true, paused: body.paused });
 }
 
 async function adminGrant(email, body, deps) {
@@ -620,6 +643,7 @@ async function speak(email, body, deps) {
   const lic = await licenceFor(email, deps);
   if (!lic) return json({ error: 'This needs an active Lunara Lens plan.', code: 'license' }, 402);
   if (!deps.env.ELEVENLABS_API_KEY || !deps.tts) return json({ error: 'The natural voice is not switched on yet.', code: 'offline' }, 503);
+  if (await paused(deps)) return PAUSED();
   const text = String(body.text || '').replace(/\s+/g, ' ').trim().slice(0, 700);
   if (!text) return json({ error: 'Nothing to say.' }, 400);
   const lang = body.lang === 'es' ? 'es' : 'en';

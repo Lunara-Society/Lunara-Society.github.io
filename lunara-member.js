@@ -54,7 +54,7 @@
 (function(){
   'use strict';
 
-  var AUTH = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth';
+  var AUTH = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth';
   var CLIENT_ID = '744926178467-645eltr29q4o3lo8msnlnuqsa782feca.apps.googleusercontent.com';
   var ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
   var self = document.currentScript;

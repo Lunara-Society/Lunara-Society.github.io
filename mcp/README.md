@@ -21,7 +21,7 @@ claimed, and this repository refuses to advertise it in the meantime.
 Point any MCP client that speaks Streamable HTTP at:
 
 ```
-https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
 ```
 
 Once the package is published, this is the local alternative:
@@ -44,7 +44,7 @@ always will be: a claim nobody can check is worth nothing.
 If you cannot run a local process, the same server answers over HTTPS:
 
 ```
-https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
 ```
 
 Streamable HTTP, one POST per JSON-RPC message, stateless, no key. Both

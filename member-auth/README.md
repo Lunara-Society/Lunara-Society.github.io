@@ -19,10 +19,10 @@ dashboard half of the page looked alive.
 
 ## What replaced it
 
-A Supabase edge function on the project `xkriotfcoialxmqvherb`:
+A Supabase edge function on the project `luiqtimzcsoqnizybifs`:
 
 ```
-https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth
+https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth
 ```
 
 | Route      | Body                                            | Answers                |

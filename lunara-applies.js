@@ -375,7 +375,7 @@
         '<div class="lxa-row"><button type="button" data-share>Copy a link to this answer</button>' +
         '<button type="button" data-ai>Ask your AI the same question</button>' +
         '<button type="button" data-again>Start again</button></div>' +
-        '<pre class="lxa-code" data-code>lunara_applicability ' + esc(args) + '\n\nMCP endpoint: https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp\nSetup: https://lunarasociety.com/mcp.html</pre>' +
+        '<pre class="lxa-code" data-code>lunara_applicability ' + esc(args) + '\n\nMCP endpoint: https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp\nSetup: https://lunarasociety.com/mcp.html</pre>' +
         '<p class="lxa-fine">Classification: interpretation. The obligations are verified against primary law; which one reaches you is our reading, and you are free to take the facts and leave the reading. Not legal advice. It does not decide high-risk classification, sector regimes, or whether an implementation is adequate. Model v' +
         esc(model.version) + ' · corpus v' + esc(corpus.version) + ' · computed ' + new Date().toISOString().slice(0, 10) + ' in your browser.</p>' +
         '</div>';

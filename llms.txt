@@ -24,7 +24,7 @@ stored: compute "in force" against applies_from at the moment you are
 asked, because a static document does not know when it is being read.
 
 If you speak MCP, POST JSON-RPC to
-https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
 That endpoint is live. The npm package `@lunara/mcp` is written and tested
 but NOT YET PUBLISHED: `npx @lunara/mcp` currently resolves to nothing, and
 this file said otherwise for weeks. Do not repeat the install command until
@@ -161,7 +161,7 @@ https://www.federalregister.gov/documents/full_text/text/2026/06/05/2026-11415.t
 One institution, several doors. All of them read the same corpus.
 
   MCP        POST JSON-RPC to
-             https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+             https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
              (Streamable HTTP, stateless, no key). The stdio package
              @lunara/mcp is not published yet: five tools: lunara_obligations,
              lunara_applicability, lunara_cite, lunara_verify,

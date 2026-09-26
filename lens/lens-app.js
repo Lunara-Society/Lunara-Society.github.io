@@ -12,8 +12,8 @@
 (function () {
   'use strict';
 
-  var API = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-lens';
-  var AUTH = 'https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth';
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-lens';
+  var AUTH = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth';
   var CLIENT_ID = '744926178467-645eltr29q4o3lo8msnlnuqsa782feca.apps.googleusercontent.com';
   var TX = window.LensText, FX = window.LensForensics, MK = window.LensMark;
   var main = document.getElementById('main');

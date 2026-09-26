@@ -49,7 +49,7 @@ answers, which is the failure that produced our first published correction.
 ## MCP server
 
 ```jsonc
-POST JSON-RPC to https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+POST JSON-RPC to https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
 (the npm package @lunara/mcp is written and tested but not published yet)
 ```
 

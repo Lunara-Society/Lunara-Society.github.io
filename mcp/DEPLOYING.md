@@ -29,10 +29,10 @@ served publicly, which has been checked rather than assumed.
 
 ## The hosted endpoint
 
-Supabase Edge Function `lunara-mcp` on project `xkriotfcoialxmqvherb`:
+Supabase Edge Function `lunara-mcp` on project `luiqtimzcsoqnizybifs`:
 
 ```
-https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp
+https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
 ```
 
 Deployed with two files: `index.ts` from `mcp/http/index.ts`, and `core.mjs`

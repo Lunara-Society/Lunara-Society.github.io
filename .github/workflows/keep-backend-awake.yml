@@ -30,7 +30,7 @@ jobs:
       - name: Sign-in lookup against the members table
         run: |
           code=$(curl -s -o body.txt -w '%{http_code}' -m 60 \
-            -X POST https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-auth/login \
+            -X POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth/login \
             -H 'Content-Type: application/json' \
             -H 'Origin: https://lunarasociety.com' \
             -d '{"identifier":"keepalive@invalid.lunarasociety.com","password":"not-a-password"}')
@@ -40,7 +40,7 @@ jobs:
       - name: MCP server lists its tools
         run: |
           code=$(curl -s -o body.txt -w '%{http_code}' -m 60 \
-            -X POST https://xkriotfcoialxmqvherb.supabase.co/functions/v1/lunara-mcp \
+            -X POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp \
             -H 'Content-Type: application/json' \
             -H 'Accept: application/json, text/event-stream' \
             -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')

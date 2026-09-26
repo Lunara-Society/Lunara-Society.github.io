@@ -40,7 +40,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, relative, isAbsolute } from 'node:path';
 
-const PROJECT  = 'xkriotfcoialxmqvherb';
+const PROJECT  = 'luiqtimzcsoqnizybifs';
 const REST     = `https://${PROJECT}.supabase.co/rest/v1`;
 const SECTIONS = ['executive_summary','critical_development','market','regulatory',
                   'competitive','opportunity','risk','decision','memory'];

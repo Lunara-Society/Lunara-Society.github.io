@@ -10,14 +10,14 @@ android {
         applicationId 'com.lunarasociety.lens'
         minSdk 21
         targetSdk 35
-        versionCode 1
-        versionName '1.0.0'
+        versionCode 3
+        versionName '2.1.0'
         manifestPlaceholders = [
             hostName: host,
             defaultUrl: "https://${host}${startUrl}",
-            launcherName: 'Lunara Lens',
-            themeColor: '#090B11',
-            backgroundColor: '#090B11'
+            launcherName: 'Rosario',
+            themeColor: '#000000',
+            backgroundColor: '#000000'
         ]
         resValue 'string', 'asset_statements', """[{ \\"relation\\": [\\"delegate_permission/common.handle_all_urls\\"], \\"target\\": { \\"namespace\\": \\"web\\", \\"site\\": \\"https://${host}\\" } }]"""
     }

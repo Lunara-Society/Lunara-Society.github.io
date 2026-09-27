@@ -77,14 +77,16 @@ export const PLAY_PACKAGE = 'com.lunarasociety.lens';
 /* What each action costs, in credits. Detection runs on the deep model;
    a video check sends six frames, so it costs more. */
 export const CREDITS = {
-  rosario: 2, intent: 1, translate: 2, replies: 2, describe: 4, read: 5,
-  summarize: 5, write: 4, coach: 3, plan_day: 3,
-  detect_image: 10, detect_text: 10, detect_audio: 10, scam: 10, detect_frames: 25
+  rosario: 4, intent: 3, translate: 5, replies: 5, describe: 8, read: 12,
+  summarize: 15, write: 10, coach: 8, plan_day: 6,
+  detect_image: 25, detect_text: 25, detect_audio: 20, scam: 20, detect_frames: 60
 };
-/* Caty's live voice: one credit per 25 characters, so a typical spoken
-   answer (about 120 characters) is 5. ElevenLabs bills about $0.00011 a
-   character; the recorded lines and the phone's own voice are free. */
-export const SPEAK_CHARS_PER_CREDIT = 25;
+/* Caty's live voice: one credit per 10 characters, so a typical spoken
+   answer (about 120 characters) is 12. ElevenLabs bills about $0.00011 a
+   character; the recorded lines and the phone's own voice are free.
+   Every price here brings in at least five times what the call costs
+   (test_lens.mjs checks it against the cheapest credit sold). */
+export const SPEAK_CHARS_PER_CREDIT = 10;
 export const speakCredits = (chars) => Math.max(1, Math.ceil(chars / SPEAK_CHARS_PER_CREDIT));
 
 /* The owner is never metered and never asked to pay. Everyone else is.
@@ -115,6 +117,8 @@ export function costOf(model, inTok, outTok, cacheWrite = 0, cacheRead = 0) {
   const p = PRICES[model] || PRICES['claude-opus-5'];
   return (inTok * p[0] + cacheWrite * p[0] * 1.25 + cacheRead * p[0] * 0.1 + outTok * p[1]) / 1e6;
 }
+// Claude via Anthropic directly, or via Google Cloud Vertex AI.
+const aiOn = (deps) => !!(deps.env.ANTHROPIC_API_KEY || deps.env.LENS_AI_PROVIDER);
 const callCost = (model, out) => costOf(model, out.input_tokens, out.output_tokens, out.cache_write_tokens || 0, out.cache_read_tokens || 0);
 
 export const period = (d = new Date()) => d.toISOString().slice(0, 7);
@@ -435,7 +439,7 @@ export async function handleLens(req, deps) {
   if (req.method === 'GET' && path === '/health') {
     return json({
       ok: true,
-      ai: !!deps.env.ANTHROPIC_API_KEY,
+      ai: aiOn(deps), ai_provider: deps.env.LENS_AI_PROVIDER || (deps.env.ANTHROPIC_API_KEY ? 'anthropic' : null),
       voice: !!deps.env.ELEVENLABS_API_KEY,
       paused: await paused(deps),
       paypal: !!(deps.env.PAYPAL_CLIENT_ID && deps.env.PAYPAL_CLIENT_SECRET),
@@ -842,7 +846,7 @@ async function runTask(lic, task, body, route, deps) {
 async function ai(email, body, deps) {
   const task = String(body.task || '');
   if (!TASKS[task]) return json({ error: 'Unknown task.' }, 400);
-  if (!deps.env.ANTHROPIC_API_KEY) return json({ error: 'The AI service is not switched on yet.', code: 'offline' }, 503);
+  if (!aiOn(deps)) return json({ error: 'The AI service is not switched on yet.', code: 'offline' }, 503);
   const lic = await legacyLicence(email, deps);
   if (lic) {
     // The earlier licence pays while its allowance lasts, then credits do.
@@ -934,7 +938,7 @@ async function apiDetect(req, deps) {
   if (!row || row.revoked_at) return json({ error: 'Unknown or revoked API key.' }, 401);
   const lic = await deps.db.getLicense(row.license_id);
   if (!lic || new Date(lic.expires_at).getTime() < Date.now()) return json({ error: 'The plan behind this key has ended. Renew at lunarasociety.com/lens/.' }, 402);
-  if (!deps.env.ANTHROPIC_API_KEY) return json({ error: 'The detection service is not switched on yet.' }, 503);
+  if (!aiOn(deps)) return json({ error: 'The detection service is not switched on yet.' }, 503);
   let body;
   try { body = await req.json(); } catch { return json({ error: 'The request body must be JSON.' }, 400); }
   const kind = body.kind || (body.image ? 'image' : body.frames ? 'video' : 'text');

@@ -154,7 +154,8 @@ https://lunarasociety.com/lens/privacy.html
   - Not collected: contacts, messages (SMS/email), calendar, health,
     files, web history, audio recordings (voice checks send only
     measurements and a transcript), device IDs.
-  - Service providers (Anthropic for AI answers, ElevenLabs for the
+  - Service providers (Anthropic for AI answers, directly or through
+    Google Cloud Vertex AI; ElevenLabs for the
     natural voice, Supabase for hosting) act on Lunara’s behalf, which
     Play does not count as sharing.
 - **AI-generated content:** the app generates text with AI. Users can

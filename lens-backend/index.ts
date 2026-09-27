@@ -12,7 +12,13 @@
    its own keys. Every table is behind RLS with no policies.
 
    Secrets (Supabase → Edge Functions → Secrets):
-     ANTHROPIC_API_KEY      required for every AI feature
+     ANTHROPIC_API_KEY      the Claude brain, billed by Anthropic; or
+     GOOGLE_VERTEX_SERVICE_ACCOUNT  the JSON key of a Google Cloud service
+                            account with the "Vertex AI User" role, in a
+                            project where Claude is enabled in Model
+                            Garden; Claude is then billed on the Google
+                            Cloud bill. Takes precedence when both are set.
+     VERTEX_REGION          optional; default global
      PAYPAL_CLIENT_ID       optional; lets buyers activate themselves
      PAYPAL_CLIENT_SECRET     with their PayPal Transaction ID
      LENS_MODEL_DEEP        optional; default claude-opus-5-5 (detection)
@@ -153,7 +159,20 @@ async function whoIs(token: unknown) {
   return s && s.email ? s : null;
 }
 
-const anthropic = env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }) : null;
+const vertexSA = (() => { try { return env.GOOGLE_VERTEX_SERVICE_ACCOUNT ? JSON.parse(env.GOOGLE_VERTEX_SERVICE_ACCOUNT) : null; } catch { return null; } })();
+// On Vertex the service account's key signs its own OAuth token (the
+// same signer as Play's), so google-auth-library never looks for ADC.
+const anthropic = vertexSA
+  ? new (await import('npm:@anthropic-ai/vertex-sdk')).AnthropicVertex({
+      region: env.VERTEX_REGION || 'global',
+      projectId: vertexSA.project_id,
+      authClient: {
+        projectId: vertexSA.project_id,
+        getRequestHeaders: async () => new Headers({ authorization: 'Bearer ' + await googleToken(vertexSA, 'https://www.googleapis.com/auth/cloud-platform') })
+      }
+    })
+  : env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }) : null;
+env.LENS_AI_PROVIDER = vertexSA ? 'vertex' : env.ANTHROPIC_API_KEY ? 'anthropic' : '';
 const model = (tier: string) =>
   (tier === 'deep' ? env.LENS_MODEL_DEEP || 'claude-opus-5-5' : env.LENS_MODEL_FAST || 'claude-sonnet-5');
 
@@ -243,14 +262,14 @@ const paypal = env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET ? {
 const PLAY_PKG = 'com.lunarasociety.lens';
 const PLAY_API = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PLAY_PKG}/purchases`;
 const b64url = (b: Uint8Array) => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-let gTok = { v: '', until: 0 };
-async function googleToken() {
-  if (Date.now() < gTok.until) return gTok.v;
-  const sa = JSON.parse(env.GOOGLE_PLAY_SERVICE_ACCOUNT);
+const gTok = new Map();
+async function googleToken(sa = JSON.parse(env.GOOGLE_PLAY_SERVICE_ACCOUNT), scope = 'https://www.googleapis.com/auth/androidpublisher') {
+  const k = sa.client_email + ' ' + scope, c = gTok.get(k);
+  if (c && Date.now() < c.until) return c.v;
   const now = Math.floor(Date.now() / 1000), te = new TextEncoder();
   const part = (o: unknown) => b64url(te.encode(JSON.stringify(o)));
   const unsigned = part({ alg: 'RS256', typ: 'JWT' }) + '.' + part({
-    iss: sa.client_email, scope: 'https://www.googleapis.com/auth/androidpublisher',
+    iss: sa.client_email, scope,
     aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600
   });
   const der = Uint8Array.from(atob(String(sa.private_key).replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), (c) => c.charCodeAt(0));
@@ -262,8 +281,8 @@ async function googleToken() {
   });
   if (!r.ok) throw new Error('google token ' + r.status);
   const t = await r.json();
-  gTok = { v: t.access_token, until: Date.now() + (t.expires_in - 120) * 1000 };
-  return gTok.v;
+  gTok.set(k, { v: t.access_token, until: Date.now() + (t.expires_in - 120) * 1000 });
+  return t.access_token;
 }
 async function gcall(url: string, method = 'GET') {
   const r = await fetch(url, { method, headers: { authorization: 'Bearer ' + await googleToken(), 'content-type': 'application/json' }, body: method === 'POST' ? '{}' : undefined });

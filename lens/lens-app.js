@@ -1701,7 +1701,7 @@
   var DEFAULT_CAT = {
     tiers: { free: { monthly: 20, price: 0, label: 'Free' }, starter: { monthly: 800, price: 7.99, label: 'Starter' }, pro: { monthly: 2500, price: 19.99, voice: true, label: 'Pro' }, max: { monthly: 7000, price: 49.99, voice: true, deep: true, label: 'Luna Max' } },
     packs: { credits_500: { credits: 500, price: 6.99 }, credits_1500: { credits: 1500, price: 17.99 }, credits_5000: { credits: 5000, price: 49.99 } },
-    credits: { rosario: 2, detect_image: 10, detect_frames: 25, describe: 4, summarize: 5, write: 4, coach: 3, translate: 2 }, speak_chars_per_credit: 25
+    credits: { rosario: 4, detect_image: 25, detect_frames: 60, describe: 8, summarize: 15, write: 10, coach: 8, translate: 5 }, speak_chars_per_credit: 10
   };
   function cat() { return (me && me.catalogue) || DEFAULT_CAT; }
   /* Credits in words a person can picture. */

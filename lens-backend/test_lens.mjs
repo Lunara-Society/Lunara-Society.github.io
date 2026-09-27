@@ -199,6 +199,14 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   ok('without an Anthropic key the AI routes say so and nothing is charged');
 }
 {
+  const { deps } = makeDeps({ env: { LENS_AI_PROVIDER: 'vertex' } });
+  const h = await run(deps, get('/health'));
+  assert.equal(h.body.ai, true); assert.equal(h.body.ai_provider, 'vertex');
+  const r = await run(deps, post('/ai', { session_token: 'good', task: 'rosario', text: 'hi' }));
+  assert.equal(r.status, 200);
+  ok('Claude through Google Cloud Vertex AI switches the AI on without an Anthropic key');
+}
+{
   const { deps, t } = makeDeps();
   let r = await run(deps, post('/me', { session_token: 'admin' }));
   assert.equal(r.body.plan, 'owner'); assert.equal(r.body.unlimited, true);
@@ -293,7 +301,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   ok('the owner can stop every AI and voice call at once, and the log records what Rosario chose');
 }
 /* ── credits ──────────────────────────────────────────────────────── */
-{ // every action's typical cost stays under half of what its credits bring in at the cheapest credit sold
+{ // every action's typical cost stays under a fifth of what its credits bring in at the cheapest credit sold
   const cheapest = Math.min(...Object.values(TIERS).filter((x) => x.price).map((x) => x.price / x.monthly), ...Object.values(PACKS).map((p) => p.price / p.credits)) * 0.85;
   const typical = { // input and output tokens of an ordinary call, images included
     // [uncached input, output, cached instructions read]: the assistant's
@@ -306,10 +314,10 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   for (const [task, price] of Object.entries(CREDITS)) {
     const model = TASKS[task].tier === 'deep' ? 'claude-opus-5-5' : 'claude-sonnet-5';
     const [i, o, c = 0] = typical[task]; const cost = costOf(model, i, o, 0, c);
-    assert.ok(cost <= 0.5 * price * cheapest, `${task}: $${cost.toFixed(4)} vs ${price} credits ($${(price * cheapest).toFixed(4)})`);
+    assert.ok(cost <= 0.2 * price * cheapest, `${task}: $${cost.toFixed(4)} vs ${price} credits ($${(price * cheapest).toFixed(4)})`);
   }
-  for (const chars of [60, 120, 180, 700]) assert.ok(speakCredits(chars) * cheapest >= chars * 0.00011 * 2, `a ${chars}-character answer is priced at least 2× ElevenLabs`);
-  ok(`every action is priced at least 2× its typical cost (cheapest credit $${cheapest.toFixed(4)} after Google's 15%)`);
+  for (const chars of [60, 120, 180, 700]) assert.ok(speakCredits(chars) * cheapest >= chars * 0.00011 * 5, `a ${chars}-character answer is priced at least 5× ElevenLabs`);
+  ok(`every action is priced at least 5× its typical cost (cheapest credit $${cheapest.toFixed(4)} after Google's 15%)`);
 }
 {
   const { deps, t, calls } = makeDeps();
@@ -329,7 +337,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   t.wallets['buyer@example.com'].sub_credits = 0; t.wallets['buyer@example.com'].pack_credits = 9;
   const before = calls.length;
   r = await run(deps, post('/ai', { session_token: 'good', task: 'detect_image', images: [] }));
-  assert.equal(r.status, 402); assert.equal(r.body.code, 'credits'); assert.equal(r.body.need, 10); assert.equal(calls.length, before);
+  assert.equal(r.status, 402); assert.equal(r.body.code, 'credits'); assert.equal(r.body.need, CREDITS.detect_image); assert.equal(calls.length, before);
   ok('credits are taken before the call, returned when it fails, and refused without calling the model');
 }
 {

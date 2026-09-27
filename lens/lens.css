@@ -202,3 +202,5 @@ ul.sig li.ai b{background:rgba(242,154,140,.18);color:var(--ai)} ul.sig li.human
 .card.row > .btn, .card.row > .iconbtn{flex:0 0 auto;width:auto}
 .report-ai{margin-top:14px;display:grid;gap:8px}
 .linkbtn{background:none;border:0;color:var(--faint);font:inherit;font-size:.85em;text-decoration:underline;text-underline-offset:3px;cursor:pointer;justify-self:start;min-height:44px;padding:0}
+.checkout{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;display:grid;gap:12px}
+.checkout #pp-box{background:#fff;border-radius:14px;padding:12px}

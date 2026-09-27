@@ -11,6 +11,8 @@
      /redeem    { session_token, code }        activation code → plan or credits
      /claim     { session_token, paypal_txn, product }  PayPal (web) → plan or credits
      /purchase/play { session_token, product_id, purchase_token }  Google Play
+     /pay/create  { session_token, product }   start a card or PayPal payment (web)
+     /pay/capture { session_token, order_id }  take it and add the credits at once
      /history   { session_token }              the last credit movements
      /ai        { session_token, task, lang, … }   the AI features
      /speak     { session_token, text, lang }  Caty's voice (Pro and Luna Max)
@@ -468,6 +470,8 @@ export async function handleLens(req, deps) {
     case '/redeem': return redeem(email, body, deps);
     case '/claim': return claim(email, body, deps);
     case '/purchase/play': return purchasePlay(email, body, deps);
+    case '/pay/create': return payCreate(email, body, deps);
+    case '/pay/capture': return payCapture(email, body, deps);
     case '/history': return history(email, deps);
     case '/ai': return ai(email, body, deps);
     case '/mark': return mark(email, who, body, deps);
@@ -509,7 +513,9 @@ async function me(email, deps) {
     monthly: TIERS[w.tier].monthly, voice: TIERS[w.tier].voice, deep: TIERS[w.tier].deep,
     source: w.tier_source || null,
     renews: w.tier === 'free' ? nextMonthStart() : w.tier_expires_at,
-    pending: !!pending, catalogue: catalogue()
+    pending: !!pending, catalogue: catalogue(),
+    // Public by design: PayPal's buttons need it in the page.
+    paypal_client_id: deps.paypal ? (deps.env.PAYPAL_CLIENT_ID || null) : null
   };
   if (lic) {
     // An earlier licence still running: its allowance is used first.
@@ -612,6 +618,41 @@ async function purchasePlay(email, body, deps) {
     if (await deps.db.recordPurchase({ ref, email, product, source: 'play' })) await addPack(email, product, 'pack', ref, deps);
     if (p.consumptionState === 0) await deps.play.consume(product, token);
   }
+  return me(email, deps);
+}
+
+/* ── card and PayPal checkout on the web ────────────────────────────
+   The server creates the order at the product's own price, so the page
+   cannot change what is charged, and marks it with the product and a
+   fingerprint of the buyer's account. When the buyer has paid, PayPal
+   is asked to take the money; the credits are granted once per capture,
+   to the account that started the order, at once. */
+const SELLABLE = (p) => (TIERS[p] && p !== 'free') || PACKS[p];
+const orderTag = async (product, email) => product + '|' + (await sha256hex('order:' + email)).slice(0, 32);
+async function payCreate(email, body, deps) {
+  if (!deps.paypal) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
+  const product = String(body.product || '');
+  if (!SELLABLE(product)) return json({ error: 'Choose a plan or a pack.' }, 400);
+  const label = TIERS[product] ? `Rosario ${TIERS[product].label}, 1 month` : `Rosario, ${PACKS[product].label}`;
+  const order = await deps.paypal.createOrder({ amount: PRODUCT_PRICE(product).toFixed(2), description: label, custom_id: await orderTag(product, email) });
+  return json({ order_id: order.id });
+}
+async function payCapture(email, body, deps) {
+  if (!deps.paypal) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
+  const id = String(body.order_id || '');
+  if (!/^[A-Z0-9]{8,40}$/.test(id)) return json({ error: 'Missing order.' }, 400);
+  const o = await deps.paypal.captureOrder(id);
+  const pu = o && o.purchase_units && o.purchase_units[0];
+  const cap = pu && pu.payments && pu.payments.captures && pu.payments.captures[0];
+  if (!o || o.status !== 'COMPLETED' || !cap || cap.status !== 'COMPLETED') {
+    return json({ error: 'The payment did not go through. Nothing was charged; try again or use another card.', code: 'declined' }, 402);
+  }
+  const [product, who] = String(cap.custom_id || pu.custom_id || '').split('|');
+  if (!SELLABLE(product) || (await orderTag(product, email)) !== product + '|' + who) return json({ error: 'That payment belongs to another account.' }, 409);
+  const paid = Number(cap.amount && cap.amount.value), cur = cap.amount && cap.amount.currency_code;
+  if (cur !== 'USD' || !(paid + 0.001 >= PRODUCT_PRICE(product))) return json({ error: 'The amount paid does not match.' }, 400);
+  const ref = 'paypal:' + cap.id;
+  if (await deps.db.recordPurchase({ ref, email, product, source: 'card' })) await fulfil(email, product, 'paypal', ref, deps);
   return me(email, deps);
 }
 

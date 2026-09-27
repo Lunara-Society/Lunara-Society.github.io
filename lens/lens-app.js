@@ -1793,15 +1793,52 @@
       return h('option', { value: k }, tr ? tr.label + ' · ' + usd(tr.price) : fmt(pk.credits) + L(' credits · ', ' créditos · ') + usd(pk.price));
     }));
     function webBuy(product) {
+      if (me && me.paypal_client_id) return checkout(product);
       var url = window.LunaraPricing && LunaraPricing.get('lens_' + product) && LunaraPricing.get('lens_' + product).link ? LunaraPricing.url('lens_' + product) : null;
       chosen.value = product;
       if (url) { window.open(url, '_blank', 'noopener'); say(L('After paying, enter the Transaction ID from your PayPal receipt below.', 'Después de pagar, escribe abajo el identificador de la transacción de tu recibo de PayPal.')); }
       else { location.href = 'mailto:lunarasociety@gmail.com?subject=' + encodeURIComponent('Rosario ' + product) + '&body=' + encodeURIComponent(L('I would like to buy: ', 'Quiero comprar: ') + product + '\n' + (raw('lunara_email') || '')); }
       var f = document.getElementById('claim-box'); if (f) f.scrollIntoView({ behavior: 'smooth' });
     }
+    /* Pay by card (or PayPal) right here: PayPal's own buttons, including
+       "Debit or Credit Card", which needs no PayPal account. The server
+       sets the price and adds the credits the moment the payment clears. */
+    function checkout(product) {
+      var tr = cat().tiers[product], pk = cat().packs[product];
+      var what = tr ? tr.label + ' · ' + usd(tr.price) + L(' · 1 month', ' · 1 mes') : fmt(pk.credits) + L(' credits · ', ' créditos · ') + usd(pk.price);
+      var old = document.getElementById('checkout'); if (old) old.remove();
+      var box = h('div', { id: 'pp-box', style: 'min-height:120px' }, busy(h('div'), L('Opening secure checkout…', 'Abriendo el pago seguro…')));
+      var status = h('p', { class: 'small muted', role: 'status' }, '');
+      var sheet = h('div', { class: 'card screen checkout', id: 'checkout', role: 'dialog', 'aria-label': L('Checkout', 'Pago') },
+        h('div', { class: 'row', style: 'justify-content:space-between;align-items:center' }, h('b', null, what),
+          h('button', { class: 'iconbtn', 'aria-label': t('cancel'), onclick: function () { sheet.remove(); } }, '×')),
+        h('p', { class: 'small muted', style: 'margin:0' }, L('Pay with a debit or credit card, or with PayPal. No PayPal account needed for cards. Your credits arrive straight away.', 'Paga con tarjeta de débito o crédito, o con PayPal. Para la tarjeta no necesitas cuenta de PayPal. Los créditos llegan al momento.')),
+        box, status);
+      var host = document.querySelector('.balance'); if (host) host.parentNode.insertBefore(sheet, host.nextSibling); else main.appendChild(sheet);
+      sheet.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      loadScript('https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(me.paypal_client_id) + '&currency=USD&intent=capture&components=buttons&disable-funding=paylater,venmo,credit&locale=' + (S.lang === 'es' ? 'es_ES' : 'en_US'))
+        .then(function () {
+          box.innerHTML = '';
+          return window.paypal.Buttons({
+            style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'pay', height: 48 },
+            createOrder: function () { return call('/pay/create', { product: product }).then(function (r) { return r.order_id; }); },
+            onApprove: function (data) {
+              status.textContent = L('Confirming your payment…', 'Confirmando tu pago…');
+              return call('/pay/capture', { order_id: data.orderID }).then(function (m) {
+                me = m; cacheMe(); renderPill(); sheet.remove(); done(m);
+              }).catch(function (e) { status.textContent = aiError(e); say(aiError(e)); });
+            },
+            onCancel: function () { status.textContent = L('Payment cancelled. Nothing was charged.', 'Pago cancelado. No se ha cobrado nada.'); },
+            onError: function () { status.textContent = L('The payment could not be started. Try again in a moment.', 'No se pudo iniciar el pago. Inténtalo de nuevo en un momento.'); }
+          }).render(box);
+        }).catch(function () { box.innerHTML = ''; status.textContent = L('Secure checkout could not load. Check your connection and try again.', 'No se pudo cargar el pago seguro. Revisa tu conexión e inténtalo de nuevo.'); });
+    }
     function webExtras() {
       var txn = h('input', { type: 'text', id: 'txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
       var code = h('input', { type: 'text', id: 'code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
+      if (me && me.paypal_client_id) return h('div', { class: 'card screen', id: 'claim-box' },
+        h('label', { class: 'f' }, t('pay_code'), code),
+        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')));
       return h('div', { class: 'card screen', id: 'claim-box' },
         h('b', null, L('Paid with PayPal?', '¿Pagaste con PayPal?')),
         h('label', { class: 'f' }, L('What you bought', 'Lo que compraste'), chosen),

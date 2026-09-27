@@ -466,4 +466,44 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   assert.equal(r.body.reports.length, 0);
   ok('members can report an AI answer, and only the owner reviews reports');
 }
+{ // card and PayPal checkout on the web
+  const orders = {}; let seq = 0;
+  const paypal = {
+    createOrder: async (o) => { const id = 'ORDER' + (++seq) + 'ABCDEFG'; orders[id] = o; return { id, status: 'CREATED' }; },
+    captureOrder: async (id) => {
+      const o = orders[id]; if (!o) return { status: 'FAILED' };
+      if (o.declined) return { status: 'FAILED' };
+      return { id, status: 'COMPLETED', purchase_units: [{ custom_id: o.custom_id, payments: { captures: [{ id: 'CAP' + id, status: 'COMPLETED', custom_id: o.custom_id, amount: { value: o.paid || o.amount, currency_code: 'USD' } }] } }] };
+    }
+  };
+  const { deps, t } = makeDeps({ paypal, env: { ANTHROPIC_API_KEY: 'x', PAYPAL_CLIENT_ID: 'public-client-id' } });
+  let r = await run(deps, post('/me', { session_token: 'good' }));
+  assert.equal(r.body.paypal_client_id, 'public-client-id');
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'free' }));
+  assert.equal(r.status, 400);
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'pro' }));
+  const id = r.body.order_id; assert.equal(orders[id].amount, '19.99');
+  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id }));
+  assert.equal(r.status, 200); assert.equal(r.body.tier, 'pro'); assert.equal(r.body.sub_credits, TIERS.pro.monthly);
+  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id }));
+  assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'a retried capture grants nothing twice');
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'credits_1500' }));
+  const id2 = r.body.order_id;
+  r = await run(deps, post('/pay/capture', { session_token: 'admin', order_id: id2 }));
+  assert.equal(r.status, 409, 'an order started by one account cannot credit another');
+  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id2 }));
+  assert.equal(r.body.pack_credits, WELCOME + 1500);
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'credits_5000' }));
+  orders[r.body.order_id].paid = '4.99';
+  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: r.body.order_id }));
+  assert.equal(r.status, 400, 'an underpaid order grants nothing');
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'starter' }));
+  orders[r.body.order_id].declined = true;
+  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: r.body.order_id }));
+  assert.equal(r.status, 402); assert.equal(r.body.code, 'declined');
+  const nd = makeDeps();
+  r = await run(nd.deps, post('/pay/create', { session_token: 'good', product: 'pro' }));
+  assert.equal(r.status, 503);
+  ok('card checkout: the server sets the price, credits arrive at once, once, to the right account; declines and underpayments grant nothing');
+}
 console.log(`\n${n} passed`);

@@ -179,11 +179,10 @@ async function callModel({ model, system, max_tokens, effort, schema, content })
 }
 
 let ppToken = { value: '', until: 0 };
-async function paypalCapture(id: string) {
-  if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) return null;
-  const base = env.PAYPAL_ENV === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+const PP_BASE = env.PAYPAL_ENV === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+async function ppAuth() {
   if (Date.now() > ppToken.until) {
-    const r = await fetch(`${base}/v1/oauth2/token`, {
+    const r = await fetch(`${PP_BASE}/v1/oauth2/token`, {
       method: 'POST',
       headers: { authorization: 'Basic ' + btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_CLIENT_SECRET}`), 'content-type': 'application/x-www-form-urlencoded' },
       body: 'grant_type=client_credentials'
@@ -192,6 +191,12 @@ async function paypalCapture(id: string) {
     const t = await r.json();
     ppToken = { value: t.access_token, until: Date.now() + (t.expires_in - 60) * 1000 };
   }
+  return ppToken.value;
+}
+async function paypalCapture(id: string) {
+  if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) return null;
+  const base = PP_BASE;
+  if (!(await ppAuth())) return null;
   const r = await fetch(`${base}/v2/payments/captures/${encodeURIComponent(id)}`, {
     headers: { authorization: `Bearer ${ppToken.value}` }
   });
@@ -202,6 +207,39 @@ async function paypalCapture(id: string) {
 /* ── Google Play ─────────────────────────────────────────────────────
    A service account signs a short JWT (RS256, WebCrypto) for an access
    token to the Android Publisher API, cached for its hour. */
+/* Card and PayPal checkout on the web (PayPal Orders v2). The page shows
+   PayPal's buttons, including "Debit or Credit Card", which needs no
+   PayPal account. No shipping step: nothing ships. */
+const paypal = env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET ? {
+  createOrder: async ({ amount, description, custom_id }) => {
+    const tok = await ppAuth(); if (!tok) throw new Error('paypal auth');
+    const r = await fetch(`${PP_BASE}/v2/checkout/orders`, {
+      method: 'POST', headers: { authorization: `Bearer ${tok}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description, custom_id, soft_descriptor: 'LUNARA ROSARIO' }],
+        application_context: { brand_name: 'Lunara Society', shipping_preference: 'NO_SHIPPING', user_action: 'PAY_NOW' }
+      })
+    });
+    if (!r.ok) throw new Error('paypal order ' + r.status + ' ' + (await r.text()).slice(0, 200));
+    return r.json();
+  },
+  captureOrder: async (id: string) => {
+    const tok = await ppAuth(); if (!tok) throw new Error('paypal auth');
+    const h = { authorization: `Bearer ${tok}`, 'content-type': 'application/json', prefer: 'return=representation' };
+    const r = await fetch(`${PP_BASE}/v2/checkout/orders/${encodeURIComponent(id)}/capture`, { method: 'POST', headers: h });
+    if (r.ok) return r.json();
+    const err = await r.text();
+    // Already captured (a retry after a dropped connection): read the order instead.
+    if (r.status === 422 && /ORDER_ALREADY_CAPTURED/.test(err)) {
+      const g = await fetch(`${PP_BASE}/v2/checkout/orders/${encodeURIComponent(id)}`, { headers: h });
+      return g.ok ? g.json() : null;
+    }
+    if (r.status === 404 || r.status === 422) return { status: 'FAILED', detail: err.slice(0, 300) };
+    throw new Error('paypal capture ' + r.status + ' ' + err.slice(0, 200));
+  }
+} : null;
+
 const PLAY_PKG = 'com.lunarasociety.lens';
 const PLAY_API = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PLAY_PKG}/purchases`;
 const b64url = (b: Uint8Array) => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -246,7 +284,7 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleLens(req, { env, db, whoIs, model, callModel, paypalCapture, tts, play });
+    const res = await handleLens(req, { env, db, whoIs, model, callModel, paypalCapture, paypal, tts, play });
     return withCors(res, origin);
   } catch (e) {
     console.error(e);

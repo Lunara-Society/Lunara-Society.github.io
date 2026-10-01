@@ -210,4 +210,17 @@ let n = 0; const ok = (m) => console.log(`ok ${++n} ${m}`);
   assert.equal(canonical({ b: 1, a: [2, { d: 1, c: 0 }] }), '{"a":[2,{"c":0,"d":1}],"b":1}');
   ok('capture seals the case, publishes it and stamps it with a signature anyone can verify');
 }
+{
+  const { deps, t, calls } = makeDeps({ feeds: { bleeping: rss([{ title: 'AI worm spreads through coding agents', url: 'https://w.ex/1' }]) } });
+  const real = deps.callModel;
+  deps.callModel = async () => { throw new Error('400 Your credit balance is too low'); };
+  const r = await sweep(deps);
+  assert.ok(r.errors.some((e) => e.startsWith('model: ')), 'a model failure is recorded, not thrown');
+  assert.equal(t.cases.length, 0); assert.equal(t.runs.length, 1);
+  deps.callModel = real;
+  deps.now = () => new Date('2026-10-01T09:00:00Z');
+  await sweep(deps);
+  assert.equal(t.cases.length, 1, 'the lead waited and was judged on the next sweep');
+  ok('when the model is unavailable, leads wait for the next sweep instead of being lost');
+}
 console.log(`\n${n} passed`);

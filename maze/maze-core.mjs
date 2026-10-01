@@ -266,7 +266,10 @@ export async function sweep(deps, { force = false } = {}) {
     if (spentToday >= budget) { run.errors.push('daily budget reached'); break; }
     const batch = queue.slice(b * BATCH, (b + 1) * BATCH);
     const open = await deps.db.openCases();
-    const r = await triage(batch, open, deps);
+    let r;
+    // If the model cannot answer (no credit, outage), stop here: the
+    // leads stay unread and the next sweep tries them again.
+    try { r = await triage(batch, open, deps); } catch (e) { run.errors.push('model: ' + String(e.message || e).slice(0, 160)); break; }
     run.cost_usd += r.cost; spentToday += r.cost; run.triaged += batch.length; done += batch.length;
     for (const v of r.verdicts) {
       const it = batch[v.index];

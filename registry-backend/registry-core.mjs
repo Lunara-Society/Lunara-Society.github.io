@@ -478,12 +478,12 @@ async function apply(body, deps, ipHash) {
     if (o && o.status === 'paid' && PAID_PRODUCTS.has(o.product)) { a.order_ref = ref; if (o.product === 'vendor') a.kind = 'vendor'; }
   }
   const saved = await deps.db.createApplication(a);
-  await send(deps, applicationEmail(saved));
+  const emailed = await send(deps, applicationEmail(saved));
   await send(deps, { to: ownerEmail(deps.env), subject: `New registry application ${saved.public_id}: ${saved.business_name}`, text: `${saved.business_name} (${saved.domain}), ${saved.contact_email}${saved.order_ref ? `, paid order ${saved.order_ref}` : ''}.\nReview: ${SITE}desk.html` });
-  return json(applyAnswer(saved, false));
+  return json(applyAnswer(saved, false, emailed));
 }
 
-function applyAnswer(a, again) {
+function applyAnswer(a, again, emailed = false) {
   return {
     success: true,
     application_id: a.public_id,
@@ -494,7 +494,8 @@ function applyAnswer(a, again) {
     dns_record: { type: 'TXT', name: dnsName(a.domain), value: dnsValue(a.dns_token) },
     message: again
       ? `You already have an application for ${a.domain}: ${a.public_id}. The DNS record is below.`
-      : `Application received. Your registry ID is ${a.public_id}. Add the DNS record below to prove you control ${a.domain}; a reviewer then checks your registration and decides. We have emailed you the same instructions.`,
+      : `Application received. Your registry ID is ${a.public_id}. Add the DNS record below to prove you control ${a.domain}; a reviewer then checks your registration and decides.${emailed ? ' We have emailed you the same instructions.' : ' Keep this ID and the record below.'}`,
+    emailed,
     next_step: 'Add the DNS TXT record, then check it with shieldVerifyDomain.'
   };
 }

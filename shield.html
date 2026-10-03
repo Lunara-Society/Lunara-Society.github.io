@@ -1027,7 +1027,7 @@ How verification actually works</h2>
           if (domainVal && data.domain_verification_token) {
             var panel = document.getElementById('dns-panel');
             var instr = document.getElementById('dns-instructions');
-            instr.innerHTML = 'Add a DNS TXT record:<br>Host: <code style="color:var(--gold);">_lunara-verify.' + domainVal + '</code><br>Value: <code style="color:var(--gold);">lunara-verify=' + data.domain_verification_token + '</code><br>DNS changes can take a few minutes to propagate. Once it\'s live, click below. We have also emailed you these steps.';
+            instr.innerHTML = 'Add a DNS TXT record:<br>Host: <code style="color:var(--gold);">_lunara-verify.' + domainVal + '</code><br>Value: <code style="color:var(--gold);">lunara-verify=' + data.domain_verification_token + '</code><br>DNS changes can take a few minutes to propagate. Once it\'s live, click below.' + (data.emailed ? ' We have also emailed you these steps.' : ' Keep your ID: you need it to check later.');
             panel.style.display = 'block';
             panel.dataset.publicId = data.public_id;
             document.getElementById('sc-public-id').value = data.public_id;

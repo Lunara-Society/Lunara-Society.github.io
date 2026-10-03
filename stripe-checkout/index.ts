@@ -16,6 +16,8 @@
                             (LUNA-SECRET-KEY is read too, the name it was
                             first saved under)
      STRIPE_WEBHOOK_SECRET  optional; whsec_… of …/lunara-checkout/webhook
+     LUNARA_OWNER_EMAILS    optional; who may buy the owner's private
+                            package. Default lunarasociety@gmail.com
    ═══════════════════════════════════════════════════════════════════ */
 
 // @ts-nocheck — checkout-core.mjs is deliberately plain JS, shared with Node.
@@ -70,11 +72,24 @@ const db = {
 
 const stripe = KEY ? stripeClient(KEY) : null;
 
+/* Who a member-area session belongs to, as lunara-auth says after
+   checking its signature. Used only to sell the owner's private package. */
+async function whoIs(token: unknown) {
+  if (typeof token !== 'string' || token.length < 20 || token.length > 4096) return null;
+  const res = await fetch(`${env.SUPABASE_URL}/functions/v1/lunara-auth/session`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ session_token: token })
+  });
+  if (!res.ok) return null;
+  const s = await res.json().catch(() => null);
+  return s && s.email ? s : null;
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleCheckout(req, { stripe, db, webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
+    const res = await handleCheckout(req, { stripe, db, whoIs, env, webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
     return withCors(res, origin);
   } catch (e) {
     console.error('lunara-checkout', e?.message || e);

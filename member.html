@@ -884,6 +884,13 @@ p,li,span{
            table, never here, because a check in the page is a check the
            reader can edit. -->
       <div id="offer-panel" hidden></div>
+      <div id="owner-panel" hidden style="border:1px solid rgba(226,196,122,.55);border-radius:10px;padding:22px 24px;margin-bottom:28px;background:rgba(196,164,107,.06)">
+        <p style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#E2C47A;margin-bottom:8px">Owner only</p>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:24px;color:#f0e0b0;margin-bottom:8px">Lunara Society Complete · $1</h3>
+        <p style="font-size:14px;line-height:1.7;color:rgba(214,200,170,.8);margin-bottom:16px">Every Lunara Society service for one business: Compliance Kit, Compliance Intelligence Report with governance session, Shield and AI Entity Verification, Vendor Certification, Article 50 Evidence and Disclosure Packs, and twelve months of Regulatory Watch. A real live payment through Stripe; the website is prefilled with yavaya.lat. Only your owner account can buy it: the server checks.</p>
+        <button type="button" class="form-btn" id="owner-buy" style="max-width:340px">Pay $1 with Stripe</button>
+        <p id="owner-msg" class="form-error" role="status"></p>
+      </div>
       <p class="dash-section-title">Member Dashboard</p>
       <h2 class="dash-section-heading">Your Protected Infrastructure</h2>
       <div id="cert-cta-banner" style="display:none;background:rgba(196,164,107,0.08);border:1px solid rgba(196,164,107,0.3);border-radius:8px;padding:20px 24px;margin-bottom:24px">
@@ -1448,6 +1455,37 @@ p,li,span{
 const LUNARA_AUTH = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth';
 const LUNARA_API = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions';
 
+/* The owner's private $1 package. The panel appears when lunara-auth
+   says this session belongs to an owner; lunara-checkout asks
+   lunara-auth the same question again before it sells anything, so
+   showing the panel to someone else would still sell them nothing. */
+const LUNARA_CHECKOUT = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout';
+const OWNER_EMAILS = ['lunarasociety@gmail.com'];
+async function ownerLoad(){
+  const panel = document.getElementById('owner-panel');
+  const token = localStorage.getItem('lunara_session_token');
+  if(!panel || !token) return;
+  try{
+    const s = await authPost('session', { session_token: token });
+    if(!s || !s.email || OWNER_EMAILS.indexOf(String(s.email).toLowerCase()) < 0) return;
+  } catch(e){ return; }
+  panel.hidden = false;
+  const btn = document.getElementById('owner-buy'), msg = document.getElementById('owner-msg');
+  btn.onclick = async function(){
+    btn.disabled = true; msg.textContent = 'Opening Stripe…';
+    try{
+      const res = await fetch(LUNARA_CHECKOUT + '/checkout', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ product:'owner_complete', session_token: localStorage.getItem('lunara_session_token'), return_to: location.href })
+      });
+      const b = await res.json();
+      if(b && b.url && b.url.indexOf('https://checkout.stripe.com/') === 0){ location.href = b.url; return; }
+      msg.textContent = (b && b.error) || 'Checkout could not be opened.';
+    } catch(e){ msg.textContent = 'Checkout could not be opened. Try again.'; }
+    btn.disabled = false;
+  };
+}
+
 async function authPost(action, payload){
   const res = await fetch(LUNARA_AUTH + '/' + action, {
     method:'POST', headers:{'Content-Type':'application/json'},
@@ -1788,6 +1826,7 @@ function showDashboard(id, name){
   // the session it was given, so the question cannot be asked about
   // anyone else.
   offerLoad();
+  ownerLoad();
   profOpenIfAsked();
   document.getElementById('dash-id').textContent=id;
   document.getElementById('dash-name').textContent=name || id;

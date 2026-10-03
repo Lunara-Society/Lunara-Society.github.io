@@ -152,6 +152,17 @@ Checkout asks for: website, system
 2. After review: certification against the seven constitutional pillars, a public register entry and your tender evidence dossier.
 3. Certification lasts twelve months. We remind you before it ends; nothing is charged automatically.
 
+### Lunara Society Complete (owner) — $1 (`owner_complete`)
+
+Not in the public price table and never listed on a page. It appears
+only in the member area for an owner account (`LUNARA_OWNER_EMAILS`,
+default lunarasociety@gmail.com). `lunara-checkout` asks `lunara-auth`
+to verify the session and checks the email before it creates a
+checkout, and Stripe's page is locked to that email. Anyone else is
+told the product does not exist. It covers every service for one
+business; the website field is prefilled with yavaya.lat. After paying,
+the Compliance Kit and the report page open from the confirmation page.
+
 Invitational memberships are not sold on the site. To charge someone
 who has been accepted, create a Payment Link in the Stripe dashboard
 and send it to them. Lens plans and credits are bought inside the app.

@@ -161,6 +161,37 @@ await test('a session for another product or order is never called paid', async 
   eq((await order(deps, r.body.order)).body.status, 'mismatch');
 });
 
+await test('the owner package is sold only to a signed-in owner, at $1, locked to their email', async () => {
+  const { deps, calls, db, pay } = setup();
+  deps.whoIs = async (t) => (t === 'owner-token-xxxxxxxxxxxx' ? { email: 'LunaraSociety@gmail.com' } : t === 'member-token-xxxxxxxxxxx' ? { email: 'someone@example.com' } : null);
+  ok(!('owner_complete' in CATALOG), 'never in the public catalogue');
+  for (const body of [{}, { session_token: 'member-token-xxxxxxxxxxx' }, { session_token: 'forged' }]) {
+    const r = await buy(deps, { product: 'owner_complete', ...body });
+    eq(r.status, 400); eq(r.body.error, 'That product cannot be bought here.', 'same answer as an unknown product');
+  }
+  eq(calls.length, 0, 'Stripe never asked');
+  eq((await buy({ ...deps, whoIs: undefined }, { product: 'owner_complete', session_token: 'owner-token-xxxxxxxxxxxx' })).status, 400, 'no way to check: refuse');
+  const r = await buy(deps, { product: 'owner_complete', session_token: 'owner-token-xxxxxxxxxxxx', amount: 0 });
+  eq(r.status, 200);
+  const p = calls[0].params;
+  eq(p.get('line_items[0][price_data][unit_amount]'), '100');
+  eq(p.get('customer_email'), 'lunarasociety@gmail.com');
+  eq(p.get('custom_fields[0][text][default_value]'), 'https://yavaya.lat');
+  pay('cs_test_1');
+  const o = await order(deps, r.body.order);
+  eq(o.body.paid, true); eq(o.body.links.length, 2);
+  eq(o.body.links[0].href, 'kit-access.html?order=' + r.body.order);
+  eq(o.body.links[1].href, 'compliance-report-access.html?order=' + r.body.order);
+  eq(db.orders.get(r.body.order).amount_total, 100);
+});
+
+await test('a $1 payment for a public product is never called paid', async () => {
+  const { deps, pay } = setup();
+  const r = await buy(deps, { product: 'vendor' });
+  pay('cs_test_1', { amount_total: 100 });
+  eq((await order(deps, r.body.order)).body.status, 'mismatch');
+});
+
 await test('the hourly sweep settles a paid order whose buyer never came back', async () => {
   const { deps, pay, db } = setup();
   const a = await buy(deps, { product: 'shield' });

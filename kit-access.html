@@ -365,7 +365,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
   fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/order?ref=' + encodeURIComponent(order))
     .then(function (r) { return r.json(); })
     .then(function (b) {
-      if (b && b.paid && b.product === 'kit') {
+      if (b && b.paid && (b.product === 'kit' || b.product === 'owner_complete')) {
         sessionStorage.setItem('lunara_kit_access', order);
         document.documentElement.style.visibility = '';
       } else if (b && b.status === 'unpaid') {

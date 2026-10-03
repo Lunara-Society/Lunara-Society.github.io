@@ -8,7 +8,7 @@
 <title>Meet Rosario | Lunara's AI Governance Guide</title>
 <meta property="og:title" content="Rosario has a message for you Lunara Society">
 <meta property="og:description" content="A personal message about AI trust, verification, and what it means for your organization.">
-<meta property="og:image" content="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/files/mp/public/6a46cea2687503d2d6d4ecd1/74c733255_rosario_email_avatar.png">
+<meta property="og:image" content="https://lunarasociety.com/rosario_avatar.png">
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#000000;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Georgia',serif;padding:20px;}
@@ -219,7 +219,7 @@
           "name": "How do I verify if a business has Lunara Shield Certification?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+            "text": "Query the Lunara Registry API at https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
           }
         },
         {
@@ -385,7 +385,7 @@
 <script>
 (function(){
   try {
-    fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/visitorTrack", {
+    fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/visitorTrack", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})

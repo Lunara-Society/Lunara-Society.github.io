@@ -64,7 +64,7 @@ readable in full by whoever is deciding whether to trust it.
 ## Registry API — free & open
 
 ```bash
-curl -X POST https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup \
+curl -X POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup \
   -H "Content-Type: application/json" \
   -d '{"domain": "example.com"}'
 ```

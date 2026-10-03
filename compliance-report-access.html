@@ -310,7 +310,7 @@ function generateReport() {
 
   var params = new URLSearchParams(window.location.search);
   var txnId = params.get('order') || params.get('t');
-  fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraScoreReport', {
+  fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/lunaraScoreReport', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

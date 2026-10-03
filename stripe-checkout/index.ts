@@ -16,6 +16,9 @@
                             (LUNA-SECRET-KEY is read too, the name it was
                             first saved under)
      STRIPE_WEBHOOK_SECRET  optional; whsec_… of …/lunara-checkout/webhook
+     RESEND_API_KEY         optional; sends each buyer a short email of what
+                            to do next. MAIL_FROM optional, default
+                            "Lunara Society <hello@lunarasociety.com>"
      LUNARA_OWNER_EMAILS    optional; who may buy the owner's private
                             package. Default lunarasociety@gmail.com
    ═══════════════════════════════════════════════════════════════════ */
@@ -49,6 +52,13 @@ const db = {
     rest('/stripe_orders', { method: 'POST', body: JSON.stringify(row) }),
   openOrders: (since: string) =>
     rest(`/stripe_orders?status=eq.open&created_at=gte.${q(since)}&order=created_at.asc&limit=50`),
+  // Only the request that moves the row from open to paid gets true.
+  markPaid: (ref: string, patch: Record<string, unknown>) =>
+    rest(`/stripe_orders?order_ref=eq.${q(ref)}&status=eq.open`, {
+      method: 'PATCH',
+      headers: { prefer: 'return=representation' },
+      body: JSON.stringify({ ...present(patch), updated_at: new Date().toISOString() })
+    }).then((r) => Array.isArray(r) && r.length === 1),
   getOrder: (ref: string) =>
     rest(`/stripe_orders?order_ref=eq.${q(ref)}&limit=1`).then(one),
   updateOrder: (ref: string, patch: Record<string, unknown>) =>
@@ -72,6 +82,22 @@ const db = {
 
 const stripe = KEY ? stripeClient(KEY) : null;
 
+/* The order email, through Resend. Without RESEND_API_KEY nothing is
+   emailed and nothing fails: paid.html says the same things. */
+const mail = env.RESEND_API_KEY ? {
+  send: async (m: { to: string; subject: string; text: string; html?: string }) => {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        from: env.MAIL_FROM || 'Lunara Society <hello@lunarasociety.com>',
+        to: [m.to], reply_to: 'lunarasociety@gmail.com', subject: m.subject, text: m.text, html: m.html
+      })
+    });
+    if (!r.ok) throw new Error('resend ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  }
+} : null;
+
 /* Who a member-area session belongs to, as lunara-auth says after
    checking its signature. Used only to sell the owner's private package. */
 async function whoIs(token: unknown) {
@@ -89,7 +115,7 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleCheckout(req, { stripe, db, whoIs, env, webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
+    const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
     return withCors(res, origin);
   } catch (e) {
     console.error('lunara-checkout', e?.message || e);

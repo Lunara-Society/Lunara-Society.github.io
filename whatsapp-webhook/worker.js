@@ -205,7 +205,7 @@ async function handleMessages(raw, env) {
    ──────────────────────────────────────────────────────────────── */
 
 const CORPUS_URL = 'https://lunarasociety.com/corpus/obligations.json';
-const REGISTRY = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
+const REGISTRY = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup';
 
 const MONTHS = ['January','February','March','April','May','June',
                 'July','August','September','October','November','December'];

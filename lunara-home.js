@@ -32,8 +32,8 @@
   var NS = 'http://www.w3.org/2000/svg';
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var REGISTRY_LOOKUP = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
-  var REGISTRY_LIST   = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList';
+  var REGISTRY_LOOKUP = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup';
+  var REGISTRY_LIST   = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList';
 
   function safe(name, fn) { try { fn(); } catch (e) { if (window.console) console.warn('[lunara-home] ' + name + ':', e.message); } }
   function isoUTC(s) { var p = s.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); }

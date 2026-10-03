@@ -741,7 +741,7 @@ function index(files, obs, prods) {
       certification: `${SITE}/certification.json`,
       context: `${SITE}/llms.txt`,
       evidence_standard: `${SITE}/evidence.html`,
-      registry_lookup: 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup',
+      registry_lookup: 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup',
       mcp: `${SITE}/mcp.html`
     },
     files,

@@ -149,7 +149,7 @@ export async function scan(domain) {
   const vf = await grab(`https://${host}/.well-known/lunara-verify.json`);
   record.lunara_verify_file = Boolean(vf);
   try {
-    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup', {
+    const res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup', {
       method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': UA },
       body: JSON.stringify({ domain: host })
     });

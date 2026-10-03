@@ -73,7 +73,7 @@
     },
     {
       "name": "Registry Lookup API",
-      "url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup"
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup"
     },
     {
       "name": "AI Gateway",
@@ -95,7 +95,7 @@
   },
   "api": {
     "spec_url": "https://lunarasociety.com/openapi.yaml",
-    "base_url": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions",
+    "base_url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry",
     "auth_required": false,
     "key_endpoints": [
       "shieldRegistryLookup",

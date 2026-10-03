@@ -136,7 +136,7 @@
 <script>
 (function(){
   try {
-    fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/visitorTrack", {
+    fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/visitorTrack", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})

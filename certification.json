@@ -31,8 +31,8 @@
     "public": true,
     "requires_authentication": false,
     "cost": "free",
-    "lookup_endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
-    "list_endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList",
+    "lookup_endpoint": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
+    "list_endpoint": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList",
     "specification": "https://lunarasociety.com/openapi.yaml",
     "statuses": [
       "verified",
@@ -64,7 +64,7 @@
           "$comment": "Documented in openapi.yaml. An agent must still have human authorisation before submitting on someone's behalf.",
           "operation": "shieldApply",
           "method": "POST",
-          "endpoint": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply",
+          "endpoint": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldApply",
           "specification": "https://lunarasociety.com/openapi.yaml"
         },
         "required_evidence": [

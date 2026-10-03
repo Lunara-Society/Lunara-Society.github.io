@@ -13,7 +13,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Nothing yet. Our email with your Disclosure Pack arrives within 24 hours; reply to it if anything about your system has changed.",
+    "apply": null
   },
   "kit": {
     "name": "Compliance Kit",
@@ -25,7 +27,9 @@ export const CATALOG = {
       "Inside: the Article 50 and SB 942 obligation checklist, disclosure and synthetic-marking templates, and the evidence log an auditor would ask to see."
     ],
     "access": "kit-access.html",
-    "ask": []
+    "ask": [],
+    "todo": "Open your kit with the link below and bookmark it. That is all.",
+    "apply": null
   },
   "shield": {
     "name": "Shield Verification",
@@ -41,7 +45,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "legal"
-    ]
+    ],
+    "todo": "Complete your registry application with the link below. It takes two minutes and gives you a DNS record to add at your domain provider; adding it is the only technical step, and review starts as soon as it is seen.",
+    "apply": "business"
   },
   "second": {
     "name": "Second Opinion",
@@ -54,7 +60,9 @@ export const CATALOG = {
     "access": null,
     "ask": [
       "website"
-    ]
+    ],
+    "todo": "Reply to this email with the advice you were given, attached or pasted in. Our written opinion follows within 48 hours of receiving it.",
+    "apply": null
   },
   "cir": {
     "name": "Compliance Intelligence Report",
@@ -68,7 +76,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Open the report page with the link below and describe your deployment to get your score now. Your written report follows by email within 24 hours.",
+    "apply": null
   },
   "watch": {
     "name": "Regulatory Watch",
@@ -83,7 +93,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Reply to this email with the systems, sectors and jurisdictions you want watched. Monitoring starts the day we have them.",
+    "apply": null
   },
   "cirplus": {
     "name": "Report with Governance Session",
@@ -98,7 +110,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Open the report page with the link below and describe your deployment. Reply to this email with two or three times that suit you for the governance session.",
+    "apply": null
   },
   "agent": {
     "name": "AI Entity Verification",
@@ -114,7 +128,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Complete your agent's registry application with the link below: the agent's name, who operates it, and its governance framework. It gives you a DNS record to add at your domain provider; review starts as soon as it is seen.",
+    "apply": "ai_agent"
   },
   "clinical": {
     "name": "Clinical AI Governance Assessment",
@@ -128,7 +144,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Reply to this email with a short description of the deployment and any documentation you already have. We confirm what else we need within one working day.",
+    "apply": null
   },
   "evidence": {
     "name": "Article 50 Evidence Pack",
@@ -142,7 +160,9 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Reply to this email with a short description of the system and where its output reaches the EU. We confirm what else we need within one working day.",
+    "apply": null
   },
   "vendor": {
     "name": "Vendor Certification",
@@ -157,6 +177,8 @@ export const CATALOG = {
     "ask": [
       "website",
       "system"
-    ]
+    ],
+    "todo": "Reply to this email with the up to three systems to certify and two or three times that suit you to start.",
+    "apply": null
   }
 };

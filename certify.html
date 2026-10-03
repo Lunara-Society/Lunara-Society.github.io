@@ -383,7 +383,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "How do I verify if a business has Lunara Shield Certification?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+            "text": "Query the Lunara Registry API at https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
           }
         },
         {
@@ -812,7 +812,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <div class="form-inner">
     <p class="section-label" style="text-align:center;margin-bottom:10px">Apply</p>
     <h2 class="section-title" style="text-align:center;font-size:30px;margin-bottom:32px">Certified Constitutional AI<br>Application</h2>
-    <form action="https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply" method="POST" onsubmit="handleSubmit(event)">
+    <form action="https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldApply" method="POST" onsubmit="handleSubmit(event)">
       <div class="form-group"><label for="f-business-name">Organisation Name</label><input id="f-business-name" type="text" name="business_name" required placeholder="Legal entity name"></div>
       <div class="form-group"><label for="f-website-url">Website</label><input id="f-website-url" type="url" name="website_url" required placeholder="https://"></div>
       <div class="form-group"><label for="f-contact-email">Contact Email</label><input id="f-contact-email" type="email" name="contact_email" required placeholder="governance@yourcompany.com"></div>
@@ -913,7 +913,7 @@ function handleSubmit(e){
   btn.textContent='Submitting...';
   btn.disabled=true;
   const data=Object.fromEntries(new FormData(e.target));
-  fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+  fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldApply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
   .then(r=>r.json()).then(()=>{
     btn.textContent='Application Received';
     e.target.reset();

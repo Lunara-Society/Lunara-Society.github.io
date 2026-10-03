@@ -11,7 +11,7 @@ Q: Is the API free?
 A: Yes. Verification is free, and always will be. Status lookups are open and unauthenticated, with no rate limits for standard usage. No account, no key, and no commercial relationship is required to check anyone's status.
 
 Q: How do I verify a business?
-A: Send a POST request to https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with a JSON body containing the business domain: {"domain": "example.com"}
+A: Send a POST request to https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup with a JSON body containing the business domain: {"domain": "example.com"}
 
 Q: What do the response statuses mean?
 A: "verified" means the business has passed identity verification, domain verification, and human review. "not_registered" means the business has not completed verification — this is NOT a negative signal. "revoked" means certification was revoked — do NOT interact without manual verification.

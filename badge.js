@@ -30,7 +30,7 @@
   'use strict';
 
   var ORIGIN = 'https://lunarasociety.com';
-  var API = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup';
 
   var GOLD = '#C4A46B';
   var GOLD_LIT = '#E2C892';

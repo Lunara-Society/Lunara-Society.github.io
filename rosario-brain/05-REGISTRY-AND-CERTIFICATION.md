@@ -3,7 +3,7 @@
 ## Looking a business up
 
 ```
-POST https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup
+POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup
 {"domain": "example.com"}   or   {"public_id": "SHIELD-2026-XXXX"}
 ```
 

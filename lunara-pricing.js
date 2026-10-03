@@ -42,7 +42,10 @@
    two different things. Change what a product delivers here, and only
    here. `access` names the page that delivers it at once, opened with
    the buyer's order reference; `ask` is what checkout collects so the
-   work can start without a round of email.
+   work can start without a round of email; `todo` is the one thing the
+   buyer must do next, sent in the order email; `apply` marks products
+   that put an entry in the public registry, whose application the
+   email links to.
 
    ───────────────────────────────────────────────────────────────────
    ON TERM LENGTHS
@@ -100,6 +103,7 @@
       lede: 'The obligation that is in force today, solved.',
       terms: 'Delivered within 24 hours',
       ask: ['website',  'system'],
+      todo: "Nothing yet. Our email with your Disclosure Pack arrives within 24 hours; reply to it if anything about your system has changed.",
       delivery: [
         "Within 24 hours we email your Disclosure Pack to the address you paid with.",
         "It holds disclosure wording drafted for your system, the machine-readable marking specification for its output, and a one page record of what you did and when.",
@@ -119,6 +123,7 @@
       lede: 'Start without an assessment.',
       terms: 'Immediate download',
       access: 'kit-access.html',
+      todo: "Open your kit with the link below and bookmark it. That is all.",
       delivery: [
         "Your kit opens at once: use the button on the confirmation page.",
         "Keep the link to that page. It opens your kit again whenever you need it.",
@@ -138,6 +143,8 @@
       lede: 'Be checkable by anyone who asks, including a machine.',
       terms: 'Six months. Renewed only when you choose to pay again.',
       ask: ['website',  'legal'],
+      todo: "Complete your registry application with the link below. It takes two minutes and gives you a DNS record to add at your domain provider; adding it is the only technical step, and review starts as soon as it is seen.",
+      apply: 'business',
       delivery: [
         "Within 24 hours we email you your verification reference and a DNS record that proves you control your domain.",
         "A person reviews your business identity and your domain.",
@@ -159,6 +166,7 @@
       lede: 'You were probably told the AI Act was postponed.',
       terms: 'Returned within 48 hours',
       ask: ['website'],
+      todo: "Reply to this email with the advice you were given, attached or pasted in. Our written opinion follows within 48 hours of receiving it.",
       delivery: [
         "Within 24 hours we email you asking for the advice you were given. Reply with it attached or pasted in.",
         "Our written opinion comes back within 48 hours of receiving it: which parts still hold, every correction cited to the article that governs it."
@@ -205,6 +213,7 @@
       terms: 'Delivered within 24 hours',
       access: 'compliance-report-access.html',
       ask: ['website',  'system'],
+      todo: "Open the report page with the link below and describe your deployment to get your score now. Your written report follows by email within 24 hours.",
       delivery: [
         "Start at once: describe your deployment on the report page and get your score straight away.",
         "Your full written report follows by email within 24 hours: every finding cited to its article, with gap analysis and prioritised remediation."
@@ -297,6 +306,7 @@
       lede: 'We tell you when something that binds you changes, and only then.',
       terms: 'Six months. Renewed only when you choose to pay again.',
       ask: ['website',  'system'],
+      todo: "Reply to this email with the systems, sectors and jurisdictions you want watched. Monitoring starts the day we have them.",
       delivery: [
         "Within 24 hours we email you to confirm the systems, sectors and jurisdictions we watch for you.",
         "For six months we write to you whenever something that binds you changes, and only then.",
@@ -317,6 +327,7 @@
       terms: 'Scheduled within 48 hours',
       access: 'compliance-report-access.html',
       ask: ['website',  'system'],
+      todo: "Open the report page with the link below and describe your deployment. Reply to this email with two or three times that suit you for the governance session.",
       delivery: [
         "Start at once: describe your deployment on the report page and get your score straight away.",
         "Your full written report follows by email within 24 hours.",
@@ -336,6 +347,8 @@
       lede: 'An identity for your agent that a third party can check.',
       terms: 'Six months. Renewed only when you choose to pay again.',
       ask: ['website',  'system'],
+      todo: "Complete your agent's registry application with the link below: the agent's name, who operates it, and its governance framework. It gives you a DNS record to add at your domain provider; review starts as soon as it is seen.",
+      apply: 'ai_agent',
       delivery: [
         "Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.",
         "A person verifies the agent and its operator.",
@@ -357,6 +370,7 @@
       lede: 'Four regimes land on the same deployment at once.',
       terms: 'Per deployment. Delivered within five working days.',
       ask: ['website',  'system'],
+      todo: "Reply to this email with a short description of the deployment and any documentation you already have. We confirm what else we need within one working day.",
       delivery: [
         "Within one working day we email you to collect what we need about the deployment.",
         "Your written assessment, mapping HIPAA, Article 50, SB 942 and Joint Commission together, is delivered within five working days of receiving it."
@@ -376,6 +390,7 @@
       lede: 'For companies whose output reaches the European Union.',
       terms: 'Per system. Delivered within five working days.',
       ask: ['website',  'system'],
+      todo: "Reply to this email with a short description of the system and where its output reaches the EU. We confirm what else we need within one working day.",
       delivery: [
         "Within one working day we email you to collect what we need about the system.",
         "Your Evidence Pack, with the duties assessed, the accountable party named and the articles cited, is delivered within five working days of receiving it."
@@ -395,6 +410,7 @@
       lede: 'Evidence a buyer can verify without taking your word.',
       terms: 'Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed only when you choose to pay again.',
       ask: ['website',  'system'],
+      todo: "Reply to this email with the up to three systems to certify and two or three times that suit you to start.",
       delivery: [
         "Within one working day we email you to schedule the assessment of up to three systems.",
         "After review: certification against the seven constitutional pillars, a public register entry and your tender evidence dossier.",

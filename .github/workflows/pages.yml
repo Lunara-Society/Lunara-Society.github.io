@@ -187,12 +187,12 @@ jobs:
       - name: Test the Lunara Lens backend
         run: node lens-backend/test_lens.mjs
 
-      # Stripe invoicing takes money. The suite checks that the browser can
-      # never set an amount, that invitational products can't be invoiced,
-      # that website invoices are never emailed by Stripe (so the form can't
-      # be used as a spam relay), and that forged webhooks are rejected.
-      - name: Test Stripe invoicing
-        run: node stripe-invoicing/test_invoice.mjs
+      # Stripe Checkout takes money. The suite checks that the browser can
+      # never set an amount, that only public products can be bought, that
+      # the server's price list matches lunara-pricing.js, and that forged
+      # webhooks are rejected.
+      - name: Test Stripe Checkout
+        run: node stripe-checkout/test_checkout.mjs
 
       # The WhatsApp Worker has no deploy gate of its own — it is pasted
       # into Cloudflare by hand — so this is the only thing standing between

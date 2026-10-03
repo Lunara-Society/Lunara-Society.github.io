@@ -28,7 +28,7 @@ https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-auth
 | Route      | Body                                            | Answers                |
 |------------|-------------------------------------------------|------------------------|
 | `/google`  | `{ id_token }`                                  | a session, or 401      |
-| `/signup`  | `{ email, password, full_name, paypal_txn }`    | a session, or 400/409  |
+| `/signup`  | `{ email, password, full_name }`                | a session, or 400/409  |
 | `/login`   | `{ identifier, password }`                      | a session, or 401      |
 | `/session` | `{ session_token }`                             | who it belongs to      |
 
@@ -38,7 +38,7 @@ body as `{ "action": "login", ... }`.
 
 A session is `{ success, session_token, lunara_id, full_name, tier,
 email, member_since, is_new }`. Nothing else is ever returned about a
-member — no hash, no salt, no PayPal reference, no Google subject, and
+member — no hash, no salt, no payment reference, no Google subject, and
 there is a test that fails if any of them start appearing.
 
 ## The Lunara ID
@@ -132,16 +132,11 @@ override. Rotating the service key invalidates every session.
 a person obtains a token in the first place; requiring one to reach it
 would be a closed loop. It authenticates its own callers.
 
-**The PayPal transaction id is recorded, not verified.** Nothing checks
-it against PayPal, so it is stored with `payment_verified: false` and
-grants no tier. A field that looks validated and is not is worse than
-one that openly is not — reconcile these by hand before granting a paid
-tier:
-
-```sql
-select lunara_id, email, paypal_txn, created_at
-from members where payment_verified = false and paypal_txn is not null;
-```
+**Signing up asks for no payment.** It once asked for a PayPal
+transaction id that nothing could check; that field is gone and any
+value sent is ignored. Accounts are created with `payment_verified:
+false`. Payments are taken by Stripe Checkout (`stripe-checkout/`),
+which confirms each one with Stripe itself.
 
 ## Redeploying
 

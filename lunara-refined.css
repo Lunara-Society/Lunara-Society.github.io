@@ -3774,11 +3774,12 @@ a.back,
 }
 
 /* ══ 33. BUYING SOMETHING ════════════════════════════════════
-   The old checkout was PayPal's hosted button, which meant loading
+   The old checkout was a hosted payment button, which meant loading
    a third-party SDK on every page that sold anything and accepting
    whatever that script decided to render. It also carried no product
    identity into the transaction, so a completed payment could not
-   tell you which of two products had been bought.
+   tell you which of two products had been bought. Buy buttons are
+   ordinary links now that open Stripe Checkout (lunara-pricing.js).
 
    This is an anchor. No script, no SDK, no layout surprise, and the
    product name and SKU travel with the payment. It is styled like
@@ -3822,7 +3823,7 @@ a.back,
 }
 
 /* Sits under a buy control to say what the money actually buys.
-   Stating "renewed by invoice, never auto-charged" costs nothing and
+   Stating "never auto-charged" costs nothing and
    removes the single most common reason someone abandons a term
    purchase, which is not knowing whether they are subscribing. */
 .lx-buy-terms {

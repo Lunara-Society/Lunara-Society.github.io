@@ -347,7 +347,7 @@
         <span class="per">One month per payment, renewed by you.</span>
       </div>
     </div>
-    <p class="sec-lede" style="margin-top:18px">In the Android app from Google Play, plans renew monthly through Google Play and are cancelled there. On the web, each PayPal payment is one month and never renews by itself: after paying, open Credits in the app and enter your PayPal Transaction ID. Unused monthly credits do not roll over.</p>
+    <p class="sec-lede" style="margin-top:18px">In the Android app from Google Play, plans renew monthly through Google Play and are cancelled there. On the web, you pay by card, Apple Pay or Google Pay through Stripe; each payment is one month and never renews by itself, and your credits are added to your account as soon as the payment completes. Unused monthly credits do not roll over.</p>
     <div class="lz-code">curl https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-lens/v1/detect \
   -H "Authorization: Bearer lk_your_key" \
   -H "Content-Type: application/json" \
@@ -367,7 +367,7 @@
       <details><summary>Can it tell me for certain that something is fake?</summary><p>Only when the file says so itself: Content Credentials or a source label declaring AI generation are statements by the tool that made it. Everything else is evidence of varying strength, and Lens tells you which is which.</p></details>
       <details><summary>What languages does it speak?</summary><p>English and Spanish, for the interface, the voice, the voice commands and translation. More languages are planned.</p></details>
       <details><summary>How do credits work?</summary><p>Every AI action has a fixed price in credits, shown in the app before you use it; if an answer fails, the credits come back. Monthly plan credits are used first, then bought ones. Everything on the phone is free. In the app, Credits shows your balance in plain words, like “about 40 AI checks”.</p></details>
-      <details><summary>I paid by PayPal. How do I get my credits?</summary><p>Sign in to the app with Google, open Credits, choose what you bought and enter the Transaction ID from your PayPal receipt. If that step ever fails, email lunarasociety@gmail.com with the ID and we add it by hand.</p></details>
+      <details><summary>I paid on the web. How do I get my credits?</summary><p>They are added by themselves: you pay from Credits in the app while signed in, and Stripe's checkout is tied to your account. If you closed the page before coming back, open Credits again and the payment is found. If anything ever looks wrong, email lunarasociety@gmail.com with the email on your Stripe receipt and we fix it the same day.</p></details>
       <details><summary>How do I delete my account?</summary><p>In the app: Account → Delete my account. Or follow the steps on the <a class="inline" href="/lens/delete-account.html">account deletion page</a>.</p></details>
     </div>
     <div class="doors">

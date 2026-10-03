@@ -47,7 +47,7 @@
       <tr><th>Data</th><th>Why</th><th>How long</th></tr>
       <tr><td>Your Google account’s email address, name and Google ID, when you sign in</td><td>To give you an account, credits and Lunara Marks</td><td>Until you delete your account</td></tr>
       <tr><td>Your plan, credit balance and credit history</td><td>To run the credits you use and buy</td><td>Until you delete your account</td></tr>
-      <tr><td>Purchase references: Google Play order IDs and purchase tokens, PayPal transaction IDs, the product bought</td><td>To grant each purchase exactly once and handle refunds</td><td>Kept after deletion without your email address, so a payment can never be claimed twice</td></tr>
+      <tr><td>Purchase references: Google Play order IDs and purchase tokens, Stripe checkout session IDs, the product bought</td><td>To grant each purchase exactly once and handle refunds</td><td>Kept after deletion without your email address, so a payment can never be claimed twice</td></tr>
       <tr><td>A usage log for each AI action: which action, the AI model, its size in tokens, its cost, the time</td><td>To price credits honestly, stop abuse and keep costs under control. It never contains the content you sent</td><td>Until you delete your account</td></tr>
       <tr><td>An AI answer you report as offensive, harmful or wrong, with the reason you chose</td><td>So we can review it and improve Rosario</td><td>Until reviewed and resolved, or until you delete your account</td></tr>
       <tr><td>Lunara Marks you create: the owner name you chose, an optional title, the image’s SHA-256 fingerprint, your email address</td><td>So anyone can check who marked an image. The owner name, title and date are public; your email is not</td><td>Until you delete your account; the mark is then revoked and the name removed</td></tr>
@@ -77,14 +77,14 @@
     </ul>
 
     <h2>Payments</h2>
-    <p>In the Android app from Google Play, purchases are made and processed by Google Play; we receive the order ID and purchase token to grant your credits. On the web, you pay by debit or credit card or with PayPal in PayPal’s secure checkout, which processes the payment; we receive the order and payment IDs to add your credits. We never see your card details.</p>
+    <p>In the Android app from Google Play, purchases are made and processed by Google Play; we receive the order ID and purchase token to grant your credits. On the web, you pay by card, Apple Pay or Google Pay in Stripe’s secure checkout, which processes the payment; we receive the checkout session ID, the amount and your email address to add your credits. We never see your card details.</p>
 
     <h2>Who else handles data</h2>
     <ul>
       <li><b>Supabase</b> hosts our database and server functions.</li>
       <li><b>GitHub Pages</b> serves the website and the web app.</li>
       <li><b>Anthropic</b> produces AI answers, directly or through <b>Google Cloud Vertex AI</b>; <b>ElevenLabs</b> produces Rosario’s natural voice.</li>
-      <li><b>Google</b> for sign-in, Google Play payments, and optional Google Drive; <b>PayPal</b> for web payments.</li>
+      <li><b>Google</b> for sign-in, Google Play payments, and optional Google Drive; <b>Stripe</b> for web payments.</li>
       <li><b>Open-Meteo</b> for the weather in your briefing.</li>
     </ul>
     <p>They process data to provide their service to us and not for their own advertising. Some are in the United States; transfers rely on their standard contractual safeguards.</p>

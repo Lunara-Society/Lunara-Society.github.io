@@ -25,7 +25,7 @@ android {
        opens the web app with ?src=play, which sells plans and credits only
        through Google Play Billing, as Play's payments policy requires.
        "web" is the copy downloaded from lunarasociety.com, which uses
-       PayPal. */
+       Stripe Checkout. */
     flavorDimensions 'store'
     productFlavors {
         play {

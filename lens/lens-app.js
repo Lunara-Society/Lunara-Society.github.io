@@ -36,9 +36,9 @@
   function fmt(n) { return Number(n || 0).toLocaleString(S.lang === 'es' ? 'es-ES' : 'en-US'); }
 
   /* The copy installed from Google Play opens with ?src=play. Inside it,
-     plans and credits are sold only through Google Play: no PayPal, no
+     plans and credits are sold only through Google Play: no Stripe, no
      links out to pay elsewhere (Play's payments policy). The copy
-     downloaded from the website and the web app use PayPal. Kept for
+     downloaded from the website and the web app use Stripe. Kept for
      this tab only, so the website in Chrome is never mistaken for it. */
   function isPlay() {
     try {
@@ -1736,7 +1736,7 @@
     }
     function draw() {
       fill(box, busy(h('div')));
-      Promise.all([refreshMe(), play ? Play.load() : null]).then(function () {
+      Promise.all([play ? refreshMe() : settleWeb(), play ? Play.load() : null]).then(function () {
         var m = me || {}, tiers = cat().tiers, packs = cat().packs, es = S.lang === 'es';
         var cur = m.owner ? 'owner' : (m.tier || 'free');
         var bal = h('div', { class: 'card screen balance' },
@@ -1747,8 +1747,7 @@
             h('p', { class: 'small muted', style: 'margin:.4em 0 0' },
               fmt(m.sub_credits || 0) + L(' monthly', ' del mes') + ' · ' + fmt(m.pack_credits || 0) + L(' bought or welcome (never expire)', ' comprados o de bienvenida (no caducan)') +
               (m.renews ? ' · ' + (cur === 'free' ? L('20 more on ', '20 más el ') : L('Renews ', 'Se renueva el ')) + new Date(m.renews).toLocaleDateString(es ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long' }) : '')),
-            m.legacy ? h('p', { class: 'small muted', style: 'margin:.4em 0 0' }, m.legacy.label + ' · ' + L('until ', 'hasta ') + new Date(m.legacy.expires_at).toLocaleDateString(es ? 'es-ES' : 'en-GB') + L(' (used first)', ' (se usa primero)')) : null,
-            m.pending ? h('p', { class: 'small', style: 'margin:.4em 0 0;color:var(--gold)' }, L('A payment is waiting for confirmation.', 'Hay un pago esperando confirmación.')) : null
+            m.legacy ? h('p', { class: 'small muted', style: 'margin:.4em 0 0' }, m.legacy.label + ' · ' + L('until ', 'hasta ') + new Date(m.legacy.expires_at).toLocaleDateString(es ? 'es-ES' : 'en-GB') + L(' (used first)', ' (se usa primero)')) : null
           ]);
         var plans = ['starter', 'pro', 'max'].map(function (k) {
           var tr = tiers[k], mine = cur === k;
@@ -1778,6 +1777,10 @@
           h('h2', null, L('Top up', 'Recargar')),
           h('p', { class: 'small muted' }, L('Bought credits never expire and work with any plan, including Free.', 'Los créditos comprados no caducan y sirven con cualquier plan, también el gratuito.')),
           h('div', { class: 'packs' }, packCards),
+          play ? null : h('h2', null, L('Detection API', 'API de detección')),
+          play ? null : h('div', { class: 'card pack' }, h('b', null, L('One month of API access', 'Un mes de acceso a la API')), h('div', { class: 'price small' }, usd(((window.LunaraPricing && LunaraPricing.get('lensapi')) || { price: 199 }).price)),
+            h('p', { class: 'small muted', style: 'margin:.2em 0 .5em' }, L('Image, video-frame and text detection as JSON. Create your keys under Account once it is active.', 'Detección de imágenes, fotogramas y texto en JSON. Crea tus claves en Cuenta cuando esté activa.')),
+            buyBtn('api_month', L('Buy one month', 'Comprar un mes'), '')),
           h('h2', null, L('What things cost', 'Lo que cuesta cada cosa')),
           h('div', { class: 'card' }, h('dl', { class: 'costs' }, prices.map(function (x) { return [h('dt', null, x[0]), h('dd', null, typeof x[1] === 'number' ? '✦ ' + x[1] : x[1])]; }))),
           h('p', { class: 'small muted' }, L('Free, always: everything that runs on your phone — reading text aloud, the magnifier, colours, QR and link checks, file checks, invisible Lunara Marks, reminders, lists, notes, memory, the safe word and the emergency screen. Rosario’s recorded voice and your phone’s voice are free too.',
@@ -1787,63 +1790,39 @@
         if (!play && window.LunaraPricing && LunaraPricing.refresh) LunaraPricing.refresh();
       });
     }
-    /* The web: PayPal, then the Transaction ID from the receipt. */
-    var chosen = h('select', { id: 'claim-product' }, ['starter', 'pro', 'max', 'credits_500', 'credits_1500', 'credits_5000'].map(function (k) {
-      var tr = cat().tiers[k], pk = cat().packs[k];
-      return h('option', { value: k }, tr ? tr.label + ' · ' + usd(tr.price) : fmt(pk.credits) + L(' credits · ', ' créditos · ') + usd(pk.price));
-    }));
+    /* The web: Stripe Checkout. The server sets the price, locks the
+       session to this account's email and says on Stripe's page where the
+       credits go. Coming back, the payment is confirmed with Stripe and
+       the credits are added once; if the return is missed (a closed tab,
+       another device), opening this screen finds the payment by itself. */
+    var PENDING = 'lens_pending_pay';
     function webBuy(product) {
-      if (me && me.paypal_client_id) return checkout(product);
-      var url = window.LunaraPricing && LunaraPricing.get('lens_' + product) && LunaraPricing.get('lens_' + product).link ? LunaraPricing.url('lens_' + product) : null;
-      chosen.value = product;
-      if (url) { window.open(url, '_blank', 'noopener'); say(L('After paying, enter the Transaction ID from your PayPal receipt below.', 'Después de pagar, escribe abajo el identificador de la transacción de tu recibo de PayPal.')); }
-      else { location.href = 'mailto:lunarasociety@gmail.com?subject=' + encodeURIComponent('Rosario ' + product) + '&body=' + encodeURIComponent(L('I would like to buy: ', 'Quiero comprar: ') + product + '\n' + (raw('lunara_email') || '')); }
-      var f = document.getElementById('claim-box'); if (f) f.scrollIntoView({ behavior: 'smooth' });
+      if (!me || !me.card) { say(L('Card payments are not available just now. Try again shortly.', 'El pago con tarjeta no está disponible ahora mismo. Inténtalo de nuevo en un rato.')); return; }
+      say(L('Opening secure checkout…', 'Abriendo el pago seguro…'));
+      call('/pay/create', { product: product }).then(function (r) {
+        if (!r || !r.url || r.url.indexOf('https://checkout.stripe.com/') !== 0) throw { error: t('err') };
+        try { localStorage.setItem(PENDING, r.session_id); } catch (e) {}
+        location.href = r.url;
+      }).catch(function (e) { say(aiError(e)); });
     }
-    /* Pay by card (or PayPal) right here: PayPal's own buttons, including
-       "Debit or Credit Card", which needs no PayPal account. The server
-       sets the price and adds the credits the moment the payment clears. */
-    function checkout(product) {
-      var tr = cat().tiers[product], pk = cat().packs[product];
-      var what = tr ? tr.label + ' · ' + usd(tr.price) + L(' · 1 month', ' · 1 mes') : fmt(pk.credits) + L(' credits · ', ' créditos · ') + usd(pk.price);
-      var old = document.getElementById('checkout'); if (old) old.remove();
-      var box = h('div', { id: 'pp-box', style: 'min-height:120px' }, busy(h('div'), L('Opening secure checkout…', 'Abriendo el pago seguro…')));
-      var status = h('p', { class: 'small muted', role: 'status' }, '');
-      var sheet = h('div', { class: 'card screen checkout', id: 'checkout', role: 'dialog', 'aria-label': L('Checkout', 'Pago') },
-        h('div', { class: 'row', style: 'justify-content:space-between;align-items:center' }, h('b', null, what),
-          h('button', { class: 'iconbtn', 'aria-label': t('cancel'), onclick: function () { sheet.remove(); } }, '×')),
-        h('p', { class: 'small muted', style: 'margin:0' }, L('Pay with a debit or credit card, or with PayPal. No PayPal account needed for cards. Your credits arrive straight away.', 'Paga con tarjeta de débito o crédito, o con PayPal. Para la tarjeta no necesitas cuenta de PayPal. Los créditos llegan al momento.')),
-        box, status);
-      var host = document.querySelector('.balance'); if (host) host.parentNode.insertBefore(sheet, host.nextSibling); else main.appendChild(sheet);
-      sheet.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      loadScript('https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(me.paypal_client_id) + '&currency=USD&intent=capture&components=buttons&disable-funding=paylater,venmo,credit&locale=' + (S.lang === 'es' ? 'es_ES' : 'en_US'))
-        .then(function () {
-          box.innerHTML = '';
-          return window.paypal.Buttons({
-            style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'pay', height: 48 },
-            createOrder: function () { return call('/pay/create', { product: product }).then(function (r) { return r.order_id; }); },
-            onApprove: function (data) {
-              status.textContent = L('Confirming your payment…', 'Confirmando tu pago…');
-              return call('/pay/capture', { order_id: data.orderID }).then(function (m) {
-                me = m; cacheMe(); renderPill(); sheet.remove(); done(m);
-              }).catch(function (e) { status.textContent = aiError(e); say(aiError(e)); });
-            },
-            onCancel: function () { status.textContent = L('Payment cancelled. Nothing was charged.', 'Pago cancelado. No se ha cobrado nada.'); },
-            onError: function () { status.textContent = L('The payment could not be started. Try again in a moment.', 'No se pudo iniciar el pago. Inténtalo de nuevo en un momento.'); }
-          }).render(box);
-        }).catch(function () { box.innerHTML = ''; status.textContent = L('Secure checkout could not load. Check your connection and try again.', 'No se pudo cargar el pago seguro. Revisa tu conexión e inténtalo de nuevo.'); });
+    function settleWeb() {
+      var q = new URLSearchParams(location.search), id = q.get('paid'), stored = null;
+      try { stored = localStorage.getItem(PENDING); } catch (e) {}
+      if (id) { q.delete('paid'); try { history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch (e) {} }
+      id = id || stored;
+      var forget = function () { try { localStorage.removeItem(PENDING); } catch (e) {} };
+      var p = id ? call('/pay/confirm', { session_id: id }).then(function (m) {
+        forget(); me = m; cacheMe(); renderPill(); buzz([30, 60, 30]); sayKey('activated'); return m;
+      }).catch(function (e) {
+        if (e && e.code === 'pending') { say(L('Stripe is still confirming your payment. Your credits are added as soon as it does.', 'Stripe aún está confirmando tu pago. Los créditos se añaden en cuanto lo haga.')); return null; }
+        forget(); if (e && e.code !== 'network') say(aiError(e)); return null;
+      }) : call('/pay/sync').then(function (m) { me = m; cacheMe(); renderPill(); return m; }).catch(function () { return null; });
+      return p.then(function () { return refreshMe(); });
     }
     function webExtras() {
-      var txn = h('input', { type: 'text', id: 'txn', autocomplete: 'off', placeholder: '9AB12345CD6789012', style: 'text-transform:uppercase' });
       var code = h('input', { type: 'text', id: 'code', autocomplete: 'off', placeholder: 'LENS-XXXX-XXXX', style: 'text-transform:uppercase' });
-      if (me && me.paypal_client_id) return h('div', { class: 'card screen', id: 'claim-box' },
-        h('label', { class: 'f' }, t('pay_code'), code),
-        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')));
       return h('div', { class: 'card screen', id: 'claim-box' },
-        h('b', null, L('Paid with PayPal?', '¿Pagaste con PayPal?')),
-        h('label', { class: 'f' }, L('What you bought', 'Lo que compraste'), chosen),
-        h('label', { class: 'f' }, t('pay_txn'), txn),
-        h('button', { class: 'btn', onclick: function () { call('/claim', { paypal_txn: txn.value, product: chosen.value }).then(function (m) { me = m; cacheMe(); renderPill(); if (m.pending) { say(L('Thank you. Your payment is waiting for confirmation.', 'Gracias. Tu pago está esperando confirmación.')); } else done(m); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('pay_send')),
+        h('p', { class: 'small muted', style: 'margin:0 0 .6em' }, L('Pay by card, Apple Pay or Google Pay through Stripe. Your credits are added to this account as soon as the payment completes, and Stripe emails your receipt.', 'Paga con tarjeta, Apple Pay o Google Pay a través de Stripe. Los créditos se añaden a esta cuenta en cuanto se completa el pago, y Stripe te envía el recibo por correo.')),
         h('label', { class: 'f' }, t('pay_code'), code),
         h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')));
     }
@@ -1886,15 +1865,8 @@
           stop,
           h('div', { class: 'stats' },
             [[t('od_spent'), '$' + Number(st.spent_usd || 0).toFixed(2)], [t('od_calls'), st.calls || 0], [L('Accounts', 'Cuentas'), st.accounts || 0], [L('Paying', 'De pago'), st.paying || 0],
-              [L('Credits used', 'Créditos usados'), fmt(st.credits_spent || 0)], [L('Purchases', 'Compras'), st.purchases || 0], [t('od_lic'), st.active_licences || 0], [t('od_pending'), st.pending_claims || 0]]
+              [L('Credits used', 'Créditos usados'), fmt(st.credits_spent || 0)], [L('Purchases', 'Compras'), st.purchases || 0], [t('od_lic'), st.active_licences || 0]]
               .map(function (x) { return h('div', { class: 'stat' }, h('b', null, String(x[1])), h('span', null, x[0])); })),
-          h('h2', null, t('od_pending')),
-          (o.claims || []).length ? o.claims.map(function (c) {
-            return h('div', { class: 'card screen' }, h('div', null, c.email), h('div', { class: 'small muted key' }, c.paypal_txn), h('div', { class: 'small' }, L('Says they bought: ', 'Dice que compró: ') + (c.product || L('the earlier $25 month', 'el antiguo mes de 25 $'))), h('div', { class: 'small muted' }, new Date(c.created_at).toLocaleString()),
-              h('div', { class: 'row' },
-                h('button', { class: 'btn gold', onclick: function () { call('/admin/claim', { claim_id: c.id }).then(function () { say(S.lang === 'es' ? 'Aprobado.' : 'Approved.'); draw(); }).catch(function (e) { say(aiError(e)); }); } }, t('od_approve')),
-                h('button', { class: 'btn ghost', onclick: function () { call('/admin/claim', { claim_id: c.id, decision: 'reject' }).then(draw); } }, t('od_reject'))));
-          }) : h('p', { class: 'muted' }, t('od_none')),
           h('h2', null, L('Reported answers', 'Respuestas denunciadas') + ' · ' + (o.reports || []).length),
           (o.reports || []).length ? o.reports.map(function (rp) {
             return h('div', { class: 'card screen' }, h('div', { class: 'small muted' }, rp.email + ' · ' + rp.task + ' · ' + (rp.reason || '') + ' · ' + new Date(rp.created_at).toLocaleString()),

@@ -171,7 +171,7 @@ ul.sig li.ai b{background:rgba(242,154,140,.18);color:var(--ai)} ul.sig li.human
 .mic{background:radial-gradient(circle at 35% 30%,#FFF1C9,#D9B45F 55%,#8C6A22);box-shadow:0 12px 40px -8px rgba(217,180,95,.7),0 0 0 6px #000,0 0 0 7px rgba(217,180,95,.35)}
 .fade{background:linear-gradient(rgba(0,0,0,0),#000 62%)}
 .toast{background:#0E0C08;border-color:var(--line)}
-.lx-invoice{color:var(--gold-hi)!important;font-size:13px!important}
+.lx-paynote{color:var(--gold-hi)!important;font-size:13px!important}
 .toast{top:calc(env(safe-area-inset-top) + 76px)}
 
 /* ── credits and plans ─────────────────────────────────────────── */

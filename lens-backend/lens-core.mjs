@@ -9,10 +9,10 @@
      GET  /health                              which secrets are present
      /me        { session_token }              plan, credits, what things cost
      /redeem    { session_token, code }        activation code → plan or credits
-     /claim     { session_token, paypal_txn, product }  PayPal (web) → plan or credits
      /purchase/play { session_token, product_id, purchase_token }  Google Play
-     /pay/create  { session_token, product }   start a card or PayPal payment (web)
-     /pay/capture { session_token, order_id }  take it and add the credits at once
+     /pay/create  { session_token, product }   Stripe Checkout for a plan or pack (web)
+     /pay/confirm { session_token, session_id } add what was paid for, once
+     /pay/sync    { session_token }            find this account's paid sessions
      /history   { session_token }              the last credit movements
      /ai        { session_token, task, lang, … }   the AI features
      /speak     { session_token, text, lang }  Caty's voice (Pro and Luna Max)
@@ -58,7 +58,7 @@ export const PLANS = {
 };
 
 /* The credit plans. Play subscription ids map onto them; on the web a
-   plan bought through PayPal is one month that does not renew. */
+   plan bought through Stripe is one month that does not renew. */
 export const TIERS = {
   free:    { monthly: 20,   price: 0,     voice: false, deep: false, label: 'Free' },
   starter: { monthly: 800,  price: 7.99,  voice: false, deep: false, label: 'Starter' },
@@ -403,7 +403,7 @@ async function licenceFor(email, deps) {
     const list = await deps.db.licensesFor(email);
     let own = (list || []).find((l) => l.plan === 'owner');
     if (!own) {
-      own = await deps.db.createLicense({ email, plan: 'owner', source: 'admin', paypal_txn: null, expires_at: '2099-12-31T00:00:00Z', budget_usd_month: PLANS.owner.budget });
+      own = await deps.db.createLicense({ email, plan: 'owner', source: 'admin', expires_at: '2099-12-31T00:00:00Z', budget_usd_month: PLANS.owner.budget });
     }
     return own;
   }
@@ -442,7 +442,7 @@ export async function handleLens(req, deps) {
       ai: aiOn(deps), ai_provider: deps.env.LENS_AI_PROVIDER || (deps.env.ANTHROPIC_API_KEY ? 'anthropic' : null),
       voice: !!deps.env.ELEVENLABS_API_KEY,
       paused: await paused(deps),
-      paypal: !!(deps.env.PAYPAL_CLIENT_ID && deps.env.PAYPAL_CLIENT_SECRET),
+      stripe: !!deps.stripe,
       play: !!deps.play,
       models: { deep: deps.model('deep'), fast: deps.model('fast') }
     });
@@ -472,10 +472,10 @@ export async function handleLens(req, deps) {
   switch (path) {
     case '/me': return me(email, deps);
     case '/redeem': return redeem(email, body, deps);
-    case '/claim': return claim(email, body, deps);
     case '/purchase/play': return purchasePlay(email, body, deps);
     case '/pay/create': return payCreate(email, body, deps);
-    case '/pay/capture': return payCapture(email, body, deps);
+    case '/pay/confirm': return payConfirm(email, body, deps);
+    case '/pay/sync': return paySync(email, deps);
     case '/history': return history(email, deps);
     case '/ai': return ai(email, body, deps);
     case '/mark': return mark(email, who, body, deps);
@@ -485,7 +485,6 @@ export async function handleLens(req, deps) {
     case '/admin/report': return adminReport(email, body, deps);
     case '/admin/codes': return adminCodes(email, body, deps);
     case '/admin/overview': return adminOverview(email, deps);
-    case '/admin/claim': return adminClaim(email, body, deps);
     case '/admin/grant': return adminGrant(email, body, deps);
     case '/admin/credits': return adminCredits(email, body, deps);
     case '/admin/pause': return adminPause(email, body, deps);
@@ -510,16 +509,14 @@ async function me(email, deps) {
     return json({ licensed: true, owner: true, unlimited: true, email, plan: 'owner', tier: 'owner', label: PLANS.owner.label, voice: true, expires_at: lic.expires_at, allowance_left_pct: 100, resets: nextMonthStart(), catalogue: catalogue() });
   }
   const w = await wallet(email, deps);
-  const pending = deps.db.pendingClaimFor ? await deps.db.pendingClaimFor(email) : null;
   const out = {
     licensed: true, email, tier: w.tier, label: TIERS[w.tier].label,
     credits: w.sub_credits + w.pack_credits, sub_credits: w.sub_credits, pack_credits: w.pack_credits,
     monthly: TIERS[w.tier].monthly, voice: TIERS[w.tier].voice, deep: TIERS[w.tier].deep,
     source: w.tier_source || null,
     renews: w.tier === 'free' ? nextMonthStart() : w.tier_expires_at,
-    pending: !!pending, catalogue: catalogue(),
-    // Public by design: PayPal's buttons need it in the page.
-    paypal_client_id: deps.paypal ? (deps.env.PAYPAL_CLIENT_ID || null) : null
+    catalogue: catalogue(),
+    card: !!deps.stripe
   };
   if (lic) {
     // An earlier licence still running: its allowance is used first.
@@ -625,38 +622,80 @@ async function purchasePlay(email, body, deps) {
   return me(email, deps);
 }
 
-/* ── card and PayPal checkout on the web ────────────────────────────
-   The server creates the order at the product's own price, so the page
-   cannot change what is charged, and marks it with the product and a
-   fingerprint of the buyer's account. When the buyer has paid, PayPal
-   is asked to take the money; the credits are granted once per capture,
-   to the account that started the order, at once. */
-const SELLABLE = (p) => (TIERS[p] && p !== 'free') || PACKS[p];
+/* ── Stripe Checkout on the web ─────────────────────────────────────
+   The server creates the session at the product's own price, locked to
+   the account's email and tagged with the product and a fingerprint of
+   the account, so the page cannot change what is charged or who gets it.
+   When Stripe shows the session paid — that product, that exact amount
+   in dollars, that account — the credits are added once, to the account
+   that started it. The app confirms on return; /pay/sync finds any
+   payment whose return was missed (a closed tab, another device). */
+const SELLABLE = (p) => (TIERS[p] && p !== 'free') || PACKS[p] || p === 'api_month';
 const orderTag = async (product, email) => product + '|' + (await sha256hex('order:' + email)).slice(0, 32);
+const APP = 'https://lunarasociety.com/lens/app.html';
+function productLabel(p) {
+  if (TIERS[p]) return `Rosario ${TIERS[p].label}, 1 month`;
+  if (PACKS[p]) return `Rosario, ${PACKS[p].label}`;
+  return PLANS[p].label;
+}
+function deliveryText(p, email) {
+  const what = TIERS[p] ? `${TIERS[p].monthly.toLocaleString('en-US')} credits a month for one month, starting now`
+    : PACKS[p] ? `${PACKS[p].credits.toLocaleString('en-US')} credits that never expire`
+    : 'one month of the Detection API; create your keys in the app';
+  return `Added to the Lunara Lens account ${email} as soon as the payment completes: ${what}. One payment; nothing renews by itself.`;
+}
+const cents = (p) => Math.round(PRODUCT_PRICE(p) * 100);
+
 async function payCreate(email, body, deps) {
-  if (!deps.paypal) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
+  if (!deps.stripe) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
   const product = String(body.product || '');
   if (!SELLABLE(product)) return json({ error: 'Choose a plan or a pack.' }, 400);
-  const label = TIERS[product] ? `Rosario ${TIERS[product].label}, 1 month` : `Rosario, ${PACKS[product].label}`;
-  const order = await deps.paypal.createOrder({ amount: PRODUCT_PRICE(product).toFixed(2), description: label, custom_id: await orderTag(product, email) });
-  return json({ order_id: order.id });
+  const tag = await orderTag(product, email);
+  const s = await deps.stripe.createSession({
+    mode: 'payment',
+    customer_email: email,
+    client_reference_id: tag.split('|')[1],
+    line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: cents(product), product_data: { name: productLabel(product) } } }],
+    success_url: `${APP}?paid={CHECKOUT_SESSION_ID}#shop`,
+    cancel_url: `${APP}#shop`,
+    custom_text: { submit: { message: deliveryText(product, email) } },
+    metadata: { kind: 'lens', lens_product: product, account: tag },
+    payment_intent_data: { description: productLabel(product), metadata: { kind: 'lens', lens_product: product } }
+  });
+  return json({ url: s.url, session_id: s.id });
 }
-async function payCapture(email, body, deps) {
-  if (!deps.paypal) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
-  const id = String(body.order_id || '');
-  if (!/^[A-Z0-9]{8,40}$/.test(id)) return json({ error: 'Missing order.' }, 400);
-  const o = await deps.paypal.captureOrder(id);
-  const pu = o && o.purchase_units && o.purchase_units[0];
-  const cap = pu && pu.payments && pu.payments.captures && pu.payments.captures[0];
-  if (!o || o.status !== 'COMPLETED' || !cap || cap.status !== 'COMPLETED') {
-    return json({ error: 'The payment did not go through. Nothing was charged; try again or use another card.', code: 'declined' }, 402);
+
+/* Settles one Stripe session for this account. Returns null when it is
+   paid and has been (or already was) added; otherwise why not. */
+async function settleSession(email, s, deps) {
+  const product = s && s.metadata && s.metadata.lens_product;
+  if (!s || !s.metadata || s.metadata.kind !== 'lens' || !SELLABLE(product)) return 'unknown';
+  if (s.metadata.account !== (await orderTag(product, email))) return 'other_account';
+  if (s.payment_status !== 'paid') return 'unpaid';
+  if (s.amount_total !== cents(product) || s.currency !== 'usd') return 'mismatch';
+  const ref = 'stripe:' + s.id;
+  if (await deps.db.recordPurchase({ ref, email, product, source: 'stripe' })) await fulfil(email, product, 'stripe', ref, deps);
+  return null;
+}
+
+async function payConfirm(email, body, deps) {
+  if (!deps.stripe) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
+  const id = String(body.session_id || '');
+  if (!/^cs_(test|live)_[A-Za-z0-9]{10,200}$/.test(id)) return json({ error: 'Missing payment.' }, 400);
+  const s = await deps.stripe.getSession(id);
+  const why = await settleSession(email, s, deps);
+  if (why === 'other_account') return json({ error: 'That payment belongs to another account.' }, 409);
+  if (why === 'unpaid') return json({ error: 'Stripe has not confirmed this payment yet. Nothing is added until it does; try again in a minute.', code: 'pending' }, 402);
+  if (why) return json({ error: 'That payment does not match what was bought. Write to lunarasociety@gmail.com.' }, 400);
+  return me(email, deps);
+}
+
+async function paySync(email, deps) {
+  if (!deps.stripe) return me(email, deps);
+  const sessions = await deps.stripe.paidSessionsFor(email);
+  for (const s of sessions || []) {
+    if (s.metadata && s.metadata.kind === 'lens') await settleSession(email, s, deps);
   }
-  const [product, who] = String(cap.custom_id || pu.custom_id || '').split('|');
-  if (!SELLABLE(product) || (await orderTag(product, email)) !== product + '|' + who) return json({ error: 'That payment belongs to another account.' }, 409);
-  const paid = Number(cap.amount && cap.amount.value), cur = cap.amount && cap.amount.currency_code;
-  if (cur !== 'USD' || !(paid + 0.001 >= PRODUCT_PRICE(product))) return json({ error: 'The amount paid does not match.' }, 400);
-  const ref = 'paypal:' + cap.id;
-  if (await deps.db.recordPurchase({ ref, email, product, source: 'card' })) await fulfil(email, product, 'paypal', ref, deps);
   return me(email, deps);
 }
 
@@ -683,14 +722,14 @@ function nextMonthStart(d = new Date()) {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString();
 }
 
-async function grant(email, plan, source, paypalTxn, deps, days) {
+async function grant(email, plan, source, deps, days) {
   const p = PLANS[plan];
   const existing = activeLicense(await deps.db.licensesFor(email));
   // Buying again extends from the end of what is left, never overlaps.
   const from = existing && existing.plan === plan ? new Date(existing.expires_at) : new Date();
   const expires = new Date(from.getTime() + (days || p.days) * 86400e3);
   return deps.db.createLicense({
-    email, plan, source, paypal_txn: paypalTxn || null,
+    email, plan, source,
     expires_at: expires.toISOString(), budget_usd_month: p.budget
   });
 }
@@ -720,49 +759,10 @@ async function fulfil(email, product, source, ref, deps, days) {
     return setTier(email, product, source, until, deps);
   }
   if (PACKS[product]) return addPack(email, product, source === 'code' ? 'gift' : 'pack', ref, deps);
-  if (PLANS[product] && product !== 'owner') return grant(email, product, source, source === 'paypal' ? ref.replace(/^paypal:/, '') : null, deps, days);
+  if (PLANS[product] && product !== 'owner') return grant(email, product, source, deps, days);
   throw new Error('unknown product ' + product);
 }
 const PRODUCT_PRICE = (p) => TIERS[p] ? TIERS[p].price : PACKS[p] ? PACKS[p].price : PLANS[p] ? PLANS[p].price : null;
-
-/* A PayPal capture id is the "Transaction ID" on the buyer's receipt.
-   PayPal is asked directly whether it is a completed payment of the
-   right amount; the id can be claimed once, ever. */
-async function claim(email, body, deps) {
-  const txn = String(body.paypal_txn || '').trim().toUpperCase();
-  const product = String(body.product || '');
-  if (product && (!PRODUCT_PRICE(product) || product === 'owner' || product === 'free')) return json({ error: 'Choose what you bought.' }, 400);
-  if (!/^[0-9A-Z]{12,20}$/.test(txn)) {
-    return json({ error: 'Enter the Transaction ID from your PayPal receipt. It is 17 letters and numbers.' }, 400);
-  }
-  if (await deps.db.licenseByTxn(txn) || await deps.db.getPurchase('paypal:' + txn)) return json({ error: 'That payment has already been used.' }, 409);
-  const cap = await deps.paypalCapture(txn);
-  if (!cap) {
-    // PayPal cannot be asked automatically: queue it for the owner, who
-    // approves it in the app. Nothing unlocks until they do.
-    if (deps.db.createClaim) {
-      const existing = deps.db.claimByTxn ? await deps.db.claimByTxn(txn) : null;
-      if (existing && existing.status !== 'pending') return json({ error: 'That Transaction ID has already been reviewed.' }, 409);
-      if (!existing) await deps.db.createClaim({ email, paypal_txn: txn, product: product || null, note: String(body.note || '').slice(0, 200) });
-      return json({ licensed: false, pending: true, email, message: 'Thank you. Your payment is waiting for confirmation.' }, 202);
-    }
-    return json({ error: 'Payments cannot be checked automatically yet. Email lunarasociety@gmail.com with your Transaction ID.' }, 503);
-  }
-  if (cap.status !== 'COMPLETED') return json({ error: 'PayPal does not show that payment as completed yet. Try again in a few minutes.' }, 400);
-  const paid = Number(cap.amount?.value || 0);
-  const cur = cap.amount?.currency_code;
-  if (product) {
-    if (cur !== 'USD' || paid + 0.001 < PRODUCT_PRICE(product)) return json({ error: `That payment was ${paid} ${cur}, which does not match what you chose.` }, 400);
-    if (!(await deps.db.recordPurchase({ ref: 'paypal:' + txn, email, product, source: 'paypal' }))) return json({ error: 'That payment has already been used.' }, 409);
-    await fulfil(email, product, 'paypal', 'paypal:' + txn, deps);
-    return me(email, deps);
-  }
-  const plan = cur === 'USD' && paid >= PLANS.api_month.price ? 'api_month'
-    : cur === 'USD' && paid >= PLANS.app_month.price ? 'app_month' : null;
-  if (!plan) return json({ error: `That payment was ${paid} ${cur}, which does not match a Lunara Lens plan.` }, 400);
-  await grant(email, plan, 'paypal', txn, deps);
-  return me(email, deps);
-}
 
 async function spend(lic, task, model, body, deps) {
   if (lic.plan === 'owner') return { budget: Infinity, spent: 0, owner: true };
@@ -955,29 +955,11 @@ async function apiDetect(req, deps) {
 
 async function adminOverview(email, deps) {
   if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const [stats, claims, licences, wallets, reports] = await Promise.all([
-    deps.db.stats(period()), deps.db.pendingClaims(), deps.db.recentLicenses(), deps.db.recentWallets ? deps.db.recentWallets() : [],
+  const [stats, licences, wallets, reports] = await Promise.all([
+    deps.db.stats(period()), deps.db.recentLicenses(), deps.db.recentWallets ? deps.db.recentWallets() : [],
     deps.db.openReports ? deps.db.openReports() : []
   ]);
-  return json({ period: period(), paused: await paused(deps), stats, claims, licences: (licences || []).filter((l) => l.plan !== 'owner'), wallets: wallets || [], reports: reports || [] });
-}
-
-async function adminClaim(email, body, deps) {
-  if (!isOwner(email, deps.env)) return json({ error: 'Not allowed.' }, 403);
-  const c = await deps.db.getClaim(String(body.claim_id || ''));
-  if (!c || c.status !== 'pending') return json({ error: 'That claim is not pending.' }, 400);
-  if (body.decision === 'reject') {
-    await deps.db.updateClaim(c.id, { status: 'rejected', decided_at: new Date().toISOString() });
-    return json({ ok: true, status: 'rejected' });
-  }
-  // What the member said they bought, unless the owner decides otherwise.
-  const want = String(body.plan || c.product || 'app_month');
-  const plan = PRODUCT_PRICE(want) !== null && want !== 'owner' && want !== 'free' ? want : 'app_month';
-  if (await deps.db.licenseByTxn(c.paypal_txn)) return json({ error: 'That payment already activated a licence.' }, 409);
-  if (!(await deps.db.recordPurchase({ ref: 'paypal:' + c.paypal_txn, email: c.email, product: plan, source: 'paypal' }))) return json({ error: 'That payment has already been used.' }, 409);
-  await fulfil(c.email, plan, 'paypal', 'paypal:' + c.paypal_txn, deps);
-  await deps.db.updateClaim(c.id, { status: 'approved', decided_at: new Date().toISOString() });
-  return json({ ok: true, status: 'approved', email: c.email, plan });
+  return json({ period: period(), paused: await paused(deps), stats, licences: (licences || []).filter((l) => l.plan !== 'owner'), wallets: wallets || [], reports: reports || [] });
 }
 
 async function adminPause(email, body, deps) {
@@ -1011,7 +993,7 @@ async function adminGrant(email, body, deps) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return json({ error: 'Enter a valid email address.' }, 400);
   const plan = PLANS[body.plan] && body.plan !== 'owner' ? body.plan : 'comp';
   const days = Math.min(400, Math.max(1, Number(body.days) || PLANS[plan].days));
-  await grant(to, plan, 'admin', null, deps, days);
+  await grant(to, plan, 'admin', deps, days);
   return json({ ok: true, email: to, plan, days });
 }
 

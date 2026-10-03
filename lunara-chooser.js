@@ -75,7 +75,7 @@
     '.lch-pts li:before{content:"";position:absolute;left:2px;top:14px;width:10px;height:6px;border-left:1.5px solid #8FD6B8;border-bottom:1.5px solid #8FD6B8;transform:rotate(-45deg)}',
     '.lch-buy{display:inline-flex;gap:10px;align-items:center;margin-top:20px;text-decoration:none;font:600 14px Inter,system-ui,sans-serif;color:#16130D;',
     '  padding:15px 24px;border-radius:999px;background:linear-gradient(180deg,#F3DA9A,#C9A55E);box-shadow:0 18px 50px -18px rgba(226,196,122,.9)}',
-    '.lch-main .lx-invoice{color:#A9AEB8}',
+    '.lch-main .lx-paynote{color:#A9AEB8}',
     '.lch-side h4{font:10.5px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:#8E949E;margin:0 0 10px}',
     '.lch-alt{display:block;text-decoration:none;color:inherit;padding:16px;border-radius:12px;border:1px solid rgba(214,222,234,.14);margin-bottom:10px;transition:all .3s ease}',
     '.lch-alt:hover{border-color:rgba(226,196,122,.6);transform:translateY(-2px)}',
@@ -126,7 +126,7 @@
       if (n.free) side += '<a class="lch-alt lch-free" href="/check.html"><div class="t"><b>First, the free check</b><span>free</span></div><p>Thirty seconds to see which obligations reach your system at all. It can say none do.</p></a>';
       (n.also || []).forEach(function (id) {
         if (!P.get(id)) return;
-        side += '<a class="lch-alt" data-lx-buy="' + id + '" data-lx-noinvoice href="#"><div class="t"><b data-lx-name="' + id + '"></b><span data-lx-amount="' + id + '"></span></div><p data-lx-lede="' + id + '"></p></a>';
+        side += '<a class="lch-alt" data-lx-buy="' + id + '" data-lx-nonote href="#"><div class="t"><b data-lx-name="' + id + '"></b><span data-lx-amount="' + id + '"></span></div><p data-lx-lede="' + id + '"></p></a>';
       });
       side += '</div>';
       res.innerHTML = '<div class="lch-res">' + main + side + '</div>';

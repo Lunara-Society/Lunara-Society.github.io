@@ -194,7 +194,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
 
 <div class="error-box" id="error-box">
   <h2>Access Denied</h2>
-  <p>This page is for verified purchasers of the Lunara Compliance Intelligence Report. If you have completed payment but are seeing this message, please contact us with your PayPal transaction ID.</p>
+  <p>This page is for verified purchasers of the Lunara Compliance Intelligence Report. If you have completed payment but are seeing this message, please write to lunarasociety@gmail.com with your order reference.</p>
   <a href="contact.html">Contact Support</a>
 </div>
 
@@ -214,13 +214,37 @@ var LX_UPGRADED = false;
 document.addEventListener('DOMContentLoaded', function () {
   var params = new URLSearchParams(window.location.search);
   var token = params.get('t');
+  var order = (params.get('order') || '').toUpperCase();
   LX_TIER = params.get('p');
 
-  if (!token) {
+  function deny() {
     document.getElementById('access-content').style.display = 'none';
     document.getElementById('error-box').style.display = 'block';
+  }
+
+  /* Opened with the order reference Stripe Checkout returns the buyer
+     with. lunara-checkout asks Stripe whether it is a completed payment
+     of the report (or the report with a session) at its listed price,
+     and which of the two it was; the address bar decides neither. Links
+     sent to earlier buyers carry ?t= and keep working. */
+  if (order) {
+    document.getElementById('access-content').style.visibility = 'hidden';
+    fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/order?ref=' + encodeURIComponent(order))
+      .then(function (r) { return r.json(); })
+      .then(function (b) {
+        if (!b || !b.paid || (b.product !== 'cir' && b.product !== 'cirplus')) return deny();
+        LX_UPGRADED = b.product === 'cirplus';
+        document.getElementById('txn-id').textContent = b.ref;
+        document.getElementById('amount-paid').textContent = '$' + Number(b.amount).toLocaleString('en-US');
+        document.getElementById('tier-label').textContent = b.name;
+        document.getElementById('product-name').textContent = b.name;
+        document.getElementById('access-content').style.visibility = '';
+      })
+      .catch(deny);
     return;
   }
+
+  if (!token) return deny();
 
   document.getElementById('txn-id').textContent = token.substring(0, 12) + '...';
 
@@ -285,7 +309,7 @@ function generateReport() {
   document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
 
   var params = new URLSearchParams(window.location.search);
-  var txnId = params.get('t');
+  var txnId = params.get('order') || params.get('t');
   fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraScoreReport', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

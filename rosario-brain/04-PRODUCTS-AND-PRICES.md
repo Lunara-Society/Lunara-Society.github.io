@@ -92,7 +92,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > Be checkable by anyone who asks, including a machine.
 
-- **Terms:** Six months. Renewed by invoice, never auto-charged.
+- **Terms:** Six months. Renewed only when you choose to pay again.
 - Identity and domain ownership verified by human review
 - Public register entry anyone can query without an account
 - Trust badge and machine-readable identity files
@@ -129,7 +129,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > We tell you when something that binds you changes, and only then.
 
-- **Terms:** Six months. Renewed by invoice, never auto-charged.
+- **Terms:** Six months. Renewed only when you choose to pay again.
 - Monitoring across the EU AI Act, SB 942 and your sector rules
 - A written note whenever a date moves or an obligation lands
 - No newsletter, no digest, nothing you did not ask for
@@ -148,7 +148,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > An identity for your agent that a third party can check.
 
-- **Terms:** Six months. Renewed by invoice, never auto-charged.
+- **Terms:** Six months. Renewed only when you choose to pay again.
 - Agent verified and its operator named
 - Declared governance framework recorded
 - Register entry with AI designation, queryable by any system
@@ -187,7 +187,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > Evidence a buyer can verify without taking your word.
 
-- **Terms:** Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed by invoice.
+- **Terms:** Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed only when you choose to pay again.
 - Certified against the seven constitutional pillars
 - Public register entry a procurement panel can query directly
 - Tender evidence dossier

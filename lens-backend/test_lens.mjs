@@ -3,12 +3,11 @@ import assert from 'node:assert/strict';
 import { handleLens, PLANS, TIERS, PACKS, CREDITS, WELCOME, TASKS, costOf, sha256hex, period, speakCredits } from './lens-core.mjs';
 
 function makeDeps(over = {}) {
-  const t = { licenses: [], usage: [], codes: [], marks: [], keys: [], claims: [], config: {}, wallets: {}, ledger: [], purchases: {}, members: [], reports: [] };
+  const t = { licenses: [], usage: [], codes: [], marks: [], keys: [], config: {}, wallets: {}, ledger: [], purchases: {}, members: [], reports: [] };
   const calls = [];
   const db = {
     licensesFor: async (e) => t.licenses.filter((l) => l.email === e),
     getLicense: async (id) => t.licenses.find((l) => l.id === id) || null,
-    licenseByTxn: async (x) => t.licenses.find((l) => l.paypal_txn === x) || null,
     createLicense: async (row) => { const l = { id: 'L' + (t.licenses.length + 1), ...row }; t.licenses.push(l); return l; },
     spent: async (id, p) => t.usage.filter((u) => u.license_id === id && u.period === p).reduce((a, u) => a + u.cost_usd, 0),
     logUsage: async (row) => { t.usage.push(row); return row; },
@@ -19,12 +18,6 @@ function makeDeps(over = {}) {
     createMark: async (row) => { const m = { ...row, created_at: '2026-09-25T00:00:00Z' }; t.marks.push(m); return m; },
     getKey: async (h) => t.keys.find((k) => k.key_hash === h) || null,
     createKey: async (row) => { t.keys.push(row); return row; },
-    createClaim: async (row) => { const c = { id: 'C' + (t.claims.length + 1), status: 'pending', ...row }; t.claims.push(c); return c; },
-    claimByTxn: async (x) => t.claims.find((c) => c.paypal_txn === x) || null,
-    pendingClaimFor: async (e) => t.claims.find((c) => c.email === e && c.status === 'pending') || null,
-    pendingClaims: async () => t.claims.filter((c) => c.status === 'pending'),
-    getClaim: async (id) => t.claims.find((c) => c.id === id) || null,
-    updateClaim: async (id, patch) => Object.assign(t.claims.find((c) => c.id === id), patch),
     recentLicenses: async () => t.licenses.slice(-20),
     stats: async () => ({ spent_usd: t.usage.reduce((a, u) => a + u.cost_usd, 0), calls: t.usage.length }),
     // Credits: the same rules as the SQL functions lens_spend and lens_add.
@@ -53,7 +46,7 @@ function makeDeps(over = {}) {
     reviewReport: async (id) => { const r = t.reports.find((x) => x.id === id); if (r) r.reviewed_at = 'now'; },
     deleteAccount: async (e, hash) => {
       delete t.wallets[e]; t.ledger = t.ledger.filter((l) => l.email !== e); t.licenses = t.licenses.filter((l) => l.email !== e);
-      t.usage = t.usage.filter((u) => u.email !== e); t.claims = t.claims.filter((c) => c.email !== e);
+      t.usage = t.usage.filter((u) => u.email !== e);
       for (const p of Object.values(t.purchases)) if (p.email === e) p.email = hash;
       for (const m of t.marks) if (m.owner_email === e) Object.assign(m, { owner_email: hash, owner_name: 'Account deleted', revoked_at: 'now' });
       t.members = t.members.filter((m) => m.email !== e);
@@ -68,9 +61,6 @@ function makeDeps(over = {}) {
     tts: async () => new Uint8Array([1, 2, 3]),
     model: () => 'claude-opus-5',
     callModel: async (a) => { calls.push(a); return { input_tokens: 2000, output_tokens: 400, result: { speech: 'ok', verdict: 'uncertain' } }; },
-    paypalCapture: async (id) => ({ '11111111111111111': { status: 'COMPLETED', amount: { value: '25.00', currency_code: 'USD' } },
-      '22222222222222222': { status: 'COMPLETED', amount: { value: '199.00', currency_code: 'USD' } },
-      '33333333333333333': { status: 'COMPLETED', amount: { value: '10.00', currency_code: 'USD' } } }[id] || { status: 'NOT_FOUND', amount: {} }),
     ...over
   };
   return { deps, t, calls };
@@ -82,8 +72,10 @@ const get = (path) => new Request('https://x.supabase.co/functions/v1/lunara-len
 const run = async (deps, req) => { const r = await handleLens(req, deps); return { status: r.status, body: await r.json() }; };
 
 let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
+// An earlier dollar-allowance licence for the test buyer, as the owner grants one.
+const licence = (deps, plan = 'app_month') => run(deps, post('/admin/grant', { session_token: 'admin', email: 'buyer@example.com', plan }));
 
-{ // the allowance can never exceed what a user paid, net of PayPal's fee
+{ // the allowance can never exceed what a user paid, net of the card fee
   const net = (p) => p - p * 0.0349 - 0.49;
   assert.ok(PLANS.app_month.budget < net(PLANS.app_month.price) * 0.5);
   assert.ok(PLANS.api_month.budget < net(PLANS.api_month.price) * 0.7);
@@ -104,26 +96,8 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   ok('no session → 401; a new account starts free with 50 welcome and 20 monthly credits');
 }
 {
-  const { deps, t } = makeDeps();
-  let r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
-  assert.equal(r.status, 200); assert.equal(r.body.plan, 'app_month'); assert.equal(t.licenses[0].email, 'buyer@example.com');
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
-  assert.equal(r.status, 409);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '33333333333333333' }));
-  assert.equal(r.status, 400);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '99999999999999999' }));
-  assert.equal(r.status, 400);
-  ok('a PayPal payment activates once, and only at the right amount');
-}
-{
-  const { deps } = makeDeps({ paypalCapture: async () => null });
-  const r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
-  assert.equal(r.status, 202); assert.equal(r.body.pending, true);
-  ok('without PayPal keys, a claim waits for the owner instead of failing');
-}
-{
   const { deps, t, calls } = makeDeps();
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   let r = await run(deps, post('/ai', { session_token: 'good', task: 'describe', lang: 'es', images: ['data:image/jpeg;base64,AAAA'] }));
   assert.equal(r.status, 200); assert.equal(r.body.result.speech, 'ok');
   assert.equal(calls[0].content[0].type, 'image');
@@ -159,7 +133,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 }
 {
   const { deps } = makeDeps();
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   let r = await run(deps, post('/mark', { session_token: 'good', sha256: 'a'.repeat(64), title: 'Beach' }));
   assert.equal(r.status, 200); assert.match(r.body.id, /^[0-9A-Z]{8}$/);
   const id = r.body.id;
@@ -172,11 +146,11 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 }
 {
   const { deps } = makeDeps();
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   let r = await run(deps, post('/apikey', { session_token: 'good' }));
   assert.equal(r.status, 402);
   const d2 = makeDeps();
-  await run(d2.deps, post('/claim', { session_token: 'good', paypal_txn: '22222222222222222' }));
+  await licence(d2.deps, 'api_month');
   r = await run(d2.deps, post('/apikey', { session_token: 'good', label: 'prod' }));
   assert.match(r.body.key, /^lk_[a-z0-9]{32}$/);
   assert.equal(d2.t.keys[0].key_hash, await sha256hex(r.body.key));
@@ -191,7 +165,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 }
 {
   const { deps } = makeDeps({ env: {} });
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   const r = await run(deps, post('/ai', { session_token: 'good', task: 'describe' }));
   assert.equal(r.status, 503); assert.equal(r.body.code, 'offline');
   const h = await run(deps, get('/health'));
@@ -220,24 +194,12 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   ok(`the owner is never capped ($${spent.toFixed(2)} in one month) and gets one owner licence`);
 }
 {
-  const { deps, t } = makeDeps({ paypalCapture: async () => null });
-  let r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: '44444444444444444' }));
-  assert.equal(r.status, 202); assert.equal(r.body.pending, true);
-  r = await run(deps, post('/me', { session_token: 'good' }));
-  assert.equal(r.body.tier, 'free'); assert.equal(r.body.pending, true); assert.equal(r.body.legacy, undefined);
-  r = await run(deps, post('/admin/overview', { session_token: 'good' }));
-  assert.equal(r.status, 403);
-  r = await run(deps, post('/admin/claim', { session_token: 'good', claim_id: 'C1' }));
+  const { deps } = makeDeps();
+  let r = await run(deps, post('/admin/overview', { session_token: 'good' }));
   assert.equal(r.status, 403);
   r = await run(deps, post('/admin/overview', { session_token: 'admin' }));
-  assert.equal(r.body.claims.length, 1);
-  r = await run(deps, post('/admin/claim', { session_token: 'admin', claim_id: 'C1' }));
-  assert.equal(r.body.status, 'approved');
-  r = await run(deps, post('/me', { session_token: 'good' }));
-  assert.equal(r.body.licensed, true); assert.equal(r.body.plan, 'app_month');
-  r = await run(deps, post('/admin/claim', { session_token: 'admin', claim_id: 'C1' }));
-  assert.equal(r.status, 400);
-  ok('unverifiable payments wait in a queue only the owner can approve');
+  assert.equal(r.status, 200); assert.equal(r.body.claims, undefined);
+  ok('only the owner sees the overview');
 }
 {
   const { deps } = makeDeps();
@@ -253,7 +215,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   const { deps, t } = makeDeps({ env: { ANTHROPIC_API_KEY: 'x', ELEVENLABS_API_KEY: 'y' } });
   let r = await handleLens(post('/speak', { session_token: 'good', text: 'hola' }), deps);
   assert.equal(r.status, 402);
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   r = await handleLens(post('/speak', { session_token: 'good', text: 'Hello there', lang: 'en' }), deps);
   assert.equal(r.status, 200); assert.equal(r.headers.get('content-type'), 'audio/mpeg');
   assert.equal(t.usage.at(-1).route, 'speak'); assert.ok(t.usage.at(-1).cost_usd > 0);
@@ -278,7 +240,7 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
 }
 {
   const { deps, t, calls } = makeDeps({ env: { ANTHROPIC_API_KEY: 'x', ELEVENLABS_API_KEY: 'y' } });
-  await run(deps, post('/claim', { session_token: 'good', paypal_txn: '11111111111111111' }));
+  await licence(deps);
   let r = await run(deps, post('/admin/pause', { session_token: 'good', paused: true }));
   assert.equal(r.status, 403);
   r = await run(deps, post('/admin/pause', { session_token: 'admin', paused: true }));
@@ -347,33 +309,10 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   w.sub_credits = 3; w.granted_period = '2020-01';
   let r = await run(deps, post('/me', { session_token: 'good' }));
   assert.equal(r.body.sub_credits, TIERS.free.monthly); assert.equal(r.body.pack_credits, WELCOME);
-  Object.assign(w, { tier: 'pro', tier_source: 'paypal', tier_expires_at: new Date(Date.now() - 1000).toISOString(), sub_credits: 900 });
+  Object.assign(w, { tier: 'pro', tier_source: 'stripe', tier_expires_at: new Date(Date.now() - 1000).toISOString(), sub_credits: 900 });
   r = await run(deps, post('/me', { session_token: 'good' }));
   assert.equal(r.body.tier, 'free'); assert.equal(r.body.sub_credits, TIERS.free.monthly); assert.equal(r.body.pack_credits, WELCOME);
   ok('Free refills each month; an ended plan falls back to Free; bought credits stay');
-}
-{ // PayPal on the web: the member says what they bought, PayPal confirms the amount
-  const caps = { AAAAAAAAAAAAAAAA1: '7.99', AAAAAAAAAAAAAAAA2: '6.99', AAAAAAAAAAAAAAAA3: '5.00', AAAAAAAAAAAAAAAA4: '49.99' };
-  const { deps, t } = makeDeps({ paypalCapture: async (id) => caps[id] ? { status: 'COMPLETED', amount: { value: caps[id], currency_code: 'USD' } } : null });
-  let r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA1', product: 'starter' }));
-  assert.equal(r.status, 200); assert.equal(r.body.tier, 'starter'); assert.equal(r.body.sub_credits, TIERS.starter.monthly);
-  const days = (new Date(r.body.renews) - Date.now()) / 86400e3; assert.ok(days > 30 && days < 32);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA1', product: 'starter' }));
-  assert.equal(r.status, 409);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA2', product: 'credits_500' }));
-  assert.equal(r.body.pack_credits, WELCOME + 500);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA3', product: 'credits_1500' }));
-  assert.equal(r.status, 400);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA4', product: 'max' }));
-  assert.equal(r.body.tier, 'max'); assert.equal(r.body.deep, true);
-  r = await run(deps, post('/claim', { session_token: 'good', paypal_txn: 'AAAAAAAAAAAAAAAA9', product: 'credits_5000' }));
-  assert.equal(r.status, 202);
-  assert.equal(t.claims[0].product, 'credits_5000');
-  r = await run(deps, post('/admin/claim', { session_token: 'admin', claim_id: t.claims[0].id }));
-  assert.equal(r.body.plan, 'credits_5000');
-  r = await run(deps, post('/me', { session_token: 'good' }));
-  assert.equal(r.body.pack_credits, WELCOME + 500 + 5000);
-  ok('web purchases: plans and packs by PayPal, each payment once, the amount checked, the queue fulfils what was bought');
 }
 { // Google Play
   const orders = {};
@@ -474,44 +413,62 @@ let n = 0; const ok = (name) => { n++; console.log('ok', n, name); };
   assert.equal(r.body.reports.length, 0);
   ok('members can report an AI answer, and only the owner reviews reports');
 }
-{ // card and PayPal checkout on the web
-  const orders = {}; let seq = 0;
-  const paypal = {
-    createOrder: async (o) => { const id = 'ORDER' + (++seq) + 'ABCDEFG'; orders[id] = o; return { id, status: 'CREATED' }; },
-    captureOrder: async (id) => {
-      const o = orders[id]; if (!o) return { status: 'FAILED' };
-      if (o.declined) return { status: 'FAILED' };
-      return { id, status: 'COMPLETED', purchase_units: [{ custom_id: o.custom_id, payments: { captures: [{ id: 'CAP' + id, status: 'COMPLETED', custom_id: o.custom_id, amount: { value: o.paid || o.amount, currency_code: 'USD' } }] } }] };
-    }
+{ // Stripe Checkout on the web
+  const sessions = {}; let seq = 0;
+  const stripe = {
+    createSession: async (p) => {
+      const id = 'cs_test_' + 'a'.repeat(10) + (++seq);
+      sessions[id] = { id, url: 'https://checkout.stripe.com/c/pay/' + id, payment_status: 'unpaid', status: 'open',
+        amount_total: p.line_items[0].price_data.unit_amount, currency: p.line_items[0].price_data.currency,
+        customer_email: p.customer_email, metadata: { ...p.metadata }, params: p };
+      return sessions[id];
+    },
+    getSession: async (id) => sessions[id] || null,
+    paidSessionsFor: async (email) => Object.values(sessions).filter((s) => s.customer_email === email && s.payment_status === 'paid')
   };
-  const { deps, t } = makeDeps({ paypal, env: { ANTHROPIC_API_KEY: 'x', PAYPAL_CLIENT_ID: 'public-client-id' } });
+  const pay = (id) => Object.assign(sessions[id], { payment_status: 'paid', status: 'complete' });
+  const { deps } = makeDeps({ stripe });
   let r = await run(deps, post('/me', { session_token: 'good' }));
-  assert.equal(r.body.paypal_client_id, 'public-client-id');
+  assert.equal(r.body.card, true);
   r = await run(deps, post('/pay/create', { session_token: 'good', product: 'free' }));
   assert.equal(r.status, 400);
-  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'pro' }));
-  const id = r.body.order_id; assert.equal(orders[id].amount, '19.99');
-  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id }));
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'pro', amount: 1 }));
+  const id = r.body.session_id;
+  assert.ok(r.body.url.startsWith('https://checkout.stripe.com/'));
+  const sp = sessions[id].params;
+  assert.equal(sp.line_items[0].price_data.unit_amount, 1999, 'the server sets the price');
+  assert.equal(sp.customer_email, 'buyer@example.com', 'locked to the account that pays');
+  assert.match(sp.custom_text.submit.message, /buyer@example\.com/, 'says where the credits go before paying');
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: id }));
+  assert.equal(r.status, 402); assert.equal(r.body.code, 'pending', 'nothing before Stripe says paid');
+  pay(id);
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: id }));
   assert.equal(r.status, 200); assert.equal(r.body.tier, 'pro'); assert.equal(r.body.sub_credits, TIERS.pro.monthly);
-  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id }));
-  assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'a retried capture grants nothing twice');
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: id }));
+  assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'a repeated confirm grants nothing twice');
+  r = await run(deps, post('/pay/sync', { session_token: 'good' }));
+  assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'nor does a sync');
   r = await run(deps, post('/pay/create', { session_token: 'good', product: 'credits_1500' }));
-  const id2 = r.body.order_id;
-  r = await run(deps, post('/pay/capture', { session_token: 'admin', order_id: id2 }));
-  assert.equal(r.status, 409, 'an order started by one account cannot credit another');
-  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: id2 }));
-  assert.equal(r.body.pack_credits, WELCOME + 1500);
+  const id2 = r.body.session_id; pay(id2);
+  r = await run(deps, post('/pay/confirm', { session_token: 'admin', session_id: id2 }));
+  assert.equal(r.status, 409, 'a payment by one account cannot credit another');
+  r = await run(deps, post('/pay/sync', { session_token: 'good' }));
+  assert.equal(r.body.pack_credits, WELCOME + 1500, 'a payment whose return was missed is found by sync');
   r = await run(deps, post('/pay/create', { session_token: 'good', product: 'credits_5000' }));
-  orders[r.body.order_id].paid = '4.99';
-  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: r.body.order_id }));
-  assert.equal(r.status, 400, 'an underpaid order grants nothing');
-  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'starter' }));
-  orders[r.body.order_id].declined = true;
-  r = await run(deps, post('/pay/capture', { session_token: 'good', order_id: r.body.order_id }));
-  assert.equal(r.status, 402); assert.equal(r.body.code, 'declined');
+  pay(r.body.session_id); sessions[r.body.session_id].amount_total = 499;
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: r.body.session_id }));
+  assert.equal(r.status, 400, 'an underpaid session grants nothing');
+  r = await run(deps, post('/pay/create', { session_token: 'good', product: 'api_month' }));
+  pay(r.body.session_id);
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: r.body.session_id }));
+  assert.equal(r.body.plan, 'api_month', 'the Detection API month is sold the same way');
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: 'cs_test_nonexistent00' }));
+  assert.equal(r.status, 400);
+  r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: '../charges' }));
+  assert.equal(r.status, 400);
   const nd = makeDeps();
   r = await run(nd.deps, post('/pay/create', { session_token: 'good', product: 'pro' }));
   assert.equal(r.status, 503);
-  ok('card checkout: the server sets the price, credits arrive at once, once, to the right account; declines and underpayments grant nothing');
+  ok('Stripe checkout: the server sets the price, credits arrive once, to the right account, only when Stripe shows the exact amount paid');
 }
 console.log(`\n${n} passed`);

@@ -457,13 +457,10 @@ async function authSignup(body, cfg) {
     return json({ success: false, error: 'That address cannot be registered. Try signing in.' }, 409);
   }
 
-  /* The form asks for a PayPal transaction id. Nothing here checks it
-     against PayPal, so it is recorded as a claim and flagged
-     unverified rather than treated as proof of payment. A field that
-     looks validated and is not is worse than one that openly is not:
-     reconcile these by hand before granting a paid tier. */
-  const paypalTxn = String(body.paypal_txn || '').trim().slice(0, 64) || null;
-
+  /* Signing up is free and asks for no payment. It once asked for a
+     transaction id it could not check; a field that looks validated and
+     is not is worse than none. Payments are taken by Stripe, which
+     confirms them itself (stripe-checkout/). */
   const { salt, hash } = await hashPassword(password);
   const member = await cfg.store.create({
     email,
@@ -472,7 +469,6 @@ async function authSignup(body, cfg) {
     tier: 'member',
     salt,
     hash,
-    paypal_txn: paypalTxn,
     payment_verified: false,
     auth_method: 'password'
   });
@@ -658,9 +654,9 @@ async function authAvatar(body, cfg) {
    entire argument is that a claim should be checkable by someone
    other than the claimant, it is the wrong shape at any price.
 
-   Nothing here talks to PayPal. Redemption records that a member says
-   they paid, the same way signup records a transaction id it cannot
-   confirm. Reconcile by hand before granting anything. */
+   Nothing here talks to the payment processor. Redemption records that
+   a member says they paid, with the reference they give. Reconcile it
+   against the Stripe dashboard before granting anything. */
 
 function offerFor(offer) {
   return {

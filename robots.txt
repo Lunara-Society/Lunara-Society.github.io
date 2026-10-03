@@ -11,6 +11,7 @@ Allow: /
 Disallow: /kit-access.html
 Disallow: /compliance-report-access.html
 Disallow: /certify-thanks.html
+Disallow: /paid.html
 Disallow: /member.html
 Disallow: /dashboard.html
 Disallow: /invoice-template.html

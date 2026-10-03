@@ -2,8 +2,8 @@
   "organization": "Lunara Society",
   "description": "Constitutional governance authority for the autonomous economy. Trust infrastructure for AI-to-business verification and compliance.",
   "url": "https://lunarasociety.com",
-  "registry_api": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
-  "compliance_api": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraScoreReport",
+  "registry_api": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
+  "compliance_api": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/lunaraScoreReport",
   "discovery": {
     "llms_txt": "https://lunarasociety.com/llms.txt",
     "ai_json": "https://lunarasociety.com/ai.json",

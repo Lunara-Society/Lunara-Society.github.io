@@ -52,7 +52,9 @@ export const OWNER_ONLY = {
       ['compliance-report-access.html', 'Open the Compliance Intelligence Report']
     ],
     ask: ['website', 'legal', 'system'],
-    defaults: { website: 'https://yavaya.lat' }
+    defaults: { website: 'https://yavaya.lat' },
+    todo: 'Complete the registry application with the link below and add the DNS record it gives you at your domain provider. Then open the Compliance Kit and the report page, and reply with up to three systems and times for the certification and governance session.',
+    apply: 'business'
   }
 };
 
@@ -284,18 +286,98 @@ function paidPatch(s) {
 
 /* Records a verified payment once. The row was written before the buyer
    left for Stripe, so this only ever fills it in. */
-async function settle(order, session, db) {
+async function settle(order, session, deps) {
+  const db = deps.db;
   const v = verdict(session, order);
-  if (v === 'paid' && order.status !== 'paid') await db.updateOrder(order.order_ref, paidPatch(session));
-  else if (v !== 'paid' && v !== order.status && v !== 'unpaid') await db.updateOrder(order.order_ref, { status: v });
+  if (v === 'paid' && order.status !== 'paid') {
+    // Conditional on the row still being open, so when paid.html, the
+    // sweep and a webhook all notice the same payment at once, exactly
+    // one of them records it and sends the email.
+    const patch = paidPatch(session);
+    if (await db.markPaid(order.order_ref, patch)) await sendOrderEmail({ ...order, ...patch }, deps);
+  } else if (v !== 'paid' && v !== order.status && v !== 'unpaid') await db.updateOrder(order.order_ref, { status: v });
   return v;
+}
+
+/* ── The order email ─────────────────────────────────────────────────
+   Short, and about the buyer: what they bought, the one thing they need
+   to do next, what follows and when, and the links. Sent once, when the
+   payment is first confirmed. If no mail service is configured the
+   order is still recorded and the confirmation page still says all of
+   this; the email is a copy, never the only place it is said. */
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+export function applyLink(order, p) {
+  if (!p.apply) return null;
+  const d = order.details || {};
+  let domain = '';
+  try { domain = new URL(/^https?:/i.test(d.website || '') ? d.website : 'https://' + (d.website || '')).hostname.replace(/^www\./, ''); } catch { /* left blank */ }
+  const q = new URLSearchParams({ order: order.order_ref, signer_type: 'human' });
+  if (d.legalname) q.set('business_name', d.legalname);
+  if (d.website) q.set('website_url', d.website);
+  if (domain) q.set('domain', domain);
+  if (order.email) q.set('contact_email', order.email);
+  if (order.country) q.set('registration_country', order.country);
+  if (p.apply === 'ai_agent' && d.aisystem) q.set('subject_agent_name', d.aisystem);
+  if (p.apply === 'ai_agent') q.set('type', 'ai_agent');
+  return `${SITE}shield.html?${q}#apply`;
+}
+
+export function orderEmail(order) {
+  const p = productFor(order.product);
+  const ref = order.order_ref;
+  const links = [{ href: `${SITE}paid.html?order=${ref}`, label: 'Your order page' }]
+    .concat(accessLinks(p, ref).map((l) => ({ href: SITE + l.href, label: l.label })));
+  const apply = applyLink(order, p);
+  if (apply) links.unshift({ href: apply, label: 'Complete your registry application' });
+  const first = (order.name || '').split(' ')[0];
+  const amount = '$' + (p.cents / 100).toLocaleString('en-US');
+  const subject = `Your order ${ref}: ${p.name}`;
+  const text = [
+    `${first ? first + ', t' : 'T'}hank you. Your payment of ${amount} for ${p.name} is confirmed.`,
+    '',
+    'WHAT YOU NEED TO DO',
+    p.todo,
+    '',
+    'WHAT HAPPENS NEXT',
+    ...p.delivery.map((x, i) => `${i + 1}. ${x}`),
+    '',
+    ...links.map((l) => `${l.label}: ${l.href}`),
+    '',
+    `Order reference: ${ref}. Reply to this email with any question.`,
+    'Lunara Society · lunarasociety.com'
+  ].join('\n');
+  const html = `<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1d1a14;line-height:1.6">
+<p style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#8a7240">Lunara Society</p>
+<p>${first ? esc(first) + ', t' : 'T'}hank you. Your payment of <b>${amount}</b> for <b>${esc(p.name)}</b> is confirmed.</p>
+<p style="margin:20px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8a7240">What you need to do</p>
+<p style="margin:0 0 14px">${esc(p.todo)}</p>
+${links.map((l, i) => `<p style="margin:${i ? 6 : 12}px 0"><a href="${esc(l.href)}" style="${i ? 'color:#8a7240' : 'display:inline-block;background:#c9a84c;color:#111;padding:10px 18px;border-radius:999px;text-decoration:none'}">${esc(l.label)}</a></p>`).join('\n')}
+<p style="margin:20px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8a7240">What happens next</p>
+<ol style="padding-left:20px;margin:0">${p.delivery.map((x) => `<li style="margin:4px 0">${esc(x)}</li>`).join('')}</ol>
+<p style="margin-top:22px;font-size:13px;color:#6b6252">Order reference ${ref}. Reply to this email with any question.</p>
+</div>`;
+  return { to: order.email, subject, text, html };
+}
+
+async function sendOrderEmail(order, deps) {
+  if (!deps.mail || !order.email) return false;
+  try {
+    await deps.mail.send(orderEmail(order));
+    await deps.db.updateOrder(order.order_ref, { emailed_at: new Date().toISOString() });
+    return true;
+  } catch (e) {
+    // The payment is recorded either way; a mail failure must not undo it.
+    console.error('order email failed', order.order_ref, e?.message || e);
+    return false;
+  }
 }
 
 async function handleEvent(event, deps) {
   const o = event.data?.object || {};
   if (event.type.startsWith('checkout.session.')) {
     const order = o.metadata?.order && await deps.db.getOrder(o.metadata.order);
-    if (order) await settle(order, o, deps.db);
+    if (order) await settle(order, o, deps);
   } else if (event.type === 'charge.refunded') {
     const pi = typeof o.payment_intent === 'string' ? o.payment_intent : o.payment_intent?.id;
     if (pi) await deps.db.markRefunded(pi, o.amount_refunded);
@@ -332,7 +414,7 @@ export async function handleCheckout(req, deps) {
     const order = await deps.db.getOrder(ref);
     if (!order) return json({ error: 'Not found.' }, 404);
     const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
-    const status = await settle(order, session, deps.db);
+    const status = await settle(order, session, deps);
     const p = productFor(order.product);
     const paid = status === 'paid';
     const links = paid ? accessLinks(p, ref) : [];
@@ -368,7 +450,7 @@ export async function handleCheckout(req, deps) {
     let paid = 0;
     for (const order of open) {
       const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
-      if ((await settle(order, session, deps.db)) === 'paid') paid++;
+      if ((await settle(order, session, deps)) === 'paid') paid++;
     }
     return json({ ok: true, checked: open.length, paid });
   }

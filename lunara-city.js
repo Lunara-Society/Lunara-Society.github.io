@@ -25,8 +25,8 @@
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
   var $ = function (id) { return document.getElementById(id); };
-  var REGISTRY_LOOKUP = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
-  var REGISTRY_LIST   = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList';
+  var REGISTRY_LOOKUP = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup';
+  var REGISTRY_LIST   = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList';
   function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function rng(seed) {
     return function () {

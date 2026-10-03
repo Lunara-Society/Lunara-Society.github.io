@@ -25,7 +25,7 @@ info:
     url: https://lunarasociety.com/terms.html
 
 servers:
-  - url: https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions
+  - url: https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry
     description: Production API
 
 paths:

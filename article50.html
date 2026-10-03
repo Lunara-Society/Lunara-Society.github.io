@@ -48,7 +48,7 @@ async function downloadPDF() {
   btn.disabled = true;
 
   try {
-    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Report', {
+    const res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/article50Report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fullPayload)
@@ -798,7 +798,7 @@ async function submitAssessment() {
   document.getElementById('loading').style.display = 'block';
 
   try {
-    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Assess', {
+    const res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/article50Assess', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -936,7 +936,7 @@ async function downloadPDF() {
   btn.disabled = true;
 
   try {
-    const res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/article50Report', {
+    const res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/article50Report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fullPayload)

@@ -48,6 +48,7 @@ function memoryDb() {
     async openOrders() { return [...orders.values()].filter((o) => o.status === 'open').map((o) => ({ ...o })); },
     async getOrder(ref) { const o = orders.get(ref); return o ? { ...o } : null; },
     async updateOrder(ref, patch) { Object.assign(orders.get(ref), patch); },
+    async markPaid(ref, patch) { const o = orders.get(ref); if (o.status !== 'open') return false; Object.assign(o, patch); return true; },
     async markRefunded(pi, amount) { for (const o of orders.values()) if (o.payment_intent === pi) o.refunded_amount = amount; },
     async claimEvent(id) { if (events.has(id)) return false; events.add(id); return true; }
   };
@@ -190,6 +191,31 @@ await test('a $1 payment for a public product is never called paid', async () =>
   const r = await buy(deps, { product: 'vendor' });
   pay('cs_test_1', { amount_total: 100 });
   eq((await order(deps, r.body.order)).body.status, 'mismatch');
+});
+
+await test('a paid order sends one short email with what to do', async () => {
+  const { deps, pay } = setup();
+  const sent = []; deps.mail = { send: async (m) => { sent.push(m); } };
+  const r = await buy(deps, { product: 'shield' });
+  pay('cs_test_1', { custom_fields: [{ key: 'website', text: { value: 'https://www.yavaya.lat' } }, { key: 'legalname', text: { value: 'Yavaya' } }] });
+  await order(deps, r.body.order); await order(deps, r.body.order);
+  deps.now = () => 5e11; await call(deps, '/settle');
+  eq(sent.length, 1, 'exactly once');
+  const m = sent[0];
+  eq(m.to, 'buyer@example.com'); ok(m.subject.includes(r.body.order));
+  ok(m.text.includes('WHAT YOU NEED TO DO') && m.text.includes(CATALOG.shield.todo));
+  ok(m.text.includes('shield.html?') && m.text.includes('domain=yavaya.lat') && m.text.includes('order=' + r.body.order), 'registry application link prefilled');
+  ok(m.text.includes('paid.html?order=' + r.body.order));
+  ok(m.html.includes('What you need to do') && !m.html.includes('<script'));
+});
+
+await test('a mail failure never undoes a payment', async () => {
+  const { deps, pay, db } = setup();
+  deps.mail = { send: async () => { throw new Error('down'); } };
+  const r = await buy(deps, { product: 'kit' });
+  pay('cs_test_1');
+  eq((await order(deps, r.body.order)).body.paid, true);
+  eq(db.orders.get(r.body.order).status, 'paid');
 });
 
 await test('the hourly sweep settles a paid order whose buyer never came back', async () => {

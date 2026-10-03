@@ -194,6 +194,13 @@ jobs:
       - name: Test Stripe Checkout
         run: node stripe-checkout/test_checkout.mjs
 
+      # The public registry. Nothing reaches it without the DNS record seen,
+      # the reviewer's identity check and the reviewer's name; a pending or
+      # rejected application is never public; a badge copied to another
+      # site does not light up; only the owner can decide.
+      - name: Test the registry
+        run: node registry-backend/test_registry.mjs
+
       # The WhatsApp Worker has no deploy gate of its own — it is pasted
       # into Cloudflare by hand — so this is the only thing standing between
       # a bad edit and a webhook Meta silently drops.

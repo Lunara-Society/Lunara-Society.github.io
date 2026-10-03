@@ -36,7 +36,9 @@ export function catalogFrom(products) {
       terms: p.terms,
       delivery: p.delivery || [],
       access: p.access || null,
-      ask: p.ask || []
+      ask: p.ask || [],
+      todo: p.todo || '',
+      apply: p.apply || null
     };
   }
   return out;

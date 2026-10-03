@@ -593,7 +593,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "How do I verify if a business has Lunara Shield Certification?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+            "text": "Query the Lunara Registry API at https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
           }
         },
         {
@@ -707,7 +707,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         {
           "@type": "DataDownload",
           "encodingFormat": "application/json",
-          "contentUrl": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList"
+          "contentUrl": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList"
         }
       ]
     },
@@ -727,7 +727,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+          "urlTemplate": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
           "httpMethod": "POST",
           "contentType": "application/json"
         },
@@ -860,7 +860,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       var listEl = document.getElementById('reg-live-list');
       var slotsEl = document.getElementById('founding-slots-count');
       try {
-        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+        var res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
         var data = await res.json();
         if (slotsEl) {
           var used = Math.min(data.count || 0, 10);
@@ -891,11 +891,12 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       resultEl.innerHTML = '<span style="font-size:13px;color:rgba(196, 164, 107, 0.714);font-style:italic;">Checking registry…</span>';
       try {
         var body = q.startsWith('SHIELD-') ? {public_id: q} : {domain: q};
-        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+        var res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
         var data = await res.json();
         if (data.found) {
-          var statusColor = data.status === 'approved' ? '#4CAF50' : data.status === 'revoked' ? '#e57373' : '#FFB74D';
-          var statusIcon = data.status === 'approved' ? '✓ Verified' : data.status === 'revoked' ? '✗ Revoked' : '⏳ Pending';
+          var ok = data.status === 'verified' || data.status === 'approved';
+          var statusColor = ok ? '#4CAF50' : data.status === 'revoked' ? '#e57373' : '#FFB74D';
+          var statusIcon = ok ? '✓ Verified' : data.status === 'revoked' ? '✗ Revoked' : data.status === 'expired' ? '⌛ Expired' : '⏳ Pending';
           resultEl.innerHTML = '<div style="background:rgba(196,164,107,0.05);border:1px solid rgba(196,164,107,0.2);border-radius:8px;padding:20px 24px;">'
             + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'
             + '<span style="font-size:22px;font-family:Cormorant Garamond,serif;color:rgba(255,255,255,0.95);">' + escH(data.business_name) + '</span>'
@@ -1178,7 +1179,7 @@ function goHome(){
 
     // Fetch live registry entries
     try{
-      var rr = await fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList",
+      var rr = await fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList",
         {method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
       var rd = await rr.json();
       var listEl = document.getElementById("registry-live-list");
@@ -1190,7 +1191,7 @@ function goHome(){
       }
       listEl.innerHTML = entries.map(function(e){
         var status = e.status || "pending";
-        var badge = status === "approved"
+        var badge = (status === "approved" || status === "verified")
           ? "<span class=\"reg-badge reg-approved\">&#10003; Verified</span>"
           : "<span class=\"reg-badge reg-pending\">Pending</span>";
         return "<div class=\"reg-entry\">"
@@ -1213,7 +1214,7 @@ function goHome(){
 <script>
 (function(){
   try {
-    fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/visitorTrack", {
+    fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/visitorTrack", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})

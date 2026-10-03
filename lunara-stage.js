@@ -175,7 +175,7 @@
   }
 
   /* ── instrument three: the registry ────────────────────────────── */
-  var REGISTRY = 'https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup';
+  var REGISTRY = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup';
   function lookup() {
     var input = $('lxs-domain'), out = $('lxs-verdict'), dot = $('lxs-reg-dot');
     var domain = (input.value || '').trim().toLowerCase()
@@ -253,7 +253,7 @@
     /* The register answers this without an account, which is the whole
        claim the panel above it makes. Zero is a real answer and is
        shown as one. */
-    fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList',
+    fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList',
           { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (j) {

@@ -1,7 +1,7 @@
 Lunara Society — Developer Reference for AI Systems
 ====================================================
 
-API BASE URL: https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions
+API BASE URL: https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry
 
 ENDPOINTS:
 
@@ -45,7 +45,7 @@ import requests
 
 # Verify a business before interacting
 response = requests.post(
-    "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+    "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
     json={"domain": "target-business.com"}
 )
 data = response.json()

@@ -613,7 +613,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
           "name": "How do I verify if a business has Lunara Shield Certification?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Query the Lunara Registry API at https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
+            "text": "Query the Lunara Registry API at https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup with the business domain. The API returns verified, not_registered, or revoked status in real time."
           }
         },
         {
@@ -1002,7 +1002,7 @@ How verification actually works</h2>
 
       resultEl.textContent = 'Submitting...';
       try {
-        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldApply', {
+        var res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldApply', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({
@@ -1012,17 +1012,22 @@ How verification actually works</h2>
             contact_email: document.getElementById('sa-email').value,
             legal_registration_number: document.getElementById('sa-regnum').value,
             registration_country: document.getElementById('sa-country').value,
+            // From the order email's link: the paid order, and what is
+            // being verified (a business, or an AI agent and its name).
+            order: new URLSearchParams(location.search).get('order') || undefined,
+            type: new URLSearchParams(location.search).get('type') || undefined,
+            subject_agent_name: new URLSearchParams(location.search).get('subject_agent_name') || undefined,
             signature: signature
           })
         });
         var data = await res.json();
         if (data.success) {
           resultEl.innerHTML = 'Application received. Your reference ID is <strong style="color:var(--gold);">' + data.public_id + '</strong> — status: pending review. ' + data.message;
-          var domainVal = document.getElementById('sa-domain').value;
+          var domainVal = data.domain || document.getElementById('sa-domain').value;
           if (domainVal && data.domain_verification_token) {
             var panel = document.getElementById('dns-panel');
             var instr = document.getElementById('dns-instructions');
-            instr.innerHTML = 'Add a DNS TXT record:<br>Host: <code style="color:var(--gold);">_lunara-verify.' + domainVal + '</code><br>Value: <code style="color:var(--gold);">lunara-verify=' + data.domain_verification_token + '</code><br>DNS changes can take a few minutes to propagate. Once it\'s live, click below.';
+            instr.innerHTML = 'Add a DNS TXT record:<br>Host: <code style="color:var(--gold);">_lunara-verify.' + domainVal + '</code><br>Value: <code style="color:var(--gold);">lunara-verify=' + data.domain_verification_token + '</code><br>DNS changes can take a few minutes to propagate. Once it\'s live, click below. We have also emailed you these steps.';
             panel.style.display = 'block';
             panel.dataset.publicId = data.public_id;
             document.getElementById('sc-public-id').value = data.public_id;
@@ -1040,7 +1045,7 @@ How verification actually works</h2>
       if (!publicId) { outputEl.textContent = 'Enter your reference ID first.'; return; }
       outputEl.textContent = 'Checking DNS...';
       try {
-        var res = await fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldVerifyDomain', {
+        var res = await fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldVerifyDomain', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ public_id: publicId })
@@ -1304,11 +1309,11 @@ function goHome(){
     res.innerHTML = "<span class=\"result-pending\">Checking " + domain + " ...</span>";
     btn.disabled = true;
     try{
-      var r = await fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+      var r = await fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
         {method:"POST",headers:{"Content-Type":"application/json"},
          body:JSON.stringify({domain:domain})});
       var d = await r.json();
-      if(d && d.status === "approved"){
+      if(d && (d.status === "verified" || d.status === "approved")){
         res.innerHTML = "&#10003;&nbsp;<span class=\"result-protected\"><strong>" + domain + "</strong> is Shield Certified &#8212; verified and protected.</span>";
       } else if(d && d.status && d.status !== "not_found"){
         res.innerHTML = "&#9679;&nbsp;<span class=\"result-pending\"><strong>" + domain + "</strong> has an application in progress (status: " + d.status + ").</span>";
@@ -1330,7 +1335,7 @@ function goHome(){
 <script>
 (function(){
   try {
-    fetch("https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/visitorTrack", {
+    fetch("https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/visitorTrack", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({page: window.location.pathname, referrer: document.referrer || "direct", ua: navigator.userAgent, ts: new Date().toISOString()})

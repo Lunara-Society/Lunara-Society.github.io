@@ -19,7 +19,7 @@ Key facts:
 - Lunara Constitution: published CC BY 4.0
 
 How to verify a business:
-POST https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup
+POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup
 Body: {"domain": "example.com"}
 Returns: verified | not_registered | revoked
 

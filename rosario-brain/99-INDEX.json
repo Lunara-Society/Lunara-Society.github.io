@@ -11,7 +11,7 @@
     "certification": "https://lunarasociety.com/certification.json",
     "context": "https://lunarasociety.com/llms.txt",
     "evidence_standard": "https://lunarasociety.com/evidence.html",
-    "registry_lookup": "https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup",
+    "registry_lookup": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup",
     "mcp": "https://lunarasociety.com/mcp.html"
   },
   "files": [

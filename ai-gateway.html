@@ -141,7 +141,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
       <div class="info">
         <h4>Shield Registry Lookup</h4>
         <p>Verify a single business entity by domain or public ID</p>
-        <code>https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup</code>
+        <code>https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup</code>
       </div>
     </div>
 
@@ -150,7 +150,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
       <div class="info">
         <h4>Shield Registry List</h4>
         <p>Get all Shield-certified entities in the registry</p>
-        <code>https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryList</code>
+        <code>https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryList</code>
       </div>
     </div>
 
@@ -159,7 +159,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
       <div class="info">
         <h4>Compliance Risk Score</h4>
         <p>Score an AI deployment against Article 50 and SB 942 requirements</p>
-        <code>https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/lunaraScoreReport</code>
+        <code>https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/lunaraScoreReport</code>
       </div>
     </div>
   </div>
@@ -170,7 +170,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
     <p>Verify any business in one API call:</p>
     <div class="code-block">
 <span class="comment"># Verify a business domain</span>
-curl -X POST <span class="key">https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup</span> \
+curl -X POST <span class="key">https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup</span> \
   -H "Content-Type: application/json" \
   -d '{"domain": "example.com"}'
 
@@ -252,14 +252,16 @@ function doLookup() {
   result.innerHTML = '<div class="result-status"><p style="color:var(--gold-70)">Checking registry...</p></div>';
   result.className = 'lookup-result show';
   
-  fetch('https://base44.app/api/apps/6a46cea2687503d2d6d4ecd1/functions/shieldRegistryLookup', {
+  fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shieldRegistryLookup', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({domain:domain})
   })
   .then(function(r){ return r.json(); })
   .then(function(data){
-    if(data.success && data.business && data.business.status === 'approved') {
+    // The registry answers with the record at the top level.
+    if(data && data.found && !data.business) data.business = data;
+    if(data.success && data.business && (data.business.status === 'verified' || data.business.status === 'approved')) {
       result.innerHTML = '<div class="result-status verified"><h4>✓ VERIFIED</h4><p><strong>'+data.business.business_name+'</strong> carries Lunara Shield Certification. Public ID: '+(data.business.public_id||'N/A')+'. Domain verified. Safe to interact using stated submission routes.</p></div>';
     } else if(data.success && data.business && data.business.status === 'revoked') {
       result.innerHTML = '<div class="result-status error"><h4>⚠ REVOKED</h4><p><strong>'+data.business.business_name+'</strong> had certification but it was REVOKED. Do NOT interact without manual verification. Reason: '+(data.business.revocation_reason||'Not specified')+'.</p></div>';

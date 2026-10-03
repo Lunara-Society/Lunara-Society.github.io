@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Registry Desk | Lunara Society</title>
+<meta name="description" content="The owner's desk for registry applications: check domains, decide, and revoke.">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<!--
+  Owner only. The page shows nothing unless lunara-registry accepts the
+  member-area session as an owner's, and every action is checked again on
+  the server, so a copy of this page gives nobody else anything.
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#E2C47A;--line:rgba(196,164,107,.18);--dim:rgba(214,200,170,.75);--text:#f0e0b0}
+body{background:#060606;color:#fff;font:300 15px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header a{color:var(--gold);text-decoration:none;font:400 13px 'Cormorant Garamond',serif;letter-spacing:.3em;text-transform:uppercase}
+main{max-width:980px;margin:0 auto;padding:28px 16px 80px}
+h1{font:300 34px 'Cormorant Garamond',serif;color:var(--text);margin-bottom:6px}
+.lede{color:var(--dim);margin-bottom:22px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:96px}
+.stat b{display:block;font:400 22px 'Cormorant Garamond',serif;color:var(--gold)}
+.stat span{font-size:12px;color:var(--dim)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filters button,.btn{background:none;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer}
+.filters button.on{border-color:var(--gold);color:var(--gold)}
+.btn.gold{background:var(--gold);color:#111;border-color:var(--gold)}
+.btn.red{border-color:#c66;color:#f2a3a3}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:rgba(196,164,107,.03)}
+.card h3{font:400 22px 'Cormorant Garamond',serif;color:var(--text)}
+.meta{font-size:13px;color:var(--dim);margin:4px 0 10px;word-break:break-word}
+.tag{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-right:6px}
+.tag.ok{color:#7fd39a;border-color:rgba(127,211,154,.4)} .tag.no{color:#f2a3a3;border-color:rgba(242,163,163,.4)} .tag.wait{color:var(--gold)}
+dl{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;font-size:13px;margin:10px 0}
+dt{color:var(--dim)} dd{word-break:break-word}
+code{font:12.5px 'IBM Plex Mono',monospace;color:var(--gold)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+input[type=text]{background:#111;border:1px solid var(--line);color:#fff;border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;min-width:200px;flex:1}
+label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:center}
+.msg{font-size:13px;margin-top:8px;color:var(--gold)}
+#gate{color:var(--dim);margin-top:30px}
+@media(max-width:600px){dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><a href="/">Lunara Society</a><a href="/member.html" style="font-family:Inter;letter-spacing:.1em;font-size:12px">Member area</a></header>
+<main>
+  <h1>Registry desk</h1>
+  <p class="lede">Applications to the public registry. Approval needs the DNS record seen at the domain, your check of the registration against official records, and your name. Every decision is emailed to the applicant.</p>
+  <div id="gate">Checking your sign-in…</div>
+  <div id="desk" hidden>
+    <div class="stats" id="stats"></div>
+    <div class="filters" id="filters"></div>
+    <div id="list"></div>
+  </div>
+</main>
+<script>
+(function () {
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry';
+  var token = null;
+  try { token = localStorage.getItem('lunara_session_token'); } catch (e) {}
+  var reviewer = '';
+  try { reviewer = localStorage.getItem('lunara_reviewer') || localStorage.getItem('lunara_name') || ''; } catch (e) {}
+  var filter = 'open', records = [];
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) { if (k === 'text') n.textContent = attrs[k]; else if (k.indexOf('on') === 0) n[k] = attrs[k]; else n.setAttribute(k, attrs[k]); });
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function post(name, body) {
+    return fetch(API + '/' + name, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ session_token: token }, body || {})) })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, status: r.status, body: b }; }); });
+  }
+  function load() {
+    if (!token) { $('gate').textContent = 'Sign in to the member area with the owner account first.'; return; }
+    post('shieldDashboard').then(function (r) {
+      if (!r.ok) { $('gate').textContent = r.status === 403 ? 'This desk is for the owner account only.' : 'The registry could not be reached.'; return; }
+      $('gate').hidden = true; $('desk').hidden = false;
+      records = r.body.records || [];
+      var s = r.body.stats || {};
+      $('stats').innerHTML = '';
+      [['Pending', s.pending], ['Returned', s.returned], ['Verified now', s.verified_live], ['Rejected', s.rejected], ['Revoked', s.revoked], ['All', s.total]].forEach(function (x) {
+        $('stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] || 0) }), el('span', { text: x[0] })]));
+      });
+      render();
+    }).catch(function () { $('gate').textContent = 'The registry could not be reached.'; });
+  }
+  function render() {
+    $('filters').innerHTML = '';
+    [['open', 'Open'], ['approved', 'Approved'], ['closed', 'Rejected or revoked'], ['all', 'All']].forEach(function (f) {
+      $('filters').appendChild(el('button', { class: filter === f[0] ? 'on' : '', text: f[1], onclick: function () { filter = f[0]; render(); } }));
+    });
+    var rows = records.filter(function (r) {
+      if (filter === 'open') return r.status === 'pending' || r.status === 'returned';
+      if (filter === 'approved') return r.status === 'approved';
+      if (filter === 'closed') return r.status === 'rejected' || r.status === 'revoked';
+      return true;
+    });
+    $('list').innerHTML = '';
+    if (!rows.length) $('list').appendChild(el('p', { class: 'lede', text: 'Nothing here.' }));
+    rows.forEach(function (r) { $('list').appendChild(card(r)); });
+  }
+  function tag(text, cls) { return el('span', { class: 'tag ' + (cls || ''), text: text }); }
+  function card(r) {
+    var msg = el('div', { class: 'msg' });
+    var note = el('input', { type: 'text', placeholder: 'Note or reason (required to return, reject or revoke)' });
+    var name = el('input', { type: 'text', placeholder: 'Your name (signs the decision)', value: reviewer });
+    var idChk = el('input', { type: 'checkbox' });
+    function act(decision) {
+      msg.textContent = 'Working…';
+      if (name.value) { reviewer = name.value; try { localStorage.setItem('lunara_reviewer', reviewer); } catch (e) {} }
+      post('adminDecide', { public_id: r.public_id, decision: decision, reviewer_name: name.value, note: note.value, identity_checked: idChk.checked }).then(function (x) {
+        var b = x.body || {};
+        if (decision === 'check_dns') { msg.textContent = b.message || b.error || ''; if (b.domain_verified) setTimeout(load, 800); return; }
+        if (!b.success) { msg.textContent = b.error || 'Not done.'; return; }
+        msg.textContent = 'Done' + (b.emailed ? ', and the applicant has been emailed.' : '. (Email is not configured, so tell the applicant yourself.)');
+        setTimeout(load, 900);
+      });
+    }
+    var open = r.status === 'pending' || r.status === 'returned';
+    var stat = { pending: ['Pending', 'wait'], returned: ['Returned', 'wait'], approved: [r.public_status === 'expired' ? 'Expired' : 'Verified', r.public_status === 'expired' ? 'no' : 'ok'], rejected: ['Rejected', 'no'], revoked: ['Revoked', 'no'] }[r.status] || [r.status, ''];
+    var dl = el('dl', {}, []);
+    [['Contact', r.contact_email], ['Website', r.website_url], ['Registration no.', r.legal_registration_number || 'Not given: ask before approving'], ['Country', r.registration_country],
+     ['Type', r.kind + (r.agent_name ? ' · agent: ' + r.agent_name : '') + (r.track ? ' · ' + r.track : '') + (r.tier ? ' · ' + r.tier : '')],
+     ['Signed by', (r.signer_type || '') + (r.signer_name ? ': ' + r.signer_name : '') + (r.signer_role ? ', ' + r.signer_role : '') + (r.attested ? ' (attested)' : '')],
+     ['Paid order', r.order_ref || 'None'], ['Notes', r.notes], ['Applied', (r.created_date || '').slice(0, 10)],
+     ['Reviewer', r.reviewer_name], ['Decision note', r.decision_note], ['Valid until', (r.expires_at || '').slice(0, 10)], ['Revocation', r.revocation_reason]
+    ].forEach(function (x) { if (x[1]) { dl.appendChild(el('dt', { text: x[0] })); dl.appendChild(el('dd', { text: String(x[1]) })); } });
+    if (r.dns_record) { dl.appendChild(el('dt', { text: 'DNS record' })); dl.appendChild(el('dd', {}, [el('code', { text: r.dns_record.type + '  ' + r.dns_record.name + '  "' + r.dns_record.value + '"' })])); }
+    var actions = el('div', { class: 'actions' });
+    if (open) {
+      actions.appendChild(el('button', { class: 'btn', text: r.domain_verified ? 'DNS verified ✓' : 'Check DNS now', onclick: function () { act('check_dns'); } }));
+      actions.appendChild(el('label', { class: 'chk' }, [idChk, 'I checked the registration against official records']));
+      actions.appendChild(name); actions.appendChild(note);
+      actions.appendChild(el('button', { class: 'btn gold', text: 'Approve', onclick: function () { act('approve'); } }));
+      actions.appendChild(el('button', { class: 'btn', text: 'Return for more', onclick: function () { act('return'); } }));
+      actions.appendChild(el('button', { class: 'btn red', text: 'Reject', onclick: function () { act('reject'); } }));
+    } else if (r.status === 'approved') {
+      actions.appendChild(el('a', { class: 'btn', href: '/registry.html?q=' + encodeURIComponent(r.domain), target: '_blank', text: 'Public entry' }));
+      actions.appendChild(name); actions.appendChild(note);
+      actions.appendChild(el('button', { class: 'btn red', text: 'Revoke (published)', onclick: function () { if (confirm('Revoke ' + r.public_id + '? The registry will say so publicly.')) act('revoke'); } }));
+    }
+    return el('div', { class: 'card' }, [
+      el('div', {}, [tag(stat[0], stat[1]), r.domain_verified ? tag('DNS ✓', 'ok') : tag('DNS not seen', 'wait'), r.identity_verified ? tag('Identity ✓', 'ok') : null]),
+      el('h3', { text: r.business_name }),
+      el('div', { class: 'meta', text: r.public_id + ' · ' + r.domain }),
+      dl, actions, msg
+    ]);
+  }
+  load();
+})();
+</script>
+</body>
+</html>

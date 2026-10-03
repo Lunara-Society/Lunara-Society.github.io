@@ -13,27 +13,42 @@ function eq(a, b, msg) { if (a !== b) throw new Error(`${msg || ''} expected ${J
 function ok(c, msg) { if (!c) throw new Error(msg || 'not ok'); }
 
 function fakeStripe() {
-  const calls = [];
+  const calls = [], sessions = {};
+  let n = 0;
   const fetchImpl = async (url, init) => {
     const u = new URL(url);
     const params = init.body ? new URLSearchParams(init.body) : u.searchParams;
     calls.push({ method: init.method, path: u.pathname, params, headers: init.headers });
-    if (u.pathname === '/v1/checkout/sessions') {
-      return new Response(JSON.stringify({ id: 'cs_test_abc', url: 'https://checkout.stripe.com/c/pay/cs_test_abc' }));
+    if (u.pathname === '/v1/checkout/sessions' && init.method === 'POST') {
+      const id = 'cs_test_' + (++n);
+      sessions[id] = {
+        id, url: 'https://checkout.stripe.com/c/pay/' + id, livemode: false, status: 'open', payment_status: 'unpaid',
+        amount_total: Number(params.get('line_items[0][price_data][unit_amount]')), currency: params.get('line_items[0][price_data][currency]'),
+        metadata: { order: params.get('metadata[order]'), lunara_product: params.get('metadata[lunara_product]') }
+      };
+      return new Response(JSON.stringify(sessions[id]));
     }
-    if (u.pathname === '/v1/checkout/sessions/cs_test_abc') {
-      return new Response(JSON.stringify({ id: 'cs_test_abc', payment_status: 'paid', metadata: { lunara_product: 'shield' } }));
-    }
+    const m = u.pathname.match(/^\/v1\/checkout\/sessions\/(cs_test_\d+)$/);
+    if (m && sessions[m[1]]) return new Response(JSON.stringify(sessions[m[1]]));
     return new Response(JSON.stringify({ error: { message: 'No such checkout session' } }), { status: 404 });
   };
-  return { stripe: stripeClient('sk_test_x', fetchImpl), calls };
+  // What Stripe does when the buyer completes the page.
+  const pay = (id, extra = {}) => Object.assign(sessions[id], {
+    status: 'complete', payment_status: 'paid', payment_intent: 'pi_' + id,
+    customer_details: { email: 'buyer@example.com', name: 'B AB', address: { country: 'SE' } },
+    custom_fields: [{ key: 'website', text: { value: 'https://example.com' } }]
+  }, extra);
+  return { stripe: stripeClient('sk_test_x', fetchImpl), calls, sessions, pay };
 }
 function memoryDb() {
-  const payments = new Map(), events = new Set();
+  const orders = new Map(), events = new Set();
   return {
-    payments,
-    async upsertPayment(row) { payments.set(row.session_id, { ...payments.get(row.session_id), ...row }); },
-    async markRefunded(pi, amount) { for (const p of payments.values()) if (p.payment_intent === pi) p.refunded_amount = amount; },
+    orders,
+    async createOrder(row) { if (orders.has(row.order_ref)) throw new Error('dup'); orders.set(row.order_ref, { ...row }); },
+    async openOrders() { return [...orders.values()].filter((o) => o.status === 'open').map((o) => ({ ...o })); },
+    async getOrder(ref) { const o = orders.get(ref); return o ? { ...o } : null; },
+    async updateOrder(ref, patch) { Object.assign(orders.get(ref), patch); },
+    async markRefunded(pi, amount) { for (const o of orders.values()) if (o.payment_intent === pi) o.refunded_amount = amount; },
     async claimEvent(id) { if (events.has(id)) return false; events.add(id); return true; }
   };
 }
@@ -54,33 +69,118 @@ await test('only public products are sellable', async () => {
   ok(loadPricing().filter((p) => !sellable(p)).length >= 2);
 });
 
-await test('a buy creates a session at the catalogue price', async () => {
-  const { stripe, calls } = fakeStripe();
-  const r = await buy({ stripe }, { product: 'shield', return_to: 'https://lunarasociety.com/certify.html' });
+function setup() { const f = fakeStripe(); const db = memoryDb(); return { ...f, db, deps: { stripe: f.stripe, db } }; }
+const order = (deps, ref) => call(deps, '/order?ref=' + ref);
+
+await test('a buy records an order and opens Stripe at the catalogue price', async () => {
+  const { deps, calls, db } = setup();
+  const r = await buy(deps, { product: 'shield', return_to: 'https://lunarasociety.com/certify.html' });
   eq(r.status, 200);
-  eq(r.body.url, 'https://checkout.stripe.com/c/pay/cs_test_abc');
+  ok(/^LO-[0-9A-Z]{16}$/.test(r.body.order), 'order ref');
+  ok(r.body.url.startsWith('https://checkout.stripe.com/'));
   const p = calls[0].params;
   eq(p.get('mode'), 'payment');
   eq(p.get('line_items[0][price_data][unit_amount]'), '7500');
   eq(p.get('line_items[0][price_data][currency]'), 'usd');
-  eq(p.get('metadata[lunara_product]'), 'shield');
+  eq(p.get('metadata[order]'), r.body.order);
+  eq(p.get('client_reference_id'), r.body.order);
+  eq(p.get('success_url'), 'https://lunarasociety.com/paid.html?order=' + r.body.order);
   eq(p.get('cancel_url'), 'https://lunarasociety.com/certify.html');
-  eq(p.get('success_url'), 'https://lunarasociety.com/certify.html?paid=shield&session_id={CHECKOUT_SESSION_ID}');
+  ok(p.get('custom_text[submit][message]').startsWith('How you receive it: '), 'delivery shown before paying');
+  eq(p.get('custom_fields[0][key]'), 'website');
+  const row = db.orders.get(r.body.order);
+  eq(row.status, 'open'); eq(row.product, 'shield'); eq(row.amount_total, 7500); eq(row.session_id, 'cs_test_1');
 });
 
 await test('an amount sent by the browser is ignored', async () => {
-  const { stripe, calls } = fakeStripe();
-  await buy({ stripe }, { product: 'vendor', amount: 1, unit_amount: 1, price: 1 });
+  const { deps, calls } = setup();
+  await buy(deps, { product: 'vendor', amount: 1, unit_amount: 1, price: 1 });
   eq(calls[0].params.get('line_items[0][price_data][unit_amount]'), '740000');
 });
 
+await test('every sellable product says how it is delivered', async () => {
+  for (const [id, p] of Object.entries(CATALOG)) ok(p.delivery.length >= 2, id + ' has no delivery steps');
+});
+
+await test('no checkout is opened if the order cannot be recorded', async () => {
+  const { deps } = setup();
+  deps.db.createOrder = async () => { throw new Error('db down'); };
+  let threw = false;
+  try { await buy(deps, { product: 'kit' }); } catch { threw = true; }
+  ok(threw, 'must not return a checkout url');
+});
+
 await test('unknown, invitational and Lens products are refused before Stripe', async () => {
-  const { stripe, calls } = fakeStripe();
+  const { deps, calls } = setup();
   for (const product of ['member6', 'lens_pro', 'nothing', '__proto__', 'constructor', '', 42]) {
-    eq((await buy({ stripe }, { product })).status, 400, String(product));
+    eq((await buy(deps, { product })).status, 400, String(product));
   }
-  eq((await call({ stripe }, '/checkout', { method: 'POST', body: '{bad' })).status, 400);
+  eq((await call(deps, '/checkout', { method: 'POST', body: '{bad' })).status, 400);
   eq(calls.length, 0);
+});
+
+await test('an unpaid order is not paid and opens nothing', async () => {
+  const { deps } = setup();
+  const r = await buy(deps, { product: 'kit' });
+  const o = await order(deps, r.body.order);
+  eq(o.body.paid, false); eq(o.body.status, 'unpaid'); eq(o.body.access, null); eq(o.body.email, null);
+  ok(o.body.delivery.length > 0, 'still says what would be delivered');
+});
+
+await test('a paid order is recorded once and opens its delivery', async () => {
+  const { deps, pay, db } = setup();
+  const r = await buy(deps, { product: 'kit' });
+  pay('cs_test_1');
+  const o = await order(deps, r.body.order);
+  eq(o.body.paid, true); eq(o.body.name, 'Compliance Kit'); eq(o.body.amount, 95);
+  eq(o.body.access, 'kit-access.html?order=' + r.body.order);
+  eq(o.body.email, 'b***r@example.com');
+  const row = db.orders.get(r.body.order);
+  eq(row.status, 'paid'); eq(row.email, 'buyer@example.com'); eq(row.details.website, 'https://example.com'); ok(row.paid_at);
+  const first = row.paid_at;
+  await order(deps, r.body.order);
+  eq(db.orders.get(r.body.order).paid_at, first, 'not re-recorded');
+});
+
+await test('a payment of the wrong amount is never called paid', async () => {
+  const { deps, pay, db } = setup();
+  const r = await buy(deps, { product: 'vendor' });
+  pay('cs_test_1', { amount_total: 100 });
+  const o = await order(deps, r.body.order);
+  eq(o.body.paid, false); eq(o.body.status, 'mismatch'); eq(o.body.access, null);
+  eq(db.orders.get(r.body.order).status, 'mismatch');
+});
+
+await test('a session for another product or order is never called paid', async () => {
+  const { deps, pay, sessions } = setup();
+  const r = await buy(deps, { product: 'kit' });
+  pay('cs_test_1');
+  sessions.cs_test_1.metadata.lunara_product = 'vendor';
+  eq((await order(deps, r.body.order)).body.status, 'mismatch');
+  sessions.cs_test_1.metadata = { lunara_product: 'kit', order: 'LO-0000000000000000' };
+  eq((await order(deps, r.body.order)).body.status, 'mismatch');
+});
+
+await test('the hourly sweep settles a paid order whose buyer never came back', async () => {
+  const { deps, pay, db } = setup();
+  const a = await buy(deps, { product: 'shield' });
+  const b = await buy(deps, { product: 'kit' });
+  pay('cs_test_1');
+  let t = 1e12; deps.now = () => t;
+  let r = await call(deps, '/settle');
+  eq(r.body.checked, 2); eq(r.body.paid, 1);
+  eq(db.orders.get(a.body.order).status, 'paid'); eq(db.orders.get(b.body.order).status, 'open');
+  r = await call(deps, '/settle');
+  ok(r.body.skipped, 'a second sweep within 30 seconds does nothing');
+  t += 31e3;
+  eq((await call(deps, '/settle')).body.checked, 1);
+});
+
+await test('unknown and malformed order references are not found', async () => {
+  const { deps } = setup();
+  eq((await order(deps, 'LO-ABCDEFGHJKMNPQRS')).status, 404);
+  eq((await order(deps, '../v1/charges')).status, 404);
+  eq((await order(deps, 'cs_test_1')).status, 404);
 });
 
 await test('return addresses off this site go home instead', async () => {
@@ -89,13 +189,11 @@ await test('return addresses off this site go home instead', async () => {
   eq(returnUrl('javascript:alert(1)'), 'https://lunarasociety.com/');
   eq(returnUrl(undefined), 'https://lunarasociety.com/');
   eq(returnUrl('https://www.lunarasociety.com/join.html?x=1#top'), 'https://www.lunarasociety.com/join.html?x=1');
-  eq(returnUrl('https://lunarasociety.com/a.html?paid=kit&session_id=cs_1'), 'https://lunarasociety.com/a.html');
 });
 
 await test('without a key the routes say so', async () => {
   eq((await buy({ stripe: null }, { product: 'shield' })).status, 503);
-  const h = await call({ stripe: null }, '/health');
-  eq(h.body.configured, false);
+  eq((await call({ stripe: null }, '/health')).body.configured, false);
 });
 
 await test('health reports the mode and never the key', async () => {
@@ -107,56 +205,53 @@ await test('health reports the mode and never the key', async () => {
   ok(stripeClient('rk_live_x').livemode && stripeClient('sk_live_x').livemode && !stripeClient('sk_test_x').livemode);
 });
 
-await test('the return check reports paid and nothing personal', async () => {
-  const { stripe } = fakeStripe();
-  const r = await call({ stripe }, '/session?id=cs_test_abc');
-  eq(r.body.paid, true); eq(r.body.product, 'Shield Verification');
-  eq(Object.keys(r.body).sort().join(), 'paid,product,status');
-  eq((await call({ stripe }, '/session?id=../../v1/charges')).status, 404);
-  eq((await call({ stripe }, '/session?id=cs_test_missing')).status, 404);
-});
-
 const secret = 'whsec_t';
 const sign = (raw, s = secret, t = Math.floor(Date.now() / 1000)) =>
   `t=${t},v1=${createHmac('sha256', s).update(`${t}.${raw}`).digest('hex')}`;
-const completed = (id = 'evt_1') => JSON.stringify({ id, type: 'checkout.session.completed', livemode: false, data: { object: {
-  id: 'cs_test_abc', amount_total: 7500, currency: 'usd', payment_status: 'paid', payment_intent: 'pi_1', livemode: false,
-  metadata: { lunara_product: 'shield' }, customer_details: { email: 'b@example.com', name: 'B AB', address: { country: 'SE' } } } } });
 const hook = (deps, raw, sig) => call(deps, '/webhook', { method: 'POST', body: raw, headers: sig ? { 'stripe-signature': sig } : {} });
+const completed = (sess, id = 'evt_1') => JSON.stringify({ id, type: 'checkout.session.completed', livemode: false, data: { object: sess } });
 
-await test('a signed completed checkout is recorded', async () => {
-  const db = memoryDb();
-  const raw = completed();
-  eq((await hook({ db, webhookSecret: secret }, raw, sign(raw))).status, 200);
-  const row = db.payments.get('cs_test_abc');
-  eq(row.product, 'shield'); eq(row.payment_status, 'paid'); eq(row.email, 'b@example.com'); eq(row.country, 'SE');
+await test('a signed completed checkout settles its order', async () => {
+  const { deps, pay, sessions, db } = setup();
+  const r = await buy(deps, { product: 'shield' });
+  pay('cs_test_1');
+  const raw = completed(sessions.cs_test_1);
+  eq((await hook({ ...deps, webhookSecret: secret }, raw, sign(raw))).status, 200);
+  eq(db.orders.get(r.body.order).status, 'paid');
 });
 
 await test('a delivered-twice event is handled once', async () => {
-  const db = memoryDb();
-  const raw = completed('evt_dup');
-  await hook({ db, webhookSecret: secret }, raw, sign(raw));
-  ok((await hook({ db, webhookSecret: secret }, raw, sign(raw))).body.duplicate);
+  const { deps, pay, sessions } = setup();
+  await buy(deps, { product: 'shield' });
+  pay('cs_test_1');
+  const raw = completed(sessions.cs_test_1, 'evt_dup');
+  const d = { ...deps, webhookSecret: secret };
+  await hook(d, raw, sign(raw));
+  ok((await hook(d, raw, sign(raw))).body.duplicate);
 });
 
 await test('forged, stale, tampered and unsigned webhooks are rejected', async () => {
-  const db = memoryDb(), deps = { db, webhookSecret: secret };
-  const raw = completed();
-  eq((await hook(deps, raw, sign(raw, 'whsec_wrong'))).status, 400);
-  eq((await hook(deps, raw, sign(raw, secret, Math.floor(Date.now() / 1000) - 3600))).status, 400);
-  eq((await hook(deps, raw.replace('7500', '1'), sign(raw))).status, 400);
-  eq((await hook(deps, raw)).status, 400);
-  eq((await hook({ db, webhookSecret: '' }, raw, sign(raw))).status, 503);
-  eq(db.payments.size, 0);
+  const { deps, pay, sessions, db } = setup();
+  const r = await buy(deps, { product: 'shield' });
+  pay('cs_test_1');
+  const d = { ...deps, webhookSecret: secret };
+  const raw = completed(sessions.cs_test_1);
+  eq((await hook(d, raw, sign(raw, 'whsec_wrong'))).status, 400);
+  eq((await hook(d, raw, sign(raw, secret, Math.floor(Date.now() / 1000) - 3600))).status, 400);
+  eq((await hook(d, raw.replace('7500', '1'), sign(raw))).status, 400);
+  eq((await hook(d, raw)).status, 400);
+  eq((await hook({ ...deps, webhookSecret: '' }, raw, sign(raw))).status, 503);
+  eq(db.orders.get(r.body.order).status, 'open');
 });
 
-await test('a refund is recorded against its payment', async () => {
-  const db = memoryDb(), deps = { db, webhookSecret: secret };
-  let raw = completed();
-  await hook(deps, raw, sign(raw));
-  raw = JSON.stringify({ id: 'evt_r', type: 'charge.refunded', data: { object: { payment_intent: 'pi_1', amount_refunded: 7500 } } });
-  await hook(deps, raw, sign(raw));
-  eq(db.payments.get('cs_test_abc').refunded_amount, 7500);
+await test('a refund is recorded against its order', async () => {
+  const { deps, pay, db } = setup();
+  const r = await buy(deps, { product: 'shield' });
+  pay('cs_test_1');
+  await order(deps, r.body.order);
+  const raw = JSON.stringify({ id: 'evt_r', type: 'charge.refunded', data: { object: { payment_intent: 'pi_cs_test_1', amount_refunded: 7500 } } });
+  await hook({ ...deps, webhookSecret: secret }, raw, sign(raw));
+  eq(db.orders.get(r.body.order).refunded_amount, 7500);
 });
 
 await test('form encoding uses Stripe brackets', async () => {

@@ -3,17 +3,25 @@
    ═══════════════════════════════════════════════════════════════════
 
    A buy button asks for a Stripe Checkout Session for one product and
-   the buyer is sent to Stripe's payment page: card, Apple Pay, Google
-   Pay, from any country. Stripe sends the receipt.
+   the buyer pays on Stripe's page: card, Apple Pay, Google Pay, from
+   any country. Stripe emails the receipt.
 
-   All of the logic is here, as plain JavaScript over fetch and Web
-   Crypto, so the tests run the code the edge function serves.
+   What the buyer gets is decided here, from catalog.mjs, which is
+   generated from lunara-pricing.js:
 
-   The amount is never taken from the browser. The page names a product
-   and the price comes from catalog.mjs, which is generated from
-   lunara-pricing.js. Prices are sent inline (price_data), so nothing
-   has to be set up in the Stripe dashboard for a product to be sold,
-   and the key only needs permission to write Checkout Sessions.
+   · The amount is the catalogue's. Nothing the browser sends can change
+     it, and an order is only ever called paid when Stripe's session
+     shows that exact amount, in dollars, for that product.
+   · How the product is delivered is shown on Stripe's page before the
+     buyer pays, and again on paid.html afterwards, in the same words.
+   · Every session carries an order reference minted here and recorded
+     before the buyer reaches Stripe. paid.html and the delivery pages
+     (the kit, the report) open with that reference and ask this
+     function, which asks Stripe. A guessed or edited address opens
+     nothing.
+
+   All of the logic is plain JavaScript over fetch and Web Crypto, so
+   the tests run the code the edge function serves.
    ═══════════════════════════════════════════════════════════════════ */
 
 import { CATALOG } from './catalog.mjs';
@@ -101,15 +109,31 @@ export function returnUrl(raw) {
   return SITE;
 }
 
-export async function createSession(stripe, productId, returnTo) {
+const ORDER_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+export const ORDER_RE = /^LO-[0-9A-HJKMNP-TV-Z]{16}$/;
+
+/* About 80 bits: unguessable, and still short enough to read out over
+   the phone. Crockford's alphabet, as Lunara IDs are. */
+export function newOrderRef() {
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  return 'LO-' + Array.from(b, (x) => ORDER_ALPHABET[x % 32]).join('');
+}
+
+/* What checkout asks for, so the work can start without a round of
+   email. Labels are Stripe's 50-character maximum or less. */
+const ASK = {
+  website: { key: 'website', label: 'Company website', optional: false },
+  legal:   { key: 'legalname', label: 'Registered business name', optional: false },
+  system:  { key: 'aisystem', label: 'AI system or product name', optional: true }
+};
+
+export async function createSession(stripe, productId, returnTo, order) {
   const p = CATALOG[productId];
   if (!p) return null;
-  const back = returnUrl(returnTo);
-  // {CHECKOUT_SESSION_ID} is filled in by Stripe and must not be encoded.
-  const success = back + (back.includes('?') ? '&' : '?') +
-    `paid=${encodeURIComponent(productId)}&session_id={CHECKOUT_SESSION_ID}`;
+  const how = p.delivery.join(' ');
   return stripe.post('/v1/checkout/sessions', {
     mode: 'payment',
+    client_reference_id: order,
     line_items: [{
       quantity: 1,
       price_data: {
@@ -118,13 +142,46 @@ export async function createSession(stripe, productId, returnTo) {
         product_data: { name: p.name, description: p.terms, metadata: { lunara_product: productId } }
       }
     }],
-    success_url: success,
-    cancel_url: back,
+    success_url: `${SITE}paid.html?order=${order}`,
+    cancel_url: returnUrl(returnTo),
     billing_address_collection: 'auto',
     tax_id_collection: { enabled: 'true' },
-    metadata: { lunara_product: productId },
-    payment_intent_data: { metadata: { lunara_product: productId } }
+    custom_fields: p.ask.length ? p.ask.map((k) => ({
+      key: ASK[k].key,
+      label: { type: 'custom', custom: ASK[k].label },
+      type: 'text',
+      optional: ASK[k].optional ? 'true' : 'false'
+    })) : undefined,
+    custom_text: { submit: { message: ('How you receive it: ' + how).slice(0, 1200) } },
+    metadata: { lunara_product: productId, order },
+    payment_intent_data: {
+      description: `${p.name} (order ${order})`,
+      metadata: { lunara_product: productId, order }
+    }
   });
+}
+
+/* Is this session a completed payment of exactly this product, at
+   exactly the catalogue price? Anything else is not paid. */
+export function verdict(session, order) {
+  const p = CATALOG[order.product];
+  if (!p || !session) return 'unknown';
+  if (session.metadata?.order !== order.order_ref || session.metadata?.lunara_product !== order.product) return 'mismatch';
+  if (session.payment_status !== 'paid') return session.status === 'expired' ? 'expired' : 'unpaid';
+  if (session.amount_total !== p.cents || session.currency !== 'usd') return 'mismatch';
+  return 'paid';
+}
+
+function mask(email) {
+  if (!email || !email.includes('@')) return null;
+  const [u, d] = email.split('@');
+  return (u.length <= 2 ? u[0] + '*' : u[0] + '***' + u[u.length - 1]) + '@' + d;
+}
+
+function fieldsOf(session) {
+  const out = {};
+  for (const f of session.custom_fields || []) out[f.key] = f.text?.value || null;
+  return out;
 }
 
 /* ── Webhook signatures ──────────────────────────────────────────── */
@@ -163,32 +220,41 @@ export const EVENTS = [
   'charge.refunded'
 ];
 
-function rowFromSession(s) {
+function paidPatch(s) {
   return {
-    session_id: s.id,
-    product: s.metadata?.lunara_product || null,
-    amount_total: s.amount_total,
-    currency: s.currency,
+    status: 'paid',
     email: s.customer_details?.email || null,
     name: s.customer_details?.name || null,
     country: s.customer_details?.address?.country || null,
-    payment_status: s.payment_status,
+    details: fieldsOf(s),
     payment_intent: typeof s.payment_intent === 'string' ? s.payment_intent : s.payment_intent?.id || null,
-    livemode: !!s.livemode
+    paid_at: new Date().toISOString()
   };
 }
 
-async function handleEvent(event, db) {
+/* Records a verified payment once. The row was written before the buyer
+   left for Stripe, so this only ever fills it in. */
+async function settle(order, session, db) {
+  const v = verdict(session, order);
+  if (v === 'paid' && order.status !== 'paid') await db.updateOrder(order.order_ref, paidPatch(session));
+  else if (v !== 'paid' && v !== order.status && v !== 'unpaid') await db.updateOrder(order.order_ref, { status: v });
+  return v;
+}
+
+async function handleEvent(event, deps) {
   const o = event.data?.object || {};
   if (event.type.startsWith('checkout.session.')) {
-    await db.upsertPayment(rowFromSession(o));
+    const order = o.metadata?.order && await deps.db.getOrder(o.metadata.order);
+    if (order) await settle(order, o, deps.db);
   } else if (event.type === 'charge.refunded') {
     const pi = typeof o.payment_intent === 'string' ? o.payment_intent : o.payment_intent?.id;
-    if (pi) await db.markRefunded(pi, o.amount_refunded);
+    if (pi) await deps.db.markRefunded(pi, o.amount_refunded);
   }
 }
 
 /* ── HTTP ────────────────────────────────────────────────────────── */
+
+let lastSweep = 0;
 
 /* deps: { stripe, webhookSecret, db } — stripe is null until a key is
    set, and the routes say so rather than failing obscurely. */
@@ -206,20 +272,53 @@ export async function handleCheckout(req, deps) {
     });
   }
 
-  // The thank-you note on return checks the session rather than trusting
-  // ?paid= in the address bar. It reveals the product and whether it was
-  // paid, nothing about who paid.
-  if (req.method === 'GET' && path === '/session') {
-    const id = url.searchParams.get('id') || '';
-    if (!deps.stripe || !/^cs_(test|live)_[A-Za-z0-9]+$/.test(id)) return json({ error: 'Not found.' }, 404);
-    try {
-      const s = await deps.stripe.get(`/v1/checkout/sessions/${id}`);
-      const p = CATALOG[s.metadata?.lunara_product];
-      return json({ paid: s.payment_status === 'paid', status: s.payment_status, product: p ? p.name : null });
-    } catch (e) {
-      if (e instanceof StripeError && e.status === 404) return json({ error: 'Not found.' }, 404);
-      throw e;
+  /* paid.html and the delivery pages ask about an order here. The answer
+     comes from Stripe, not from the address bar. It names the product,
+     the amount, how it is delivered and a masked email so the buyer
+     knows where to look, and nothing else about who paid. */
+  if (req.method === 'GET' && path === '/order') {
+    const ref = (url.searchParams.get('ref') || '').toUpperCase();
+    if (!deps.stripe || !ORDER_RE.test(ref)) return json({ error: 'Not found.' }, 404);
+    const order = await deps.db.getOrder(ref);
+    if (!order) return json({ error: 'Not found.' }, 404);
+    const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
+    const status = await settle(order, session, deps.db);
+    const p = CATALOG[order.product];
+    const paid = status === 'paid';
+    return json({
+      ref,
+      status,
+      paid,
+      product: order.product,
+      name: p.name,
+      amount: p.cents / 100,
+      currency: 'usd',
+      terms: p.terms,
+      delivery: p.delivery,
+      access: paid && p.access ? `${p.access}?order=${ref}` : null,
+      email: paid ? mask(session.customer_details?.email) : null
+    });
+  }
+
+  /* A buyer who pays and closes the tab never reaches paid.html, so
+     their order would sit at "open" though Stripe holds the money. This
+     sweep asks Stripe about recent open orders and settles them. It is
+     run every hour by .github/workflows/settle-orders.yml; it only reads
+     from Stripe and only ever records what Stripe confirms, so anyone
+     calling it can do no more than make it check sooner. */
+  if (req.method === 'GET' && path === '/settle') {
+    if (!deps.stripe) return json({ error: 'Not configured.' }, 503);
+    const now = deps.now ? deps.now() : Date.now();
+    if (now - lastSweep < 30e3) return json({ ok: true, skipped: true });
+    lastSweep = now;
+    const since = new Date(now - 3 * 86400e3).toISOString();
+    const open = (await deps.db.openOrders(since)) || [];
+    let paid = 0;
+    for (const order of open) {
+      const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
+      if ((await settle(order, session, deps.db)) === 'paid') paid++;
     }
+    return json({ ok: true, checked: open.length, paid });
   }
 
   if (req.method !== 'POST') return json({ error: 'Not found.' }, 404);
@@ -233,7 +332,7 @@ export async function handleCheckout(req, deps) {
     const event = JSON.parse(raw);
     // Stripe retries; the first delivery of an event id wins.
     if (!(await deps.db.claimEvent(event.id, event.type))) return json({ received: true, duplicate: true });
-    await handleEvent(event, deps.db);
+    await handleEvent(event, deps);
     return json({ received: true });
   }
 
@@ -245,8 +344,20 @@ export async function handleCheckout(req, deps) {
     if (!Object.prototype.hasOwnProperty.call(CATALOG, product)) {
       return json({ error: 'That product cannot be bought here.' }, 400);
     }
-    const session = await createSession(deps.stripe, product, body.return_to);
-    return json({ url: session.url });
+    const order = newOrderRef();
+    const session = await createSession(deps.stripe, product, body.return_to, order);
+    // Recorded before the buyer leaves, so a payment can never arrive for
+    // an order this side has not heard of. If this fails, no checkout.
+    await deps.db.createOrder({
+      order_ref: order,
+      session_id: session.id,
+      product,
+      amount_total: CATALOG[product].cents,
+      currency: 'usd',
+      status: 'open',
+      livemode: !!session.livemode
+    });
+    return json({ url: session.url, order });
   }
 
   return json({ error: 'Not found.' }, 404);

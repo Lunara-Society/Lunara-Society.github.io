@@ -220,7 +220,7 @@ after three days.
 
 - `play` flavour: uploaded to Play. Opens `app.html?src=play`, which
   sells plans and credits only through Google Play (Play’s payments
-  policy), never PayPal.
-- `web` flavour: the APK downloaded from lunarasociety.com. Uses PayPal.
+  policy), never Stripe.
+- `web` flavour: the APK downloaded from lunarasociety.com. Uses Stripe Checkout.
 
 Both are the same web app; updating the site updates both.

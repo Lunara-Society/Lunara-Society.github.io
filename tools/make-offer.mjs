@@ -16,7 +16,7 @@
        --name "Small Business Shield" \
        --cents 200 \
        --hours 3 \
-       --pay "https://paypal.me/lunarasociety/2" \
+       --pay "https://buy.stripe.com/…" \
        --product shield \
        --lede "..." \
        --note "internal end-to-end test of the purchase path"
@@ -78,7 +78,7 @@ console.log(`
 --  opens  ${opens.toISOString()}
 --  closes ${expires.toISOString()}   (${hours}h)
 --  redeemable once. Redemption records a claim; it does not confirm
---  a payment. Reconcile against PayPal by hand before granting.
+--  a payment. Reconcile against the Stripe dashboard before granting.
 -- ═══════════════════════════════════════════════════════════════════
 
 insert into public.member_offers

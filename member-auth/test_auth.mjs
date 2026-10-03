@@ -188,7 +188,7 @@ console.log('\nSignup and login with a passphrase');
 
   r = await call('signup', {
     email: 'Mem@Example.org', password: 'correct horse battery',
-    full_name: 'Mem Ber', paypal_txn: '7XY44821AB009911C'
+    full_name: 'Mem Ber', paypal_txn: '7XY44821AB009911C' // an old form field, now ignored
   }, cfg);
   let out = await r.json();
   check('signup succeeds', r.status === 200 && out.success === true, JSON.stringify(out));
@@ -203,8 +203,8 @@ console.log('\nSignup and login with a passphrase');
   check('the passphrase is not stored', JSON.stringify(row).indexOf('correct horse battery') === -1);
   check('a salt and a hash are stored instead',
     /^[0-9a-f]{32}$/.test(row.salt) && /^[0-9a-f]{64}$/.test(row.hash));
-  check('the PayPal reference is kept', row.paypal_txn === '7XY44821AB009911C');
-  check('the PayPal reference is flagged unverified', row.payment_verified === false);
+  check('a payment reference sent at signup is not stored', row.paypal_txn === undefined);
+  check('a signup is never marked as paid', row.payment_verified === false);
   check('an unverified payment does not grant a paid tier', row.tier === 'member', row.tier);
 
   const first = out;
@@ -344,7 +344,7 @@ console.log('\nWhat the page is told about the moment');
     String(out.member_since));
 
   /* Nothing beyond identity and standing may leave this endpoint —
-     no hash, no salt, no PayPal reference, no Google subject. */
+     no hash, no salt, no payment reference, no Google subject. */
   const leaked = ['hash', 'salt', 'paypal_txn', 'google_sub', 'payment_verified', 'id']
     .filter((k) => k in out);
   check('no credential material is returned to the page', leaked.length === 0, leaked.join(','));
@@ -632,7 +632,7 @@ const read = async (p) => { const r = await p; return { status: r.status, body: 
   store._offers.push({
     id: 'off-1', code: 'founder-test', lunara_id: MINE,
     name: 'Small Business Shield', lede: 'One-off.',
-    amount_cents: 200, currency: 'USD', pay_url: 'https://paypal.me/x/2',
+    amount_cents: 200, currency: 'USD', pay_url: 'https://buy.stripe.com/test_x',
     product_id: 'shield',
     opens_at: new Date(Date.now() - 60000).toISOString(),
     expires_at: new Date(Date.now() + 3 * HOUR).toISOString(),

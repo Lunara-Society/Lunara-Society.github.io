@@ -799,8 +799,7 @@ p,li,span{
     <!-- REGISTER FORM -->
     <div id="form-register" style="display:none">
       <h2 class="auth-title">Create Your Account</h2>
-      <p class="auth-sub">Subscribe to access Lunara Society member intelligence, certification methodology, and governance implementation guides.</p>
-      <p style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:12px;line-height:1.6">After subscribing, check your email for the PayPal confirmation. Use the Transaction ID from that email to register below.</p>
+      <p class="auth-sub">Create your Lunara account to sign in to the member area. Signing up is free and asks for no payment.</p>
       <div class="form-group">
         <label class="form-label">Full Name</label>
         <input type="text" class="form-input" id="reg-name" placeholder="Your name">
@@ -812,11 +811,6 @@ p,li,span{
       <div class="form-group">
         <label class="form-label">Passphrase</label>
         <input type="password" class="form-input" id="reg-pass" placeholder="Minimum 10 characters">
-      </div>
-      <div class="form-group" style="margin-bottom:16px">
-        <label style="font-size:12px;color:var(--gold-50);margin-bottom:6px;display:block;letter-spacing:0.08em">PayPal Transaction ID (from your subscription confirmation email)</label>
-        <input class="form-input" id="reg-txn" type="text" placeholder="e.g. 9XH4ABC12345" style="font-size:13px">
-        <p style="font-size:11px;color:rgba(196, 164, 107, 0.714);margin-top:6px">Active subscription required. Find your transaction ID in your PayPal confirmation email.</p>
       </div>
       <button class="form-btn" onclick="doRegister()">Create Account</button>
       <p class="form-error" id="register-error"></p>
@@ -1764,16 +1758,14 @@ async function doRegister(){
   const pass = document.getElementById('reg-pass').value.trim();
   const err = document.getElementById('register-error');
   err.textContent = '';
-  const txn = document.getElementById('reg-txn').value.trim();
-  if(!name||!email||!pass||!txn){ err.textContent='Please fill in all fields including PayPal Transaction ID.'; return; }
+  if(!name||!email||!pass){ err.textContent='Please fill in all fields.'; return; }
   if(pass.length < 10){ err.textContent='Passphrase must be at least 10 characters.'; return; }
-  if(txn.length < 6){ err.textContent='Please enter a valid PayPal Transaction ID from your confirmation email.'; return; }
   const btn = document.querySelector('#form-register .form-btn');
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Creating account...';
   try{
     const data = await authPost('signup',
-      { email, full_name: name, password: pass, paypal_txn: txn });
+      { email, full_name: name, password: pass });
     if(data.success){
       localStorage.setItem('lunara_email', email.toLowerCase());
       saveSession(data.session_token, data.lunara_id, data.full_name, data.tier);
@@ -1964,13 +1956,13 @@ function offerApplyUrl(o){
   return '/shield.html?' + q.toString() + '#apply';
 }
 
-/* Which processor the offer actually points at. This panel named
-   PayPal in six places, which was true until the $2 offer moved to a
-   Revolut checkout and then it was wrong in six places. The row
-   already knows where the money is taken; read it from there. */
+/* Which processor the offer actually points at. This panel once named
+   one processor in six places, which was true until the $2 offer moved
+   elsewhere and then it was wrong in six places. The row already knows
+   where the money is taken; read it from there. */
 function offerProvider(url){
   const h = (String(url || '').match(/^https:\/\/([^/]+)/) || [,''])[1].toLowerCase();
-  if(/(^|\.)paypal\.(com|me)$/.test(h)) return 'PayPal';
+  if(/(^|\.)stripe\.com$/.test(h))      return 'Stripe';
   if(/(^|\.)revolut\.com$/.test(h))     return 'Revolut';
   return '';
 }

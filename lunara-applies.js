@@ -356,7 +356,7 @@
       if (ids.length) {
         side += '<h4>' + (obs.length ? 'What to do about it' : 'If you want more than this') + '</h4>';
         ids.forEach(function (id) {
-          side += '<a class="lxa-buy" data-lx-buy="' + id + '" data-lx-noinvoice href="/shield.html">' +
+          side += '<a class="lxa-buy" data-lx-buy="' + id + '" data-lx-nonote href="/shield.html">' +
             '<div class="t"><b data-lx-name="' + id + '"></b><span data-lx-amount="' + id + '"></span></div>' +
             '<div class="l">' + esc(PRODUCT_WHY[id] || '') + '</div><span class="c">Get it →</span></a>';
         });

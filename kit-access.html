@@ -343,19 +343,38 @@ nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.95);backdrop-filte
 <body>
 <!-- ACCESS GATE -->
 <script>
+/* The kit opens with the order reference Stripe Checkout returns the
+   buyer with (kit-access.html?order=LO-…). lunara-checkout asks Stripe
+   whether that order is a completed payment of the kit at its listed
+   price; nothing else opens it. Links sent to earlier buyers carry ?t=
+   and keep working. */
 (function(){
   var params = new URLSearchParams(window.location.search);
-  var token = params.get('t');
-  if (!token) {
-    // Check if we already verified in this session
-    var verified = sessionStorage.getItem('lunara_kit_access');
-    if (!verified) {
-      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#060606;font-family:Inter,sans-serif;color:rgba(196,164,107,0.72);text-align:center;padding:40px;"><div><div style="font-family:Cormorant Garamond,serif;font-size:42px;font-weight:300;color:rgba(196,164,107,0.9);margin-bottom:24px;">Lunara Society</div><p style="font-size:16px;line-height:1.8;margin-bottom:24px;max-width:420px;">This page is for verified purchasers of the EU AI Act Compliance Readiness Kit. If you have completed payment, you should have been redirected here automatically.</p><a href="readiness-kit.html" style="display:inline-block;padding:14px 32px;border:1px solid rgba(196,164,107,0.5);border-radius:100px;color:rgba(224,224,176,0.9);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">Purchase the Kit</a></div></div>';
-      throw new Error('Access denied');
-    }
-  } else {
-    sessionStorage.setItem('lunara_kit_access', token);
+  var order = (params.get('order') || '').toUpperCase();
+  var legacy = params.get('t');
+  function deny(msg) {
+    var paint = function () { document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#060606;font-family:Inter,sans-serif;color:rgba(196,164,107,0.72);text-align:center;padding:40px;"><div><div style="font-family:Cormorant Garamond,serif;font-size:42px;font-weight:300;color:rgba(196,164,107,0.9);margin-bottom:24px;">Lunara Society</div><p style="font-size:16px;line-height:1.8;margin-bottom:24px;max-width:420px;">' + msg + '</p><a href="readiness-kit.html" style="display:inline-block;padding:14px 32px;border:1px solid rgba(196,164,107,0.5);border-radius:100px;color:rgba(224,224,176,0.9);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">The Compliance Kit</a></div></div>'; document.documentElement.style.visibility = ''; };
+    if (document.body) paint(); else document.addEventListener('DOMContentLoaded', paint);
   }
+  if (legacy) { sessionStorage.setItem('lunara_kit_access', legacy); return; }
+  if (!order) {
+    if (sessionStorage.getItem('lunara_kit_access')) return;
+    return deny('This page opens with the link on your order confirmation. Lost it? Write to lunarasociety@gmail.com with the email you paid with.');
+  }
+  document.documentElement.style.visibility = 'hidden';
+  fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/order?ref=' + encodeURIComponent(order))
+    .then(function (r) { return r.json(); })
+    .then(function (b) {
+      if (b && b.paid && b.product === 'kit') {
+        sessionStorage.setItem('lunara_kit_access', order);
+        document.documentElement.style.visibility = '';
+      } else if (b && b.status === 'unpaid') {
+        deny('Stripe has not confirmed this payment yet. Refresh in a few minutes.');
+      } else {
+        deny('This link does not belong to a completed purchase of the kit. If you have paid, write to lunarasociety@gmail.com with your order reference.');
+      }
+    })
+    .catch(function () { deny('We could not check your order just now. Refresh in a moment.'); });
 })();
 </script>
 <!-- END ACCESS GATE -->

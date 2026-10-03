@@ -3,56 +3,160 @@ export const CATALOG = {
   "disclose": {
     "name": "Article 50 Disclosure Pack",
     "cents": 7500,
-    "terms": "Delivered within 24 hours"
+    "terms": "Delivered within 24 hours",
+    "delivery": [
+      "Within 24 hours we email your Disclosure Pack to the address you paid with.",
+      "It holds disclosure wording drafted for your system, the machine-readable marking specification for its output, and a one page record of what you did and when.",
+      "Reply to that email if anything about your system has changed."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "kit": {
     "name": "Compliance Kit",
     "cents": 9500,
-    "terms": "Immediate download"
+    "terms": "Immediate download",
+    "delivery": [
+      "Your kit opens at once: use the button on the confirmation page.",
+      "Keep the link to that page. It opens your kit again whenever you need it.",
+      "Inside: the Article 50 and SB 942 obligation checklist, disclosure and synthetic-marking templates, and the evidence log an auditor would ask to see."
+    ],
+    "access": "kit-access.html",
+    "ask": []
   },
   "shield": {
     "name": "Shield Verification",
     "cents": 7500,
-    "terms": "Six months. Renewed by invoice, never auto-charged."
+    "terms": "Six months. Renewed only when you choose to pay again.",
+    "delivery": [
+      "Within 24 hours we email you your verification reference and a DNS record that proves you control your domain.",
+      "A person reviews your business identity and your domain.",
+      "When it passes, your entry goes live on the public register and we send your trust badge and machine-readable identity files.",
+      "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "legal"
+    ]
   },
   "second": {
     "name": "Second Opinion",
     "cents": 24000,
-    "terms": "Returned within 48 hours"
+    "terms": "Returned within 48 hours",
+    "delivery": [
+      "Within 24 hours we email you asking for the advice you were given. Reply with it attached or pasted in.",
+      "Our written opinion comes back within 48 hours of receiving it: which parts still hold, every correction cited to the article that governs it."
+    ],
+    "access": null,
+    "ask": [
+      "website"
+    ]
   },
   "cir": {
     "name": "Compliance Intelligence Report",
     "cents": 39000,
-    "terms": "Delivered within 24 hours"
+    "terms": "Delivered within 24 hours",
+    "delivery": [
+      "Start at once: describe your deployment on the report page and get your score straight away.",
+      "Your full written report follows by email within 24 hours: every finding cited to its article, with gap analysis and prioritised remediation."
+    ],
+    "access": "compliance-report-access.html",
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "watch": {
     "name": "Regulatory Watch",
     "cents": 29000,
-    "terms": "Six months. Renewed by invoice, never auto-charged."
+    "terms": "Six months. Renewed only when you choose to pay again.",
+    "delivery": [
+      "Within 24 hours we email you to confirm the systems, sectors and jurisdictions we watch for you.",
+      "For six months we write to you whenever something that binds you changes, and only then.",
+      "We remind you before the six months end; nothing is charged automatically."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "cirplus": {
     "name": "Report with Governance Session",
     "cents": 74000,
-    "terms": "Scheduled within 48 hours"
+    "terms": "Scheduled within 48 hours",
+    "delivery": [
+      "Start at once: describe your deployment on the report page and get your score straight away.",
+      "Your full written report follows by email within 24 hours.",
+      "Within 48 hours we email you to schedule your sixty minute governance session with the people who wrote it."
+    ],
+    "access": "compliance-report-access.html",
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "agent": {
     "name": "AI Entity Verification",
     "cents": 54000,
-    "terms": "Six months. Renewed by invoice, never auto-charged."
+    "terms": "Six months. Renewed only when you choose to pay again.",
+    "delivery": [
+      "Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.",
+      "A person verifies the agent and its operator.",
+      "When it passes, its register entry with AI designation goes live, queryable by any system.",
+      "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "clinical": {
     "name": "Clinical AI Governance Assessment",
     "cents": 195000,
-    "terms": "Per deployment. Delivered within five working days."
+    "terms": "Per deployment. Delivered within five working days.",
+    "delivery": [
+      "Within one working day we email you to collect what we need about the deployment.",
+      "Your written assessment, mapping HIPAA, Article 50, SB 942 and Joint Commission together, is delivered within five working days of receiving it."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "evidence": {
     "name": "Article 50 Evidence Pack",
     "cents": 245000,
-    "terms": "Per system. Delivered within five working days."
+    "terms": "Per system. Delivered within five working days.",
+    "delivery": [
+      "Within one working day we email you to collect what we need about the system.",
+      "Your Evidence Pack, with the duties assessed, the accountable party named and the articles cited, is delivered within five working days of receiving it."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   },
   "vendor": {
     "name": "Vendor Certification",
     "cents": 740000,
-    "terms": "Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed by invoice."
+    "terms": "Up to three systems. Twelve months, so it cannot lapse mid-tender. Renewed only when you choose to pay again.",
+    "delivery": [
+      "Within one working day we email you to schedule the assessment of up to three systems.",
+      "After review: certification against the seven constitutional pillars, a public register entry and your tender evidence dossier.",
+      "Certification lasts twelve months. We remind you before it ends; nothing is charged automatically."
+    ],
+    "access": null,
+    "ask": [
+      "website",
+      "system"
+    ]
   }
 };

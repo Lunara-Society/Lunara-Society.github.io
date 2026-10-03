@@ -1,0 +1,29 @@
+name: Settle Stripe orders
+
+# A buyer who pays and closes the tab before the confirmation page never
+# tells the site they paid, so their order would stay "open" although
+# Stripe holds the money. Every hour this asks lunara-checkout to check
+# recent open orders with Stripe and record the ones Stripe confirms, so
+# the list of orders to deliver (stripe-checkout/README.md) is complete
+# whether or not the buyer came back. The run goes red if the function
+# does not answer, so somebody is told before a buyer is.
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask Stripe about open orders
+        run: |
+          code=$(curl -s -o body.txt -w '%{http_code}' -m 120 \
+            https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/settle)
+          echo "lunara-checkout answered $code: $(cat body.txt)"
+          [ "$code" = "200" ] || { echo "::error::Order sweep answered $code, expected 200."; exit 1; }

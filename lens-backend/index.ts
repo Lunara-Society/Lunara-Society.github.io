@@ -4,7 +4,7 @@
 
    Everything of consequence lives in lens-core.mjs, which the tests run
    under Node. This file supplies the three things that cannot run off
-   the platform: the tables, the model call and PayPal.
+   the platform: the tables, the model call and Stripe.
 
    Deployed with verify_jwt disabled on purpose, as lunara-auth is: the
    app signs in through lunara-auth and sends that session token, which
@@ -19,8 +19,10 @@
                             Garden; Claude is then billed on the Google
                             Cloud bill. Takes precedence when both are set.
      VERTEX_REGION          optional; default global
-     PAYPAL_CLIENT_ID       optional; lets buyers activate themselves
-     PAYPAL_CLIENT_SECRET     with their PayPal Transaction ID
+     STRIPE_SECRET_KEY      card payments on the web (Stripe Checkout); a
+                            restricted key with Checkout Sessions: Write.
+                            LUNA-SECRET-KEY is read too, the name it was
+                            first saved under.
      LENS_MODEL_DEEP        optional; default claude-opus-5-5 (detection)
      LENS_MODEL_FAST        optional; default claude-sonnet-5 (assistant)
      GOOGLE_PLAY_SERVICE_ACCOUNT  the JSON key of a Google Cloud service
@@ -57,7 +59,6 @@ const insert = (table: string, row: unknown) =>
 const db = {
   licensesFor: (email: string) => rest(`/lens_licenses?email=ilike.${q(email)}&order=expires_at.desc&limit=20`),
   getLicense: (id: string) => rest(`/lens_licenses?id=eq.${q(id)}&limit=1`).then(one),
-  licenseByTxn: (txn: string) => rest(`/lens_licenses?paypal_txn=eq.${q(txn)}&limit=1`).then(one),
   createLicense: (row: unknown) => insert('lens_licenses', row),
   spent: (id: string, period: string) =>
     rest('/rpc/lens_spent', { method: 'POST', body: JSON.stringify({ p_license: id, p_period: period }) }).then(Number),
@@ -74,12 +75,6 @@ const db = {
   createMark: (row: unknown) => insert('lens_marks', row),
   getKey: (hash: string) => rest(`/lens_api_keys?key_hash=eq.${q(hash)}&limit=1`).then(one),
   createKey: (row: unknown) => insert('lens_api_keys', row),
-  createClaim: (row: unknown) => insert('lens_claims', row),
-  claimByTxn: (txn: string) => rest(`/lens_claims?paypal_txn=eq.${q(txn)}&limit=1`).then(one),
-  pendingClaimFor: (email: string) => rest(`/lens_claims?email=ilike.${q(email)}&status=eq.pending&limit=1`).then(one),
-  pendingClaims: () => rest('/lens_claims?status=eq.pending&order=created_at.asc&limit=50'),
-  getClaim: (id: string) => /^[0-9a-f-]{36}$/.test(id) ? rest(`/lens_claims?id=eq.${q(id)}&limit=1`).then(one) : Promise.resolve(null),
-  updateClaim: (id: string, patch: unknown) => rest(`/lens_claims?id=eq.${q(id)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   recentLicenses: () => rest('/lens_licenses?select=email,plan,source,expires_at,created_at&order=created_at.desc&limit=30'),
   stats: (period: string) => rest('/rpc/lens_month_stats', { method: 'POST', body: JSON.stringify({ p_period: period }) }),
   getConfig: (key: string) => rest(`/lens_config?key=eq.${q(key)}&limit=1`).then(one).then((r) => (r ? r.value : null)),
@@ -197,68 +192,43 @@ async function callModel({ model, system, max_tokens, effort, schema, content })
   return { ...usage, result };
 }
 
-let ppToken = { value: '', until: 0 };
-const PP_BASE = env.PAYPAL_ENV === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-async function ppAuth() {
-  if (Date.now() > ppToken.until) {
-    const r = await fetch(`${PP_BASE}/v1/oauth2/token`, {
-      method: 'POST',
-      headers: { authorization: 'Basic ' + btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_CLIENT_SECRET}`), 'content-type': 'application/x-www-form-urlencoded' },
-      body: 'grant_type=client_credentials'
-    });
-    if (!r.ok) return null;
-    const t = await r.json();
-    ppToken = { value: t.access_token, until: Date.now() + (t.expires_in - 60) * 1000 };
+/* ── Stripe Checkout ────────────────────────────────────────────────
+   Card, Apple Pay and Google Pay on the web. lens-core decides the
+   price, the product and the account; this only talks to Stripe. */
+const STRIPE_KEY = env.STRIPE_SECRET_KEY || env['LUNA-SECRET-KEY'] || env.LUNA_SECRET_KEY || '';
+function formEncode(obj: Record<string, unknown>, prefix = '', out = new URLSearchParams()) {
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined || v === null) continue;
+    const key = prefix ? `${prefix}[${k}]` : k;
+    if (Array.isArray(v)) v.forEach((x, i) => typeof x === 'object' ? formEncode(x, `${key}[${i}]`, out) : out.append(`${key}[${i}]`, String(x)));
+    else if (typeof v === 'object') formEncode(v as Record<string, unknown>, key, out);
+    else out.append(key, String(v));
   }
-  return ppToken.value;
+  return out;
 }
-async function paypalCapture(id: string) {
-  if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) return null;
-  const base = PP_BASE;
-  if (!(await ppAuth())) return null;
-  const r = await fetch(`${base}/v2/payments/captures/${encodeURIComponent(id)}`, {
-    headers: { authorization: `Bearer ${ppToken.value}` }
-  });
-  if (r.status === 404) return { status: 'NOT_FOUND', amount: {} };
-  return r.ok ? r.json() : null;
+async function stripeCall(method: string, path: string, params?: Record<string, unknown>) {
+  const headers: Record<string, string> = { authorization: `Bearer ${STRIPE_KEY}`, 'stripe-version': '2026-08-26.dahlia' };
+  let url = 'https://api.stripe.com' + path, body;
+  if (params && method === 'GET') url += '?' + formEncode(params);
+  else if (params) { body = formEncode(params).toString(); headers['content-type'] = 'application/x-www-form-urlencoded'; }
+  const r = await fetch(url, { method, headers, body });
+  if (r.status === 404) return null;
+  const data = await r.json();
+  if (!r.ok) throw new Error('stripe ' + r.status + ' ' + (data?.error?.message || ''));
+  return data;
 }
+const stripe = STRIPE_KEY ? {
+  createSession: (p: Record<string, unknown>) => stripeCall('POST', '/v1/checkout/sessions', p),
+  getSession: (id: string) => stripeCall('GET', `/v1/checkout/sessions/${encodeURIComponent(id)}`),
+  paidSessionsFor: async (email: string) => {
+    const r = await stripeCall('GET', '/v1/checkout/sessions', { customer_details: { email }, status: 'complete', limit: 20 });
+    return (r && r.data) || [];
+  }
+} : null;
 
 /* ── Google Play ─────────────────────────────────────────────────────
    A service account signs a short JWT (RS256, WebCrypto) for an access
    token to the Android Publisher API, cached for its hour. */
-/* Card and PayPal checkout on the web (PayPal Orders v2). The page shows
-   PayPal's buttons, including "Debit or Credit Card", which needs no
-   PayPal account. No shipping step: nothing ships. */
-const paypal = env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET ? {
-  createOrder: async ({ amount, description, custom_id }) => {
-    const tok = await ppAuth(); if (!tok) throw new Error('paypal auth');
-    const r = await fetch(`${PP_BASE}/v2/checkout/orders`, {
-      method: 'POST', headers: { authorization: `Bearer ${tok}`, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        intent: 'CAPTURE',
-        purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description, custom_id, soft_descriptor: 'LUNARA ROSARIO' }],
-        application_context: { brand_name: 'Lunara Society', shipping_preference: 'NO_SHIPPING', user_action: 'PAY_NOW' }
-      })
-    });
-    if (!r.ok) throw new Error('paypal order ' + r.status + ' ' + (await r.text()).slice(0, 200));
-    return r.json();
-  },
-  captureOrder: async (id: string) => {
-    const tok = await ppAuth(); if (!tok) throw new Error('paypal auth');
-    const h = { authorization: `Bearer ${tok}`, 'content-type': 'application/json', prefer: 'return=representation' };
-    const r = await fetch(`${PP_BASE}/v2/checkout/orders/${encodeURIComponent(id)}/capture`, { method: 'POST', headers: h });
-    if (r.ok) return r.json();
-    const err = await r.text();
-    // Already captured (a retry after a dropped connection): read the order instead.
-    if (r.status === 422 && /ORDER_ALREADY_CAPTURED/.test(err)) {
-      const g = await fetch(`${PP_BASE}/v2/checkout/orders/${encodeURIComponent(id)}`, { headers: h });
-      return g.ok ? g.json() : null;
-    }
-    if (r.status === 404 || r.status === 422) return { status: 'FAILED', detail: err.slice(0, 300) };
-    throw new Error('paypal capture ' + r.status + ' ' + err.slice(0, 200));
-  }
-} : null;
-
 const PLAY_PKG = 'com.lunarasociety.lens';
 const PLAY_API = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PLAY_PKG}/purchases`;
 const b64url = (b: Uint8Array) => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -303,7 +273,7 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleLens(req, { env, db, whoIs, model, callModel, paypalCapture, paypal, tts, play });
+    const res = await handleLens(req, { env, db, whoIs, model, callModel, stripe, tts, play });
     return withCors(res, origin);
   } catch (e) {
     console.error(e);

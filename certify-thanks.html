@@ -87,7 +87,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
   <div class="next-steps">
     <h2>What Happens Next</h2>
     <ol id="steps-list">
-      <li><strong>Verification Email</strong>, We will send a confirmation to your PayPal email within 24 hours with your certification reference ID.</li>
+      <li><strong>Verification Email</strong>, We will email a confirmation to the address you paid with within 24 hours with your certification reference ID.</li>
       <li><strong>Domain Verification</strong>, You will receive instructions to verify your business domain via DNS token.</li>
       <li><strong>Compliance Review</strong>, Our governance team reviews your application against the seven constitutional pillars.</li>
       <li><strong>Certification Issued</strong>, Upon successful review, your Shield badge is issued and your record is published on the public Lunara Registry.</li>
@@ -99,7 +99,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
 
 <div class="error-box" id="error-box">
   <h2>Access Denied</h2>
-  <p>This page is for verified purchasers. If you have completed payment but are seeing this message, please contact us with your PayPal transaction ID.</p>
+  <p>This page is for verified purchasers. If you have completed payment but are seeing this message, please write to lunarasociety@gmail.com with your order reference.</p>
   <a href="contact.html">Contact Support</a>
 </div>
 
@@ -110,6 +110,8 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
 <script>
 (function(){
   var params = new URLSearchParams(window.location.search);
+  // Stripe Checkout confirms every order on paid.html.
+  if (params.get('order')) { location.replace('paid.html?order=' + encodeURIComponent(params.get('order'))); return; }
   var token = params.get('t');
   var tier = params.get('tier');
 
@@ -125,7 +127,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
     document.getElementById('product-name').textContent = 'AI Entity Verification';
     document.getElementById('intro-text').textContent = 'Thank you. Your AI Entity Verification application has been received and your payment is confirmed. Here is what happens next.';
     document.getElementById('steps-list').innerHTML = 
-      '<li><strong>Verification Email</strong> — We will send a confirmation to your PayPal email within 24 hours with your verification reference ID.</li>' +
+      '<li><strong>Verification Email</strong> — We will email a confirmation to the address you paid with within 24 hours with your verification reference ID.</li>' +
       '<li><strong>Identity Documentation</strong> — You will receive instructions to submit your AI entity governance documentation and operational rules.</li>' +
       '<li><strong>Technical Audit</strong> — Our governance team conducts a technical audit of your AI entity architecture and compliance posture.</li>' +
       '<li><strong>Verification Published</strong> — Upon successful audit, your AI entity verification record is published on the public Lunara Registry.';
@@ -133,7 +135,7 @@ footer p{font-size:11px;letter-spacing:0.1em;color:rgba(196, 164, 107, 0.714)}
     document.getElementById('product-name').textContent = 'Strategic Registry Partner';
     document.getElementById('intro-text').textContent = 'Thank you. Your Strategic Registry Partner application has been received and your payment is confirmed. Here is what happens next.';
     document.getElementById('steps-list').innerHTML = 
-      '<li><strong>Verification Email</strong> — We will send a confirmation to your PayPal email within 24 hours with your partner reference ID.</li>' +
+      '<li><strong>Verification Email</strong> — We will email a confirmation to the address you paid with within 24 hours with your partner reference ID.</li>' +
       '<li><strong>Partner Onboarding</strong> — You will receive your API key and embed instructions for registry lookup integration.</li>' +
       '<li><strong>Integration Support</strong> — Our technical team assists with embedding the Lunara Shield verification badge on your platform.</li>' +
       '<li><strong>Partner Activation</strong> — Your partner profile is published on the Lunara Registry and referral tracking is activated.';

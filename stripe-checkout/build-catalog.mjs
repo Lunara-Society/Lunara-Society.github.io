@@ -30,7 +30,14 @@ export function loadPricing() {
 export function catalogFrom(products) {
   const out = {};
   for (const p of products.filter(sellable)) {
-    out[p.id] = { name: p.name, cents: Math.round(p.price * 100), terms: p.terms };
+    out[p.id] = {
+      name: p.name,
+      cents: Math.round(p.price * 100),
+      terms: p.terms,
+      delivery: p.delivery || [],
+      access: p.access || null,
+      ask: p.ask || []
+    };
   }
   return out;
 }

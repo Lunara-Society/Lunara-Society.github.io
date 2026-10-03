@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Your Order | Lunara Society</title>
+<meta name="description" content="Your Lunara Society order: what you paid for, and exactly how and when you receive it.">
+<link rel="icon" type="image/png" href="lunara_logo_512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<!--
+  Where Stripe Checkout returns every buyer: paid.html?order=LO-…
+
+  Nothing on this page is taken from the address bar except the order
+  reference. Whether it was paid, what was bought, the amount and how it
+  is delivered all come from lunara-checkout, which asks Stripe and only
+  says "paid" when Stripe shows the exact catalogue amount for that exact
+  product. The delivery steps are the same words the buyer saw on
+  Stripe's page before paying; both come from lunara-pricing.js.
+-->
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C4A46B;--gold-b:#E2C47A;--line:rgba(196,164,107,.16);--dim:rgba(214,200,170,.78);--text:#f0e0b0;--bg:#060606}
+html,body{background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(196,164,107,.06) 0%,transparent 70%);pointer-events:none}
+.nav{position:relative;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.nav a{color:rgba(196,164,107,.85);text-decoration:none;font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-family:'Cormorant Garamond',serif}
+main{position:relative;max-width:640px;margin:0 auto;padding:64px 20px 80px}
+.mark{width:56px;height:56px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-b);font-size:26px;margin:0 auto 24px}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(32px,7vw,46px);line-height:1.15;color:var(--text);text-align:center;margin-bottom:14px}
+h1 em{color:var(--gold-b)}
+.lede{text-align:center;color:var(--dim);font-size:16px;line-height:1.75;margin:0 auto 34px;max-width:520px}
+.box{border:1px solid var(--line);border-radius:10px;background:rgba(196,164,107,.03);padding:8px 22px;margin-bottom:34px}
+.row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid rgba(196,164,107,.08);font-size:14.5px}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--dim)}
+.row span:last-child{color:var(--text);text-align:right;word-break:break-word}
+.mono{font-family:"IBM Plex Mono",monospace;white-space:nowrap;font-size:13.5px}
+h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:26px;color:var(--text);margin-bottom:14px}
+ol{list-style:none;counter-reset:s;margin-bottom:30px}
+ol li{position:relative;padding:14px 0 14px 46px;border-bottom:1px solid rgba(196,164,107,.08);color:var(--dim);font-size:15.5px;line-height:1.7}
+ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:13px;width:30px;height:30px;border:1px solid rgba(196,164,107,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;color:var(--gold-b)}
+.btn{display:block;text-align:center;padding:16px 24px;border-radius:100px;background:var(--gold-b);color:#0b0b0b;font-size:13px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;font-weight:500;margin-bottom:26px}
+.note{font-size:13.5px;line-height:1.75;color:var(--dim);border-left:2px solid rgba(196,164,107,.4);padding-left:14px}
+.note a{color:var(--gold-b)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<nav class="nav"><a href="/">Lunara Society</a></nav>
+
+<main>
+  <div id="wait">
+    <h1>Checking your payment…</h1>
+    <p class="lede">This takes a second. We ask Stripe directly.</p>
+  </div>
+
+  <div id="paid" hidden>
+    <div class="mark" aria-hidden="true">✓</div>
+    <h1>Payment <em>received.</em></h1>
+    <p class="lede">Thank you. Here is exactly what you bought and how you receive it.</p>
+
+    <div class="box">
+      <div class="row"><span>Product</span><span id="o-name"></span></div>
+      <div class="row"><span>Paid</span><span id="o-amount"></span></div>
+      <div class="row"><span>Order reference</span><span class="mono" id="o-ref"></span></div>
+      <div class="row"><span>Receipt sent to</span><span id="o-email"></span></div>
+      <div class="row"><span>Term</span><span id="o-terms"></span></div>
+    </div>
+
+    <a class="btn" id="o-access" hidden>Open it now</a>
+
+    <h2>How you receive it</h2>
+    <ol id="o-steps"></ol>
+
+    <p class="note">Keep this page's address or your order reference. Stripe has emailed your receipt.
+      Our emails come from <a href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a>; if one
+      has not arrived when promised, check spam, then write to us with your order reference.</p>
+  </div>
+
+  <div id="pending" hidden>
+    <h1>Payment <em>processing.</em></h1>
+    <p class="lede">Stripe has not confirmed this payment yet. Some payment methods take a little longer.
+      Refresh this page in a few minutes; nothing is delivered until the payment is confirmed, and
+      you are not charged for a payment that does not complete.</p>
+  </div>
+
+  <div id="problem" hidden>
+    <h1>We could not confirm <em>this order.</em></h1>
+    <p class="lede" id="problem-text">If you have paid, write to
+      <a style="color:var(--gold-b)" href="mailto:lunarasociety@gmail.com">lunarasociety@gmail.com</a>
+      with your order reference and we will sort it out the same day.</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout';
+  var ref = (new URLSearchParams(location.search).get('order') || '').toUpperCase();
+  var $ = function (id) { return document.getElementById(id); };
+  function show(id) {
+    ['wait', 'paid', 'pending', 'problem'].forEach(function (k) { $(k).hidden = k !== id; });
+  }
+  function problem(extra) {
+    if (extra) $('problem-text').insertAdjacentText('afterbegin', extra + ' ');
+    show('problem');
+  }
+  if (!/^LO-[0-9A-HJKMNP-TV-Z]{16}$/.test(ref)) return problem('This address has no order reference.');
+
+  fetch(API + '/order?ref=' + encodeURIComponent(ref)).then(function (r) {
+    return r.json().then(function (b) { return { ok: r.ok, b: b }; });
+  }).then(function (res) {
+    var b = res.b;
+    if (!res.ok || !b || !b.status) return problem('We could not find order ' + ref + '.');
+    if (b.status === 'unpaid') return show('pending');
+    if (!b.paid) return problem('Order ' + ref + ' does not show a completed payment of the listed price.');
+
+    $('o-name').textContent = b.name;
+    $('o-amount').textContent = '$' + Number(b.amount).toLocaleString('en-US') + ' USD';
+    $('o-ref').textContent = b.ref;
+    $('o-email').textContent = b.email || 'the address you paid with';
+    $('o-terms').textContent = b.terms;
+    b.delivery.forEach(function (step) {
+      var li = document.createElement('li');
+      li.textContent = step;
+      $('o-steps').appendChild(li);
+    });
+    if (b.access) {
+      $('o-access').href = '/' + b.access;
+      $('o-access').hidden = false;
+    }
+    document.title = b.name + ' | Your Order | Lunara Society';
+    show('paid');
+  }).catch(function () {
+    problem('We could not reach our server to check order ' + ref + '. Refresh in a moment.');
+  });
+})();
+</script>
+</body>
+</html>

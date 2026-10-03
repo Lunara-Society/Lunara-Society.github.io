@@ -8,7 +8,7 @@
 
    verify_jwt is off, as on lunara-auth and lunara-lens: buyers have no
    Supabase session, and Stripe signs its webhooks with its own secret,
-   which checkout-core checks. stripe_payments has row level security on
+   which checkout-core checks. stripe_orders has row level security on
    and no policies, so only this function can read it.
 
    Secrets (Supabase → Edge Functions → Secrets):
@@ -33,20 +33,29 @@ const H = {
 async function rest(path: string, init: RequestInit = {}) {
   const res = await fetch(REST + path, { ...init, headers: { ...H, ...(init.headers || {}) } });
   if (!res.ok) throw new Error(`${init.method || 'GET'} ${path.split('?')[0]} ${res.status}: ${await res.text()}`);
-  return res.status === 204 ? null : res.json();
+  const text = await res.text(); // a POST without return=representation answers 201 with no body
+  return text ? JSON.parse(text) : null;
 }
 const present = (row: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null && v !== undefined));
 
+const q = encodeURIComponent;
+const one = (r: unknown) => (Array.isArray(r) && r.length ? r[0] : null);
+
 const db = {
-  upsertPayment: (row: Record<string, unknown>) =>
-    rest('/stripe_payments?on_conflict=session_id', {
-      method: 'POST',
-      headers: { prefer: 'resolution=merge-duplicates' },
-      body: JSON.stringify({ ...present(row), updated_at: new Date().toISOString() })
+  createOrder: (row: Record<string, unknown>) =>
+    rest('/stripe_orders', { method: 'POST', body: JSON.stringify(row) }),
+  openOrders: (since: string) =>
+    rest(`/stripe_orders?status=eq.open&created_at=gte.${q(since)}&order=created_at.asc&limit=50`),
+  getOrder: (ref: string) =>
+    rest(`/stripe_orders?order_ref=eq.${q(ref)}&limit=1`).then(one),
+  updateOrder: (ref: string, patch: Record<string, unknown>) =>
+    rest(`/stripe_orders?order_ref=eq.${q(ref)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ ...present(patch), updated_at: new Date().toISOString() })
     }),
   markRefunded: (paymentIntent: string, amount: number) =>
-    rest(`/stripe_payments?payment_intent=eq.${encodeURIComponent(paymentIntent)}`, {
+    rest(`/stripe_orders?payment_intent=eq.${q(paymentIntent)}`, {
       method: 'PATCH',
       body: JSON.stringify({ refunded_amount: amount, updated_at: new Date().toISOString() })
     }),

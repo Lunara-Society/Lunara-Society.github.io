@@ -94,6 +94,10 @@ await test('an application gets a public id, a DNS record and an email with what
   const toApplicant = mailbox.find((m) => m.to === 'ana@yavaya.lat');
   ok(toApplicant && toApplicant.text.includes('_lunara-verify') && toApplicant.text.includes(r.body.domain_verification_token), 'applicant told the exact record');
   ok(mailbox.some((m) => m.to === 'lunarasociety@gmail.com'), 'owner told');
+  ok(r.body.message.includes('emailed') && r.body.emailed === true);
+  const { deps: quiet } = setup({ mail: null });
+  const q = await call(quiet, 'shieldApply', APP);
+  ok(!q.body.message.includes('emailed you') && q.body.emailed === false, 'never claims an email that was not sent');
 });
 
 await test('a pending application is not on the public registry', async () => {

@@ -232,8 +232,8 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/order?ref=' + encodeURIComponent(order))
       .then(function (r) { return r.json(); })
       .then(function (b) {
-        if (!b || !b.paid || (b.product !== 'cir' && b.product !== 'cirplus')) return deny();
-        LX_UPGRADED = b.product === 'cirplus';
+        if (!b || !b.paid || ['cir', 'cirplus', 'owner_complete'].indexOf(b.product) < 0) return deny();
+        LX_UPGRADED = b.product !== 'cir';
         document.getElementById('txn-id').textContent = b.ref;
         document.getElementById('amount-paid').textContent = '$' + Number(b.amount).toLocaleString('en-US');
         document.getElementById('tier-label').textContent = b.name;

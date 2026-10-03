@@ -71,7 +71,7 @@ ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;to
       <div class="row"><span>Term</span><span id="o-terms"></span></div>
     </div>
 
-    <a class="btn" id="o-access" hidden>Open it now</a>
+    <div id="o-links"></div>
 
     <h2>How you receive it</h2>
     <ol id="o-steps"></ol>
@@ -128,10 +128,12 @@ ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;to
       li.textContent = step;
       $('o-steps').appendChild(li);
     });
-    if (b.access) {
-      $('o-access').href = '/' + b.access;
-      $('o-access').hidden = false;
-    }
+    var links = b.links || (b.access ? [{ href: b.access, label: 'Open it now' }] : []);
+    links.forEach(function (l) {
+      var a = document.createElement('a');
+      a.className = 'btn'; a.href = '/' + l.href; a.textContent = l.label;
+      $('o-links').appendChild(a);
+    });
     document.title = b.name + ' | Your Order | Lunara Society';
     show('paid');
   }).catch(function () {

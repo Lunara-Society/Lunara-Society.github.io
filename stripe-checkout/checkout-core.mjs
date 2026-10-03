@@ -26,6 +26,54 @@
 
 import { CATALOG } from './catalog.mjs';
 
+/* ── The owner's private package ──────────────────────────────────────
+   Everything Lunara Society does, for one business, at $1: the owner's
+   live payment test, and how the owner's own businesses are certified.
+   It is not in lunara-pricing.js, so no page lists it and the public
+   catalogue cannot sell it. /checkout sells it only to a request that
+   carries a lunara-auth session whose email is an owner's (checked by
+   lunara-auth, which verifies the session's signature), and Stripe's
+   page is locked to that email. Anyone else is told the product does
+   not exist, in the same words as any unknown product. */
+export const OWNER_ONLY = {
+  owner_complete: {
+    name: 'Lunara Society Complete (owner)',
+    cents: 100,
+    terms: 'Owner only. Every Lunara Society service, for one business.',
+    delivery: [
+      'The Compliance Kit and the Compliance Intelligence Report open at once: use the buttons on the confirmation page.',
+      'Shield Verification and AI Entity Verification: within 24 hours, your verification reference and the DNS record that proves you control the domain; register entries go live when review passes.',
+      'Vendor Certification for up to three systems, the Article 50 Evidence Pack and Disclosure Pack, and a governance session: scheduled within one working day.',
+      'Regulatory Watch for twelve months: we write whenever something that binds the business changes, and only then.',
+      'Nothing renews or is charged automatically.'
+    ],
+    access: [
+      ['kit-access.html', 'Open the Compliance Kit'],
+      ['compliance-report-access.html', 'Open the Compliance Intelligence Report']
+    ],
+    ask: ['website', 'legal', 'system'],
+    defaults: { website: 'https://yavaya.lat' }
+  }
+};
+
+/* The catalogue entry for a product: the public one, or the owner's. */
+export const productFor = (id) =>
+  Object.prototype.hasOwnProperty.call(CATALOG, id) ? CATALOG[id]
+    : Object.prototype.hasOwnProperty.call(OWNER_ONLY, id) ? OWNER_ONLY[id] : null;
+
+export function isOwner(email, env) {
+  const list = String((env && env.LUNARA_OWNER_EMAILS) || 'lunarasociety@gmail.com')
+    .toLowerCase().split(/[,\s]+/).filter(Boolean);
+  return !!email && list.includes(String(email).toLowerCase());
+}
+
+/* Pages a paid order opens, as [{ href, label }]. */
+function accessLinks(p, ref) {
+  if (!p.access) return [];
+  const list = Array.isArray(p.access) ? p.access : [[p.access, 'Open it now']];
+  return list.map(([page, label]) => ({ href: `${page}?order=${ref}`, label }));
+}
+
 export const STRIPE_API = 'https://api.stripe.com';
 export const STRIPE_VERSION = '2026-08-26.dahlia';
 const SITE = 'https://lunarasociety.com/';
@@ -127,13 +175,14 @@ const ASK = {
   system:  { key: 'aisystem', label: 'AI system or product name', optional: true }
 };
 
-export async function createSession(stripe, productId, returnTo, order) {
-  const p = CATALOG[productId];
+export async function createSession(stripe, productId, returnTo, order, lockEmail) {
+  const p = productFor(productId);
   if (!p) return null;
   const how = p.delivery.join(' ');
   return stripe.post('/v1/checkout/sessions', {
     mode: 'payment',
     client_reference_id: order,
+    customer_email: lockEmail || undefined,
     line_items: [{
       quantity: 1,
       price_data: {
@@ -150,6 +199,7 @@ export async function createSession(stripe, productId, returnTo, order) {
       key: ASK[k].key,
       label: { type: 'custom', custom: ASK[k].label },
       type: 'text',
+      text: p.defaults && p.defaults[k] ? { default_value: p.defaults[k] } : undefined,
       optional: ASK[k].optional ? 'true' : 'false'
     })) : undefined,
     custom_text: { submit: { message: ('How you receive it: ' + how).slice(0, 1200) } },
@@ -164,7 +214,7 @@ export async function createSession(stripe, productId, returnTo, order) {
 /* Is this session a completed payment of exactly this product, at
    exactly the catalogue price? Anything else is not paid. */
 export function verdict(session, order) {
-  const p = CATALOG[order.product];
+  const p = productFor(order.product);
   if (!p || !session) return 'unknown';
   if (session.metadata?.order !== order.order_ref || session.metadata?.lunara_product !== order.product) return 'mismatch';
   if (session.payment_status !== 'paid') return session.status === 'expired' ? 'expired' : 'unpaid';
@@ -283,8 +333,9 @@ export async function handleCheckout(req, deps) {
     if (!order) return json({ error: 'Not found.' }, 404);
     const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
     const status = await settle(order, session, deps.db);
-    const p = CATALOG[order.product];
+    const p = productFor(order.product);
     const paid = status === 'paid';
+    const links = paid ? accessLinks(p, ref) : [];
     return json({
       ref,
       status,
@@ -295,7 +346,8 @@ export async function handleCheckout(req, deps) {
       currency: 'usd',
       terms: p.terms,
       delivery: p.delivery,
-      access: paid && p.access ? `${p.access}?order=${ref}` : null,
+      access: links.length ? links[0].href : null,
+      links,
       email: paid ? mask(session.customer_details?.email) : null
     });
   }
@@ -341,18 +393,24 @@ export async function handleCheckout(req, deps) {
     let body;
     try { body = await req.json(); } catch { return json({ error: 'Send JSON.' }, 400); }
     const product = typeof body.product === 'string' ? body.product : '';
-    if (!Object.prototype.hasOwnProperty.call(CATALOG, product)) {
-      return json({ error: 'That product cannot be bought here.' }, 400);
+    const refuse = () => json({ error: 'That product cannot be bought here.' }, 400);
+    let lockEmail = null;
+    if (Object.prototype.hasOwnProperty.call(OWNER_ONLY, product)) {
+      const who = deps.whoIs ? await deps.whoIs(body.session_token) : null;
+      if (!who || !isOwner(who.email, deps.env)) return refuse();
+      lockEmail = String(who.email).toLowerCase();
+    } else if (!Object.prototype.hasOwnProperty.call(CATALOG, product)) {
+      return refuse();
     }
     const order = newOrderRef();
-    const session = await createSession(deps.stripe, product, body.return_to, order);
+    const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail);
     // Recorded before the buyer leaves, so a payment can never arrive for
     // an order this side has not heard of. If this fails, no checkout.
     await deps.db.createOrder({
       order_ref: order,
       session_id: session.id,
       product,
-      amount_total: CATALOG[product].cents,
+      amount_total: productFor(product).cents,
       currency: 'usd',
       status: 'open',
       livemode: !!session.livemode

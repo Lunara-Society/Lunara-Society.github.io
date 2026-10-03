@@ -84,8 +84,16 @@
      a balance and is payable exactly once — thirteen invoice URLs on
      thirteen buy buttons would sell each product once and show the
      next customer somebody else's receipt. So the link stays, and
-     this sits underneath it for the people it fails. */
+     this sits underneath it for the people it fails.
+
+     The invoice is raised by Stripe, not by hand: the form below asks
+     lunara-invoice (stripe-invoicing/) for one, and the buyer is sent
+     to Stripe's hosted invoice page, which takes cards and wallets with
+     the payer's own country. Each request makes a fresh invoice for that
+     buyer, so the objection above does not apply to it. If the function
+     cannot be reached, the prefilled email below is still offered. */
   var INVOICE_TO = 'lunarasociety@gmail.com';
+  var INVOICE_API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-invoice/request';
 
   /* Grouped roughly by who the product is for rather than strictly by
      price, since tier is what pages actually filter on. Do not trust
@@ -409,6 +417,113 @@
       '&body=' + encodeURIComponent(body);
   }
 
+  /* Products the website may invoice. lunara-invoice enforces the same
+     rule from Stripe's product metadata; this only decides which form
+     to offer. Invitational products are sent to accepted people, and
+     Lens plans are paid in the app so the credits reach the account. */
+  function invoiceable(p) {
+    return !p.invitational && p.id.indexOf('lens') !== 0;
+  }
+
+  var dialog = null;
+
+  function countryOptions() {
+    var names = null;
+    try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) {}
+    var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', list = [];
+    for (var i = 0; i < 26; i++) for (var j = 0; j < 26; j++) {
+      var code = A[i] + A[j], name = names ? names.of(code) : code;
+      if (names && (!name || name === code || /unknown/i.test(name))) continue;
+      list.push([code, name]);
+    }
+    list.sort(function (a, b) { return a[1].localeCompare(b[1]); });
+    return '<option value="">Choose…</option>' + list.map(function (c) {
+      return '<option value="' + c[0] + '">' + c[1].replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</option>';
+    }).join('');
+  }
+
+  function openInvoiceForm(p) {
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.className = 'lx-invoice-dialog';
+      dialog.setAttribute('aria-labelledby', 'lx-inv-title');
+      dialog.style.cssText =
+        'max-width:440px;width:calc(100% - 32px);padding:28px;border:1px solid rgba(201,168,76,.35);' +
+        'border-radius:12px;background:#0d0d14;color:#ece8de;font-family:inherit;font-size:15px;line-height:1.5;';
+      var field = 'display:block;width:100%;box-sizing:border-box;margin:4px 0 14px;padding:10px 12px;' +
+        'border:1px solid rgba(236,232,222,.25);border-radius:8px;background:#15151f;color:inherit;font:inherit;';
+      dialog.innerHTML =
+        '<form method="dialog" novalidate>' +
+        '<h2 id="lx-inv-title" style="margin:0 0 4px;font-size:20px;font-weight:400"></h2>' +
+        '<p class="lx-inv-amount" style="margin:0 0 18px;opacity:.75"></p>' +
+        '<label>Email<input name="email" type="email" autocomplete="email" required style="' + field + '"></label>' +
+        '<label>Name or business on the invoice<input name="name" autocomplete="organization" required style="' + field + '"></label>' +
+        '<label>Billing country<select name="country" required style="' + field + '">' + countryOptions() + '</select></label>' +
+        '<label>VAT or company number <span style="opacity:.6">(optional)</span><input name="tax_id" style="' + field + '"></label>' +
+        '<input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">' +
+        '<p class="lx-inv-error" role="alert" style="color:#f0a3a3;min-height:1.5em;margin:0 0 10px"></p>' +
+        '<div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">' +
+        '<button type="button" value="cancel" class="lx-inv-cancel" style="padding:10px 16px;border-radius:8px;border:1px solid rgba(236,232,222,.3);background:none;color:inherit;font:inherit;cursor:pointer">Cancel</button>' +
+        '<button type="submit" class="lx-inv-go" style="padding:10px 18px;border-radius:8px;border:0;background:#c9a84c;color:#0d0d14;font:inherit;cursor:pointer">Continue to invoice</button>' +
+        '</div>' +
+        '<p style="margin:16px 0 0;font-size:12px;opacity:.6">Payment is taken by Stripe on its hosted invoice page. ' +
+        'Card or wallet, from any country. <a class="lx-inv-mail" style="color:inherit">Prefer email?</a></p>' +
+        '</form>';
+      document.body.appendChild(dialog);
+      dialog.querySelector('.lx-inv-cancel').addEventListener('click', function () { dialog.close(); });
+      dialog.querySelector('form').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        submitInvoice(dialog._product);
+      });
+    }
+    dialog._product = p;
+    dialog.querySelector('#lx-inv-title').textContent = p.name;
+    dialog.querySelector('.lx-inv-amount').textContent = money(p.price) + ' USD · ' + p.terms;
+    dialog.querySelector('.lx-inv-error').textContent = '';
+    dialog.querySelector('.lx-inv-mail').setAttribute('href', invoiceHref(p));
+    var go = dialog.querySelector('.lx-inv-go');
+    go.disabled = false; go.textContent = 'Continue to invoice';
+    if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
+    dialog.querySelector('input[name=email]').focus();
+  }
+
+  function submitInvoice(p) {
+    var f = dialog.querySelector('form');
+    var err = dialog.querySelector('.lx-inv-error');
+    var go = dialog.querySelector('.lx-inv-go');
+    var data = {
+      product: p.id,
+      email: f.email.value.trim(),
+      name: f.name.value.trim(),
+      country: f.country.value,
+      tax_id: f.tax_id.value.trim(),
+      website: f.website.value
+    };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { err.textContent = 'Enter a valid email address.'; return; }
+    if (data.name.length < 2) { err.textContent = 'Enter the name to put on the invoice.'; return; }
+    if (!data.country) { err.textContent = 'Choose a country.'; return; }
+    err.textContent = '';
+    go.disabled = true; go.textContent = 'Preparing invoice…';
+    fetch(INVOICE_API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      return r.json().then(function (body) { return { ok: r.ok, body: body }; });
+    }).then(function (res) {
+      if (res.ok && res.body.url && res.body.url.indexOf('https://invoice.stripe.com/') === 0) {
+        go.textContent = 'Opening invoice…';
+        window.location.href = res.body.url;
+        return;
+      }
+      throw new Error(res.body && res.body.error);
+    }).catch(function (e) {
+      go.disabled = false; go.textContent = 'Continue to invoice';
+      err.textContent = e && e.message && e.message !== 'Failed to fetch' ? e.message
+        : 'The invoice could not be prepared. You can also request one by email.';
+    });
+  }
+
   function fill() {
     var slots = {
       'data-lx-price': function (p) { return String(p.price); },
@@ -452,6 +567,16 @@
       alt.className = 'lx-invoice';
       alt.setAttribute('href', invoiceHref(prod));
       alt.textContent = 'Card declined your country? Request an invoice →';
+      if (invoiceable(prod)) {
+        alt.textContent = 'Pay by invoice instead (any country) →';
+        alt.addEventListener('click', (function (p) {
+          return function (ev) {
+            if (typeof window.fetch !== 'function') return; // the email still works
+            ev.preventDefault();
+            openInvoiceForm(p);
+          };
+        })(prod));
+      }
       alt.style.cssText =
         'display:block;margin-top:10px;font-size:12px;line-height:1.5;' +
         'opacity:.72;text-decoration:underline;text-underline-offset:2px;';
@@ -467,6 +592,9 @@
       money: money,
       url: function (id) { var p = byId(id); return p ? LINK + p.link : null; },
       invoiceUrl: function (id) { var p = byId(id); return p ? invoiceHref(p) : null; },
+      /* Opens the Stripe invoice form for a product, for a page that
+         places its own control rather than using data-lx-buy. */
+      requestInvoice: function (id) { var p = byId(id); if (p && invoiceable(p)) openInvoiceForm(p); },
       /* fill() runs once, at boot. A page that writes price slots into
          the DOM afterwards — the scorer builds its recommendations from
          the result — would otherwise render them empty, which is how a

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>AI Passport League: How AI Companies Score on Security | Lunara Society</title>
+<meta name="description" content="127 AI labs, agent platforms and AI apps, rescanned every week on thirteen public security signals and ranked. Live data, nothing estimated, every row checkable.">
+<link rel="canonical" href="https://lunarasociety.com/league.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/league.html">
+<meta property="og:title" content="The AI Passport League">
+<meta property="og:description" content="How 127 AI companies score on thirteen public security signals, rescanned every week.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The AI Passport League">
+<meta name="twitter:description" content="127 AI companies, thirteen public security signals, rescanned every week.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-shell.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "AI Passport League",
+  "url": "https://lunarasociety.com/league.html",
+  "description": "Weekly scans of AI companies' public security signals (HTTPS headers, DNSSEC, SPF, DMARC, CAA, llms.txt, AI crawler policy, security.txt), scored out of 100 by Lunara Passport Control.",
+  "isAccessibleForFree": true,
+  "creator": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+  "distribution": [{ "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportLeague" }],
+  "variableMeasured": "Passport score (0-100) and grade"
+}
+</script>
+<style>
+:root{--lg-ink:#F4F0E8;--lg-body:#CDD1D9;--lg-mute:#9AA0AB;--lg-gold:#E2C47A;--lg-ok:#7FE0B0;--lg-warn:#F2C46B;--lg-bad:#FF8A7A;--lg-hair:rgba(214,222,234,.12)}
+.lg-head{padding-top:clamp(120px,14vh,160px)}
+.lg-head h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:80px;line-height:.98;color:var(--lg-ink);margin-top:14px}
+.lg-head h1 em{color:var(--lg-gold)}
+.lg-head .lede{font-size:19px;line-height:1.6;color:var(--lg-body);max-width:40em;margin-top:20px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.stat{padding:22px 24px;border:1px solid var(--lg-hair);border-radius:16px;background:rgba(13,15,21,.8)}
+.stat b{display:block;font:400 52px/1 "Cormorant Garamond",serif;color:var(--lg-ink)}
+.stat span{display:block;margin-top:8px;font:11px "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--lg-mute)}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:40px;align-items:end}
+.pod{border:1px solid var(--lg-hair);border-radius:18px;padding:24px;background:linear-gradient(180deg,rgba(226,196,122,.08),rgba(13,15,21,.85));text-decoration:none;color:inherit;display:block;transition:transform .2s,border-color .2s}
+.pod:hover{transform:translateY(-3px);border-color:rgba(226,196,122,.45)}
+.pod.p1{padding-top:44px;border-color:rgba(226,196,122,.4)}
+.pod .pl{font:11px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--lg-gold)}
+.pod .pn{font:400 30px/1.1 "Cormorant Garamond",serif;color:var(--lg-ink);margin-top:10px}
+.pod .pd{font:12.5px "IBM Plex Mono",monospace;color:var(--lg-mute)}
+.pod .ps{font:600 16px Inter,sans-serif;margin-top:14px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:46px}
+.tools input{flex:1;min-width:260px;background:#07090d;border:1px solid var(--lg-hair);border-radius:999px;padding:12px 20px;color:var(--lg-ink);font:15px "IBM Plex Mono",monospace;outline:0}
+.tools input:focus{border-color:var(--lg-gold)}
+.chip{background:rgba(255,255,255,.03);border:1px solid var(--lg-hair);color:var(--lg-body);border-radius:999px;padding:8px 15px;font:13px Inter,sans-serif;cursor:pointer}
+.chip.on,.chip:hover{border-color:var(--lg-gold);color:var(--lg-gold)}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th{font:10.5px "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--lg-mute);text-align:left;padding:10px 12px;border-bottom:1px solid var(--lg-hair);cursor:pointer;white-space:nowrap}
+td{padding:13px 12px;border-bottom:1px solid rgba(214,222,234,.06);font-size:15px;color:var(--lg-body);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:rgba(226,196,122,.05)}
+.rk{font:13px "IBM Plex Mono",monospace;color:var(--lg-mute);width:44px}
+.nm b{display:block;color:var(--lg-ink);font-weight:500}
+.nm small{font:12px "IBM Plex Mono",monospace;color:var(--lg-mute)}
+.cat{font-size:13px;color:var(--lg-mute)}
+.gr{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;font:700 14px Inter,sans-serif;border:2px solid currentColor}
+.bar{width:180px;height:8px;border-radius:99px;background:rgba(214,222,234,.08);overflow:hidden;display:inline-block;vertical-align:middle;margin-right:10px}
+.bar i{display:block;height:100%;border-radius:99px;transform-origin:left;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleX(0)}}
+.sc{font:500 15px "IBM Plex Mono",monospace;color:var(--lg-ink)}
+.dl{font:12.5px "IBM Plex Mono",monospace}
+.up{color:var(--lg-ok)}.down{color:var(--lg-bad)}.flat{color:var(--lg-mute)}
+.visa{font:11px "IBM Plex Mono",monospace;letter-spacing:.08em}
+.note{font-size:14px;color:var(--lg-mute);margin-top:18px;line-height:1.6}
+.empty{padding:40px;text-align:center;color:var(--lg-mute)}
+@media (prefers-reduced-motion:reduce){.bar i{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <header class="wrap lg-head">
+    <p class="kicker">The AI Passport League · rescanned every week</p>
+    <h1>How the AI industry<br><em>guards its own door.</em></h1>
+    <p class="lede">Every week Lunara Passport Control rescans the labs, agent platforms and AI apps below on thirteen public security signals. Click any row for the full passport: what passed, what failed, and the fix.</p>
+    <div class="stats">
+      <div class="stat"><b id="lg-n">…</b><span id="lg-n-k">Companies scanned</span></div>
+      <div class="stat"><b id="lg-avg">…</b><span>Average score</span></div>
+      <div class="stat"><b id="lg-a">…</b><span>Grade A or A+</span></div>
+      <div class="stat"><b id="lg-dmarc">…</b><span>Reject spoofed email</span></div>
+    </div>
+    <div class="podium" id="lg-podium" aria-label="Top three"></div>
+  </header>
+
+  <section class="wrap" aria-label="The table">
+    <div class="tools">
+      <input id="lg-q" type="search" placeholder="Find a company or domain" aria-label="Filter">
+      <div id="lg-cats"></div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Company</th><th>Category</th><th>Grade</th><th>Score</th><th title="Since the previous weekly rescan">Week</th><th>Register</th></tr></thead>
+      <tbody id="lg-rows"><tr><td colspan="7" class="empty">Reading the league…</td></tr></tbody>
+    </table>
+    <p class="note">The score reads only public signals, which anyone can verify for themselves, and says nothing about who runs a domain or how safe its products are. "Register" is the Lunara register: only a named human review sets it. The list of companies is <a class="inline" href="/league/domains.json">published</a>; the data is open at <code>GET lunara-registry/passportLeague</code>. A company that wants a row corrected can rescan itself on the <a class="inline" href="/passport.html">passport page</a> at any time.</p>
+    <div class="doors">
+      <a class="door solid" href="/passport.html">Scan your own domain</a>
+      <a class="door line" href="/shield.html">Get the register's stamp</a>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportLeague';
+  var COLOR = function (g) { return g === 'A+' || g === 'A' ? '#7FE0B0' : g === 'B' ? '#E2C47A' : g === 'C' ? '#F2C46B' : '#FF8A7A'; };
+  var $ = function (id) { return document.getElementById(id); };
+  var all = [], cat = 'All', q = '';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function go(d) { location.href = '/passport.html?d=' + encodeURIComponent(d); }
+
+  function rows() {
+    var list = all.filter(function (e) {
+      return (cat === 'All' || e.category === cat) && (!q || (e.name + ' ' + e.domain).toLowerCase().indexOf(q) >= 0);
+    });
+    if (!list.length) { $('lg-rows').innerHTML = '<tr><td colspan="7" class="empty">Nothing matches.</td></tr>'; return; }
+    $('lg-rows').innerHTML = list.map(function (e) {
+      var d = e.prev_score == null ? null : e.score - e.prev_score;
+      var dl = d == null ? '<span class="flat">new</span>' : d > 0 ? '<span class="up">▲ ' + d + '</span>' : d < 0 ? '<span class="down">▼ ' + (-d) + '</span>' : '<span class="flat">—</span>';
+      var c = COLOR(e.grade);
+      return '<tr data-d="' + esc(e.domain) + '"><td class="rk">' + e.rank + '</td>'
+        + '<td class="nm"><b>' + esc(e.name) + '</b><small>' + esc(e.domain) + '</small></td>'
+        + '<td class="cat">' + esc(e.category || '') + '</td>'
+        + '<td><span class="gr" style="color:' + c + '">' + esc(e.grade) + '</span></td>'
+        + '<td><span class="bar"><i style="width:' + e.score + '%;background:' + c + '"></i></span><span class="sc">' + e.score + '</span></td>'
+        + '<td class="dl">' + dl + '</td>'
+        + '<td class="visa" style="color:' + (e.visa === 'verified' ? '#7FE0B0' : '#9AA0AB') + '">' + esc(e.visa.replace('_', ' ')) + '</td></tr>';
+    }).join('');
+  }
+
+  $('lg-rows').addEventListener('click', function (ev) { var tr = ev.target.closest('tr[data-d]'); if (tr) go(tr.getAttribute('data-d')); });
+  $('lg-q').addEventListener('input', function () { q = this.value.trim().toLowerCase(); rows(); });
+
+  fetch(API).then(function (r) { return r.json(); }).then(function (j) {
+    all = (j.entries || []).map(function (e, i) { e.rank = i + 1; return e; });
+    var n = all.length;
+    $('lg-n').textContent = n;
+    $('lg-n-k').textContent = n < j.listed ? 'of ' + j.listed + ' scanned so far' : 'Companies scanned';
+    $('lg-avg').textContent = n ? Math.round(all.reduce(function (s, e) { return s + e.score; }, 0) / n) : '—';
+    $('lg-a').textContent = n ? all.filter(function (e) { return e.grade === 'A' || e.grade === 'A+'; }).length : '—';
+    $('lg-dmarc').textContent = n ? Math.round(100 * all.filter(function (e) { return e.passed.indexOf('dmarc') >= 0; }).length / n) + '%' : '—';
+    $('lg-podium').innerHTML = all.slice(0, 3).map(function (e, i) {
+      return '<a class="pod p' + (i + 1) + '" href="/passport.html?d=' + encodeURIComponent(e.domain) + '"><div class="pl">No. ' + (i + 1) + '</div><div class="pn">' + esc(e.name) + '</div><div class="pd">' + esc(e.domain) + '</div><div class="ps" style="color:' + COLOR(e.grade) + '">' + esc(e.grade) + ' · ' + e.score + '/100</div></a>';
+    }).join('');
+    var podium = $('lg-podium').children;
+    if (podium.length === 3) $('lg-podium').insertBefore(podium[1], podium[0]); // 2 · 1 · 3
+    var cats = ['All'].concat(all.map(function (e) { return e.category; }).filter(function (c, i, a) { return c && a.indexOf(c) === i; }));
+    $('lg-cats').innerHTML = cats.map(function (c) { return '<button class="chip' + (c === cat ? ' on' : '') + '" type="button">' + esc(c) + '</button>'; }).join(' ');
+    Array.prototype.forEach.call($('lg-cats').children, function (b) { b.addEventListener('click', function () { cat = b.textContent; Array.prototype.forEach.call($('lg-cats').children, function (x) { x.classList.toggle('on', x === b); }); rows(); }); });
+    rows();
+  }).catch(function () {
+    $('lg-rows').innerHTML = '<tr><td colspan="7" class="empty">The league could not be read just now. Nothing is shown rather than a guess.</td></tr>';
+    ['lg-n', 'lg-avg', 'lg-a', 'lg-dmarc'].forEach(function (id) { $(id).textContent = '—'; });
+  });
+})();
+</script>
+</body>
+</html>

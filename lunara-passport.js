@@ -152,8 +152,55 @@
       $('pp-cta').textContent = 'Apply for Shield'; $('pp-cta').href = '/shield.html';
     }
     $('pp-call').textContent = 'curl -X POST ' + API + ' \\\n  -H "content-type: application/json" \\\n  -d \'{"domain":"' + domain + '"}\'';
+    badge(domain, d);
     $('pp-after').classList.add('on');
   }
+
+  var BADGE = ['A+', 'A', 'B'];
+  function badge(domain, d) {
+    var ok = BADGE.indexOf(d.grade) >= 0, box = $('pp-badge-preview');
+    box.innerHTML = '';
+    $('pp-badge-code').hidden = $('pp-badge-btns').hidden = !ok;
+    if (!ok) {
+      $('pp-badge-h').innerHTML = 'The badge unlocks <em>at B</em>';
+      $('pp-badge-p').textContent = domain + ' needs ' + (65 - d.score) + ' more points for the free Lunara Passport badge. The list on the left is the way there.';
+      return;
+    }
+    $('pp-badge-h').innerHTML = 'Earned: the <em>free badge</em>';
+    $('pp-badge-p').textContent = 'Put this on ' + domain + '. It shows the live grade, links to this passport, and hides itself if the grade ever drops below B.';
+    var el = document.createElement('div');
+    el.__lunaraPreview = d;
+    box.appendChild(el);
+    if (window.LunaraPassportBadge) window.LunaraPassportBadge.render(el, d);
+    $('pp-badge-code').textContent = '<div data-lunara-passport></div>\n<script src="https://lunarasociety.com/passport-badge.js" async></script>';
+  }
+  $('pp-badge-copy').addEventListener('click', function () {
+    var b = this;
+    (navigator.clipboard ? navigator.clipboard.writeText($('pp-badge-code').textContent) : Promise.reject()).then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy badge code'; }, 1800); }, function () {});
+  });
+
+  $('pp-watch').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var out = $('pp-watch-out'), domain = $('pp-name').textContent;
+    out.className = 'watch-out'; out.textContent = 'Sending…';
+    fetch(API.replace('passportScan', 'passportWatch'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain: domain, email: $('pp-watch-email').value }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.success) out.className = 'watch-out err'; out.textContent = j.message || j.error; })
+      .catch(function () { out.className = 'watch-out err'; out.textContent = 'Could not reach the server. Try again.'; });
+  });
+
+  /* A link from an alert email: confirm the watch, or stop it. */
+  (function () {
+    var q = new URLSearchParams(location.search), token = q.get('watch');
+    if (!token) return;
+    var banner = $('pp-banner');
+    banner.hidden = false; banner.textContent = 'One moment…';
+    $('pp-wrap').parentNode.insertBefore(banner, $('pp-wrap'));
+    fetch(API.replace('passportScan', 'passportWatchSet'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: token, action: q.get('stop') ? 'stop' : 'confirm' }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { banner.textContent = j.message || j.error; if (j.success && j.watching && !q.get('d')) scan(j.domain); })
+      .catch(function () { banner.textContent = 'Could not reach the server. Open the link again in a moment.'; });
+  })();
 
   function scan(raw) {
     if (busy) return;

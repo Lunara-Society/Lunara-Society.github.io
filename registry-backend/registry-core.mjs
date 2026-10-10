@@ -39,10 +39,9 @@
    tables, mail, DNS and the model. The tests run this same file.
    ═══════════════════════════════════════════════════════════════════ */
 
-import { passportScan } from './passport.mjs';
+import { passportRoute } from './passport-routes.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
-const PASSPORT_LIMIT_HOUR = 30;
 export const FOUNDING_CAP = 80;
 // The Shield price in lunara-pricing.js; the test suite fails if they part.
 export const SHIELD_PRICE = 75;
@@ -344,15 +343,9 @@ export async function handleRegistry(req, deps) {
       return json({ success: true, cap: FOUNDING_CAP, used, remaining: FOUNDING_CAP - used, sold_out: used >= FOUNDING_CAP, current_price: SHIELD_PRICE });
     }
 
-    case 'passportScan': {
-      const domain = normDomain(body.domain);
-      if (!domain) return json({ success: false, error: 'Send a domain, for example example.com.' }, 400);
-      if (!deps.resolve || !deps.fetchPage) return json({ success: false, error: 'Scanning is not available here.' }, 503);
-      if (await limited('passport', ipHash, PASSPORT_LIMIT_HOUR, deps)) {
-        return json({ success: false, error: `That is ${PASSPORT_LIMIT_HOUR} scans in an hour from here. Try again later.` }, 429);
-      }
-      return json(await passportScan(domain, deps));
-    }
+    case 'passportScan': case 'passportBadge': case 'passportLeague': case 'passportTick':
+    case 'passportWatch': case 'passportWatchSet':
+      return passportRoute(name, body, deps, ipHash, { json, normDomain, limited, send, mailHtml, randomToken });
 
     case 'shieldApply': return apply(body, deps, ipHash);
     case 'shieldVerifyDomain': return verifyDomain(body, deps);
@@ -434,8 +427,8 @@ export async function handleRegistry(req, deps) {
 
 const ownerEmail = (env) => String((env && env.LUNARA_OWNER_EMAILS) || 'lunarasociety@gmail.com').split(/[,\s]+/)[0];
 
-async function limited(kind, ipHash, perHour, deps) {
-  const n = await deps.db.countHits(kind, ipHash, new Date(deps.now() - 3600e3).toISOString());
+async function limited(kind, ipHash, perHour, deps, window = 3600e3) {
+  const n = await deps.db.countHits(kind, ipHash, new Date(deps.now() - window).toISOString());
   if (n >= perHour) return true;
   await deps.db.hit(kind, ipHash, new Date(deps.now()).toISOString());
   return false;

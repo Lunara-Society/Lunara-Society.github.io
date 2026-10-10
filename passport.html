@@ -145,6 +145,14 @@
 .btn:hover{border-color:var(--pp-gold)}
 pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);border-radius:12px;padding:16px 18px;font:12.5px/1.6 "IBM Plex Mono",monospace;color:#BFD8CB;white-space:pre-wrap;word-break:break-all}
 
+/* badge, watch, banner */
+.badge-preview{margin-top:16px;min-height:58px}
+.watch{display:flex;gap:10px;margin-top:16px}
+.watch input{flex:1;min-width:0;background:#07090d;border:1px solid var(--pp-hair);border-radius:999px;padding:12px 18px;color:var(--pp-ink);font:15px Inter,sans-serif;outline:0}
+.watch input:focus{border-color:var(--pp-gold)}
+.watch-out{font-size:14px;color:var(--pp-ok);min-height:20px;margin-top:10px}
+.banner{max-width:1040px;margin:26px auto 0;padding:16px 22px;border-radius:12px;border:1px solid rgba(127,224,176,.35);background:rgba(127,224,176,.07);color:var(--pp-ink);font-size:15.5px}
+.league-link{text-align:center;margin-top:30px;font-size:16px}
 /* the three ideas, drawn */
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
 .how .card{text-align:left}
@@ -237,7 +245,25 @@ pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);bord
         <pre class="call" id="pp-call"></pre>
         <p style="font-size:13px;color:var(--pp-mute);margin-top:10px">That call is the whole API: any AI system can run this scan before it trusts or pays a site.</p>
       </div>
+      <div class="card" id="pp-badge-card">
+        <h2 id="pp-badge-h">The free <em>badge</em></h2>
+        <p id="pp-badge-p"></p>
+        <div id="pp-badge-preview" class="badge-preview"></div>
+        <pre class="call" id="pp-badge-code" hidden></pre>
+        <div class="btns" id="pp-badge-btns" hidden><button class="btn" id="pp-badge-copy" type="button">Copy badge code</button></div>
+      </div>
+      <div class="card">
+        <h2>Watch <em>this passport</em></h2>
+        <p>We rescan every week. Leave an email and we tell you the day something here gets worse: a certificate rule removed, email protection switched off, a grade lost.</p>
+        <form class="watch" id="pp-watch" autocomplete="on">
+          <input id="pp-watch-email" type="email" placeholder="you@company.com" aria-label="Email for alerts" required>
+          <button class="btn gold" type="submit">Watch</button>
+        </form>
+        <p class="watch-out" id="pp-watch-out" aria-live="polite"></p>
+      </div>
     </div>
+    <p class="banner" id="pp-banner" hidden></p>
+    <p class="league-link"><a class="inline" href="/league.html">See how 127 AI companies score in the weekly league table &rarr;</a></p>
   </div>
 
   <section class="wrap">
@@ -265,6 +291,7 @@ pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);bord
 </main>
 
 <script src="lunara-shell.js" defer></script>
+<script src="passport-badge.js" defer></script>
 <script src="lunara-passport.js" defer></script>
 </body>
 </html>

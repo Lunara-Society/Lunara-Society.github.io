@@ -1,0 +1,641 @@
+{
+ "about": "The domains Lunara Passport Control rescans every week for the public league table at https://lunarasociety.com/league.html. Each is scanned for public signals only (score) and read against the register (visa). To add or remove a company, change this file.",
+ "updated": "2026-10-10",
+ "domains": [
+  {
+   "domain": "anthropic.com",
+   "name": "Anthropic",
+   "category": "Model labs"
+  },
+  {
+   "domain": "openai.com",
+   "name": "OpenAI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "deepmind.google",
+   "name": "Google DeepMind",
+   "category": "Model labs"
+  },
+  {
+   "domain": "mistral.ai",
+   "name": "Mistral AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "cohere.com",
+   "name": "Cohere",
+   "category": "Model labs"
+  },
+  {
+   "domain": "x.ai",
+   "name": "xAI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "ai.meta.com",
+   "name": "Meta AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "ai21.com",
+   "name": "AI21 Labs",
+   "category": "Model labs"
+  },
+  {
+   "domain": "deepseek.com",
+   "name": "DeepSeek",
+   "category": "Model labs"
+  },
+  {
+   "domain": "qwenlm.ai",
+   "name": "Qwen",
+   "category": "Model labs"
+  },
+  {
+   "domain": "moonshot.ai",
+   "name": "Moonshot AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "reka.ai",
+   "name": "Reka",
+   "category": "Model labs"
+  },
+  {
+   "domain": "inflection.ai",
+   "name": "Inflection AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "aleph-alpha.com",
+   "name": "Aleph Alpha",
+   "category": "Model labs"
+  },
+  {
+   "domain": "01.ai",
+   "name": "01.AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "zhipuai.cn",
+   "name": "Zhipu AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "nousresearch.com",
+   "name": "Nous Research",
+   "category": "Model labs"
+  },
+  {
+   "domain": "allenai.org",
+   "name": "Allen Institute for AI",
+   "category": "Model labs"
+  },
+  {
+   "domain": "ssi.inc",
+   "name": "Safe Superintelligence",
+   "category": "Model labs"
+  },
+  {
+   "domain": "thinkingmachines.ai",
+   "name": "Thinking Machines Lab",
+   "category": "Model labs"
+  },
+  {
+   "domain": "chatgpt.com",
+   "name": "ChatGPT",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "claude.ai",
+   "name": "Claude",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "gemini.google.com",
+   "name": "Gemini",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "copilot.microsoft.com",
+   "name": "Microsoft Copilot",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "perplexity.ai",
+   "name": "Perplexity",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "character.ai",
+   "name": "Character.AI",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "poe.com",
+   "name": "Poe",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "you.com",
+   "name": "You.com",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "pi.ai",
+   "name": "Pi",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "grok.com",
+   "name": "Grok",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "chat.mistral.ai",
+   "name": "Le Chat",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "phind.com",
+   "name": "Phind",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "jasper.ai",
+   "name": "Jasper",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "writer.com",
+   "name": "Writer",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "grammarly.com",
+   "name": "Grammarly",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "notion.so",
+   "name": "Notion",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "otter.ai",
+   "name": "Otter.ai",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "fireflies.ai",
+   "name": "Fireflies.ai",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "tome.app",
+   "name": "Tome",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "gamma.app",
+   "name": "Gamma",
+   "category": "Assistants and AI apps"
+  },
+  {
+   "domain": "manus.im",
+   "name": "Manus",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "lindy.ai",
+   "name": "Lindy",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "relevanceai.com",
+   "name": "Relevance AI",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "crewai.com",
+   "name": "CrewAI",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "langchain.com",
+   "name": "LangChain",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "llamaindex.ai",
+   "name": "LlamaIndex",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "dust.tt",
+   "name": "Dust",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "adept.ai",
+   "name": "Adept",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "multion.ai",
+   "name": "MultiOn",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "induced.ai",
+   "name": "Induced AI",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "browserbase.com",
+   "name": "Browserbase",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "browser-use.com",
+   "name": "Browser Use",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "e2b.dev",
+   "name": "E2B",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "composio.dev",
+   "name": "Composio",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "zapier.com",
+   "name": "Zapier",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "n8n.io",
+   "name": "n8n",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "make.com",
+   "name": "Make",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "sierra.ai",
+   "name": "Sierra",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "decagon.ai",
+   "name": "Decagon",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "lovable.dev",
+   "name": "Lovable",
+   "category": "Agent platforms"
+  },
+  {
+   "domain": "cursor.com",
+   "name": "Cursor",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "github.com",
+   "name": "GitHub Copilot",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "windsurf.com",
+   "name": "Windsurf",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "cognition.ai",
+   "name": "Cognition (Devin)",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "replit.com",
+   "name": "Replit",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "bolt.new",
+   "name": "Bolt",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "v0.app",
+   "name": "v0",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "sourcegraph.com",
+   "name": "Sourcegraph",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "tabnine.com",
+   "name": "Tabnine",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "codeium.com",
+   "name": "Codeium",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "augmentcode.com",
+   "name": "Augment Code",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "poolside.ai",
+   "name": "Poolside",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "factory.ai",
+   "name": "Factory",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "aider.chat",
+   "name": "Aider",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "continue.dev",
+   "name": "Continue",
+   "category": "Coding agents"
+  },
+  {
+   "domain": "huggingface.co",
+   "name": "Hugging Face",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "together.ai",
+   "name": "Together AI",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "fireworks.ai",
+   "name": "Fireworks AI",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "groq.com",
+   "name": "Groq",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "replicate.com",
+   "name": "Replicate",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "modal.com",
+   "name": "Modal",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "openrouter.ai",
+   "name": "OpenRouter",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "anyscale.com",
+   "name": "Anyscale",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "baseten.co",
+   "name": "Baseten",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "cerebras.ai",
+   "name": "Cerebras",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "lambda.ai",
+   "name": "Lambda",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "coreweave.com",
+   "name": "CoreWeave",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "nvidia.com",
+   "name": "NVIDIA",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "pinecone.io",
+   "name": "Pinecone",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "weaviate.io",
+   "name": "Weaviate",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "qdrant.tech",
+   "name": "Qdrant",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "wandb.ai",
+   "name": "Weights & Biases",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "scale.com",
+   "name": "Scale AI",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "databricks.com",
+   "name": "Databricks",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "vercel.com",
+   "name": "Vercel",
+   "category": "Infrastructure"
+  },
+  {
+   "domain": "midjourney.com",
+   "name": "Midjourney",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "stability.ai",
+   "name": "Stability AI",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "runwayml.com",
+   "name": "Runway",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "pika.art",
+   "name": "Pika",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "lumalabs.ai",
+   "name": "Luma AI",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "ideogram.ai",
+   "name": "Ideogram",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "leonardo.ai",
+   "name": "Leonardo.Ai",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "bfl.ai",
+   "name": "Black Forest Labs",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "elevenlabs.io",
+   "name": "ElevenLabs",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "suno.com",
+   "name": "Suno",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "udio.com",
+   "name": "Udio",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "synthesia.io",
+   "name": "Synthesia",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "heygen.com",
+   "name": "HeyGen",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "descript.com",
+   "name": "Descript",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "krea.ai",
+   "name": "Krea",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "higgsfield.ai",
+   "name": "Higgsfield",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "deepgram.com",
+   "name": "Deepgram",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "assemblyai.com",
+   "name": "AssemblyAI",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "hume.ai",
+   "name": "Hume AI",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "captions.ai",
+   "name": "Captions",
+   "category": "Image, video and voice"
+  },
+  {
+   "domain": "lunarasociety.com",
+   "name": "Lunara Society",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "credo.ai",
+   "name": "Credo AI",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "holisticai.com",
+   "name": "Holistic AI",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "arthur.ai",
+   "name": "Arthur",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "robustintelligence.com",
+   "name": "Robust Intelligence",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "lakera.ai",
+   "name": "Lakera",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "protectai.com",
+   "name": "Protect AI",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "hiddenlayer.com",
+   "name": "HiddenLayer",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "fiddler.ai",
+   "name": "Fiddler AI",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "truera.com",
+   "name": "TruEra",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "calypsoai.com",
+   "name": "CalypsoAI",
+   "category": "AI governance and safety"
+  },
+  {
+   "domain": "patronus.ai",
+   "name": "Patronus AI",
+   "category": "AI governance and safety"
+  }
+ ]
+}

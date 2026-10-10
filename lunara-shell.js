@@ -79,6 +79,7 @@
       ['passport.html',     'Passport control: scan a domain'],
       ['league.html',       'The AI Passport League'],
       ['check.html',        'Does the law reach your AI?'],
+      ['december-2.html',   'The 2 December deadline'],
       ['lens.html',         'Lunara Lens: is it real?'],
       ['registry.html',     'Public register'],
       ['evidence.html',     'Evidence standard'],

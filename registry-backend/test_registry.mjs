@@ -46,6 +46,10 @@ export function memoryDb() {
     async getWatch(t) { return watches.get(t) || null; },
     async createWatch(r) { watches.set(r.token, { ...r }); },
     async updateWatch(t, p) { Object.assign(watches.get(t), p); },
+    async listOrders() { return [...orders.values()]; },
+    async countPassports() { return passports.size; },
+    async countWatchers() { return [...watches.values()].filter((w) => w.confirmed_at && !w.unsubscribed_at).length; },
+    async countSubscribers() { return subs.size; },
     async getOrder(ref) { return orders.get(ref) || null; }
   };
 }
@@ -483,6 +487,25 @@ await test('agent passport: only a verified AI agent gets one, anyone can verify
   eq((await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'member-session' })).status, 409);
   const again = (await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'owner-session' })).status;
   eq(again, 409, 'even the owner cannot issue for a revoked agent');
+});
+
+await test('ops: live numbers for the owner; figures without people for the agent key; nothing for anyone else', async () => {
+  const { deps, db } = setup({ env: { LUNARA_OPS_KEY: 'k'.repeat(32) } });
+  db.orders.set('LO-1', { order_ref: 'LO-1', product: 'shield', amount_total: 7500, status: 'paid', email: 'buyer@x.com', name: 'Buyer', livemode: true, paid_at: '2026-10-03T00:00:00Z', created_at: '2026-10-03T00:00:00Z' });
+  db.orders.set('LO-2', { order_ref: 'LO-2', product: 'kit', amount_total: 9500, status: 'open', livemode: true, created_at: '2026-10-03T00:00:00Z' });
+  db.orders.set('LO-3', { order_ref: 'LO-3', product: 'kit', amount_total: 9500, status: 'paid', livemode: false, created_at: '2026-10-01T00:00:00Z' });
+  const callH = (headers, body) => handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers, body: JSON.stringify(body || {}) }), deps).then(async (r) => ({ status: r.status, body: await r.json() }));
+  eq((await callH({}, {})).status, 403);
+  eq((await callH({ 'x-lunara-ops-key': 'k'.repeat(31) + 'x' })).status, 403, 'a wrong key');
+  eq((await callH({ 'x-lunara-ops-key': 'short' })).status, 403);
+  const a = (await callH({ 'x-lunara-ops-key': 'k'.repeat(32) })).body;
+  eq(a.revenue.paid_orders, 1, 'sandbox orders are not revenue'); eq(a.revenue.gross_usd, 75); eq(a.revenue.unfinished_checkouts_7_days, 1);
+  ok(!JSON.stringify(a).includes('buyer@x.com'), 'the agent sees no email'); eq(a.access.startsWith('agent'), true);
+  const o = (await callH({}, { session_token: 'owner-session' })).body;
+  eq(o.access, 'owner'); ok(JSON.stringify(o).includes('buyer@x.com'));
+  eq((await callH({}, { session_token: 'member-session' })).status, 403, 'a member is not the owner');
+  const none = setup().deps;
+  eq((await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), none)).status, 403, 'no key configured, no key accepted');
 });
 
 console.log(`${passed} passed, ${failed} failed`);

@@ -102,3 +102,12 @@ create table if not exists public.passport_watch (
 );
 alter table public.passport_scans enable row level security;
 alter table public.passport_watch enable row level security;
+
+-- Agent passports: the Ed25519 key that signs them, made by the function
+-- on first use. Only the service role reads this table; the public half
+-- is served by lunara-registry/agentPassportKeys.
+create table if not exists public.registry_keys (
+  kid text primary key, public_jwk jsonb not null, private_pkcs8 text not null,
+  active boolean not null default true, created_at timestamptz not null default now()
+);
+alter table public.registry_keys enable row level security;

@@ -40,6 +40,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 import { passportRoute } from './passport-routes.mjs';
+import { agentPassportRoute } from './agent-passport.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
 export const FOUNDING_CAP = 80;
@@ -346,6 +347,9 @@ export async function handleRegistry(req, deps) {
     case 'passportScan': case 'passportBadge': case 'passportLeague': case 'passportTick':
     case 'passportWatch': case 'passportWatchSet':
       return passportRoute(name, body, deps, ipHash, { json, normDomain, limited, send, mailHtml, randomToken });
+
+    case 'agentPassportKeys': case 'agentPassportVerify': case 'agentPassportIssue':
+      return agentPassportRoute(name, body, deps, { json, isOwner });
 
     case 'shieldApply': return apply(body, deps, ipHash);
     case 'shieldVerifyDomain': return verifyDomain(body, deps);

@@ -222,6 +222,24 @@ Returns two answers that must not be conflated:
 Use it before an agent pays, signs up, or sends data to an unfamiliar
 domain. Report the score as hygiene and the visa as identity.
 
+## AGENT PASSPORTS: IDENTITY AN AI AGENT CARRIES
+
+An AI agent verified by a named Lunara reviewer can carry a signed
+passport and present it as an HTTP header:
+
+  Lunara-Passport: <token>
+
+Verify it before you trust the agent:
+
+  POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/agentPassportVerify
+  Body: {"passport": "<token>"}
+  Keys: GET .../lunara-registry/agentPassportKeys (Ed25519, JWK)
+
+valid=true only when the signature is Lunara's AND the register says the
+credential is verified and current right now. A genuine but revoked or
+expired passport returns signature=valid, valid=false. Never accept a
+passport on its signature alone.
+
 ---
 
 ## APPLYING, INCLUDING AS AN AI AGENT

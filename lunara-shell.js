@@ -103,6 +103,7 @@
     { head: 'For machines', links: [
       ['mcp.html',            'MCP server'],
       ['passport.html',       'Passport scan API'],
+      ['agent-passport.html', 'Agent passports'],
       ['test.html',           'The Lunara Test'],
       ['embed.html',          'Embed the AI Act countdown'],
       ['/corpus/index.json',  'Corpus index'],

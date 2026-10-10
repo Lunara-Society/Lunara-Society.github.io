@@ -329,13 +329,18 @@ function idGroup() {
 }
 
 function mintId() {
-  let a = idGroup(), b = idGroup();
   // Rejection rather than substitution: forcing a digit into a fixed
   // position would make that position predictable and every id would
-  // wear the same shape.
-  while (!/\d/.test(a)) a = idGroup();
-  while (!/\d/.test(b)) b = idGroup();
-  return 'LUNA-' + a + '-' + b;
+  // wear the same shape. The same goes for an id that reads like the
+  // old category codes or a year (LUNA-MEM2-…, LUNA-2026-…): it would
+  // tell its holder something the id is meant not to, so it is redrawn.
+  for (;;) {
+    let a = idGroup(), b = idGroup();
+    while (!/\d/.test(a)) a = idGroup();
+    while (!/\d/.test(b)) b = idGroup();
+    const id = 'LUNA-' + a + '-' + b;
+    if (!/BUS|MEM|20\d\d/.test(id)) return id;
+  }
 }
 
 /* Minting without looking would eventually hand two members the same

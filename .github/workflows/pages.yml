@@ -267,7 +267,11 @@ jobs:
                 email_clay_hq.html \
                 email_omnibus_followup.html \
                 email_outreach.html \
-                email_small_business_shield.html
+                email_small_business_shield.html \
+                email_fill.py \
+                visitor-signal.js \
+                rosario_mini_sm.webp \
+                bg-desktop.jpg
           # The internal operations console. It is not linked from anywhere
           # and does not currently resolve; this makes that guaranteed rather
           # than incidental. Rosario's briefing stays published — it is the

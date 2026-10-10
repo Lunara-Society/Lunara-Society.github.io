@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Agent Passports: Signed Identity for AI Agents | Lunara Society</title>
+<meta name="description" content="A signed passport a verified AI agent carries to every site, API and payment system. Anyone verifies it in one call, and it stops working the moment the credential is revoked.">
+<link rel="canonical" href="https://lunarasociety.com/agent-passport.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/agent-passport.html">
+<meta property="og:title" content="Agent passports: identity an AI agent carries">
+<meta property="og:description" content="Issued only after a named human review. Verified by anyone in one call. Dead the moment it is revoked.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent passports: identity an AI agent carries">
+<meta name="twitter:description" content="Issued after a named human review, verified in one call, dead the moment it is revoked.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-shell.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Lunara agent passports",
+  "url": "https://lunarasociety.com/agent-passport.html",
+  "description": "Ed25519-signed credentials issued to AI agents whose Lunara Shield verification a named reviewer approved. Verify: POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/agentPassportVerify {\"passport\": \"<token>\"}. Public keys: GET .../agentPassportKeys.",
+  "publisher": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" }
+}
+</script>
+<style>
+:root{--ap-ink:#F4F0E8;--ap-body:#CDD1D9;--ap-mute:#9AA0AB;--ap-gold:#E2C47A;--ap-ok:#7FE0B0;--ap-bad:#FF8A7A;--ap-hair:rgba(214,222,234,.12)}
+.ap-hero{padding-top:clamp(120px,14vh,160px);display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center}
+.ap-hero h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:78px;line-height:.98;color:var(--ap-ink);margin-top:14px}
+.ap-hero h1 em{color:var(--ap-gold)}
+.ap-hero .lede{font-size:19px;line-height:1.6;color:var(--ap-body);margin-top:20px;max-width:30em}
+/* the specimen credential */
+.cred{position:relative;border-radius:20px;padding:28px 30px;background:linear-gradient(140deg,#18212c,#0e131a 60%,#16120b);border:1px solid rgba(226,196,122,.35);box-shadow:0 50px 100px -40px rgba(0,0,0,.9),0 0 60px -20px rgba(226,196,122,.25);transform:rotate(-2deg);animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:rotate(-1deg) translateY(-8px)}}
+.cred::before{content:"";position:absolute;inset:0;border-radius:20px;background:repeating-linear-gradient(120deg,rgba(226,196,122,.035) 0 2px,transparent 2px 12px);pointer-events:none}
+.cred-h{display:flex;justify-content:space-between;font:11px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--ap-gold)}
+.cred-b{display:grid;grid-template-columns:96px 1fr;gap:20px;margin-top:22px;align-items:center}
+.bot{width:96px;height:96px;border-radius:18px;background:radial-gradient(circle at 50% 35%,rgba(127,224,176,.25),#0b0e13 70%);border:1px solid rgba(127,224,176,.35);display:grid;place-items:center}
+.bot svg{width:58px;height:58px}
+.cred dl{margin:0;display:grid;gap:8px}
+.cred dt{font:10px "IBM Plex Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--ap-mute)}
+.cred dd{margin:2px 0 0;color:var(--ap-ink);font:500 16px Inter,sans-serif}
+.cred-sig{margin-top:20px;font:11.5px/1.5 "IBM Plex Mono",monospace;color:rgba(127,224,176,.75);word-break:break-all}
+.cred-spec{position:absolute;right:22px;bottom:16px;font:10px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,138,122,.8);border:1px solid rgba(255,138,122,.5);padding:3px 8px;border-radius:4px}
+/* the three moves */
+.flow{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center;margin-top:34px}
+.mv{border:1px solid var(--ap-hair);border-radius:16px;padding:24px;background:rgba(13,15,21,.8);min-height:210px}
+.mv svg{width:46px;height:46px}
+.mv h3{font:500 18px Inter,sans-serif;color:var(--ap-ink);margin:14px 0 8px}
+.mv p{font-size:15px;line-height:1.6;color:var(--ap-body);margin:0}
+.mv code{font-size:12.5px}
+.arrow{height:2px;background:linear-gradient(90deg,var(--ap-gold),var(--ap-ok));position:relative;margin:0 6px}
+.arrow::after{content:"";position:absolute;right:-2px;top:-5px;border:6px solid transparent;border-left-color:var(--ap-ok)}
+/* tools */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px}
+.card{background:rgba(13,15,21,.85);border:1px solid var(--ap-hair);border-radius:16px;padding:26px 28px}
+.card h2{font:400 30px/1.1 "Cormorant Garamond",serif;color:var(--ap-ink);margin:0 0 8px}
+.card h2 em{color:var(--ap-gold)}
+.card p{color:var(--ap-body);font-size:15.5px;line-height:1.6}
+textarea,.card input{width:100%;box-sizing:border-box;background:#07090d;border:1px solid var(--ap-hair);border-radius:12px;padding:12px 14px;color:var(--ap-ink);font:13px "IBM Plex Mono",monospace;outline:0;margin-top:12px}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,.card input:focus{border-color:var(--ap-gold)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 22px;font:600 14.5px Inter,sans-serif;cursor:pointer;border:0;color:#1a1408;background:linear-gradient(180deg,#F0D899,#C9A55E);margin-top:14px;text-decoration:none}
+.btn.line{background:rgba(255,255,255,.03);color:var(--ap-ink);border:1px solid var(--ap-hair);font-weight:500}
+.out{margin-top:16px;border-radius:12px;padding:16px 18px;display:none;font-size:15px;line-height:1.6}
+.out.on{display:block}
+.out.ok{background:rgba(127,224,176,.08);border:1px solid rgba(127,224,176,.4);color:var(--ap-ink)}
+.out.no{background:rgba(255,138,122,.08);border:1px solid rgba(255,138,122,.4);color:var(--ap-ink)}
+.out b{font-weight:600}
+pre.call{margin:12px 0 0;background:#07090d;border:1px solid var(--ap-hair);border-radius:12px;padding:14px 16px;font:12.5px/1.6 "IBM Plex Mono",monospace;color:#BFD8CB;white-space:pre-wrap;word-break:break-all}
+.price{font:13px "IBM Plex Mono",monospace;color:var(--ap-mute);margin-top:10px}
+@media (prefers-reduced-motion:reduce){.cred{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <header class="wrap ap-hero">
+    <div>
+      <p class="kicker">Agent passports · signed · revocable</p>
+      <h1>A passport your<br><em>AI agent carries.</em></h1>
+      <p class="lede">A website is checked from the outside. An agent has no outside. So once a named reviewer has verified an AI agent and who runs it, the agent gets a signed passport to present everywhere it goes, and anyone can check it in one call.</p>
+    </div>
+    <div class="cred" aria-label="A specimen agent passport">
+      <div class="cred-h"><span>Lunara · Agent passport</span><span>Ed25519</span></div>
+      <div class="cred-b">
+        <div class="bot"><svg viewBox="0 0 56 56" fill="none" stroke="#7FE0B0" stroke-width="1.8" aria-hidden="true"><rect x="12" y="16" width="32" height="26" rx="7"/><circle cx="22" cy="29" r="3"/><circle cx="34" cy="29" r="3"/><path d="M28 16V9M24 9h8M8 26v8M48 26v8M22 37h12"/></svg></div>
+        <dl>
+          <div><dt>Agent</dt><dd>Example Agent</dd></div>
+          <div><dt>Operated by</dt><dd>Example Ltd · example.com</dd></div>
+          <div><dt>Register</dt><dd>SHIELD-2026-0000 · verified</dd></div>
+        </dl>
+      </div>
+      <p class="cred-sig">Lunara-Passport: eyJ2IjoxLCJ0eXAiOiJsdW5hcmEtYWdlbnQtcGFzc3BvcnQi…</p>
+      <span class="cred-spec">Specimen</span>
+    </div>
+  </header>
+
+  <section class="wrap">
+    <p class="kicker">How it works</p>
+    <h2 class="h2">Three moves</h2>
+    <div class="flow">
+      <div class="mv">
+        <svg viewBox="0 0 46 46" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><circle cx="23" cy="16" r="7"/><path d="M10 38c2-8 7-12 13-12s11 4 13 12"/><path d="m30 30 4 4 7-8" stroke="#7FE0B0"/></svg>
+        <h3>1. A person verifies it</h3>
+        <p>The agent and its operator go through AI Entity Verification: domain proof, identity check, a named reviewer. No review, no passport.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="mv">
+        <svg viewBox="0 0 46 46" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><rect x="9" y="7" width="28" height="34" rx="4"/><path d="M15 15h16M15 21h16M15 27h10"/><circle cx="31" cy="33" r="5" stroke="#7FE0B0"/></svg>
+        <h3>2. The agent carries it</h3>
+        <p>It sends the passport with its requests: <code>Lunara-Passport: &lt;token&gt;</code>. One header, no account, no SDK.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="mv">
+        <svg viewBox="0 0 46 46" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><path d="M23 5 8 11v11c0 9 6 16 15 19 9-3 15-10 15-19V11z"/><path d="m16 23 5 5 9-10" stroke="#7FE0B0"/></svg>
+        <h3>3. Anyone checks it</h3>
+        <p>The receiver verifies the signature and the live register in one call. Revoked or expired, and it fails, whatever the token says.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="two">
+      <div class="card">
+        <h2>Check a <em>passport</em></h2>
+        <p>Paste the token an agent presented. It is verified against the published key and the live register.</p>
+        <textarea id="ap-token" spellcheck="false" placeholder="eyJ2Ijox…"></textarea>
+        <button class="btn" id="ap-check" type="button">Verify</button>
+        <div class="out" id="ap-out" aria-live="polite"></div>
+        <pre class="call">curl -X POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/agentPassportVerify \
+  -H "content-type: application/json" \
+  -d '{"passport":"&lt;token&gt;"}'</pre>
+        <p style="font-size:13px;color:var(--ap-mute);margin-top:10px">Offline: the public keys are at <code>GET …/lunara-registry/agentPassportKeys</code> (JWK). Check the register too, or a revoked passport will still look valid.</p>
+      </div>
+      <div class="card">
+        <h2>Issue your <em>agent's passport</em></h2>
+        <p>For an AI agent whose verification has been approved. Sign in with the account that applied, enter its register ID, and copy the passport into the agent's configuration.</p>
+        <input id="ap-id" type="text" placeholder="SHIELD-2026-0000" aria-label="Register ID" spellcheck="false">
+        <button class="btn" id="ap-issue" type="button">Issue passport</button>
+        <div class="out" id="ap-issued" aria-live="polite"></div>
+        <p style="margin-top:22px">Not verified yet? AI Entity Verification is reviewed by a person and includes the passport.</p>
+        <a class="btn line" href="/shield.html#agent">AI Entity Verification</a>
+        <p class="price"><span data-lx-amount="agent"></span> · <span data-lx-terms="agent"></span></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var API = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function post(path, body) {
+    return fetch(API + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); });
+  }
+  function show(el, ok, html) { el.className = 'out on ' + (ok ? 'ok' : 'no'); el.innerHTML = html; }
+
+  $('ap-check').addEventListener('click', function () {
+    var t = $('ap-token').value.trim().replace(/^Lunara-Passport:\s*/i, '');
+    if (!t) return $('ap-token').focus();
+    post('agentPassportVerify', { passport: t }).then(function (v) {
+      if (v.valid) {
+        show($('ap-out'), true, '<b>Valid.</b> ' + esc(v.agent) + ', operated by ' + esc(v.operator) + (v.domain ? ' (' + esc(v.domain) + ')' : '') + ', current until ' + esc(String(v.expires_at).slice(0, 10)) + '. Register record: ');
+        var a = document.createElement('a'); a.className = 'inline'; a.href = v.record; a.textContent = v.public_id; $('ap-out').appendChild(a);
+      }
+      else show($('ap-out'), false, '<b>' + (v.signature === 'valid' ? 'Genuine, not current.' : 'Not valid.') + '</b> ' + esc(v.reason));
+    }).catch(function () { show($('ap-out'), false, 'The register could not be reached. Nothing is shown rather than a guess.'); });
+  });
+
+  $('ap-issue').addEventListener('click', function () {
+    var token = null; try { token = localStorage.getItem('lunara_session_token'); } catch (e) {}
+    if (!token) return show($('ap-issued'), false, 'Sign in first, with the account that applied: <a class="inline" href="/member.html">sign in</a>.');
+    var id = $('ap-id').value.trim();
+    if (!id) return $('ap-id').focus();
+    post('agentPassportIssue', { public_id: id, session_token: token }).then(function (r) {
+      if (!r.success) return show($('ap-issued'), false, esc(r.error));
+      show($('ap-issued'), true, '<b>Issued.</b> Give the agent this header. It works until ' + esc(new Date(r.payload.exp * 1000).toISOString().slice(0, 10)) + ' or until the credential is revoked.<pre class="call">' + esc(r.header) + '</pre>');
+    }).catch(function () { show($('ap-issued'), false, 'The register could not be reached. Try again.'); });
+  });
+})();
+</script>
+</body>
+</html>

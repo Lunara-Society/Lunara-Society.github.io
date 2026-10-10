@@ -330,7 +330,8 @@
 
   function start() {
     safe('css', injectCss);
-    safe('sky', buildSky);
+    // The starfield is retired: the site is lit by light and haze now,
+    // not stars (lunara-engine.js). buildSky stays for reference only.
     safe('touch', buildTouch);
     safe('light', buildLight);
     safe('rise', buildRise);

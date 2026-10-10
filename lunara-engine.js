@@ -87,7 +87,14 @@
     '#lxe-cur.hot{width:64px;height:64px;margin:-32px 0 0 -32px;border-color:rgba(127,224,176,.7);background:radial-gradient(circle,rgba(127,224,176,.12),transparent 70%)}',
     '#lxe-dot{position:fixed;left:0;top:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#FFF3D2;z-index:2147483501;pointer-events:none;',
     '  box-shadow:0 0 10px #E2C47A,0 0 20px rgba(226,196,122,.6);opacity:0;transition:opacity .3s}',
-    '#lxe-dot.on{opacity:1}'
+    '#lxe-dot.on{opacity:1}',
+    /* the arrival scan */
+    '.lxe-pagescan{position:fixed;inset:0;z-index:2147483300;pointer-events:none;overflow:hidden}',
+    '.lxe-pagescan i{position:absolute;left:0;right:0;top:-80px;height:80px;display:block;',
+    '  background:linear-gradient(180deg,transparent,rgba(127,224,176,.05) 30%,rgba(127,224,176,.12) 92%,rgba(220,255,240,.95) 98%,transparent),',
+    '  repeating-linear-gradient(90deg,rgba(127,224,176,.10) 0 1px,transparent 1px 22px);',
+    '  box-shadow:0 2px 26px 4px rgba(127,224,176,.35);animation:lxePageScan 1.15s cubic-bezier(.55,0,.35,1) forwards}',
+    '@keyframes lxePageScan{0%{top:-80px;opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}'
   ].join('\n');
 
   function injectCss() {
@@ -204,6 +211,8 @@
       if (url.pathname === location.pathname && url.search === location.search) return; // same page, an anchor
       if (/\.(json|txt|xml|pdf|png|jpe?g|zip|yaml)$/i.test(url.pathname)) return;     // files open as files
       e.preventDefault();
+      // A lock opens between the pages (lunara-locks.js); without it, the plain shutter.
+      if (window.LunaraLocks) { window.LunaraLocks.open(url.href); return; }
       sh.classList.add('go');
       setTimeout(function () { location.href = url.href; }, 430);
     });
@@ -428,8 +437,24 @@
     shine();
   }
 
+  /* ── THE ARRIVAL SCAN ───────────────────────────────────────────────
+     Once the shutter has parted (lunara-shell.css), the passport's
+     laser reads the page from top to bottom, trailing its grid. */
+  function arrivalScan() {
+    if (REDUCED || document.documentElement.classList.contains('lx-intro')) return;
+    var since = performance.now();
+    var wait = Math.max(0, 820 - since);
+    setTimeout(function () {
+      var l = document.createElement('div'); l.className = 'lxe-pagescan'; l.setAttribute('aria-hidden', 'true');
+      l.innerHTML = '<i></i>';
+      document.body.appendChild(l);
+      setTimeout(function () { if (l.parentNode) l.parentNode.removeChild(l); }, 1300);
+    }, wait);
+  }
+
   function boot() {
     safe('css', injectCss);
+    safe('arrival', arrivalScan);
     // While the threshold plays, it has the graphics card to itself.
     if (document.documentElement.classList.contains('lx-intro')) window.addEventListener('lunara:intro-done', function () { safe('haze', buildHaze); });
     else safe('haze', buildHaze);

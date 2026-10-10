@@ -285,7 +285,17 @@
     document.head.appendChild(s);
   }
 
-  function boot() { install(); loadMember(); loadCosmos(); loadEngine(); }
+  /* ── the locks ────────────────────────────────────────────────
+     lunara-locks.js: the mechanism that opens between pages. */
+  function loadLocks() {
+    if (document.querySelector('script[src*="lunara-locks.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-locks.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function boot() { install(); loadMember(); loadCosmos(); loadEngine(); loadLocks(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

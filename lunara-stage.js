@@ -195,6 +195,8 @@
     }).then(function (json) {
       var status = json.status || (json.found ? 'verified' : 'not_registered');
       var more = ' <a class="inline" href="passport.html?d=' + encodeURIComponent(domain) + '">Run its full passport scan &rarr;</a>';
+      // The register's answer lands the way the passport's does: stamped.
+      if (window.LunaraFX) window.LunaraFX.stamp(out.closest('.lxs-panel'), status === 'verified' || status === 'revoked' ? status : 'not_registered', { right: 10, bottom: -6 });
       if (status === 'verified') {
         dot.className = 'lxs-dot live';
         out.innerHTML = '<span class="ok">Verified.</span> <b>' + domain + '</b> holds a Shield credential. A named reviewer signed that decision.' + more;

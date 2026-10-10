@@ -1140,7 +1140,7 @@
 
   function init() {
     safe('atmosphere', buildAtmosphere);
-    safe('dust', buildDust);
+    // Gold dust (the embers) is retired; see lunara-engine.js.
     safe('header-geometry', fixHeaderGeometry);
     safe('scroll-aids', buildScrollAids);
     safe('light-follow', buildLightFollow);

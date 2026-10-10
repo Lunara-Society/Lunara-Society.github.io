@@ -214,3 +214,26 @@ body.lx-shelled [id]{scroll-margin-top:96px}
   ::view-transition-old(root),::view-transition-new(root){animation:none}
 }
 
+
+/* ═══ THE SHUTTER, OPENING ═══════════════════════════════════════════
+   Every page opens on a seam of light: two black halves part, a line
+   of light flares where they meet and fades. Leaving a page closes the
+   same shutter (lunara-engine.js), so moving through the site reads as
+   one continuous cut. Pure CSS, painted from the first frame, so there
+   is never a flash of the page before the shutter. Pointer events pass
+   straight through it, and reduced motion gets none of it. */
+@media (prefers-reduced-motion: no-preference) {
+  html::before, html::after {
+    content: ""; position: fixed; left: 0; right: 0; height: 50.5vh; z-index: 2147483600;
+    pointer-events: none; background: #030405;
+    animation: lxShutTop .9s cubic-bezier(.65,0,.25,1) .08s both;
+  }
+  html::before { top: 0; }
+  html::after {
+    bottom: 0; animation-name: lxShutBottom;
+    box-shadow: 0 -1px 0 rgba(255,246,220,.9), 0 -2px 40px 6px rgba(226,196,122,.45);
+  }
+  @keyframes lxShutTop { from { transform: none; } to { transform: translateY(-101%); visibility: hidden; } }
+  @keyframes lxShutBottom { from { transform: none; } to { transform: translateY(101%); visibility: hidden; } }
+  html.lx-intro::before, html.lx-intro::after { animation: none; display: none; }
+}

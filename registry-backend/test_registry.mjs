@@ -434,8 +434,8 @@ await test('passport: the tick rescans what is stale, rolls the week, and the le
   eq(db.passports.get('good.example').prev_score, 70); eq(db.passports.get('good.example').score, 100);
   eq((await call(deps, 'passportTick', {})).body.due, 0, 'nothing is stale any more');
   const L = (await call(deps, 'passportLeague', null, 'GET')).body;
-  eq(L.listed, 2); eq(L.entries[0].domain, 'good.example'); eq(L.entries[0].name, 'Good'); eq(L.entries[0].prev_score, 70);
-  ok(L.entries[0].score >= L.entries[1].score);
+  eq(L.listed, 2); eq(L.entries.length, 1, 'bare.example never answered over HTTPS, so it is not ranked'); eq(L.unreachable[0].domain, 'bare.example');
+  eq(L.entries[0].domain, 'good.example'); eq(L.entries[0].name, 'Good'); eq(L.entries[0].prev_score, 70);
 });
 
 await test('passport: watchers confirm, get told when it gets worse, and can stop', async () => {

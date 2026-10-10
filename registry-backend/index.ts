@@ -21,6 +21,7 @@
 
 // @ts-nocheck — registry-core.mjs is deliberately plain JS, shared with Node.
 import { handleRegistry, withCors, json } from './registry-core.mjs';
+import { isPrivateAddress } from './passport.mjs';
 
 const env = Deno.env.toObject();
 const REST = `${env.SUPABASE_URL}/rest/v1`;
@@ -102,6 +103,46 @@ async function dns(name: string) {
   return [];
 }
 
+/* Passport scans: DNS answers with the resolver's DNSSEC verdict, and
+   pages fetched only from public addresses. Every hop of a redirect is
+   resolved and checked again, and bodies are cut at 64 KB. */
+const TYPES: Record<string, number> = { A: 1, AAAA: 28, TXT: 16, CAA: 257, SOA: 6 };
+async function resolve(name: string, type: string) {
+  for (const base of ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve']) {
+    try {
+      const r = await fetch(`${base}?name=${q(name)}&type=${type}&do=1`, { headers: { accept: 'application/dns-json' }, signal: AbortSignal.timeout(5000) });
+      if (!r.ok) continue;
+      const j = await r.json();
+      return { ad: !!j.AD, answers: (j.Answer || []).filter((a: { type: number }) => a.type === TYPES[type]).map((a: { data: string }) => a.data) };
+    } catch { /* next resolver */ }
+  }
+  throw new Error('dns unreachable');
+}
+async function publicHost(host: string) {
+  if (/^[\d.]+$/.test(host) || host.includes(':') || !host.includes('.')) return false;
+  const [a, aaaa] = await Promise.all([resolve(host, 'A').catch(() => null), resolve(host, 'AAAA').catch(() => null)]);
+  const ips = [...(a?.answers || []), ...(aaaa?.answers || [])].filter((x) => /^[\d.]+$|:/.test(x));
+  return ips.length > 0 && !ips.some(isPrivateAddress);
+}
+async function fetchPage(url: string) {
+  for (let hop = 0; hop < 4; hop++) {
+    const u = new URL(url);
+    if (u.protocol !== 'https:' || u.port || !(await publicHost(u.hostname))) throw new Error('refused');
+    const r = await fetch(u, { redirect: 'manual', headers: { 'user-agent': 'LunaraPassport/1.0 (+https://lunarasociety.com/passport.html)' }, signal: AbortSignal.timeout(7000) });
+    if (r.status >= 300 && r.status < 400 && r.headers.get('location')) { url = new URL(r.headers.get('location')!, u).href; await r.body?.cancel(); continue; }
+    const headers: Record<string, string> = {};
+    r.headers.forEach((v, k) => { headers[k.toLowerCase()] = v; });
+    let text = '';
+    if (r.body) {
+      const reader = r.body.getReader(); const dec = new TextDecoder(); let n = 0;
+      while (n < 65536) { const { done, value } = await reader.read(); if (done) break; n += value.length; text += dec.decode(value, { stream: true }); }
+      await reader.cancel().catch(() => {});
+    }
+    return { status: r.status, headers, text: text.slice(0, 65536) };
+  }
+  throw new Error('too many redirects');
+}
+
 async function whoIs(token: unknown) {
   if (typeof token !== 'string' || token.length < 20 || token.length > 4096) return null;
   const res = await fetch(`${env.SUPABASE_URL}/functions/v1/lunara-auth/session`, {
@@ -127,7 +168,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }));
   try {
     const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
-    return withCors(await handleRegistry(req, { db, mail, dns, whoIs, ai, env, ip, now: () => Date.now() }));
+    return withCors(await handleRegistry(req, { db, mail, dns, resolve, fetchPage, whoIs, ai, env, ip, now: () => Date.now() }));
   } catch (e) {
     console.error('lunara-registry', e?.message || e);
     return withCors(json({ success: false, error: 'Something went wrong on our side. Try again.' }, 500));

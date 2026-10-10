@@ -5,6 +5,7 @@
 <meta name="google-site-verification" content="spIBwGb_iEr1-MZ8g3enKaL1JSuL-2MyiryGYMrFEpE" />
 <meta name="viewport" content="width=1120">
 <meta name="robots" content="index, follow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="The constitutional governance authority for the autonomous economy: Shield certification, a free public trust registry, and Article 50 compliance.">
 <title>Lunara Society | Trust Infrastructure for AI</title>
 <link rel="canonical" href="https://lunarasociety.com/">
@@ -71,8 +72,8 @@
   --ink-2:    #0A0C10;
   --ink-3:    #10131A;
   --white:    #EFEAE0;
-  --grey:     #A49E93;
-  --grey-2:   #8D887F;
+  --grey:     #BEB8AD;
+  --grey-2:   #A29D94;
   --gold:     #C4A46B;
   --gold-lit: #E2C47A;
   --silver:   #D9DFE8;
@@ -90,7 +91,7 @@
 html{background:var(--ink);scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   background:var(--ink);color:var(--white);
-  font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.65;
+  font-family:var(--sans);font-weight:400;font-size:16.5px;line-height:1.65;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;overflow-x:clip;
 }
@@ -220,9 +221,19 @@ h1 em{
   -webkit-background-clip:text;background-clip:text;color:transparent;
   padding-right:.08em;
 }
-.open-copy .lede{font-size:18px;line-height:1.7;color:#C9C3B8;max-width:32em;margin-top:28px}
+.open-copy .lede{font-size:19px;line-height:1.65;color:#DAD5CB;max-width:32em;margin-top:28px}
 .open-copy .lede b{color:var(--white);font-weight:400}
 .open-copy .doors{display:flex;gap:12px;margin-top:38px}
+/* Passport control in the first screen: something to do, not only to read. */
+.pgate{display:flex;align-items:center;gap:0;width:430px;flex:none;padding:6px 6px 6px 18px;border-radius:999px;background:rgba(8,10,14,.78);border:1px solid rgba(127,224,176,.32);box-shadow:0 0 0 5px rgba(127,224,176,.04),0 20px 50px -24px rgba(127,224,176,.45);backdrop-filter:blur(6px)}
+.pgate-k{font:10px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:#7FE0B0;white-space:nowrap;padding-right:12px;border-right:1px solid rgba(214,222,234,.14);display:flex;align-items:center;gap:8px}
+.pgate-k::before{content:"";width:6px;height:6px;border-radius:50%;background:#7FE0B0;box-shadow:0 0 10px #7FE0B0;animation:pgpulse 1.8s ease-in-out infinite}
+@keyframes pgpulse{50%{opacity:.35}}
+.pgate input{flex:1;min-width:0;background:none;border:0;outline:0;color:#F4F0E8;font:15px "IBM Plex Mono",monospace;padding:10px 14px}
+.pgate input::placeholder{color:#7d838e}
+.pgate button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 20px;font:600 14px Inter,sans-serif;color:#06120c;background:linear-gradient(180deg,#9DF0C6,#5CC795);cursor:pointer}
+.pgate button svg{width:14px;height:14px}
+@media (prefers-reduced-motion:reduce){.pgate-k::before{animation:none}}
 .fade{opacity:0;transform:translateY(12px);transition:opacity 1.3s ease,transform 1.3s var(--ease)}
 .lit .fade{opacity:1;transform:none}
 .fade.d1{transition-delay:.55s}.fade.d2{transition-delay:.75s}.fade.d3{transition-delay:.95s}
@@ -670,7 +681,11 @@ h1 em{
       <p class="lede fade d2">Machine-readable regulatory intelligence, signed so anyone can check it, and a public register any AI system may query without an account. <b>Everything on this page is live, the moon included.</b></p>
       <div class="doors fade d3">
         <a class="door solid" href="shield.html">Apply for certification <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-        <a class="door line" href="scorer.html">Score your AI risk</a>
+      <form class="pgate" action="passport.html" method="get" role="search" aria-label="Scan any domain">
+        <span class="pgate-k">Passport control</span>
+        <input name="d" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="any domain" aria-label="Domain to scan">
+        <button type="submit">Scan <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </form>
       </div>
     </div>
   </div>

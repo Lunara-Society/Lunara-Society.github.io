@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Passport Control: Scan Any Domain's Trust Signals | Lunara Society</title>
+<meta name="description" content="Type any domain and get its passport in seconds: HTTPS and security headers, DNSSEC, SPF, DMARC, CAA, llms.txt, AI crawler policy and the public register. Free, live, no account.">
+<link rel="canonical" href="https://lunarasociety.com/passport.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/passport.html">
+<meta property="og:title" content="Passport Control: does this domain get through?">
+<meta property="og:description" content="Thirteen live checks on any domain, scored out of 100, and the register's stamp. The same scan AI systems run before they trust a site.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Passport Control: does this domain get through?">
+<meta name="twitter:description" content="Thirteen live checks on any domain, scored out of 100, and the register's stamp.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-shell.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Lunara Passport Control",
+  "url": "https://lunarasociety.com/passport.html",
+  "applicationCategory": "SecurityApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Scans a domain's public trust signals (HTTPS, security headers, DNSSEC, SPF, DMARC, CAA, llms.txt, AI crawler policy, security.txt) and reads its status in the Lunara public register. Callable by AI systems at POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportScan.",
+  "publisher": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" }
+}
+</script>
+<style>
+:root{--pp-ink:#F4F0E8;--pp-body:#CDD1D9;--pp-mute:#9AA0AB;--pp-gold:#E2C47A;--pp-gold-deep:#C4A46B;--pp-ok:#7FE0B0;--pp-warn:#F2C46B;--pp-bad:#FF8A7A;--pp-panel:rgba(13,15,21,.82);--pp-hair:rgba(214,222,234,.12)}
+.pp-hero{padding-top:clamp(120px,14vh,160px);text-align:center;position:relative}
+.pp-hero .kicker{justify-content:center}
+.pp-hero h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:84px;line-height:.98;letter-spacing:-.015em;color:var(--pp-ink);margin:18px auto 0}
+.pp-hero h1 em{color:var(--pp-gold);font-style:italic}
+.pp-hero .lede{font-size:19px;line-height:1.6;color:var(--pp-body);max-width:36em;margin:22px auto 0}
+
+/* the gate */
+.gate{margin:44px auto 0;max-width:760px;position:relative}
+.gate form{display:flex;gap:0;padding:8px;border-radius:999px;background:rgba(10,12,17,.9);border:1px solid rgba(226,196,122,.35);box-shadow:0 0 0 6px rgba(226,196,122,.05),0 30px 80px -30px rgba(226,196,122,.35)}
+.gate input{flex:1;background:none;border:0;outline:0;color:var(--pp-ink);font:400 22px "IBM Plex Mono",monospace;padding:14px 26px;min-width:0}
+.gate input::placeholder{color:#5f6570}
+.gate button{border:0;border-radius:999px;padding:0 34px;font:600 16px Inter,sans-serif;letter-spacing:.02em;color:#1a1408;background:linear-gradient(180deg,#F0D899,#C9A55E);cursor:pointer;transition:transform .15s,box-shadow .2s}
+.gate button:hover{transform:translateY(-1px);box-shadow:0 10px 30px -8px rgba(226,196,122,.7)}
+.gate button:disabled{opacity:.6;cursor:progress}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+.chips button{background:rgba(255,255,255,.03);border:1px solid var(--pp-hair);color:var(--pp-body);border-radius:999px;padding:7px 15px;font:13px "IBM Plex Mono",monospace;cursor:pointer;transition:border-color .2s,color .2s}
+.chips button:hover{border-color:var(--pp-gold);color:var(--pp-gold)}
+.chips span{font:11px "IBM Plex Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--pp-mute);align-self:center;margin-right:4px}
+
+/* the passport */
+.book-wrap{perspective:2200px;margin:64px auto 0;max-width:1040px;display:none}
+.book-wrap.on{display:block}
+.book{display:grid;grid-template-columns:1fr 1fr;border-radius:18px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#17202b,#0f141c 55%,#141a23);border:1px solid rgba(226,196,122,.28);
+  box-shadow:0 60px 120px -40px rgba(0,0,0,.9),0 0 0 1px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);
+  transform-origin:50% 0;animation:open 0.9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes open{from{transform:rotateX(38deg) translateY(40px) scale(.94);opacity:0}to{transform:none;opacity:1}}
+.book::before{content:"";position:absolute;inset:0;background:
+  repeating-radial-gradient(circle at 25% 40%,rgba(226,196,122,.035) 0 1px,transparent 1px 9px),
+  repeating-linear-gradient(115deg,rgba(127,224,176,.018) 0 2px,transparent 2px 14px);pointer-events:none}
+.book::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.7),transparent);box-shadow:0 0 30px 6px rgba(0,0,0,.45)}
+.page{padding:34px 38px 30px;position:relative;min-height:560px}
+.ph{display:flex;justify-content:space-between;align-items:center;font:11px "IBM Plex Mono",monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--pp-gold-deep)}
+.ph img{width:30px;height:30px;border-radius:50%}
+.id{display:grid;grid-template-columns:150px 1fr;gap:24px;margin-top:28px}
+.photo{width:150px;height:186px;border-radius:10px;border:1px solid rgba(226,196,122,.3);overflow:hidden;background:#0b0e13;position:relative}
+.photo svg{width:100%;height:100%;display:block}
+.fields dl{margin:0;display:grid;gap:12px}
+.fields dt{font:10px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--pp-mute)}
+.fields dd{margin:2px 0 0;font:500 17px Inter,sans-serif;color:var(--pp-ink);word-break:break-all}
+.fields dd.big{font:400 30px "Cormorant Garamond",serif;line-height:1.05}
+.fields dd.mono{font:14px "IBM Plex Mono",monospace;color:var(--pp-body)}
+.visa-box{margin-top:30px;padding:18px 20px;border-radius:12px;border:1px dashed rgba(226,196,122,.3);min-height:96px;position:relative}
+.visa-box b{display:block;font:10px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--pp-mute);margin-bottom:8px}
+.visa-box p b{display:inline;font:600 15.5px Inter,sans-serif;letter-spacing:0;text-transform:none;margin:0}
+.visa-box p{margin:0;font-size:15px;line-height:1.55;color:var(--pp-body)}
+.mrz{position:absolute;left:38px;right:38px;bottom:26px;font:14px/1.6 "IBM Plex Mono",monospace;letter-spacing:.12em;color:rgba(214,222,234,.55);white-space:pre;overflow:hidden}
+
+.score{display:flex;align-items:center;gap:26px;margin-top:22px}
+.dial{width:132px;height:132px;position:relative;flex:none}
+.dial svg{width:100%;height:100%;transform:rotate(-90deg)}
+.dial .n{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.dial .n b{font:400 46px/1 "Cormorant Garamond",serif;color:var(--pp-ink);display:block}
+.dial .n small{font:10px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--pp-mute)}
+.grade{font:500 64px/1 "Cormorant Garamond",serif;color:var(--pp-gold)}
+.grade-cap{font-size:14px;line-height:1.5;color:var(--pp-body);max-width:15em}
+.groups{margin-top:22px;display:grid;gap:16px}
+.grp h3{margin:0 0 6px;font:10.5px "IBM Plex Mono",monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--pp-gold-deep)}
+.row{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(214,222,234,.06);opacity:0;transform:translateX(10px);transition:opacity .35s,transform .35s}
+.row.in{opacity:1;transform:none}
+.row .ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:700 12px Inter,sans-serif}
+.row.pass .ic{background:rgba(127,224,176,.16);color:var(--pp-ok)}
+.row.part .ic{background:rgba(242,196,107,.16);color:var(--pp-warn)}
+.row.fail .ic{background:rgba(255,138,122,.14);color:var(--pp-bad)}
+.row .l{font-size:14.5px;color:var(--pp-ink)}
+.row .l small{display:block;font:11.5px "IBM Plex Mono",monospace;color:var(--pp-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+.row .pts{font:12px "IBM Plex Mono",monospace;color:var(--pp-mute)}
+
+/* scanning */
+.laser{position:absolute;left:0;right:0;height:120px;top:-120px;pointer-events:none;z-index:3;
+  background:linear-gradient(180deg,transparent,rgba(127,224,176,.12) 70%,rgba(127,224,176,.9) 98%,transparent);filter:blur(.3px)}
+.scanning .laser{animation:sweep 1.6s ease-in-out infinite}
+@keyframes sweep{0%{top:-120px}100%{top:100%}}
+.scanning .page{filter:saturate(.6)}
+.status-line{text-align:center;margin-top:20px;font:13px "IBM Plex Mono",monospace;letter-spacing:.12em;color:var(--pp-ok);min-height:20px}
+
+/* the stamp */
+.stamp{position:absolute;z-index:4;left:140px;top:430px;pointer-events:none;opacity:0}
+.stamp.slam{animation:slam .55s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes slam{0%{opacity:0;transform:scale(2.6) rotate(-4deg)}60%{opacity:1;transform:scale(.94) rotate(-14deg)}100%{opacity:.92;transform:scale(1) rotate(-12deg)}}
+.book.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:none}25%{transform:translate(2px,3px)}50%{transform:translate(-3px,-1px)}75%{transform:translate(1px,-2px)}}
+.stamp svg{width:240px;height:240px;mix-blend-mode:screen;filter:drop-shadow(0 0 10px currentColor)}
+.stamp.ok{color:#7FE0B0}.stamp.no{color:#FF8A7A}.stamp.rev{color:#F2C46B}
+
+/* after */
+.after{max-width:1040px;margin:34px auto 0;display:none;grid-template-columns:1.25fr 1fr;gap:22px}
+.after.on{display:grid}
+.card{background:var(--pp-panel);border:1px solid var(--pp-hair);border-radius:16px;padding:26px 28px}
+.card h2{font:400 30px/1.1 "Cormorant Garamond",serif;color:var(--pp-ink);margin:0 0 6px}
+.card h2 em{color:var(--pp-gold)}
+.card p{color:var(--pp-body);font-size:15.5px;line-height:1.65}
+.fixes{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px;counter-reset:f}
+.fixes li{counter-increment:f;display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:baseline;font-size:15px;color:var(--pp-body);line-height:1.5}
+.fixes li::before{content:counter(f);font:12px "IBM Plex Mono",monospace;color:var(--pp-gold);border:1px solid rgba(226,196,122,.35);border-radius:50%;width:24px;height:24px;display:grid;place-items:center}
+.fixes li b{color:var(--pp-ink);font-weight:500}
+.fixes li span{font:12px "IBM Plex Mono",monospace;color:var(--pp-ok)}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 22px;font:500 14.5px Inter,sans-serif;text-decoration:none;cursor:pointer;border:1px solid var(--pp-hair);color:var(--pp-ink);background:rgba(255,255,255,.03)}
+.btn.gold{border:0;color:#1a1408;background:linear-gradient(180deg,#F0D899,#C9A55E);font-weight:600}
+.btn:hover{border-color:var(--pp-gold)}
+pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);border-radius:12px;padding:16px 18px;font:12.5px/1.6 "IBM Plex Mono",monospace;color:#BFD8CB;white-space:pre-wrap;word-break:break-all}
+
+/* the three ideas, drawn */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+.how .card{text-align:left}
+.how svg{width:56px;height:56px;margin-bottom:14px}
+.how h3{font:500 18px Inter,sans-serif;color:var(--pp-ink);margin:0 0 8px}
+.how p{margin:0;font-size:15px}
+.err{color:var(--pp-bad)}
+@media (prefers-reduced-motion:reduce){.book,.stamp.slam,.scanning .laser,.book.shake{animation:none!important}.stamp.slam{opacity:.92;transform:rotate(-12deg)}.row{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <header class="wrap pp-hero">
+    <p class="kicker">Passport control · live · free · no account</p>
+    <h1>Does this domain<br><em>get through?</em></h1>
+    <p class="lede">Type any website, AI product or agent's domain. In a few seconds you get its passport: thirteen live security checks, a score out of 100, and the register's stamp.</p>
+
+    <div class="gate">
+      <form id="pp-form" autocomplete="off">
+        <input id="pp-domain" type="text" inputmode="url" spellcheck="false" placeholder="openai.com" aria-label="Domain to scan">
+        <button id="pp-go" type="submit">Scan passport</button>
+      </form>
+      <div class="chips" aria-label="Try one">
+        <span>Try</span>
+        <button type="button" data-d="lunarasociety.com">lunarasociety.com</button>
+        <button type="button" data-d="anthropic.com">anthropic.com</button>
+        <button type="button" data-d="openai.com">openai.com</button>
+        <button type="button" data-d="github.com">github.com</button>
+        <button type="button" data-d="stripe.com">stripe.com</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="book-wrap" id="pp-wrap">
+      <div class="book" id="pp-book">
+        <div class="laser" aria-hidden="true"></div>
+        <section class="page" aria-label="Identity">
+          <div class="ph"><span>Lunara Society · Passport</span><img src="/lunara_logo_96.png" alt=""></div>
+          <div class="id">
+            <div class="photo" id="pp-photo" aria-hidden="true"></div>
+            <div class="fields">
+              <dl>
+                <div><dt>Holder</dt><dd class="big" id="pp-name">—</dd></div>
+                <div><dt>Passport no.</dt><dd class="mono" id="pp-no">—</dd></div>
+                <div><dt>Scanned</dt><dd class="mono" id="pp-when">—</dd></div>
+                <div><dt>DNS proof of control</dt><dd class="mono" id="pp-proof">—</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="visa-box">
+            <b>Visa · the public register</b>
+            <p id="pp-visa">Reading the register…</p>
+          </div>
+          <div class="mrz" id="pp-mrz" aria-hidden="true"></div>
+        </section>
+        <section class="page" aria-label="Checks">
+          <div class="ph"><span>Border checks · 13</span><span id="pp-points"></span></div>
+          <div class="score">
+            <div class="dial">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(214,222,234,.08)" stroke-width="9"/>
+                <circle id="pp-arc" cx="60" cy="60" r="52" fill="none" stroke="url(#gg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)"/>
+                <defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#C4A46B"/><stop offset="1" stop-color="#7FE0B0"/></linearGradient></defs>
+              </svg>
+              <div class="n"><div><b id="pp-score">0</b><small>/ 100</small></div></div>
+            </div>
+            <div><div class="grade" id="pp-grade">·</div><div class="grade-cap" id="pp-gradecap">Public signals only. The visa is decided by a person.</div></div>
+          </div>
+          <div class="groups" id="pp-groups"></div>
+        </section>
+        <div class="stamp" id="pp-stamp" aria-hidden="true"></div>
+      </div>
+      <p class="status-line" id="pp-status" aria-live="polite"></p>
+    </div>
+
+    <div class="after" id="pp-after">
+      <div class="card">
+        <h2>How to <em>raise this score</em></h2>
+        <p id="pp-fixlede">Each line is a change your web or DNS host can make, usually in minutes.</p>
+        <ol class="fixes" id="pp-fixes"></ol>
+      </div>
+      <div class="card">
+        <h2 id="pp-cta-h">Get the <em>stamp</em></h2>
+        <p id="pp-cta-p">Points come from public signals. The stamp comes from a named reviewer checking who runs the domain, and every AI system that asks the register gets the same answer.</p>
+        <div class="btns">
+          <a class="btn gold" id="pp-cta" href="/shield.html">Apply for Shield</a>
+          <button class="btn" id="pp-share" type="button">Copy link to this passport</button>
+        </div>
+        <pre class="call" id="pp-call"></pre>
+        <p style="font-size:13px;color:var(--pp-mute);margin-top:10px">That call is the whole API: any AI system can run this scan before it trusts or pays a site.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="wrap">
+    <p class="kicker">What the passport reads</p>
+    <h2 class="h2">Three questions at the border</h2>
+    <div class="how">
+      <div class="card">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><rect x="12" y="24" width="32" height="24" rx="5"/><path d="M19 24v-6a9 9 0 0 1 18 0v6"/><circle cx="28" cy="36" r="3"/></svg>
+        <h3>Is the connection safe?</h3>
+        <p>HTTPS, HSTS, a content security policy and the headers that stop clickjacking and content sniffing.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><rect x="8" y="14" width="40" height="28" rx="4"/><path d="m8 18 20 13 20-13"/><path d="M40 6l6 6M46 6l-6 6" stroke="#FF8A7A"/></svg>
+        <h3>Can its name be forged?</h3>
+        <p>DNSSEC, SPF and DMARC decide whether someone else can send email or answer DNS as this domain. CAA limits who issues its certificates.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#E2C47A" stroke-width="1.6" aria-hidden="true"><rect x="14" y="16" width="28" height="24" rx="6"/><circle cx="23" cy="28" r="2.5"/><circle cx="33" cy="28" r="2.5"/><path d="M28 16V9M24 9h8M10 26v6M46 26v6"/></svg>
+        <h3>Does it speak to machines?</h3>
+        <p>An llms.txt for AI systems, a declared policy for AI crawlers, and a security.txt so a researcher who finds a hole knows whom to tell.</p>
+      </div>
+    </div>
+    <p class="sec-lede" style="margin-top:28px">The score never decides the visa. A site can score 100 and still be <code>not_registered</code>: the register only stamps a domain after a named reviewer has checked who runs it. That separation is the point.</p>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+<script src="lunara-passport.js" defer></script>
+</body>
+</html>

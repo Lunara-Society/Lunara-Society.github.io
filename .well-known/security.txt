@@ -1,0 +1,8 @@
+# Lunara Society — security contact (RFC 9116)
+# If you find a vulnerability in lunarasociety.com, the registry, the
+# signed corpus or the badge, tell us here. We answer every report.
+Contact: mailto:lunarasociety@gmail.com
+Expires: 2027-10-01T00:00:00.000Z
+Preferred-Languages: en, es
+Canonical: https://lunarasociety.com/.well-known/security.txt
+Policy: https://lunarasociety.com/governance-and-security.html

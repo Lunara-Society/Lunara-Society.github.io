@@ -2,6 +2,7 @@
 
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { isPrivateAddress, grade, CHECKS } from './passport.mjs';
 import { handleRegistry, publicStatus, normDomain, assessArticle50, applicationEmail, decisionEmail, SHIELD_PRICE } from './registry-core.mjs';
 
 let failed = 0, passed = 0;
@@ -300,6 +301,95 @@ await test('unknown functions and methods', async () => {
   const { deps } = setup();
   eq((await call(deps, 'nope', {})).status, 404);
   eq((await call(deps, 'health', null, 'GET')).body.ok, true);
+});
+
+/* A well-kept site and a bare one, served from memory. */
+function web(site) {
+  return {
+    resolve: async (name, type) => {
+      const r = site.dns[`${type} ${name}`];
+      if (r === 'down') throw new Error('dns');
+      return { ad: !!site.ad, answers: r || [] };
+    },
+    fetchPage: async (url) => {
+      const p = site.pages[url];
+      if (!p) { if (site.pages['https://' + new URL(url).hostname + '/']) return { status: 404, headers: { 'content-type': 'text/html' }, text: '<html>nope' }; throw new Error('unreachable'); }
+      return { status: 200, headers: {}, ...p };
+    }
+  };
+}
+const GOOD = {
+  ad: true,
+  dns: {
+    'TXT good.example': ['"v=spf1 include:_spf.example -all"'], 'TXT _dmarc.good.example': ['"v=DMARC1; p=reject; rua=mailto:d@good.example"'],
+    'CAA good.example': ['0 issue "letsencrypt.org"'], 'SOA good.example': ['ns1 hostmaster 1 2 3 4 5'],
+    'TXT _lunara-verify.good.example': ['"lunara-verify=abc"']
+  },
+  pages: {
+    'https://good.example/': { headers: { 'strict-transport-security': 'max-age=63072000; includeSubDomains', 'content-security-policy': "default-src 'self'; frame-ancestors 'none'", 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer' }, text: '<html>' },
+    'https://good.example/llms.txt': { headers: { 'content-type': 'text/plain' }, text: '# Good\n> A well kept example site for tests.' },
+    'https://good.example/robots.txt': { headers: { 'content-type': 'text/plain' }, text: 'User-agent: GPTBot\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /' },
+    'https://good.example/.well-known/security.txt': { headers: { 'content-type': 'text/plain' }, text: 'Contact: mailto:security@good.example\nExpires: 2027-01-01T00:00:00Z' }
+  }
+};
+
+await test('passport: weights sum to 100 and grades are monotone', async () => {
+  eq(CHECKS.reduce((s, c) => s + c.points, 0), 100);
+  eq(grade(100), 'A+'); eq(grade(80), 'A'); eq(grade(0), 'F');
+});
+
+await test('passport: a well-kept site scores 100 and is still not registered', async () => {
+  const { deps } = setup(web(GOOD));
+  const r = (await call(deps, 'passportScan', { domain: 'https://good.example/path' })).body;
+  eq(r.domain, 'good.example'); eq(r.score, 100); eq(r.grade, 'A+');
+  eq(r.visa, 'not_registered', 'points never buy a stamp'); eq(r.dns_proof, true);
+  ok(r.checks.every((c) => c.pass && c.fix === null));
+  eq(r.next, 'https://lunarasociety.com/shield.html');
+});
+
+await test('passport: a bare site fails honestly, soft 404s and unreachable DNS score nothing', async () => {
+  const bare = { dns: { 'SOA bare.example': 'down' }, pages: { 'https://www.bare.example/': { headers: {}, text: '<html>' } } };
+  const { deps } = setup(web(bare));
+  const r = (await call(deps, 'passportScan', { domain: 'bare.example' })).body;
+  eq(r.score, 15, 'only HTTPS (via www)'); eq(r.grade, 'F');
+  const by = Object.fromEntries(r.checks.map((c) => [c.id, c]));
+  eq(by.https.pass, true); ok(/www\.bare\.example/.test(by.https.detail));
+  eq(by.llms.pass, false, 'an HTML 404 page is not an llms.txt'); ok(by.dmarc.fix);
+  eq(by.dnssec.detail, 'No answer');
+});
+
+await test('passport: partial credit, the register decides the visa', async () => {
+  const site = { dns: { 'TXT mid.example': ['"v=spf1 a"'], 'TXT _dmarc.mid.example': ['"v=DMARC1; p=none"'] },
+    pages: { 'https://mid.example/': { headers: { 'strict-transport-security': 'max-age=300' }, text: '' } } };
+  const { deps, db } = setup(web(site));
+  db.apps.set('SHIELD-2026-0001', { public_id: 'SHIELD-2026-0001', domain: 'mid.example', status: 'approved', kind: 'business', business_name: 'Mid', verified_at: '2026-09-01T00:00:00Z', expires_at: '2027-03-01T00:00:00Z' });
+  const r = (await call(deps, 'passportScan', { domain: 'mid.example' })).body;
+  eq(r.score, 15 + 5 + 4 + 4); eq(r.visa, 'verified'); eq(r.register.public_id, 'SHIELD-2026-0001'); eq(r.next, null);
+  db.apps.get('SHIELD-2026-0001').status = 'revoked';
+  eq((await call(deps, 'passportScan', { domain: 'mid.example' })).body.visa, 'revoked');
+});
+
+await test('passport: a <meta> policy counts, except for framing', async () => {
+  const site = { dns: {}, pages: { 'https://meta.example/': { headers: {}, text: `<html><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-ancestors 'none'"><meta name='referrer' content='no-referrer'></head>` } } };
+  const r = (await call(setup(web(site)).deps, 'passportScan', { domain: 'meta.example' })).body;
+  const by = Object.fromEntries(r.checks.map((c) => [c.id, c]));
+  eq(by.csp.pass, true); ok(/^<meta> default-src/.test(by.csp.detail));
+  eq(by.referrer.pass, true); eq(by.referrer.detail, '<meta> no-referrer');
+  eq(by.frame.pass, false, 'browsers ignore frame-ancestors in a meta policy');
+});
+
+await test('passport: bad input, no network, rate limit', async () => {
+  eq((await call(setup(web(GOOD)).deps, 'passportScan', { domain: 'localhost' })).status, 400);
+  eq((await call(setup().deps, 'passportScan', { domain: 'good.example' })).status, 503);
+  const { deps } = setup(web(GOOD));
+  for (let i = 0; i < 30; i++) eq((await call(deps, 'passportScan', { domain: 'good.example' })).status, 200);
+  eq((await call(deps, 'passportScan', { domain: 'good.example' })).status, 429);
+});
+
+await test('passport: private addresses are refused', async () => {
+  for (const ip of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:10.0.0.1', '999.1.1.1'])
+    eq(isPrivateAddress(ip), true, ip);
+  for (const ip of ['1.1.1.1', '185.199.108.153', '2606:4700::1111']) eq(isPrivateAddress(ip), false, ip);
 });
 
 console.log(`${passed} passed, ${failed} failed`);

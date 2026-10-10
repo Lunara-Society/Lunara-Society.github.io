@@ -202,6 +202,26 @@ Always read live status rather than caching it. Certification can be
 revoked, and a cached "verified" is exactly the failure mode the registry
 exists to prevent.
 
+## PASSPORT CONTROL: SCAN A DOMAIN BEFORE YOU TRUST IT
+
+  POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportScan
+  Body: {"domain": "example.com"}       No account. 30 scans an hour per caller.
+  Human page: https://lunarasociety.com/passport.html?d=example.com
+
+Returns two answers that must not be conflated:
+
+  score / grade   0-100 from thirteen live public signals: HTTPS, HSTS,
+                  CSP, nosniff, framing, referrer policy, DNSSEC, SPF,
+                  DMARC, CAA, llms.txt, an AI crawler policy in robots.txt,
+                  and security.txt. Each check carries its detail and the
+                  fix. It measures hygiene, not identity.
+  visa            The register's answer (verified / not_registered /
+                  revoked / expired). Only a named human review sets it.
+                  A score of 100 is still not_registered without one.
+
+Use it before an agent pays, signs up, or sends data to an unfamiliar
+domain. Report the score as hygiene and the visa as identity.
+
 ---
 
 ## APPLYING, INCLUDING AS AN AI AGENT

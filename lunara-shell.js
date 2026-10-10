@@ -67,15 +67,16 @@
   var NAV = [
     { href: 'intelligence.html', label: 'Intelligence' },
     { href: 'registry.html',     label: 'Registry' },
+    { href: 'passport.html',     label: 'Passport' },
     { href: 'shield.html',       label: 'Certification' },
     { href: 'mcp.html',          label: 'For AI Systems' },
-    { href: 'evidence.html',     label: 'Evidence' },
     { href: 'lens.html',         label: 'Lens app' }
   ];
 
   var FOOT = [
     { head: 'The record', links: [
       ['intelligence.html', 'Regulatory intelligence'],
+      ['passport.html',     'Passport control: scan a domain'],
       ['check.html',        'Does the law reach your AI?'],
       ['lens.html',         'Lunara Lens: is it real?'],
       ['registry.html',     'Public register'],
@@ -100,6 +101,7 @@
     ]},
     { head: 'For machines', links: [
       ['mcp.html',            'MCP server'],
+      ['passport.html',       'Passport scan API'],
       ['test.html',           'The Lunara Test'],
       ['embed.html',          'Embed the AI Act countdown'],
       ['/corpus/index.json',  'Corpus index'],

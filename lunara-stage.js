@@ -194,15 +194,16 @@
       return r.json();
     }).then(function (json) {
       var status = json.status || (json.found ? 'verified' : 'not_registered');
+      var more = ' <a class="inline" href="passport.html?d=' + encodeURIComponent(domain) + '">Run its full passport scan &rarr;</a>';
       if (status === 'verified') {
         dot.className = 'lxs-dot live';
-        out.innerHTML = '<span class="ok">Verified.</span> <b>' + domain + '</b> holds a Shield credential. A named reviewer signed that decision.';
+        out.innerHTML = '<span class="ok">Verified.</span> <b>' + domain + '</b> holds a Shield credential. A named reviewer signed that decision.' + more;
       } else if (status === 'revoked') {
         dot.className = 'lxs-dot gold';
-        out.innerHTML = '<b>' + domain + '</b> held a credential and it was withdrawn. Check the revocation reason before relying on it.';
+        out.innerHTML = '<b>' + domain + '</b> held a credential and it was withdrawn. Check the revocation reason before relying on it.' + more;
       } else {
         dot.className = 'lxs-dot';
-        out.innerHTML = '<b>' + domain + '</b> is not in the register. That is true of almost every business and says nothing against them — it means nobody has checked, which is exactly the gap this institution exists to close.';
+        out.innerHTML = '<b>' + domain + '</b> is not in the register. That is true of almost every business and says nothing against them — it means nobody has checked, which is exactly the gap this institution exists to close.' + more;
       }
     }).catch(function () {
       dot.className = 'lxs-dot';

@@ -25,8 +25,8 @@
   --ink-2:    #0C0E12;
   --ink-3:    #12151A;
   --white:    #EFEAE0;
-  --grey:     #A49E93;
-  --grey-2:   #8D887F;
+  --grey:     #BEB8AD;
+  --grey-2:   #A29D94;
   --gold:     #C4A46B;
   --gold-lit: #E2C47A;
   --silver:   rgba(236,240,246,0.92);
@@ -40,7 +40,7 @@ html{scroll-behavior:smooth;background:var(--ink)}
 body{
   background:var(--ink);color:var(--white);
   font-family:'Inter',system-ui,-apple-system,sans-serif;
-  font-weight:300;line-height:1.65;
+  font-weight:400;line-height:1.65;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;overflow-x:clip;
 }
@@ -103,7 +103,7 @@ h2,.h2{
   font-size:clamp(27px,3.6vw,42px);line-height:1.12;letter-spacing:-.01em;color:var(--white);
 }
 h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:20px;color:var(--white);line-height:1.25}
-.sec-lede{font-size:15px;color:var(--grey);max-width:64ch;margin-top:14px}
+.sec-lede{font-size:16.5px;color:var(--grey);max-width:64ch;margin-top:14px}
 p+p{margin-top:14px}
 
 /* ── panels ─────────────────────────────────────────────────────

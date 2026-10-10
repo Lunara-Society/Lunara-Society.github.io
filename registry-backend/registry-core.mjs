@@ -39,7 +39,10 @@
    tables, mail, DNS and the model. The tests run this same file.
    ═══════════════════════════════════════════════════════════════════ */
 
+import { passportScan } from './passport.mjs';
+
 export const PROTOCOL = 'LUNA-PROTO-1';
+const PASSPORT_LIMIT_HOUR = 30;
 export const FOUNDING_CAP = 80;
 // The Shield price in lunara-pricing.js; the test suite fails if they part.
 export const SHIELD_PRICE = 75;
@@ -339,6 +342,16 @@ export async function handleRegistry(req, deps) {
     case 'shieldFoundingCount': {
       const used = Math.min(FOUNDING_CAP, await deps.db.countApproved('business'));
       return json({ success: true, cap: FOUNDING_CAP, used, remaining: FOUNDING_CAP - used, sold_out: used >= FOUNDING_CAP, current_price: SHIELD_PRICE });
+    }
+
+    case 'passportScan': {
+      const domain = normDomain(body.domain);
+      if (!domain) return json({ success: false, error: 'Send a domain, for example example.com.' }, 400);
+      if (!deps.resolve || !deps.fetchPage) return json({ success: false, error: 'Scanning is not available here.' }, 503);
+      if (await limited('passport', ipHash, PASSPORT_LIMIT_HOUR, deps)) {
+        return json({ success: false, error: `That is ${PASSPORT_LIMIT_HOUR} scans in an hour from here. Try again later.` }, 429);
+      }
+      return json(await passportScan(domain, deps));
     }
 
     case 'shieldApply': return apply(body, deps, ipHash);

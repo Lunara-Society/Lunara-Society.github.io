@@ -61,6 +61,115 @@
       + '<text x="120" y="172" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="3" fill="currentColor" stroke="none">' + t[1] + '</text></svg>';
   }
 
+
+  /* ── the cinema ────────────────────────────────────────────────────
+     The cover opens on its spine, the booklet follows the pointer and
+     catches light in its foil, each check lands with a tick, and the
+     stamp comes down with ink, a flash and a thud. Sound starts only
+     after the reader has clicked, and one button turns it off for good. */
+  var AC = null, soundOn = true;
+  try { soundOn = localStorage.getItem('lx-sound') !== '0'; } catch (e) {}
+  function snd() {
+    if (!soundOn || reduce) return null;
+    try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) { AC = null; }
+    return AC;
+  }
+  function tick(i) {
+    var a = snd(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = 'sine'; o.frequency.setValueAtTime(1500 + (i % 4) * 140, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.08);
+  }
+  function thud() {
+    var a = snd(); if (!a) return;
+    var t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.28);
+    g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.42);
+    var len = Math.floor(a.sampleRate * 0.12), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    var n = a.createBufferSource(), f = a.createBiquadFilter(), ng = a.createGain();
+    n.buffer = buf; f.type = 'lowpass'; f.frequency.value = 900; ng.gain.value = 0.35;
+    n.connect(f); f.connect(ng); ng.connect(a.destination); n.start(t);
+  }
+  function hum(on) {
+    var a = snd(); if (!a) return;
+    if (on && !hum.o) {
+      var o = a.createOscillator(), g = a.createGain(); o.type = 'sawtooth'; o.frequency.value = 62;
+      var f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 260;
+      g.gain.setValueAtTime(0.0001, a.currentTime); g.gain.exponentialRampToValueAtTime(0.02, a.currentTime + 0.4);
+      o.connect(f); f.connect(g); g.connect(a.destination); o.start(); hum.o = o; hum.g = g;
+    } else if (!on && hum.o) {
+      var t = a.currentTime; hum.g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); hum.o.stop(t + 0.32); hum.o = null;
+    }
+  }
+  $('pp-snd').addEventListener('click', function () {
+    soundOn = !soundOn; this.setAttribute('aria-pressed', soundOn ? 'true' : 'false'); this.textContent = soundOn ? 'Sound on' : 'Sound off';
+    try { localStorage.setItem('lx-sound', soundOn ? '1' : '0'); } catch (e) {}
+    if (!soundOn) hum(false);
+  });
+  if (!soundOn) { $('pp-snd').setAttribute('aria-pressed', 'false'); $('pp-snd').textContent = 'Sound off'; }
+
+  function openCover() {
+    var rig = $('pp-rig'), cover = $('pp-cover');
+    if (reduce) { rig.classList.remove('closed'); return; }
+    cover.classList.add('snap'); cover.classList.remove('open', 'gone'); rig.classList.add('closed');
+    void cover.offsetWidth; cover.classList.remove('snap');
+    setTimeout(function () { rig.classList.remove('closed'); cover.classList.add('open'); }, 650);
+    setTimeout(function () { cover.classList.add('gone'); }, 1900);
+  }
+
+  // The booklet turns toward the pointer; the foil moves against it.
+  (function () {
+    if (reduce || !(window.matchMedia && matchMedia('(pointer: fine)').matches)) return;
+    var wrap = $('pp-wrap'), rig = $('pp-rig'), holo = wrap.querySelector('.holo');
+    wrap.addEventListener('pointermove', function (e) {
+      if (rig.classList.contains('closed')) return;
+      var b = wrap.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
+      rig.style.transform = 'rotateX(' + ((0.5 - y) * 7).toFixed(2) + 'deg) rotateY(' + ((x - 0.5) * 9).toFixed(2) + 'deg)';
+      holo.style.setProperty('--hx', (100 - x * 100).toFixed(1) + '%'); holo.style.setProperty('--hy', (100 - y * 100).toFixed(1) + '%');
+    });
+    wrap.addEventListener('pointerleave', function () { rig.style.transform = ''; });
+  })();
+
+  // Ink thrown off the stamp, and a ring of air.
+  function burst(color) {
+    if (reduce) return;
+    var cv = $('pp-fx'), stamp = $('pp-stamp'), rig = $('pp-rig');
+    var rb = rig.getBoundingClientRect(), sb = stamp.getBoundingClientRect();
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = cv.offsetWidth * dpr; cv.height = cv.offsetHeight * dpr;
+    var cx = cv.getContext('2d'); cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var ox = sb.left - rb.left + 120 + sb.width / 2, oy = sb.top - rb.top + 120 + sb.height / 2;
+    var ps = [];
+    for (var i = 0; i < 90; i++) {
+      var a = Math.random() * Math.PI * 2, v = 2 + Math.random() * 9;
+      ps.push({ x: ox + Math.cos(a) * 60, y: oy + Math.sin(a) * 60, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1.5, r: 1 + Math.random() * 3.2, life: 1 });
+    }
+    var t0 = performance.now();
+    (function f(now) {
+      var k = (now - t0) / 1000;
+      cx.clearRect(0, 0, cv.width, cv.height);
+      cx.globalCompositeOperation = 'lighter';
+      cx.strokeStyle = color; cx.globalAlpha = Math.max(0, 0.7 - k * 1.4); cx.lineWidth = 3;
+      cx.beginPath(); cx.arc(ox, oy, 120 + k * 420, 0, Math.PI * 2); cx.stroke();
+      ps.forEach(function (p) {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.vx *= 0.97; p.life -= 0.018;
+        if (p.life <= 0) return;
+        cx.globalAlpha = p.life; cx.fillStyle = color;
+        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI * 2); cx.fill();
+      });
+      if (k < 1.3) requestAnimationFrame(f); else cx.clearRect(0, 0, cv.width, cv.height);
+    })(t0);
+  }
+  function impact(visa) {
+    var color = visa === 'verified' ? '#7FE0B0' : visa === 'not_registered' ? '#FF8A7A' : '#F2C46B';
+    thud(); burst(color);
+    var fl = $('pp-flash'); fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
+    if (!reduce) { document.body.classList.add('quake'); setTimeout(function () { document.body.classList.remove('quake'); }, 420); }
+  }
+
   var LINES = ['Resolving DNS…', 'Asking for DNSSEC signatures…', 'Reading SPF and DMARC…', 'Opening HTTPS…', 'Reading security headers…', 'Looking for llms.txt…', 'Reading robots.txt for AI crawlers…', 'Looking for security.txt…', 'Asking the register…'];
 
   function reset(domain) {
@@ -69,6 +178,9 @@
     var book = $('pp-book');
     book.style.animation = 'none'; void book.offsetWidth; book.style.animation = '';
     book.classList.add('scanning');
+    openCover();
+    hum(true);
+    if (!reduce) document.body.classList.add('spot');
     $('pp-photo').innerHTML = portrait(domain);
     $('pp-name').textContent = domain;
     $('pp-no').textContent = serial(domain);
@@ -93,6 +205,7 @@
   function show(domain, d) {
     var book = $('pp-book');
     book.classList.remove('scanning');
+    hum(false);
     $('pp-status').textContent = 'Scan complete · ' + d.checks.filter(function (c) { return c.pass; }).length + ' of 13 checks passed';
     $('pp-mrz').textContent = mrz(domain, d);
     $('pp-proof').textContent = d.dns_proof ? 'Present (_lunara-verify)' : 'Not published';
@@ -116,7 +229,7 @@
     });
     $('pp-groups').innerHTML = html;
     var rows = $('pp-groups').querySelectorAll('.row');
-    rows.forEach(function (r, i) { setTimeout(function () { r.classList.add('in'); }, reduce ? 0 : 90 * i); });
+    rows.forEach(function (r, i) { setTimeout(function () { r.classList.add('in'); tick(i); }, reduce ? 0 : 90 * i); });
 
     setTimeout(function () {
       $('pp-arc').style.strokeDashoffset = (326.7 * (1 - d.score / 100)).toFixed(1);
@@ -131,8 +244,9 @@
       var st = $('pp-stamp');
       st.innerHTML = stampSvg(d.visa);
       st.className = 'stamp ' + (d.visa === 'verified' ? 'ok' : d.visa === 'not_registered' ? 'no' : 'rev') + ' slam';
-      if (!reduce) setTimeout(function () { book.classList.add('shake'); setTimeout(function () { book.classList.remove('shake'); }, 400); }, 300);
+      if (!reduce) setTimeout(function () { impact(d.visa); book.classList.add('shake'); setTimeout(function () { book.classList.remove('shake'); }, 400); }, 300);
       after(domain, d);
+      setTimeout(function () { document.body.classList.remove('spot'); }, 1600);
     }, delay);
   }
 
@@ -221,10 +335,10 @@
       .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.success) throw new Error(j.error || 'HTTP ' + r.status); return j; }); })
       .then(function (d) {
         // Let the laser finish a pass even on a fast answer; the reading should feel read.
-        setTimeout(function () { clearInterval(tick); show(domain, d); busy = false; $('pp-go').disabled = false; }, Math.max(0, (reduce ? 0 : 2200) - (Date.now() - started)));
+        setTimeout(function () { clearInterval(tick); show(domain, d); busy = false; $('pp-go').disabled = false; }, Math.max(0, (reduce ? 0 : 2700) - (Date.now() - started)));
       })
       .catch(function (e) {
-        clearInterval(tick); busy = false; $('pp-go').disabled = false;
+        clearInterval(tick); hum(false); document.body.classList.remove('spot'); busy = false; $('pp-go').disabled = false;
         $('pp-book').classList.remove('scanning');
         status.className = 'status-line err';
         status.textContent = (e && e.message && !/^HTTP|Failed to fetch|NetworkError/.test(e.message)) ? e.message : 'The scanner could not be reached just now. Nothing is shown rather than a guess.';

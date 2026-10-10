@@ -273,7 +273,18 @@
     document.head.appendChild(s);
   }
 
-  function boot() { install(); loadMember(); loadCosmos(); }
+  /* ── the engine ───────────────────────────────────────────────
+     lunara-engine.js: the WebGL sky, the opening, 3D depth on cards
+     and the light cursor. Same pattern, same reason. */
+  function loadEngine() {
+    if (document.querySelector('script[src*="lunara-engine.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-engine.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  function boot() { install(); loadMember(); loadCosmos(); loadEngine(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

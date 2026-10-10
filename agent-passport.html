@@ -82,7 +82,27 @@ textarea:focus,.card input:focus{border-color:var(--ap-gold)}
 .out b{font-weight:600}
 pre.call{margin:12px 0 0;background:#07090d;border:1px solid var(--ap-hair);border-radius:12px;padding:14px 16px;font:12.5px/1.6 "IBM Plex Mono",monospace;color:#BFD8CB;white-space:pre-wrap;word-break:break-all}
 .price{font:13px "IBM Plex Mono",monospace;color:var(--ap-mute);margin-top:10px}
-@media (prefers-reduced-motion:reduce){.cred{animation:none}}
+
+/* the credential, in the hand */
+.cred-rig{perspective:1400px;text-align:center}
+.cred{text-align:left;animation:none;transform:none;padding:0;background:none;border:0;box-shadow:none;transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.2,.8,.2,1);cursor:pointer;position:relative;height:250px;outline:0}
+.cred::before{display:none}
+.cred-face{position:absolute;inset:0;border-radius:20px;padding:28px 30px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;
+  background:linear-gradient(140deg,#18212c,#0e131a 60%,#16120b);border:1px solid rgba(226,196,122,.4);
+  box-shadow:0 50px 100px -40px rgba(0,0,0,.95),0 0 70px -20px rgba(226,196,122,.3)}
+.cred-face::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(120deg,rgba(226,196,122,.035) 0 2px,transparent 2px 12px);pointer-events:none}
+.cred-face::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:color-dodge;opacity:.22;
+  background:linear-gradient(115deg,transparent 20%,rgba(255,0,170,.55) 32%,rgba(0,255,220,.55) 44%,rgba(255,240,0,.5) 56%,rgba(120,80,255,.55) 68%,transparent 80%);
+  background-size:300% 300%;background-position:var(--hx,50%) var(--hy,50%)}
+.cred-back{transform:rotateY(180deg)}
+.cb-body{display:grid;grid-template-columns:120px 1fr;gap:22px;margin-top:22px;align-items:center;position:relative}
+.cb-code{width:120px;height:120px;background:#F4F0E8;border-radius:8px;padding:6px;box-sizing:border-box}
+.cb-lines p{margin:0 0 8px;font:12px "IBM Plex Mono",monospace;color:var(--ap-mute)}
+.cb-lines b{color:var(--ap-ink);font-weight:500}.cb-lines b.ok{color:var(--ap-ok)}
+.cb-sig{word-break:break-all;color:rgba(127,224,176,.7)!important;font-size:10.5px!important;line-height:1.5}
+.cred-hint{margin-top:16px;font:11px "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ap-mute)}
+@media (prefers-reduced-motion:reduce){.cred{animation:none;transition:none}}
 </style>
 </head>
 <body>
@@ -93,7 +113,9 @@ pre.call{margin:12px 0 0;background:#07090d;border:1px solid var(--ap-hair);bord
       <h1>A passport your<br><em>AI agent carries.</em></h1>
       <p class="lede">A website is checked from the outside. An agent has no outside. So once a named reviewer has verified an AI agent and who runs it, the agent gets a signed passport to present everywhere it goes, and anyone can check it in one call.</p>
     </div>
-    <div class="cred" aria-label="A specimen agent passport">
+    <div class="cred-rig" id="ap-rig" data-no-tilt>
+    <div class="cred" id="ap-cred" role="button" tabindex="0" aria-label="A specimen agent passport. Click to turn it over.">
+      <div class="cred-face cred-front">
       <div class="cred-h"><span>Lunara · Agent passport</span><span>Ed25519</span></div>
       <div class="cred-b">
         <div class="bot"><svg viewBox="0 0 56 56" fill="none" stroke="#7FE0B0" stroke-width="1.8" aria-hidden="true"><rect x="12" y="16" width="32" height="26" rx="7"/><circle cx="22" cy="29" r="3"/><circle cx="34" cy="29" r="3"/><path d="M28 16V9M24 9h8M8 26v8M48 26v8M22 37h12"/></svg></div>
@@ -105,6 +127,22 @@ pre.call{margin:12px 0 0;background:#07090d;border:1px solid var(--ap-hair);bord
       </div>
       <p class="cred-sig">Lunara-Passport: eyJ2IjoxLCJ0eXAiOiJsdW5hcmEtYWdlbnQtcGFzc3BvcnQi…</p>
       <span class="cred-spec">Specimen</span>
+          </div>
+      <div class="cred-face cred-back" aria-hidden="true">
+        <div class="cred-h"><span>Verify this passport</span><span>Lunara-Passport</span></div>
+        <div class="cb-body">
+          <svg class="cb-code" id="ap-code" viewBox="0 0 21 21" shape-rendering="crispEdges"></svg>
+          <div class="cb-lines">
+            <p>POST …/lunara-registry/<b>agentPassportVerify</b></p>
+            <p>signature <b class="ok">Ed25519 · valid</b></p>
+            <p>register <b class="ok">verified · live</b></p>
+            <p class="cb-sig" id="ap-sig"></p>
+          </div>
+        </div>
+        <span class="cred-spec">Specimen</span>
+      </div>
+    </div>
+    <p class="cred-hint">Move to turn it · click to flip</p>
     </div>
   </header>
 
@@ -159,6 +197,44 @@ pre.call{margin:12px 0 0;background:#07090d;border:1px solid var(--ap-hair);bord
   </section>
 </main>
 
+<script>
+/* The specimen credential: it turns toward the pointer, its foil moves
+   against the turn, and a click turns it over. */
+(function () {
+  var rig = document.getElementById('ap-rig'), card = document.getElementById('ap-cred');
+  if (!rig || !card) return;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var flipped = false, rx = 0, ry = 0;
+  // A code-like pattern and a signature-like string, drawn for the specimen only.
+  var seed = 7, R = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }, svg = '';
+  function finder(ox, oy) {
+    svg += '<rect x="' + ox + '" y="' + oy + '" width="7" height="7" fill="#0b0e13"/><rect x="' + (ox + 1) + '" y="' + (oy + 1) + '" width="5" height="5" fill="#F4F0E8"/><rect x="' + (ox + 2) + '" y="' + (oy + 2) + '" width="3" height="3" fill="#0b0e13"/>';
+  }
+  for (var y = 0; y < 21; y++) for (var x = 0; x < 21; x++) {
+    var inFinder = (x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12);
+    if (!inFinder && R() > 0.5) svg += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#0b0e13"/>';
+  }
+  finder(0, 0); finder(14, 0); finder(0, 14);
+  document.getElementById('ap-code').innerHTML = svg;
+  var hex = ''; for (var i = 0; i < 88; i++) hex += 'abcdef0123456789'[Math.floor(R() * 16)];
+  document.getElementById('ap-sig').textContent = 'sig ' + hex;
+  function apply() { card.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + (ry + (flipped ? 180 : 0)).toFixed(2) + 'deg)'; }
+  function flip() { flipped = !flipped; card.setAttribute('aria-label', flipped ? 'The back of the specimen passport. Click to turn it back.' : 'A specimen agent passport. Click to turn it over.'); apply(); }
+  card.addEventListener('click', flip);
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+  if (reduce) return;
+  document.addEventListener('pointermove', function (e) {
+    var b = rig.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
+    if (x < -0.6 || x > 1.6 || y < -0.8 || y > 1.8) { rx = 0; ry = 0; apply(); return; }
+    rx = (0.5 - y) * 18; ry = (x - 0.5) * 26; apply();
+    card.querySelectorAll('.cred-face').forEach(function (f) { f.style.setProperty('--hx', (100 - x * 100).toFixed(0) + '%'); f.style.setProperty('--hy', (100 - y * 100).toFixed(0) + '%'); });
+  });
+  // An idle card breathes, so it never sits dead on the page.
+  var t0 = performance.now(), idle = true;
+  document.addEventListener('pointermove', function () { idle = false; clearTimeout(window.__apIdle); window.__apIdle = setTimeout(function () { idle = true; }, 2500); });
+  (function breathe(now) { if (idle) { var k = (now - t0) / 1000; rx = Math.sin(k * 0.7) * 6; ry = Math.cos(k * 0.5) * 12; apply(); } requestAnimationFrame(breathe); })(t0);
+})();
+</script>
 <script src="lunara-shell.js" defer></script>
 <script src="lunara-pricing.js" defer></script>
 <script>

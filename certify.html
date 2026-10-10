@@ -195,6 +195,30 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   [style*="width:88px"][style*="border-radius:50%"]{width:68px!important;height:68px!important}
   [style*="width:80px"][style*="border-radius:50%"]{width:64px!important;height:64px!important}
 }
+
+/* three tracks, one card each */
+.tracks3{max-width:1200px}
+.t3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;text-align:left}
+.t3c{border:1px solid rgba(196,164,107,.22);border-radius:16px;padding:28px 26px;background:linear-gradient(180deg,rgba(196,164,107,.06),rgba(10,12,16,.6));transition:transform .25s,border-color .25s}
+.t3c:hover{transform:translateY(-4px);border-color:rgba(196,164,107,.5)}
+.t3c svg{width:46px;height:46px;color:#E2C47A}
+.t3k{font:11px "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#C4A46B;margin-top:16px}
+.t3c h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:30px;color:#F2EEE6;margin:6px 0 10px}
+.t3s{font-size:15.5px;line-height:1.6;color:#D6D1C7}
+.t3w{font-size:14px;line-height:1.6;color:#A9A398;margin-top:10px}
+.t3c details{margin-top:14px;border-top:1px solid rgba(214,222,234,.1);padding-top:12px}
+.t3c summary{cursor:pointer;font-size:14px;color:#E2C47A}
+.t3c details p{font-size:14px;line-height:1.7;color:#BEB8AD;margin-top:10px}
+.t3l{display:inline-block;margin-top:16px;font-size:13px;letter-spacing:.06em;color:#E2C47A;text-decoration:none;border-bottom:1px solid rgba(196,164,107,.35)}
+
+/* the process as a journey, drawn rather than listed */
+.process-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;position:relative;margin-top:40px;text-align:left}
+.process-steps::before{content:"";position:absolute;left:30px;right:30px;top:30px;height:2px;background:linear-gradient(90deg,#C4A46B,rgba(127,224,176,.8));opacity:.55}
+.process-steps .step{display:block;padding:0;border:0;position:relative}
+.process-steps .step-num{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:24px;color:#F2EEE6;background:#0c0e13;border:2px solid #C4A46B;box-shadow:0 0 22px -4px rgba(226,196,122,.6);position:relative;z-index:1}
+.process-steps .step:last-child .step-num{border-color:#7FE0B0;box-shadow:0 0 22px -4px rgba(127,224,176,.7)}
+.process-steps .step-content h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:23px;color:#F2EEE6;margin:18px 0 8px}
+.process-steps .step-content p{font-size:14.5px;line-height:1.6;color:#C9C3B8}
 </style>
 
 <style>.page-accent{width:60px;height:2px;background:linear-gradient(90deg,rgba(196,164,107,0.8),transparent);margin:24px auto 32px}</style>
@@ -634,37 +658,40 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   </div>
 </div>
 
-<!-- HEALTHCARE TRACK -->
-<section class="fade-in" id="healthcare">
-  <p class="section-label">Track I · Healthcare AI Governance</p>
-  <h2 class="section-title">Constitutional certification for AI in clinical, diagnostic, and health operations roles.</h2>
+<!-- THE THREE TRACKS — one card each; the full argument folds open. -->
+<section class="fade-in tracks3" aria-label="Certification tracks">
+  <p class="section-label">Three tracks</p>
+  <h2 class="section-title">Pick the track that matches<br>where your AI works.</h2>
   <div class="divider"></div>
-  <p class="section-body">Healthcare AI is classified as high risk under the EU AI Act. The Joint Commission is expanding AI scrutiny for accredited hospitals. The FDA has issued guidance on AI enabled medical devices. Health systems, digital health platforms, and clinical AI vendors are now operating in a regulatory environment where independent governance certification is rapidly becoming a procurement and accreditation requirement.</p>
-  <p class="section-body">The Healthcare Constitutional AI track maps each of the seven pillars to healthcare specific compliance requirements. HIPAA alignment for Data Sovereignty. Clinical transparency standards for Transparency of Contact. Audit trail requirements for Audit Accessibility. Revocation protocols for AI systems operating in diagnostic or treatment advisory roles.</p>
-  <p class="track-note">This track is designed for: hospital systems, digital health platforms, clinical AI vendors, health insurance AI operations, telemedicine platforms, and medical device manufacturers deploying AI components.</p>
-    <p style="margin-top:16px"><a href="/certify-healthcare.html" style="color:var(--gold-dim);font-size:13px;font-family:Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3);padding-bottom:2px">Read the full Healthcare Track Specification <p class="track-note">This track is designed for: hospital systems, digital health platforms, clinical AI vendors, health insurance AI operations, telemedicine platforms, and medical device manufacturers deploying AI components.</p>#8599;</a></p>
-</section>
-
-<!-- FINTECH TRACK -->
-<section class="fade-in" id="fintech">
-  <p class="section-label">Track II · Financial Services AI Governance</p>
-  <h2 class="section-title">Constitutional certification for AI in lending, payments, risk, and compliance roles.</h2>
-  <div class="divider"></div>
-  <p class="section-body">Financial services AI operates under overlapping regulatory regimes. FINRA 2026 GenAI Governance demands robust AI oversight. The CFPB is scrutinizing algorithmic decisioning in lending. Federal banking regulators have issued guidance on model risk management for AI systems. The EU AI Act classifies credit scoring and insurance pricing AI as high risk.</p>
-  <p class="section-body">The Financial Services Constitutional AI track maps each of the seven pillars to financial compliance requirements. Model risk management alignment for Declared Governance Framework. Fair lending transparency for Transparency of Contact. Data residency and cross border data flow compliance for Data Sovereignty. Regulator access protocols for Audit Accessibility.</p>
-  <p class="track-note">This track is designed for: banks and credit unions, fintech platforms, insurance AI providers, payment processors, wealth management platforms, regtech companies, and lending marketplaces.</p>
-    <p style="margin-top:16px"><a href="/certify-fintech.html"
-</section>
-
-<!-- GOVERNMENT TRACK -->
-<section class="fade-in" id="government">
-  <p class="section-label">Track III · Government AI Governance</p>
-  <h2 class="section-title">Constitutional certification for AI in public sector and institutional roles.</h2>
-  <div class="divider"></div>
-  <p class="section-body">Government AI deployment is accelerating across federal, state, and international bodies. The Albanian AI minister Diella has surfaced the governance gap that no existing framework addresses. The European AI Office is actively developing standards for AI systems in public roles. NIST is expected to release Q3 guidance on AI agent standards for federal procurement.</p>
-  <p class="section-body">The Government Constitutional AI track maps each of the seven pillars to public sector governance requirements: NIST AI Risk Management Framework, CISA guidance, FedRAMP alignment, federal acquisition regulation, GAO audit authority, and civil rights protections including Title VI and Section 508.</p>
-  <p class="section-body">The vendor transition governance checkpoint is Lunara's procurement innovation. When 68% of agencies plan to switch AI vendors, a constitutional governance framework ensures the standard persists across transitions. The implementation changes. The governance does not.</p>
-  <p style="margin-top:16px"><a href="/certify-government.html" style="color:var(--gold-dim);font-size:13px;font-family:Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(196,164,107,0.3);padding-bottom:2px">Read the full Government Track Specification &#8599;</a></p>
+  <div class="t3">
+    <article class="t3c" id="healthcare">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="8" y="8" width="32" height="32" rx="9"/><path d="M24 16v16M16 24h16"/></svg>
+      <p class="t3k">Track I · Available now</p>
+      <h3>Healthcare AI</h3>
+      <p class="t3s">Clinical, diagnostic and health-operations AI. Each pillar mapped to HIPAA, clinical transparency and audit-trail duties.</p>
+      <p class="t3w">For hospitals, digital health, clinical AI vendors, telemedicine and medical devices.</p>
+      <details><summary>Why this track exists</summary><p>Healthcare AI is classified as high risk under the EU AI Act. The Joint Commission is expanding AI scrutiny for accredited hospitals. The FDA has issued guidance on AI enabled medical devices. Health systems, digital health platforms, and clinical AI vendors are now operating in a regulatory environment where independent governance certification is rapidly becoming a procurement and accreditation requirement.</p><p>The Healthcare Constitutional AI track maps each of the seven pillars to healthcare specific compliance requirements. HIPAA alignment for Data Sovereignty. Clinical transparency standards for Transparency of Contact. Audit trail requirements for Audit Accessibility. Revocation protocols for AI systems operating in diagnostic or treatment advisory roles.</p></details>
+      <a class="t3l" href="/certify-healthcare.html">Full Healthcare specification &#8599;</a>
+    </article>
+    <article class="t3c" id="fintech">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 38h32M12 34V20M20 34V20M28 34V20M36 34V20M6 18l18-10 18 10z"/></svg>
+      <p class="t3k">Track II · Available now</p>
+      <h3>Financial services AI</h3>
+      <p class="t3s">Lending, payments, risk and compliance AI. Mapped to model-risk management, fair lending and data residency.</p>
+      <p class="t3w">For banks, credit unions, fintechs, insurers, payment processors and lending marketplaces.</p>
+      <details><summary>Why this track exists</summary><p>Financial services AI operates under overlapping regulatory regimes. FINRA 2026 GenAI Governance demands robust AI oversight. The CFPB is scrutinizing algorithmic decisioning in lending. Federal banking regulators have issued guidance on model risk management for AI systems. The EU AI Act classifies credit scoring and insurance pricing AI as high risk.</p><p>The Financial Services Constitutional AI track maps each of the seven pillars to financial compliance requirements. Model risk management alignment for Declared Governance Framework. Fair lending transparency for Transparency of Contact. Data residency and cross border data flow compliance for Data Sovereignty. Regulator access protocols for Audit Accessibility.</p></details>
+      <a class="t3l" href="/certify-fintech.html">Full Financial Services specification &#8599;</a>
+    </article>
+    <article class="t3c" id="government">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M24 6l16 8H8zM10 16v18M18 16v18M30 16v18M38 16v18M6 38h36M4 42h40"/></svg>
+      <p class="t3k">Track III · Coming Q4 2026</p>
+      <h3>Government AI</h3>
+      <p class="t3s">AI in public-sector roles. Mapped to the NIST AI RMF, CISA guidance, FedRAMP and civil-rights protections.</p>
+      <p class="t3w">Keeps the governance standard in place when an agency changes AI vendor.</p>
+      <details><summary>Why this track exists</summary><p>Government AI deployment is accelerating across federal, state, and international bodies. The Albanian AI minister Diella has surfaced the governance gap that no existing framework addresses. The European AI Office is actively developing standards for AI systems in public roles. NIST is expected to release Q3 guidance on AI agent standards for federal procurement.</p><p>The Government Constitutional AI track maps each of the seven pillars to public sector governance requirements: NIST AI Risk Management Framework, CISA guidance, FedRAMP alignment, federal acquisition regulation, GAO audit authority, and civil rights protections including Title VI and Section 508.</p><p>The vendor transition governance checkpoint is Lunara's procurement innovation. When 68% of agencies plan to switch AI vendors, a constitutional governance framework ensures the standard persists across transitions. The implementation changes. The governance does not.</p></details>
+      <a class="t3l" href="/certify-government.html">Full Government specification &#8599;</a>
+    </article>
+  </div>
 </section>
 
 <!-- TIERS -->

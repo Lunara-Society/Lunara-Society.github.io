@@ -289,7 +289,7 @@ h1 em{
 .lxs-verdict .ok{color:var(--live)}
 
 /* ── III. FOUR THINGS ───────────────────────────────────────────── */
-.offer{padding:170px 0 140px;position:relative}
+.offer{padding:110px 0 80px;position:relative}
 .offer-grid{display:grid;grid-template-columns:.9fr 1.3fr;gap:80px;align-items:start}
 .offer-head{position:sticky;top:130px}
 .offer-list{border-top:1px solid var(--hair)}
@@ -317,7 +317,7 @@ h1 em{
 .check{position:relative;padding:40px 0 110px}
 
 /* ── IV. THE CHAIN OF CUSTODY ───────────────────────────────────── */
-.chain{position:relative;padding:40px 0 140px}
+.chain{position:relative;padding:40px 0 80px}
 .chain-head{max-width:760px}
 .track{position:relative;margin-top:70px}
 .nodes{list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:26px;position:relative}
@@ -408,7 +408,7 @@ h1 em{
 /* ── V. BREAK THE SEAL ──────────────────────────────────────────────
    The real record, the real signature, and the reader's own hands on
    the bytes. Nothing here is simulated. */
-.seal-test{position:relative;padding:150px 0 150px;overflow:hidden;isolation:isolate}
+.seal-test{position:relative;padding:90px 0 90px;overflow:hidden;isolation:isolate}
 .seal-test::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;transition:opacity 1.2s ease,background 1.2s ease;
   background:radial-gradient(60% 55% at 72% 55%,rgba(226,196,122,.07),transparent 70%)}
 .seal-test.broken::before{background:radial-gradient(60% 55% at 72% 55%,rgba(224,112,96,.09),transparent 70%)}
@@ -508,7 +508,7 @@ h1 em{
 .wc-link:hover{color:var(--white)}
 
 /* ── VII. THE RECORD ─────────────────────────────────────────────── */
-.record{padding:40px 0 150px}
+.record{padding:40px 0 90px}
 .creed{font-family:var(--serif);font-weight:300;font-size:clamp(56px,5.6vw,86px);line-height:1.02;letter-spacing:-.018em;max-width:15em;text-wrap:balance}
 .creed em{font-style:italic;background:linear-gradient(100deg,#F5E7C4,#E2C47A 45%,#B8955A);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tally{display:grid;grid-template-columns:repeat(4,1fr);margin-top:80px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
@@ -519,7 +519,7 @@ h1 em{
 .tally i{font-style:normal;font-size:13px;color:var(--grey-2);margin-top:6px}
 
 /* ── VIII. THE DOOR ──────────────────────────────────────────────── */
-.close{position:relative;padding:130px 0 80px;overflow:hidden}
+.close{position:relative;padding:90px 0 70px;overflow:hidden}
 .close::before{content:'';position:absolute;left:50%;top:0;width:1200px;height:900px;transform:translateX(-50%);
   background:radial-gradient(closest-side,rgba(226,196,122,.08),transparent);pointer-events:none}
 .close-grid{display:grid;grid-template-columns:auto 1fr;gap:80px;align-items:center;position:relative}
@@ -546,6 +546,22 @@ h1 em{
   *,*::before,*::after{animation:none !important;transition-duration:.01ms !important;transition-delay:0s !important}
   h1 .ln > span,.fade,.lxs-panel,#moon,.moon-halo,.moon-cap,#sky{transform:none !important;opacity:1 !important}
 }
+
+/* the league teaser */
+.lgt{padding:120px 0 40px}
+.lgt-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:70px;align-items:center}
+.lgt h2{font-family:var(--serif);font-weight:300;font-size:clamp(46px,4.4vw,64px);line-height:1.02;margin-top:18px}
+.lgt h2 em{color:var(--gold-lit)}
+.lgt-list{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:l}
+.lgt-list a{display:grid;grid-template-columns:36px 1fr 150px 46px;gap:14px;align-items:center;padding:14px 18px;border:1px solid var(--hair);border-radius:14px;background:rgba(12,14,19,.75);text-decoration:none;color:var(--white);transition:transform .2s,border-color .2s}
+.lgt-list a:hover{transform:translateX(4px);border-color:rgba(226,196,122,.4)}
+.lgt-list .r{font:13px var(--mono);color:var(--grey-2)}
+.lgt-list b{font-weight:500;display:block}
+.lgt-list small{font:12px var(--mono);color:var(--grey-2)}
+.lgt-list .bar{height:7px;border-radius:9px;background:rgba(214,222,234,.08);overflow:hidden}
+.lgt-list .bar i{display:block;height:100%;border-radius:9px}
+.lgt-list .g{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:700 14px var(--sans);border:2px solid currentColor}
+.creed-sub{text-align:center;color:var(--grey);font-size:16px;margin-top:18px}
 </style>
 <link rel="stylesheet" href="lunara-shell.css">
 
@@ -724,6 +740,24 @@ h1 em{
         <p class="lxs-verdict" id="lxs-verdict" aria-live="polite">Free, unauthenticated, and the same answer an AI system gets.</p>
       </article>
     </div>
+  </div>
+</section>
+
+<!-- ── II¼. THE LEAGUE ──────────────────────────────────────────────
+     Live from lunara-registry/passportLeague: the top of the weekly
+     table, never typed in. Hidden entirely if it cannot be read. -->
+<section class="lgt" id="lgt" aria-label="The AI Passport League" hidden>
+  <div class="wrap lgt-grid">
+    <div>
+      <p class="kicker">The AI Passport League · this week</p>
+      <h2>Who guards<br><em>their own door?</em></h2>
+      <p class="sec-lede">127 AI labs, agent platforms and apps, rescanned every week on thirteen public security signals. Your domain can be scanned the same way in seconds.</p>
+      <div class="doors" style="margin-top:28px">
+        <a class="door solid" href="league.html">See all 127</a>
+        <a class="door line" href="passport.html">Scan your domain</a>
+      </div>
+    </div>
+    <ol class="lgt-list" id="lgt-list"></ol>
   </div>
 </section>
 
@@ -968,27 +1002,6 @@ h1 em{
   </div>
 </section>
 
-<!-- ── VI. THE THING WE ARE MOST PROUD OF ─────────────────────────── -->
-<section class="wrong">
-  <div class="wrap wrong-grid">
-    <div>
-      <p class="kicker" data-rv>The record of being wrong</p>
-      <blockquote class="wrong-quote" data-rv="2" style="margin-top:26px">
-        <p>A compliance authority that has never issued a correction is either very lucky <em>or not looking.</em></p>
-      </blockquote>
-      <p class="wrong-body" data-rv="3"><strong>Five corrections are published against this institution</strong>, in full, with what we got wrong and why. One of them is an obligation we missed for three days, a prohibition that arrives on 2 December 2026 and carries the heaviest penalty in the Act.</p>
-    </div>
-
-    <article class="wrong-card" id="wrong-card" data-rv="2">
-      <p class="wc-head">Correction 04 &middot; published against ourselves</p>
-      <p class="wc-row">Article 50(2) marking, for generative systems already on the market</p>
-      <p class="wc-dates"><s class="wc-old">2 February 2027</s><span class="wc-new" id="wc-new">2 December 2026</span></p>
-      <p class="wc-why">The Digital Omnibus grants four months, not six. We had carried a date from an adjacent instrument, and a date carried is a date nobody can check. Every reader of that row was told February. It was December.</p>
-      <a class="wc-link" href="evidence.html">Read all five corrections <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-    </article>
-  </div>
-</section>
-
 <!-- ── VII. WHAT THE RECORD ACTUALLY HOLDS ─────────────────────────────
      Four figures, none of them typed into this file. Each is read at
      the moment the page loads by lunara-stage.js: the obligations from
@@ -997,6 +1010,7 @@ h1 em{
 <section class="record">
   <div class="wrap">
     <p class="creed" data-rv>Nothing is trusted merely because Lunara says it is. <em>Check the record.</em></p>
+    <p class="creed-sub" data-rv="2">Including where we were wrong: <a class="inline" href="evidence.html">five corrections are published against this institution</a>, in full.</p>
     <div class="tally" id="lx-tally" data-rv="2">
       <div><b id="lx-t-obl">&hellip;</b><span>Obligations tracked</span><i id="lx-t-oblx">from the signed corpus</i></div>
       <div><b id="lx-t-force">&hellip;</b><span>Already in force</span><i>computed as you read this</i></div>
@@ -1042,6 +1056,24 @@ h1 em{
 requestAnimationFrame(function () {
   requestAnimationFrame(function () { document.body.classList.add('lit'); });
 });
+</script>
+<script>
+/* The league teaser: top five of the weekly table, or nothing at all. */
+(function () {
+  var C = function (g) { return g === 'A+' || g === 'A' ? '#7FE0B0' : g === 'B' ? '#E2C47A' : g === 'C' ? '#F2C46B' : '#FF8A7A'; };
+  var E = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  fetch('https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportLeague')
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      var top = (j.entries || []).slice(0, 5);
+      if (top.length < 5) return;
+      document.getElementById('lgt-list').innerHTML = top.map(function (e, i) {
+        var c = C(e.grade);
+        return '<li><a href="passport.html?d=' + encodeURIComponent(e.domain) + '"><span class="r">' + (i + 1) + '</span><span><b>' + E(e.name) + '</b><small>' + E(e.domain) + '</small></span><span class="bar"><i style="width:' + e.score + '%;background:' + c + '"></i></span><span class="g" style="color:' + c + '">' + E(e.grade) + '</span></a></li>';
+      }).join('');
+      document.getElementById('lgt').hidden = false;
+    }).catch(function () {});
+})();
 </script>
 <script src="lunara-shell.js" defer></script>
 <script src="lunara-moon.js" defer></script>

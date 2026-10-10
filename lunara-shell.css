@@ -228,7 +228,11 @@ body.lx-shelled [id]{scroll-margin-top:96px}
     pointer-events: none; background: #030405;
     animation: lxShutTop .9s cubic-bezier(.65,0,.25,1) .08s both;
   }
-  html::before { top: 0; }
+  html::before {
+    top: 0; content: "Access granted"; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px; box-sizing: border-box;
+    font: 500 11px/1 "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .5em; text-transform: uppercase;
+    color: #7FE0B0; text-shadow: 0 0 14px rgba(127,224,176,.8);
+  }
   html::after {
     bottom: 0; animation-name: lxShutBottom;
     box-shadow: 0 -1px 0 rgba(255,246,220,.9), 0 -2px 40px 6px rgba(226,196,122,.45);

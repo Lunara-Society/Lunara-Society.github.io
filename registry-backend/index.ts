@@ -57,6 +57,9 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
+  getActiveKey: () => rest('/registry_keys?active=eq.true&order=created_at.asc&limit=1').then(one),
+  listKeys: () => rest('/registry_keys?select=kid,public_jwk,created_at&order=created_at.asc'),
+  saveKey: (k: Record<string, unknown>) => post('registry_keys', k, 'return=minimal'),
   getPassport: (d: string) => rest(`/passport_scans?domain=eq.${q(d)}&limit=1`).then(one),
   getPassports: async (ds: string[]) => {
     const out: unknown[] = [];

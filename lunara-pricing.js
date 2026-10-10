@@ -352,13 +352,14 @@
       delivery: [
         "Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.",
         "A person verifies the agent and its operator.",
-        "When it passes, its register entry with AI designation goes live, queryable by any system.",
+        "When it passes, its register entry with AI designation goes live, queryable by any system, and you can issue the agent its signed passport at lunarasociety.com/agent-passport.html.",
         "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
       ],
       points: [
         'Agent verified and its operator named',
         'Declared governance framework recorded',
         'Register entry with AI designation, queryable by any system',
+        'A signed agent passport it presents to sites and APIs',
         'Revocable, and revocations are published'
       ]
     },

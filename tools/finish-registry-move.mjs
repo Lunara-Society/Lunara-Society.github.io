@@ -13,11 +13,15 @@
      mcp/core.mjs (then redeploy the lunara-mcp function)
      .well-known/lunara-verify.json
 
+   It also adds the lunara_passport tool (tools/mcp-passport-tool.mjs)
+   to mcp/core.mjs, so one signing covers both.
+
    This swaps the address, rebuilds the protocol document and re-signs
    everything that changed. Commit the result; the deploy check passes. */
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { addPassportTool } from './mcp-passport-tool.mjs';
 
 if (!process.env.LUNARA_SIGNING_KEY) {
   console.error('Set LUNARA_SIGNING_KEY to the path of the private key file first.');
@@ -28,6 +32,11 @@ const NEW = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-regist
 for (const f of ['registry-protocol.js', 'corpus/index.json', 'mcp/core.mjs', '.well-known/lunara-verify.json']) {
   const s = readFileSync(f, 'utf8');
   if (s.includes(OLD)) { writeFileSync(f, s.split(OLD).join(NEW)); console.log('updated', f); }
+}
+// Same signing run: give AI systems the passport scan as an MCP tool.
+{
+  const core = readFileSync('mcp/core.mjs', 'utf8'), next = addPassportTool(core);
+  if (next !== core) { writeFileSync('mcp/core.mjs', next); console.log('added lunara_passport to mcp/core.mjs'); }
 }
 execFileSync('node', ['tools/build-registry-protocol.mjs'], { stdio: 'inherit' });
 execFileSync('node', ['tools/sign-assertions.mjs'], { stdio: 'inherit', env: process.env });

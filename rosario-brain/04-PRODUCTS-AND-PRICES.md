@@ -152,6 +152,7 @@ What we charge for is being **listed**, being **monitored**, and being
 - Agent verified and its operator named
 - Declared governance framework recorded
 - Register entry with AI designation, queryable by any system
+- A signed agent passport it presents to sites and APIs
 - Revocable, and revocations are published
 
 ### Report with Governance Session — $740

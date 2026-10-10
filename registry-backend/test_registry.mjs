@@ -13,7 +13,7 @@ function eq(a, b, msg) { if (a !== b) throw new Error(`${msg || ''} expected ${J
 function ok(c, msg) { if (!c) throw new Error(msg || 'not ok'); }
 
 export function memoryDb() {
-  const apps = new Map(), passports = new Map(), watches = new Map(), hits = [], partners = [], subs = new Set(), visits = [], leads = [], chats = new Map(), orders = new Map();
+  const apps = new Map(), keys = [], passports = new Map(), watches = new Map(), hits = [], partners = [], subs = new Set(), visits = [], leads = [], chats = new Map(), orders = new Map();
   return {
     apps, passports, watches, hits, partners, subs, visits, leads, orders, mailbox: [],
     async getApplication(id) { const a = apps.get(id); return a ? { ...a } : null; },
@@ -34,6 +34,9 @@ export function memoryDb() {
     async listLeads() { return leads; },
     async chatHistory(c) { return chats.get(c) || []; },
     async saveChat(c, p, m, r) { chats.set(c, (chats.get(c) || []).concat([{ role: 'user', content: m }, { role: 'assistant', content: r }])); },
+    async getActiveKey() { return keys.find((k) => k.active) || null; },
+    async listKeys() { return keys.map(({ kid, public_jwk }) => ({ kid, public_jwk })); },
+    async saveKey(k) { keys.push(k); },
     async getPassport(d) { return passports.has(d) ? { ...passports.get(d) } : null; },
     async getPassports(ds) { return ds.filter((d) => passports.has(d)).map((d) => ({ ...passports.get(d) })); },
     async savePassport(r) { passports.set(r.domain, { ...(passports.get(r.domain) || {}), ...r }); },
@@ -452,6 +455,34 @@ await test('passport: watchers confirm, get told when it gets worse, and can sto
   eq((await call(deps, 'passportWatchSet', { token, action: 'stop' })).body.watching, false);
   eq((await db.watchersFor('good.example')).length, 0);
   eq((await call(deps, 'passportWatchSet', { token: 'x' })).status, 400);
+});
+
+await test('agent passport: only a verified AI agent gets one, anyone can verify it, revocation kills it', async () => {
+  const { deps, db } = setup();
+  const base = { kind: 'ai_agent', status: 'approved', contact_email: 'ana@yavaya.lat', business_name: 'Yavaya', agent_name: 'Yavi', agent_operator: 'Yavaya', domain: 'yavaya.lat', expires_at: '2027-04-04T00:00:00Z' };
+  db.apps.set('SHIELD-2026-0007', { public_id: 'SHIELD-2026-0007', ...base });
+  db.apps.set('SHIELD-2026-0008', { public_id: 'SHIELD-2026-0008', ...base, kind: 'business' });
+  eq((await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007' })).status, 401);
+  eq((await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'nobody' })).status, 401);
+  eq((await call({ ...deps, whoIs: async () => ({ email: 'eve@x.com' }) }, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'eve' })).status, 404, 'not theirs');
+  eq((await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0008', session_token: 'member-session' })).status, 409, 'a business gets no agent passport');
+  const r = (await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'member-session' })).body;
+  eq(r.success, true); eq(r.payload.agent, 'Yavi'); ok(r.header.startsWith('Lunara-Passport: '));
+  eq((await call(deps, 'agentPassportKeys', null, 'GET')).body.keys.length, 1, 'one key, made on first use');
+  ok(!JSON.stringify((await call(deps, 'agentPassportKeys', null, 'GET')).body).includes('pkcs8'), 'the private key is never served');
+  let v = (await call(deps, 'agentPassportVerify', { passport: r.passport })).body;
+  eq(v.valid, true); eq(v.signature, 'valid'); eq(v.status, 'verified'); eq(v.public_id, 'SHIELD-2026-0007');
+  const [h, sig] = r.passport.split('.');
+  const forged = Buffer.from(JSON.stringify({ ...r.payload, agent: 'Evil' })).toString('base64url') + '.' + sig;
+  v = (await call(deps, 'agentPassportVerify', { passport: forged })).body;
+  eq(v.valid, false); eq(v.signature, 'invalid');
+  eq((await call(deps, 'agentPassportVerify', { passport: 'garbage' })).body.valid, false);
+  db.apps.get('SHIELD-2026-0007').status = 'revoked';
+  v = (await call(deps, 'agentPassportVerify', { passport: r.passport })).body;
+  eq(v.valid, false); eq(v.signature, 'valid'); eq(v.status, 'revoked');
+  eq((await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'member-session' })).status, 409);
+  const again = (await call(deps, 'agentPassportIssue', { public_id: 'SHIELD-2026-0007', session_token: 'owner-session' })).status;
+  eq(again, 409, 'even the owner cannot issue for a revoked agent');
 });
 
 console.log(`${passed} passed, ${failed} failed`);

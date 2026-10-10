@@ -287,7 +287,7 @@
 
   /* ── the chain of custody ──────────────────────────────────────── */
   safe('chain', function () {
-    var chain = $('chain'); if (!chain || reduce) return;
+    var chain = $('chain'); if (!chain || reduce || !chain.hasAttribute('data-scrolly')) return;
     chain.classList.add('scrolly');
     var sticky = chain.querySelector('.chain-sticky');
     var nodes = [].slice.call(chain.querySelectorAll('.node'));
@@ -379,7 +379,7 @@
   /* ── the correction: the right date comes from the corpus ──────── */
   corpusP.then(function (c) {
     var o = c.json.obligations.filter(function (x) { return /^Article 50\(2\) marking/.test(x.name); })[0];
-    if (o) $('wc-new').textContent = longDate(isoUTC(o.applies_from));
+    if (o && $('wc-new')) $('wc-new').textContent = longDate(isoUTC(o.applies_from));
   }).catch(function () {});
 
   /* ── the tally counts up to what lunara-stage.js reads ────────── */

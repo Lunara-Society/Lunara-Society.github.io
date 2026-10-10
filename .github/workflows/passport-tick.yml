@@ -1,0 +1,29 @@
+name: Passport rescans
+
+# Keeps the league table and score-watch alerts current. Every 20 minutes
+# this knocks on lunara-registry/passportTick, which rescans the few
+# league or watched domains whose passport is more than six and a half
+# days old and emails watchers when one got worse. A knock with nothing
+# stale does nothing, so the schedule can be generous. The list itself is
+# league/domains.json in this repository.
+
+on:
+  schedule:
+    - cron: '7,27,47 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Rescan what is stale
+        run: |
+          code=$(curl -s -o body.txt -w '%{http_code}' -m 150 -X POST \
+            -H 'content-type: application/json' -d '{}' \
+            https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/passportTick)
+          echo "passportTick answered $code: $(cat body.txt)"
+          [ "$code" = "200" ] || { echo "::error::passportTick answered $code, expected 200."; exit 1; }

@@ -79,3 +79,26 @@ alter table public.chat_turns             enable row level security;
 
 -- lunara-checkout: when the order email was sent.
 alter table public.stripe_orders add column if not exists emailed_at timestamptz;
+
+-- Passport control: the latest scan of each domain. prev_* is the score
+-- before the last scheduled rescan, which is what "this week" compares.
+create table if not exists public.passport_scans (
+  domain text primary key,
+  score integer not null, grade text not null, visa text not null,
+  checks jsonb not null, scanned_at timestamptz not null,
+  prev_score integer, prev_grade text, prev_scanned_at timestamptz,
+  first_scanned_at timestamptz not null default now()
+);
+create index if not exists passport_scans_score on public.passport_scans (score desc);
+
+-- Score watch: an owner asks to be told when a domain's passport gets worse.
+create table if not exists public.passport_watch (
+  token text primary key,
+  domain text not null, email text not null,
+  confirmed_at timestamptz, unsubscribed_at timestamptz,
+  last_score integer, last_alert_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (domain, email)
+);
+alter table public.passport_scans enable row level security;
+alter table public.passport_watch enable row level security;

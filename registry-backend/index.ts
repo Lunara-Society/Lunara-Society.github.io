@@ -57,6 +57,23 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
+  getPassport: (d: string) => rest(`/passport_scans?domain=eq.${q(d)}&limit=1`).then(one),
+  getPassports: async (ds: string[]) => {
+    const out: unknown[] = [];
+    for (let i = 0; i < ds.length; i += 100) {
+      const part = ds.slice(i, i + 100);
+      if (part.length) out.push(...(await rest(`/passport_scans?domain=in.(${part.map((d) => q(d)).join(',')})&limit=1000`)));
+    }
+    return out;
+  },
+  savePassport: (r: Record<string, unknown>) => rest('/passport_scans?on_conflict=domain', {
+    method: 'POST', headers: { prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(r) }),
+  watchedDomains: async () => [...new Set(((await rest('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=domain&limit=5000')) || []).map((w: { domain: string }) => w.domain))],
+  watchersFor: (d: string) => rest(`/passport_watch?domain=eq.${q(d)}&confirmed_at=not.is.null&unsubscribed_at=is.null&limit=100`),
+  findWatch: (d: string, e: string) => rest(`/passport_watch?domain=eq.${q(d)}&email=eq.${q(e)}&limit=1`).then(one),
+  getWatch: (t: string) => rest(`/passport_watch?token=eq.${q(t)}&limit=1`).then(one),
+  createWatch: (r: Record<string, unknown>) => post('passport_watch', r, 'return=minimal'),
+  updateWatch: (t: string, patch: Record<string, unknown>) => rest(`/passport_watch?token=eq.${q(t)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   createPartner: (r: unknown) => post('registry_partners', r, 'return=minimal'),
   subscribe: async (email: string, source: string) => {
     const r = await rest('/newsletter_subscribers?on_conflict=email', { method: 'POST', headers: { prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify({ email, source_page: source || null }) });
@@ -143,6 +160,19 @@ async function fetchPage(url: string) {
   throw new Error('too many redirects');
 }
 
+/* The league is the list published at /league/domains.json, so adding a
+   company is a commit to the site, reviewed like any other page. */
+let league: { at: number; list: unknown[] } | null = null;
+async function leagueList() {
+  if (league && Date.now() - league.at < 600e3) return league.list;
+  const r = await fetch('https://lunarasociety.com/league/domains.json', { signal: AbortSignal.timeout(8000) });
+  if (!r.ok) throw new Error('league ' + r.status);
+  const j = await r.json();
+  const list = (Array.isArray(j.domains) ? j.domains : []).filter((e: { domain?: unknown }) => typeof e?.domain === 'string');
+  league = { at: Date.now(), list };
+  return list;
+}
+
 async function whoIs(token: unknown) {
   if (typeof token !== 'string' || token.length < 20 || token.length > 4096) return null;
   const res = await fetch(`${env.SUPABASE_URL}/functions/v1/lunara-auth/session`, {
@@ -168,7 +198,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }));
   try {
     const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
-    return withCors(await handleRegistry(req, { db, mail, dns, resolve, fetchPage, whoIs, ai, env, ip, now: () => Date.now() }));
+    return withCors(await handleRegistry(req, { db, mail, dns, resolve, fetchPage, leagueList, whoIs, ai, env, ip, now: () => Date.now() }));
   } catch (e) {
     console.error('lunara-registry', e?.message || e);
     return withCors(json({ success: false, error: 'Something went wrong on our side. Try again.' }, 500));

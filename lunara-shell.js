@@ -77,6 +77,7 @@
     { head: 'The record', links: [
       ['intelligence.html', 'Regulatory intelligence'],
       ['passport.html',     'Passport control: scan a domain'],
+      ['league.html',       'The AI Passport League'],
       ['check.html',        'Does the law reach your AI?'],
       ['lens.html',         'Lunara Lens: is it real?'],
       ['registry.html',     'Public register'],

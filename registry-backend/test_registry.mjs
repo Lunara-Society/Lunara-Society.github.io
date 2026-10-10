@@ -13,9 +13,9 @@ function eq(a, b, msg) { if (a !== b) throw new Error(`${msg || ''} expected ${J
 function ok(c, msg) { if (!c) throw new Error(msg || 'not ok'); }
 
 export function memoryDb() {
-  const apps = new Map(), hits = [], partners = [], subs = new Set(), visits = [], leads = [], chats = new Map(), orders = new Map();
+  const apps = new Map(), passports = new Map(), watches = new Map(), hits = [], partners = [], subs = new Set(), visits = [], leads = [], chats = new Map(), orders = new Map();
   return {
-    apps, hits, partners, subs, visits, leads, orders, mailbox: [],
+    apps, passports, watches, hits, partners, subs, visits, leads, orders, mailbox: [],
     async getApplication(id) { const a = apps.get(id); return a ? { ...a } : null; },
     async getPublishedByDomain(d) { return [...apps.values()].filter((a) => a.domain === d && ['approved', 'revoked'].includes(a.status)).sort((x, y) => (y.decided_at || '').localeCompare(x.decided_at || ''))[0] || null; },
     async listPublished() { return [...apps.values()].filter((a) => a.status === 'approved'); },
@@ -34,6 +34,15 @@ export function memoryDb() {
     async listLeads() { return leads; },
     async chatHistory(c) { return chats.get(c) || []; },
     async saveChat(c, p, m, r) { chats.set(c, (chats.get(c) || []).concat([{ role: 'user', content: m }, { role: 'assistant', content: r }])); },
+    async getPassport(d) { return passports.has(d) ? { ...passports.get(d) } : null; },
+    async getPassports(ds) { return ds.filter((d) => passports.has(d)).map((d) => ({ ...passports.get(d) })); },
+    async savePassport(r) { passports.set(r.domain, { ...(passports.get(r.domain) || {}), ...r }); },
+    async watchedDomains() { return [...new Set([...watches.values()].filter((w) => w.confirmed_at && !w.unsubscribed_at).map((w) => w.domain))]; },
+    async watchersFor(d) { return [...watches.values()].filter((w) => w.domain === d && w.confirmed_at && !w.unsubscribed_at); },
+    async findWatch(d, e) { return [...watches.values()].find((w) => w.domain === d && w.email === e) || null; },
+    async getWatch(t) { return watches.get(t) || null; },
+    async createWatch(r) { watches.set(r.token, { ...r }); },
+    async updateWatch(t, p) { Object.assign(watches.get(t), p); },
     async getOrder(ref) { return orders.get(ref) || null; }
   };
 }
@@ -390,6 +399,59 @@ await test('passport: private addresses are refused', async () => {
   for (const ip of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '::1', 'fd00::1', 'fe80::1', '::ffff:10.0.0.1', '999.1.1.1'])
     eq(isPrivateAddress(ip), true, ip);
   for (const ip of ['1.1.1.1', '185.199.108.153', '2606:4700::1111']) eq(isPrivateAddress(ip), false, ip);
+});
+
+await test('passport: every scan is kept, and the badge reads the kept one', async () => {
+  const { deps, db } = setup(web(GOOD));
+  eq((await call(setup().deps, 'passportBadge', { domain: 'nobody.example' })).body.found, false, 'nothing kept, no network');
+  await call(deps, 'passportScan', { domain: 'good.example' });
+  eq(db.passports.get('good.example').score, 100);
+  let fetched = 0; const f = deps.fetchPage; deps.fetchPage = async (u) => { fetched++; return f(u); };
+  const b = (await call(deps, 'passportBadge', { domain: 'www.good.example' }, 'GET')).body;
+  eq(b.grade, 'A+'); eq(b.eligible, true); eq(b.visa, 'not_registered'); eq(fetched, 0, 'a fresh passport is not rescanned');
+  ok(b.passport.endsWith('passport.html?d=good.example'));
+});
+
+await test('passport: a stale badge rescans once a day at most, and a low grade is not eligible', async () => {
+  const { deps, db } = setup(web(GOOD));
+  db.passports.set('good.example', { domain: 'good.example', score: 40, grade: 'D', visa: 'not_registered', checks: [], scanned_at: '2026-09-01T00:00:00Z' });
+  const b = (await call(deps, 'passportBadge', { domain: 'good.example' })).body;
+  eq(b.score, 100, 'rescanned because it was a month old');
+  db.passports.set('good.example', { domain: 'good.example', score: 40, grade: 'D', visa: 'not_registered', checks: [], scanned_at: '2026-09-01T00:00:00Z' });
+  const again = (await call(deps, 'passportBadge', { domain: 'good.example' })).body;
+  eq(again.score, 40, 'not rescanned twice in a day'); eq(again.fresh, false); eq(again.eligible, false);
+});
+
+await test('passport: the tick rescans what is stale, rolls the week, and the league ranks it', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const { deps, db } = setup({ ...web(site), leagueList: async () => [{ domain: 'good.example', name: 'Good' }, { domain: 'bare.example', name: 'Bare' }] });
+  db.passports.set('good.example', { domain: 'good.example', score: 70, grade: 'B', visa: 'not_registered', checks: [], scanned_at: '2026-09-20T00:00:00Z' });
+  const r = (await call(deps, 'passportTick', {})).body;
+  eq(r.due, 2);
+  eq(db.passports.get('good.example').prev_score, 70); eq(db.passports.get('good.example').score, 100);
+  eq((await call(deps, 'passportTick', {})).body.due, 0, 'nothing is stale any more');
+  const L = (await call(deps, 'passportLeague', null, 'GET')).body;
+  eq(L.listed, 2); eq(L.entries[0].domain, 'good.example'); eq(L.entries[0].name, 'Good'); eq(L.entries[0].prev_score, 70);
+  ok(L.entries[0].score >= L.entries[1].score);
+});
+
+await test('passport: watchers confirm, get told when it gets worse, and can stop', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const { deps, db, mailbox } = setup({ ...web(site), leagueList: async () => [] });
+  eq((await call({ ...deps, mail: null }, 'passportWatch', { domain: 'good.example', email: 'o@good.example' })).status, 503, 'no mail, no promise');
+  const w = (await call(deps, 'passportWatch', { domain: 'good.example', email: 'O@good.example' })).body;
+  eq(w.success, true); eq(mailbox.length, 1);
+  const token = [...db.watches.keys()][0];
+  ok(mailbox[0].text.includes(token));
+  eq((await call(deps, 'passportWatchSet', { token })).body.watching, true);
+  await call(deps, 'passportScan', { domain: 'good.example' });
+  db.passports.get('good.example').scanned_at = '2026-09-01T00:00:00Z';
+  delete site.dns['TXT _dmarc.good.example'];
+  const r = (await call(deps, 'passportTick', {})).body;
+  eq(r.alerts, 1); ok(/DMARC/.test(mailbox[1].text)); ok(mailbox[1].text.includes('stop=1'));
+  eq((await call(deps, 'passportWatchSet', { token, action: 'stop' })).body.watching, false);
+  eq((await db.watchersFor('good.example')).length, 0);
+  eq((await call(deps, 'passportWatchSet', { token: 'x' })).status, 400);
 });
 
 console.log(`${passed} passed, ${failed} failed`);

@@ -81,6 +81,21 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
 .visa{font:11px "IBM Plex Mono",monospace;letter-spacing:.08em}
 .note{font-size:14px;color:var(--lg-mute);margin-top:18px;line-height:1.6}
 .empty{padding:40px;text-align:center;color:var(--lg-mute)}
+
+/* the constellation */
+.gx{margin-top:60px}
+.gx-head{display:flex;justify-content:space-between;align-items:baseline;gap:30px}
+.gx-hint{font-size:15px;color:var(--lg-body);max-width:34em;text-align:right}
+.gx-stage{position:relative;margin-top:14px;height:620px;border-radius:24px;overflow:hidden;cursor:grab;
+  background:radial-gradient(60% 70% at 50% 50%,rgba(226,196,122,.08),rgba(7,9,13,.4) 60%,transparent);border:1px solid var(--lg-hair);
+  box-shadow:inset 0 0 120px rgba(0,0,0,.6)}
+.gx-stage:active{cursor:grabbing}
+#gx{width:100%;height:100%;display:block}
+.gx-tip{position:absolute;pointer-events:none;padding:10px 14px;border-radius:12px;background:rgba(9,11,16,.92);border:1px solid rgba(226,196,122,.4);
+  box-shadow:0 20px 40px -10px rgba(0,0,0,.8);font:14px Inter,sans-serif;color:var(--lg-ink);transform:translate(-50%,-120%);white-space:nowrap}
+.gx-tip small{display:block;font:12px "IBM Plex Mono",monospace;color:var(--lg-mute)}
+.gx-legend{position:absolute;left:20px;bottom:16px;display:flex;gap:16px;font:11px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--lg-mute)}
+.gx-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);margin-right:7px}
 @media (prefers-reduced-motion:reduce){.bar i{animation:none}}
 </style>
 </head>
@@ -98,6 +113,18 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
     </div>
     <div class="podium" id="lg-podium" aria-label="Top three"></div>
   </header>
+
+  <section class="wrap gx" aria-label="The constellation">
+    <div class="gx-head">
+      <p class="kicker">The constellation</p>
+      <p class="gx-hint">Every star is a company. The closer to the core, the higher the score. Drag to turn it; click a star for its passport.</p>
+    </div>
+    <div class="gx-stage" id="gx-stage">
+      <canvas id="gx" role="img" aria-label="A rotating 3D map of the league: companies closer to the centre score higher"></canvas>
+      <div class="gx-tip" id="gx-tip" hidden></div>
+      <div class="gx-legend" aria-hidden="true"><span style="--c:#7FE0B0">A+ / A</span><span style="--c:#E2C47A">B</span><span style="--c:#F2C46B">C</span><span style="--c:#FF8A7A">D / F</span></div>
+    </div>
+  </section>
 
   <section class="wrap" aria-label="The table">
     <div class="tools">
@@ -146,6 +173,123 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
     }).join('');
   }
 
+
+  /* ── the constellation ─────────────────────────────────────────────
+     Each company is a star on a sphere whose radius is its distance
+     from a perfect score: the best burn near the core, the weakest
+     orbit at the edge. Rings mark the grade boundaries; companies of
+     one category are joined like a constellation. */
+  var GX = { nodes: [], ready: false };
+  function galaxy() {
+    var cv = $('gx'), stage = $('gx-stage'), tip = $('gx-tip');
+    var cx = cv.getContext('2d'); if (!cx) return;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W, H, dpr = Math.min(2, window.devicePixelRatio || 1);
+    function size() { W = stage.clientWidth; H = stage.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    size(); window.addEventListener('resize', size);
+    var N = all.length, GA = Math.PI * (3 - Math.sqrt(5));
+    var R = function (score) { return 50 + (100 - score) * 3.1; };
+    function hsh(str, k) { var h = 2166136261 ^ k; for (var c = 0; c < str.length; c++) { h ^= str.charCodeAt(c); h = Math.imul(h, 16777619); } return ((h >>> 0) % 100000) / 100000; }
+    GX.nodes = all.map(function (e, i) {
+      // A fixed direction per company, from its name: the same sky every visit.
+      var y = hsh(e.domain, 1) * 2 - 1, rad = Math.sqrt(1 - y * y), th = hsh(e.domain, 2) * Math.PI * 2;
+      var r = R(e.score) * (0.9 + 0.2 * hsh(e.domain, 3));
+      return { e: e, x: Math.cos(th) * rad * r, y: y * r * 0.82, z: Math.sin(th) * rad * r, col: COLOR(e.grade), sx: 0, sy: 0, s: 1, vis: true };
+    });
+    var byCat = {};
+    GX.nodes.forEach(function (n) { (byCat[n.e.category] = byCat[n.e.category] || []).push(n); });
+    var links = [];
+    Object.keys(byCat).forEach(function (k) { var a = byCat[k]; for (var i = 1; i < a.length; i++) links.push([a[i - 1], a[i]]); });
+    var rotY = 0.6, rotX = 0.32, vY = reduce ? 0 : 0.0016, drag = null, hover = null, born = performance.now(), mouse = null, visible = true;
+    var rings = [[90, 'A+'], [80, 'A'], [65, 'B'], [50, 'C'], [35, 'D']];
+
+    function project(x, y, z) {
+      var cy = Math.cos(rotY), sy = Math.sin(rotY), cxr = Math.cos(rotX), sxr = Math.sin(rotX);
+      var X = x * cy - z * sy, Z = x * sy + z * cy;
+      var Y = y * cxr - Z * sxr; Z = y * sxr + Z * cxr;
+      var f = 760 / (760 + Z);
+      return { x: W / 2 + X * f, y: H / 2 + Y * f, z: Z, f: f };
+    }
+    function draw(now) {
+      if (!visible) return;
+      var k = reduce ? 1 : Math.min(1, (now - born) / 1800), ease = 1 - Math.pow(1 - k, 4);
+      if (!drag) rotY += vY;
+      cx.clearRect(0, 0, W, H);
+      // the core
+      var pulse = 0.5 + 0.5 * Math.sin(now / 700);
+      var g = cx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, 90 + pulse * 10);
+      g.addColorStop(0, 'rgba(255,246,220,.95)'); g.addColorStop(0.12, 'rgba(226,196,122,.55)'); g.addColorStop(1, 'rgba(226,196,122,0)');
+      cx.fillStyle = g; cx.beginPath(); cx.arc(W / 2, H / 2, 100, 0, 7); cx.fill();
+      cx.fillStyle = 'rgba(26,20,8,.85)'; cx.font = '600 10px "IBM Plex Mono",monospace'; cx.textAlign = 'center'; cx.fillText('100', W / 2, H / 2 + 4); cx.textAlign = 'left';
+      // grade rings, drawn as tilted orbits
+      cx.lineWidth = 1;
+      rings.forEach(function (rg) {
+        var r = R(rg[0]) * ease;
+        cx.beginPath();
+        for (var a = 0; a <= 64; a++) {
+          var t = a / 64 * Math.PI * 2, p = project(Math.cos(t) * r, 0, Math.sin(t) * r);
+          if (a) cx.lineTo(p.x, p.y); else cx.moveTo(p.x, p.y);
+        }
+        cx.strokeStyle = 'rgba(226,196,122,.13)'; cx.stroke();
+        var lp = project(r, 0, 0);
+        cx.fillStyle = 'rgba(226,196,122,.55)'; cx.font = '11px "IBM Plex Mono",monospace'; cx.fillText(rg[1], lp.x + 6, lp.y - 4);
+      });
+      // place every star
+      GX.nodes.forEach(function (n) { var p = project(n.x * ease, n.y * ease, n.z * ease); n.sx = p.x; n.sy = p.y; n.sz = p.z; n.f = p.f; n.vis = (cat === 'All' || n.e.category === cat) && (!q || (n.e.name + ' ' + n.e.domain).toLowerCase().indexOf(q) >= 0); });
+      // constellations
+      links.forEach(function (l) {
+        var a = l[0], b = l[1]; if (!a.vis || !b.vis) return;
+        cx.strokeStyle = 'rgba(226,196,122,' + (cat === 'All' ? 0.07 : 0.28) + ')';
+        cx.beginPath(); cx.moveTo(a.sx, a.sy); cx.lineTo(b.sx, b.sy); cx.stroke();
+      });
+      var order = GX.nodes.slice().sort(function (a, b) { return b.sz - a.sz; });
+      order.forEach(function (n) {
+        var depth = Math.max(0.25, Math.min(1, n.f * 0.95));
+        var r = (2 + n.e.score / 22) * n.f * (n === hover ? 1.8 : 1);
+        var a = (n.vis ? 1 : 0.12) * depth;
+        var gg = cx.createRadialGradient(n.sx, n.sy, 0, n.sx, n.sy, r * 4.5);
+        gg.addColorStop(0, n.col); gg.addColorStop(0.25, n.col + '88'); gg.addColorStop(1, n.col + '00');
+        cx.globalAlpha = a * 0.75; cx.fillStyle = gg; cx.beginPath(); cx.arc(n.sx, n.sy, r * 4.5, 0, 7); cx.fill();
+        cx.globalAlpha = a; cx.fillStyle = '#FFF8E8'; cx.beginPath(); cx.arc(n.sx, n.sy, r * 0.55, 0, 7); cx.fill();
+      });
+      cx.globalAlpha = 1;
+      // names: the top ten, and whatever is under the pointer
+      cx.font = '12px Inter,sans-serif'; cx.textAlign = 'left';
+      order.forEach(function (n) {
+        if (!n.vis || !(n.e.rank <= 5 || n === hover) || n.sz > 60) return;
+        cx.fillStyle = 'rgba(244,240,232,' + (n === hover ? 1 : 0.75) + ')';
+        cx.fillText(n.e.name, n.sx + 9, n.sy + 4);
+      });
+      requestAnimationFrame(draw);
+    }
+    function pick(x, y) {
+      var best = null, bd = 16 * 16;
+      GX.nodes.forEach(function (n) { if (!n.vis) return; var d = (n.sx - x) * (n.sx - x) + (n.sy - y) * (n.sy - y); if (d < bd && (!best || n.sz < best.sz + 40)) { bd = d; best = n; } });
+      return best;
+    }
+    stage.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY, ry: rotY, rx: rotX, moved: 0 }; stage.setPointerCapture(e.pointerId); });
+    stage.addEventListener('pointermove', function (e) {
+      var b = stage.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+      if (drag) {
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved = Math.max(drag.moved, Math.abs(dx) + Math.abs(dy));
+        rotY = drag.ry + dx * 0.006; rotX = Math.max(-1.2, Math.min(1.2, drag.rx + dy * 0.004));
+      }
+      hover = pick(x, y);
+      if (hover) {
+        tip.hidden = false; tip.style.left = hover.sx + 'px'; tip.style.top = hover.sy + 'px';
+        tip.innerHTML = '<b>' + esc(hover.e.name) + '</b> · <span style="color:' + hover.col + '">' + esc(hover.e.grade) + ' ' + hover.e.score + '</span><small>#' + hover.e.rank + ' · ' + esc(hover.e.domain) + '</small>';
+      } else tip.hidden = true;
+    });
+    stage.addEventListener('pointerup', function (e) {
+      var wasDrag = drag && drag.moved > 6; drag = null;
+      if (!wasDrag && hover) go(hover.e.domain);
+    });
+    stage.addEventListener('pointerleave', function () { hover = null; tip.hidden = true; });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { var was = visible; visible = es[0].isIntersecting; if (visible && !was) requestAnimationFrame(draw); }).observe(stage);
+    document.addEventListener('visibilitychange', function () { var was = visible; visible = !document.hidden; if (visible && !was) requestAnimationFrame(draw); });
+    requestAnimationFrame(draw);
+  }
+
   $('lg-rows').addEventListener('click', function (ev) { var tr = ev.target.closest('tr[data-d]'); if (tr) go(tr.getAttribute('data-d')); });
   $('lg-q').addEventListener('input', function () { q = this.value.trim().toLowerCase(); rows(); });
 
@@ -166,6 +310,7 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
     $('lg-cats').innerHTML = cats.map(function (c) { return '<button class="chip' + (c === cat ? ' on' : '') + '" type="button">' + esc(c) + '</button>'; }).join(' ');
     Array.prototype.forEach.call($('lg-cats').children, function (b) { b.addEventListener('click', function () { cat = b.textContent; Array.prototype.forEach.call($('lg-cats').children, function (x) { x.classList.toggle('on', x === b); }); rows(); }); });
     rows();
+    try { if (all.length) galaxy(); } catch (e) { $('gx-stage').hidden = true; }
     if (j.unreachable && j.unreachable.length) {
       var n2 = document.createElement('p'); n2.className = 'note';
       n2.textContent = 'Not ranked this week, because the scanner could not reach them over HTTPS: ' + j.unreachable.map(function (u) { return u.name + ' (' + u.domain + ')'; }).join(', ') + '. An unreachable site was not measured, so it gets no score rather than a zero.';

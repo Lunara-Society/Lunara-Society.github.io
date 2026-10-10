@@ -153,6 +153,59 @@ pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);bord
 .watch-out{font-size:14px;color:var(--pp-ok);min-height:20px;margin-top:10px}
 .banner{max-width:1040px;margin:26px auto 0;padding:16px 22px;border-radius:12px;border:1px solid rgba(127,224,176,.35);background:rgba(127,224,176,.07);color:var(--pp-ink);font-size:15.5px}
 .league-link{text-align:center;margin-top:30px;font-size:16px}
+
+/* ── the cinema: a passport that opens, catches light and takes a stamp ── */
+.book-wrap{position:relative}
+.rig{position:relative;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.rig.closed{transform:translateX(-25%) rotateX(8deg) scale(.96)}
+.rig.closed .book{background:transparent;border-color:transparent;box-shadow:none}
+.rig.closed .book::before,.rig.closed .book::after,.rig.closed .book .page,.rig.closed .holo{opacity:0}
+.rig:not(.closed) .book .page,.rig:not(.closed) .book::before,.rig:not(.closed) .book::after,.rig:not(.closed) .holo{transition:opacity .8s ease .45s}
+.rig.closed .laser,.rig.closed .grid,.rig.closed .stamp{opacity:0}
+.cover{position:absolute;top:0;bottom:0;left:50%;width:50%;transform-origin:0 50%;transform-style:preserve-3d;z-index:9;transform:translateZ(4px);transition:transform 1.35s cubic-bezier(.6,.04,.2,1),opacity .6s ease}
+.cover.open{transform:translateZ(4px) rotateY(-178deg)}
+.cover.gone{opacity:0;pointer-events:none}
+.cover.snap{transition:none}
+.cover .f,.cover .k{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:4px 18px 18px 4px;overflow:hidden}
+.cover .f{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:#E2C47A;
+  background:radial-gradient(120% 90% at 30% 20%,#1d3a3a,#0f2124 55%,#091416);
+  box-shadow:inset 0 0 0 1px rgba(226,196,122,.4),inset 0 0 0 9px rgba(0,0,0,.25),inset 0 0 0 10px rgba(226,196,122,.25),0 50px 100px -30px rgba(0,0,0,.95)}
+.cover .f::before{content:"";position:absolute;inset:0;background:repeating-radial-gradient(circle at 50% 42%,rgba(226,196,122,.05) 0 1px,transparent 1px 7px);mix-blend-mode:screen}
+.cover .f::after{content:"";position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 40%,rgba(255,246,220,.35) 50%,transparent 60%);transform:translateX(-60%);animation:coverSweep 2.4s ease-in-out .2s infinite}
+@keyframes coverSweep{0%{transform:translateX(-60%)}60%,100%{transform:translateX(60%)}}
+.cv-top{font:600 13px "IBM Plex Mono",monospace;letter-spacing:.45em;text-transform:uppercase;position:relative}
+.cv-seal{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle,rgba(226,196,122,.18),transparent 70%);box-shadow:0 0 0 2px rgba(226,196,122,.6),0 0 0 8px rgba(226,196,122,.12),0 0 60px rgba(226,196,122,.35)}
+.cv-seal img{width:104px;height:104px;border-radius:50%;filter:sepia(.6) saturate(1.4) brightness(1.05)}
+.cv-title{font:500 46px/1 "Cormorant Garamond",serif;letter-spacing:.32em;text-transform:uppercase;position:relative;
+  background:linear-gradient(100deg,#B8955A,#F5DDA0 45%,#FFF6DC 50%,#E2C47A 55%,#B8955A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.cv-sub{font:11px "IBM Plex Mono",monospace;letter-spacing:.25em;text-transform:uppercase;color:rgba(226,196,122,.7);position:relative}
+.cv-chip{width:52px;color:rgba(226,196,122,.75);position:relative}
+.cover .k{transform:rotateY(180deg);border-radius:18px 4px 4px 18px;background:linear-gradient(135deg,#17202b,#0f141c);
+  box-shadow:inset 0 0 0 1px rgba(226,196,122,.25)}
+.cover .k::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(127,224,176,.03) 0 2px,transparent 2px 14px)}
+/* the foil */
+.holo{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:color-dodge;opacity:.16;
+  background:linear-gradient(115deg,transparent 20%,rgba(255,0,170,.5) 32%,rgba(0,255,220,.5) 44%,rgba(255,240,0,.45) 56%,rgba(120,80,255,.5) 68%,transparent 80%);
+  background-size:300% 300%;background-position:var(--hx,50%) var(--hy,50%)}
+/* the scan grid */
+.grid{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:repeating-linear-gradient(0deg,rgba(127,224,176,.07) 0 1px,transparent 1px 22px),repeating-linear-gradient(90deg,rgba(127,224,176,.05) 0 1px,transparent 1px 22px)}
+.scanning .grid{opacity:1;animation:gridMove 1.2s linear infinite}
+@keyframes gridMove{to{background-position:0 22px,22px 0}}
+/* the impact */
+.flash{position:absolute;inset:-40px;z-index:10;pointer-events:none;opacity:0;border-radius:30px;background:radial-gradient(circle at 30% 70%,rgba(255,255,255,.55),transparent 60%)}
+.flash.go{animation:flash .5s ease-out}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+.fx{position:absolute;left:-120px;top:-120px;width:calc(100% + 240px);height:calc(100% + 240px);z-index:11;pointer-events:none}
+.snd{position:absolute;right:0;top:-38px;z-index:12;background:rgba(255,255,255,.04);border:1px solid var(--pp-hair);color:var(--pp-mute);border-radius:999px;padding:5px 12px;font:11px "IBM Plex Mono",monospace;letter-spacing:.12em;cursor:pointer}
+.snd[aria-pressed="false"]{opacity:.6}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity 1s ease;
+  background:radial-gradient(ellipse 60% 70% at 50% 55%,transparent 40%,rgba(0,0,0,.62))}
+body.spot::after{opacity:1}
+@keyframes quake{0%,100%{transform:none}20%{transform:translate(3px,4px)}40%{transform:translate(-4px,-2px)}60%{transform:translate(2px,-3px)}80%{transform:translate(-1px,2px)}}
+body.quake main{animation:quake .38s ease}
+@media (prefers-reduced-motion:reduce){.rig,.cover{transition:none!important}.cover{display:none}.rig.closed{transform:none}.holo,.grid,.flash,.fx{display:none}}
 /* the three ideas, drawn */
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
 .how .card{text-align:left}
@@ -188,7 +241,21 @@ pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);bord
 
   <div class="wrap">
     <div class="book-wrap" id="pp-wrap">
+      <button class="snd" id="pp-snd" type="button" aria-pressed="true" title="Sound">Sound on</button>
+      <div class="rig" id="pp-rig">
+      <div class="cover" id="pp-cover" aria-hidden="true">
+        <div class="f">
+          <span class="cv-top">Lunara Society</span>
+          <span class="cv-seal"><img src="/lunara_logo_256.png" alt="" width="120" height="120"></span>
+          <span class="cv-title">Passport</span>
+          <span class="cv-sub">Passport control · the machine economy</span>
+          <svg class="cv-chip" viewBox="0 0 60 40" aria-hidden="true"><rect x="1" y="1" width="58" height="38" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1 20h14M45 20h14" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="k"></div>
+      </div>
       <div class="book" id="pp-book">
+        <div class="holo" aria-hidden="true"></div>
+        <div class="grid" aria-hidden="true"></div>
         <div class="laser" aria-hidden="true"></div>
         <section class="page" aria-label="Identity">
           <div class="ph"><span>Lunara Society · Passport</span><img src="/lunara_logo_96.png" alt=""></div>
@@ -225,6 +292,9 @@ pre.call{margin:14px 0 0;background:#07090d;border:1px solid var(--pp-hair);bord
           <div class="groups" id="pp-groups"></div>
         </section>
         <div class="stamp" id="pp-stamp" aria-hidden="true"></div>
+      </div>
+      <div class="flash" id="pp-flash" aria-hidden="true"></div>
+      <canvas class="fx" id="pp-fx" aria-hidden="true"></canvas>
       </div>
       <p class="status-line" id="pp-status" aria-live="polite"></p>
     </div>

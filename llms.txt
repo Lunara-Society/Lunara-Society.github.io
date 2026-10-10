@@ -240,6 +240,15 @@ credential is verified and current right now. A genuine but revoked or
 expired passport returns signature=valid, valid=false. Never accept a
 passport on its signature alone.
 
+Context, reported and cited on https://lunarasociety.com/agent-passport.html:
+the AI Agent Accountability Act (Senators Hawley and Murphy, introduced
+1 October 2026, NOT law) would extend the US Computer Fraud and Abuse Act
+to agent operators and developers. A passport does not decide liability;
+it makes the operator of an agent identifiable before the agent acts.
+
+The next EU AI Act binding date, read from the signed corpus, with a
+check of whether it applies: https://lunarasociety.com/december-2.html
+
 ---
 
 ## APPLYING, INCLUDING AS AN AI AGENT

@@ -41,6 +41,7 @@
 
 import { passportRoute } from './passport-routes.mjs';
 import { agentPassportRoute } from './agent-passport.mjs';
+import { opsStats } from './ops.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
 export const FOUNDING_CAP = 80;
@@ -418,6 +419,9 @@ export async function handleRegistry(req, deps) {
     case 'rosarioWebChat':
     case 'rosarioChatProxy': return chat('rosario', body, deps, ipHash);
     case 'wrenPublicChat': return chat('wren', body, deps, ipHash);
+
+    case 'opsStats':
+      return opsStats(req, body, deps, { json, isOwner });
 
     case 'shieldDashboard':
     case 'lunaraScorerLeads':

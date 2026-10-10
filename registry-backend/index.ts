@@ -17,6 +17,9 @@
                           (the domain must be verified in Resend)
      ANTHROPIC_API_KEY    the public chat (shared with lunara-lens)
      LUNARA_OWNER_EMAILS  optional; default lunarasociety@gmail.com
+     LUNARA_OPS_KEY       optional; 24+ characters. Lets the owner's own reporting
+                          agents read opsStats (figures only, no names or emails)
+                          with the header x-lunara-ops-key.
    ═══════════════════════════════════════════════════════════════════ */
 
 // @ts-nocheck — registry-core.mjs is deliberately plain JS, shared with Node.
@@ -57,6 +60,10 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
+  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at&order=created_at.desc&limit=500'),
+  countPassports: () => countOf('/passport_scans?select=domain'),
+  countWatchers: () => countOf('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=token'),
+  countSubscribers: () => countOf('/newsletter_subscribers?select=email'),
   getActiveKey: () => rest('/registry_keys?active=eq.true&order=created_at.asc&limit=1').then(one),
   listKeys: () => rest('/registry_keys?select=kid,public_jwk,created_at&order=created_at.asc'),
   saveKey: (k: Record<string, unknown>) => post('registry_keys', k, 'return=minimal'),

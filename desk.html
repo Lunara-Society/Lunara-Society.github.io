@@ -57,6 +57,12 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
     <div class="stats" id="stats"></div>
     <div class="filters" id="filters"></div>
     <div id="list"></div>
+    <section id="ops" aria-label="Operations">
+      <h2 style="margin-top:46px">Operations, live</h2>
+      <p class="lede" id="ops-src">Read from Stripe-confirmed orders and the register, not from the retired Base44 app.</p>
+      <div class="stats" id="ops-stats"></div>
+      <div id="ops-orders"></div>
+    </section>
   </div>
 </main>
 <script>
@@ -90,7 +96,28 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
         $('stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] || 0) }), el('span', { text: x[0] })]));
       });
       render();
+      ops();
     }).catch(function () { $('gate').textContent = 'The registry could not be reached.'; });
+  }
+  /* The real numbers: what Stripe confirmed and what the register holds. */
+  function ops() {
+    post('opsStats').then(function (r) {
+      if (!r.ok) { $('ops-src').textContent = 'Operations could not be read: ' + (r.body && r.body.error || r.status); return; }
+      var o = r.body, v = o.revenue, p = o.passport;
+      $('ops-stats').innerHTML = '';
+      [['Paid orders', v.paid_orders], ['Net revenue', '$' + v.net_usd], ['To deliver', v.awaiting_delivery], ['Unfinished checkouts, 7d', v.unfinished_checkouts_7_days],
+       ['Passport scans, 7d', p.scans_7_days], ['Domains on record', p.domains_on_record], ['Watchers', p.watchers_confirmed], ['Newsletter', o.newsletter_subscribers]].forEach(function (x) {
+        $('ops-stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] == null ? '—' : x[1]) }), el('span', { text: x[0] })]));
+      });
+      $('ops-orders').innerHTML = '';
+      if (!o.orders.length) { $('ops-orders').appendChild(el('p', { class: 'lede', text: 'No live orders yet.' })); return; }
+      o.orders.slice(0, 20).forEach(function (x) {
+        $('ops-orders').appendChild(el('div', { class: 'card' }, [
+          el('p', {}, [el('b', { text: x.order_ref + ' · ' + x.product + ' · $' + x.amount_usd }), ' ', tag(x.status, x.status === 'paid' ? 'ok' : ''), x.delivered ? tag('delivered', 'ok') : (x.status === 'paid' ? tag('to deliver', 'wait') : null)]),
+          el('p', { class: 'lede', text: [x.name, x.email, x.country, (x.paid_at || x.created_at || '').slice(0, 10)].filter(Boolean).join(' · ') })
+        ]));
+      });
+    }).catch(function () { $('ops-src').textContent = 'Operations could not be read.'; });
   }
   function render() {
     $('filters').innerHTML = '';

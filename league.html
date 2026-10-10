@@ -166,6 +166,11 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
     $('lg-cats').innerHTML = cats.map(function (c) { return '<button class="chip' + (c === cat ? ' on' : '') + '" type="button">' + esc(c) + '</button>'; }).join(' ');
     Array.prototype.forEach.call($('lg-cats').children, function (b) { b.addEventListener('click', function () { cat = b.textContent; Array.prototype.forEach.call($('lg-cats').children, function (x) { x.classList.toggle('on', x === b); }); rows(); }); });
     rows();
+    if (j.unreachable && j.unreachable.length) {
+      var n2 = document.createElement('p'); n2.className = 'note';
+      n2.textContent = 'Not ranked this week, because the scanner could not reach them over HTTPS: ' + j.unreachable.map(function (u) { return u.name + ' (' + u.domain + ')'; }).join(', ') + '. An unreachable site was not measured, so it gets no score rather than a zero.';
+      document.querySelector('table').insertAdjacentElement('afterend', n2);
+    }
   }).catch(function () {
     $('lg-rows').innerHTML = '<tr><td colspan="7" class="empty">The league could not be read just now. Nothing is shown rather than a guess.</td></tr>';
     ['lg-n', 'lg-avg', 'lg-a', 'lg-dmarc'].forEach(function (id) { $(id).textContent = '—'; });

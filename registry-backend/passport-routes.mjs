@@ -103,9 +103,12 @@ export async function passportRoute(name, body, deps, ipHash, h) {
       const list = (await deps.leagueList().catch(() => null)) || [];
       const names = new Map(list.map((e) => [e.domain, e]));
       const rows = (await deps.db.getPassports(list.map((e) => e.domain))) || [];
-      const ranked = rows.filter((r) => names.has(r.domain)).map((r) => ({ ...brief(r), name: names.get(r.domain).name, category: names.get(r.domain).category || null }))
-        .sort((a, b) => b.score - a.score || a.domain.localeCompare(b.domain));
-      return json({ success: true, listed: list.length, scanned: ranked.length, entries: ranked });
+      const all = rows.filter((r) => names.has(r.domain)).map((r) => ({ ...brief(r), name: names.get(r.domain).name, category: names.get(r.domain).category || null }));
+      // A site we could not reach over HTTPS was not measured, so it is
+      // not ranked: a 0 would read as a verdict on its security.
+      const ranked = all.filter((e) => e.passed.includes('https')).sort((a, b) => b.score - a.score || a.domain.localeCompare(b.domain));
+      const unreachable = all.filter((e) => !e.passed.includes('https')).map(({ domain, name, scanned_at }) => ({ domain, name, scanned_at }));
+      return json({ success: true, listed: list.length, scanned: ranked.length, entries: ranked, unreachable });
     }
 
     case 'passportTick': {

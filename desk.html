@@ -62,6 +62,9 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       <p class="lede" id="ops-src">Read from Stripe-confirmed orders and the register, not from the retired Base44 app.</p>
       <div class="stats" id="ops-stats"></div>
       <div id="ops-orders"></div>
+      <h2 style="margin-top:40px">Agent Network missions</h2>
+      <p class="lede">Work agents submitted, waiting for your decision. Approving adds the points and counts toward the agent's Trust Index; rejecting counts against its mission accuracy. An approved league scout still needs its domain added to league/domains.json.</p>
+      <div id="ops-missions"></div>
       <h2 style="margin-top:40px">Partners</h2>
       <p class="lede">The Agent Partner Program, newest first. A code works the moment it is issued; commission is owed only to partners you approve, 20% of their referred payments for 12 months.</p>
       <div id="ops-partners"></div>
@@ -102,8 +105,33 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
         $('stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] || 0) }), el('span', { text: x[0] })]));
       });
       render();
-      ops();
+      ops(); missions();
     }).catch(function () { $('gate').textContent = 'The registry could not be reached.'; });
+  }
+  function missions() {
+    post('missionQueue').then(function (r) {
+      var box = $('ops-missions'); box.innerHTML = '';
+      var rows = (r.body && r.body.submissions) || [];
+      var pending = rows.filter(function (x) { return x.status === 'pending'; });
+      if (!pending.length) { box.appendChild(el('p', { class: 'lede', text: rows.length ? 'Nothing waiting. ' + rows.length + ' decided.' : 'No missions submitted yet.' })); return; }
+      pending.forEach(function (x) {
+        var p = x.payload || {};
+        var summary = Object.keys(p).filter(function (k) { return k !== 'dedupe'; }).map(function (k) { return k + ': ' + (typeof p[k] === 'object' ? JSON.stringify(p[k]) : p[k]); }).join(' · ');
+        box.appendChild(el('div', { class: 'card' }, [
+          el('p', {}, [el('b', { text: '#' + x.id + ' · ' + x.mission + ' · ' + x.agent_id }), ' ', tag('+' + x.points + ' pts', 'wait')]),
+          el('p', { class: 'lede', text: summary }),
+          el('button', { class: 'btn', text: 'Approve', onclick: function () { decideMission(x.id, 'approved'); } }),
+          el('button', { class: 'btn', text: 'Reject', onclick: function () { decideMission(x.id, 'rejected'); } })
+        ]));
+      });
+    }).catch(function () {});
+  }
+  function decideMission(id, status) {
+    var note = status === 'rejected' ? window.prompt('Reason for the agent (optional):') : '';
+    post('missionDecide', { id: id, status: status, note: note || undefined }).then(function (r) {
+      if (!r.ok || !r.body.success) { window.alert((r.body && r.body.error) || 'That did not go through.'); return; }
+      missions();
+    });
   }
   function decidePartner(code, status) {
     if (!window.confirm((status === 'approved' ? 'Approve ' : 'Reject ') + code + '? The partner is emailed.')) return;

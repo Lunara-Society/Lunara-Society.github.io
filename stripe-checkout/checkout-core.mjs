@@ -199,6 +199,10 @@ const ORDER_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
    that arrives with one is written on the order and in Stripe's
    metadata; the partner's commission is counted from there. */
 export const PARTNER_RE = /^P-[0-9A-HJKMNP-TV-Z]{6}$/;
+/* An Agent Network agent id (lunara-registry/network.mjs). Trial sittings
+   and membership tiers are bought for one, and a tier only once the
+   registry says the agent has qualified for it. */
+export const AGENT_RE = /^AGT-[0-9A-HJKMNP-TV-Z]{8}$/;
 export const ORDER_RE = /^LO-[0-9A-HJKMNP-TV-Z]{16}$/;
 
 /* About 80 bits: unguessable, and still short enough to read out over
@@ -264,7 +268,7 @@ export async function createSession(stripe, productId, returnTo, order, lockEmai
       };
     }) : undefined,
     custom_text: { submit: { message: ('How you receive it: ' + how).slice(0, 1200) } },
-    metadata: { lunara_product: productId, order, partner: prefill.partner || undefined },
+    metadata: { lunara_product: productId, order, partner: prefill.partner || undefined, agent: prefill.agent || undefined },
     payment_intent_data: sub ? undefined : {
       description: `${p.name} (order ${order})`,
       metadata: { lunara_product: productId, order, partner: prefill.partner || undefined }
@@ -394,6 +398,13 @@ async function settle(order, session, deps) {
    lunara-registry's rescans and alerts take it from there. */
 async function provision(order, deps) {
   const p = productFor(order.product);
+  if (p && p.network && order.agent_id) {
+    try {
+      if (p.network.credits && deps.db.networkAddCredits) await deps.db.networkAddCredits(order.agent_id, p.network.credits);
+      if (p.network.tier && deps.db.networkSetTier) await deps.db.networkSetTier(order.agent_id, p.network.tier, order.order_ref);
+    } catch (e) { console.error('network provision failed', order.order_ref, e?.message || e); }
+    return;
+  }
   if (!p || !p.monitor || !deps.db.monitorWatch) return;
   const domain = normDomain(order.details && order.details.website);
   if (!domain || !order.email) return;
@@ -459,6 +470,7 @@ export async function syncSubscription(order, deps) {
   const p = productFor(order.product);
   if (renewed && p && p.apply && deps.db.extendRegistry) await deps.db.extendRegistry(order.order_ref, end);
   if (LAPSED.has(sub.status) && p && p.monitor && deps.db.endMonitorWatch) await deps.db.endMonitorWatch(order.order_ref);
+  if (LAPSED.has(sub.status) && p && p.network && p.network.tier && deps.db.networkEndTier) await deps.db.networkEndTier(order.order_ref);
   return { ...order, ...patch };
 }
 
@@ -711,10 +723,17 @@ export async function handleCheckout(req, deps) {
     } else if (!Object.prototype.hasOwnProperty.call(CATALOG, product)) {
       return refuse();
     }
+    let agent = null;
+    if (CATALOG[product] && CATALOG[product].network) {
+      agent = typeof body.agent_id === 'string' ? body.agent_id.trim().toUpperCase() : '';
+      if (!AGENT_RE.test(agent)) return json({ error: 'This is bought for an agent in the Lunara Agent Network.', reasons: ['Enter the agent id (AGT-…) it was given when it joined.'] }, 400);
+      const e = deps.networkEligibility ? await deps.networkEligibility(agent, product) : null;
+      if (!e || !e.eligible) return json({ error: 'Not available to this agent yet.', reasons: (e && e.reasons) || ['The network could not be asked just now. Try again shortly.'] }, 403);
+    }
     const order = newOrderRef();
     const partner = typeof body.ref === 'string' && PARTNER_RE.test(body.ref.trim().toUpperCase()) && !lockEmail ? body.ref.trim().toUpperCase() : null;
     const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail,
-      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '', partner },
+      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '', partner, agent },
       String((deps.env && deps.env.CHECKOUT_RECOVERY) || '') === 'on');
     // Recorded before the buyer leaves, so a payment can never arrive for
     // an order this side has not heard of. If this fails, no checkout.
@@ -726,7 +745,8 @@ export async function handleCheckout(req, deps) {
       currency: 'usd',
       status: 'open',
       livemode: !!session.livemode,
-      partner_ref: partner || undefined
+      partner_ref: partner || undefined,
+      agent_id: agent || undefined
     });
     return json({ url: session.url, order });
   }

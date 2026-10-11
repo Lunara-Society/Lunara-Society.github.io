@@ -19,6 +19,10 @@
      shieldPartnerApply    registry partner application (now partnerApply)
      partnerApply, partnerStats   the Agent Partner Program (partners.mjs)
      a2a, a2a/message:send        Lunara as an A2A agent (a2a.mjs)
+     networkJoin, networkProfile, networkStatus, networkDirectory,
+     networkEligibility, trialInfo, trialStart, trialSubmit,
+     missionList, missionSubmit   the Agent Network (network.mjs, trials.mjs)
+   Owner only: missionQueue, missionDecide
      newsletterSubscribe   { email }
      lunaraScoreReport     a scorer result, kept as a lead
      article50Assess       the Article 50 assessment engine
@@ -46,6 +50,7 @@ import { agentPassportRoute } from './agent-passport.mjs';
 import { opsStats } from './ops.mjs';
 import { partnerRoute } from './partners.mjs';
 import { a2aRoute } from './a2a.mjs';
+import { networkRoute, decideMission } from './network.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
 export const FOUNDING_CAP = 80;
@@ -320,12 +325,11 @@ export async function handleRegistry(req, deps) {
   deps = { ...deps, now: () => now };
   const ipHash = await sha256hex('lunara-registry:' + (deps.ip || ''));
 
-  if (name === 'a2a' || name.startsWith('a2a/')) {
-    // Other agents reach the REST routes through here, rate limits and all.
-    const call = (route, b) => handleRegistry(new Request(`https://lunara.internal/lunara-registry/${route}`, { method: 'POST', body: JSON.stringify(b || {}) }), deps)
-      .then((r) => r.json()).catch(() => ({ success: false, error: 'That could not be answered just now.' }));
-    return a2aRoute(name, req.method, body, { json, call });
-  }
+  // One route of this function calling another, rate limits and all.
+  const call = (route, b) => handleRegistry(new Request(`https://lunara.internal/lunara-registry/${route}`, { method: 'POST', body: JSON.stringify(b || {}) }), deps)
+    .then((r) => r.json()).catch(() => ({ success: false, error: 'That could not be answered just now.' }));
+
+  if (name === 'a2a' || name.startsWith('a2a/')) return a2aRoute(name, req.method, body, { json, call });
 
   switch (name) {
     case '':
@@ -366,6 +370,10 @@ export async function handleRegistry(req, deps) {
     case 'shieldApply': return apply(body, deps, ipHash);
     case 'shieldVerifyDomain': return verifyDomain(body, deps);
     case 'shieldMemberStatus': return memberStatus(body, deps);
+
+    case 'networkJoin': case 'networkProfile': case 'networkStatus': case 'networkDirectory': case 'networkEligibility':
+    case 'trialInfo': case 'trialStart': case 'trialSubmit': case 'missionList': case 'missionSubmit':
+      return networkRoute(name, body, deps, ipHash, { json, normDomain, limited, send, ownerEmail, sha256hex, call });
 
     case 'shieldPartnerApply': case 'partnerApply': case 'partnerStats': {
       if (req.method !== 'POST') return json({ error: 'Use POST.' }, 405);
@@ -432,6 +440,8 @@ export async function handleRegistry(req, deps) {
     case 'lunaraScorerLeads':
     case 'adminDecide':
     case 'partnerDecide':
+    case 'missionQueue':
+    case 'missionDecide':
       return admin(name, body, deps);
 
     default:
@@ -569,6 +579,12 @@ function deskRecord(a) {
 async function admin(name, body, deps) {
   const who = deps.whoIs ? await deps.whoIs(body.session_token) : null;
   if (!who || !isOwner(who.email, deps.env)) return json({ success: false, error: 'Owner sign-in required.' }, 403);
+
+  if (name === 'missionQueue') {
+    const rows = (await deps.db.misList()) || [];
+    return json({ success: true, submissions: rows.slice(0, 200) });
+  }
+  if (name === 'missionDecide') return decideMission(body, deps, { json, clean });
 
   if (name === 'partnerDecide') {
     const code = clean(body.code, 12).toUpperCase();

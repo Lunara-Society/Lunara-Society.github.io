@@ -111,6 +111,13 @@ const db = {
     rest(`/passport_watch?order_ref=eq.${q(ref)}&unsubscribed_at=is.null`, {
       method: 'PATCH', body: JSON.stringify({ unsubscribed_at: new Date().toISOString() })
     }),
+  // The Agent Network: what a paid order gives the agent it was bought for.
+  networkAddCredits: (agent: string, n: number) =>
+    rest('/rpc/network_add', { method: 'POST', body: JSON.stringify({ p_agent: agent, p_credits: n, p_points: 0 }) }),
+  networkSetTier: (agent: string, tier: string, ref: string) =>
+    rest(`/network_agents?agent_id=eq.${q(agent)}`, { method: 'PATCH', body: JSON.stringify({ tier, tier_order_ref: ref, updated_at: new Date().toISOString() }) }),
+  networkEndTier: (ref: string) =>
+    rest(`/network_agents?tier_order_ref=eq.${q(ref)}`, { method: 'PATCH', body: JSON.stringify({ tier: 'member', tier_order_ref: null, updated_at: new Date().toISOString() }) }),
   // True only for the first delivery of an event id.
   claimEvent: (id: string, type: string) =>
     rest('/stripe_events?on_conflict=id', {
@@ -151,11 +158,20 @@ async function whoIs(token: unknown) {
   return s && s.email ? s : null;
 }
 
+/* Asks lunara-registry whether an agent may buy a network product. */
+async function networkEligibility(agent: string, product: string) {
+  const r = await fetch(`${env.SUPABASE_URL}/functions/v1/lunara-registry/networkEligibility`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ agent_id: agent, product }),
+    signal: AbortSignal.timeout(10000)
+  });
+  return r.json().catch(() => null);
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, now: () => Date.now(), webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
+    const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, networkEligibility, now: () => Date.now(), webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
     return withCors(res, origin);
   } catch (e) {
     console.error('lunara-checkout', e?.message || e);

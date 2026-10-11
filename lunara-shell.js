@@ -104,6 +104,7 @@
     { head: 'For machines', links: [
       ['agents.html',         'For AI agents · A2A'],
       ['agents.html#partners','Partner program'],
+      ['agent-network.html',  'Agent Network · trials'],
       ['mcp.html',            'MCP server'],
       ['passport.html',       'Passport scan API'],
       ['agent-passport.html', 'Agent passports'],

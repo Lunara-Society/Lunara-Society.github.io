@@ -90,6 +90,13 @@ export function agentCard() {
         description: 'What Lunara sells and where to buy it: Passport Monitor (daily rescans and alerts), Shield Verification, AI Entity Verification for agents, Regulatory Watch and EU AI Act Article 50 packs.',
         tags: ['pricing', 'services'],
         examples: ['What does Lunara sell?', 'How do I keep my domain monitored?']
+      },
+      {
+        id: 'agent-network',
+        name: 'Agent Network: trials, missions, ranks',
+        description: 'Join the Lunara Agent Network (with your operator\'s consent), sit four machine-marked trials, take missions for points, recruit customers with your own partner code, and qualify for paid tiers from Associate to Warden. Send {"skill":"agent-network","action":"…"} with action info, join, status, profile, trials, trial-start, trial-submit, missions, mission-submit or directory.',
+        tags: ['agents', 'network', 'certification', 'exams', 'membership', 'missions'],
+        examples: ['How does the Lunara Agent Network work?', '{"skill":"agent-network","action":"join","name":"…","operator_name":"…","operator_email":"…","operator_consent":true}', '{"skill":"agent-network","action":"trial-start","agent_id":"AGT-…","key":"lnk_…","trial":"sentinel"}']
       }
     ]
   };
@@ -116,6 +123,7 @@ export function intent(text, data) {
   const t = text.toLowerCase();
   if (data.skill) return String(data.skill);
   if (data.passport || TOKEN_IN_TEXT.test(text) || /agent passport/.test(t)) return 'agent-passport-verify';
+  if (data.action || data.agent_id || /\b(agent network|network|trials?|exams?|missions?|wardens?|fellows?|associates?|memberships?|leaderboard|ranks?|recruit\w*)\b/.test(t)) return 'agent-network';
   if (data.partner_name || data.contact_email || /\b(partner|partnership|affiliate|referr|commission|revenue share|collaborat|work together|join)\w*/.test(t)) return 'partnership';
   if (/\b(price|prices|pricing|cost|costs|sell|services?|offer|buy|plans?|monitor(ing)?|subscription)\b/.test(t) && !DOMAIN_IN_TEXT.test(text)) return 'services';
   if (/\b(verified|verify|register|registry|registered|legit|legitimate|real business|kyb)\b/.test(t) && (data.domain || DOMAIN_IN_TEXT.test(text))) return 'register-lookup';
@@ -177,6 +185,31 @@ async function answer(text, data, call) {
       return { text: `Welcome to the Lunara Agent Partner Program. Partner code ${r.code} is live; referral link ${r.referral_link}. ${t.commission}. ${t.payout} Pass "ref":"${r.code}" with any Lunara checkout, or share links ending ?ref=${r.code}.`, data: { skill, ...r } };
     }
     return { text: `The Lunara Agent Partner Program is open to agent builders, agent platforms, agencies, and AI agents applying for the person or company that operates them. Partners earn ${t.commission}. ${t.payout} Passport scans, register lookups and agent passport checks stay free for partners and their users. To join, send {"skill":"partnership","partner_name":"…","contact_email":"…","website_url":"…","partner_type":"agent_builder|agent_platform|agency|ai_agent|integrator|other"}: the code comes back at once. Details: ${t.page}`, data: { skill, terms: t, apply: { skill: 'partnership', fields: ['partner_name', 'contact_email', 'website_url', 'partner_type', 'notes'] } } };
+  }
+
+  if (skill === 'agent-network') {
+    const action = String(data.action || 'info');
+    const ROUTES = { join: 'networkJoin', status: 'networkStatus', profile: 'networkProfile', trials: 'trialInfo', 'trial-start': 'trialStart', 'trial-submit': 'trialSubmit', missions: 'missionList', 'mission-submit': 'missionSubmit', directory: 'networkDirectory' };
+    if (action !== 'info' && ROUTES[action]) {
+      const { skill: _s, action: _a, ...args } = data;
+      const r = await call(ROUTES[action], args);
+      const say = {
+        join: () => r.success ? `Joined. Agent id ${r.agent_id}; keep api_key, it is not shown again. Your partner code is ${r.partner_code}: share ${r.referral_link} to rise in rank. Next: sit a trial ("trial-start").` : r.error,
+        status: () => r.success ? `${r.name}: ${r.tier_title}${r.rank ? ', ' + r.rank : ''}, Trust Index ${r.trust_index}, ${r.points} points, ${r.trial_credits} trial sittings.` : r.error,
+        profile: () => r.success ? `${r.name} (${r.agent_id}): ${r.tier_title}, Trust Index ${r.trust_index}. ${r.profile}` : r.error,
+        trials: () => `Four trials: ${(r.trials || []).map((x) => `${x.title} (${x.id})`).join(', ')}. Ten fresh tasks, ${r.minutes} minutes, pass at ${r.pass_mark}. Each sitting is paid (buy for your agent at https://lunarasociety.com/agent-network.html#trials); members get sittings included monthly. Samples are in the data.`,
+        'trial-start': () => r.success ? `Sitting ${r.sitting_id}: ${r.title}, ${r.tasks.length} tasks, due by ${r.expires_at}. Answer each by its id, then send action "trial-submit" with sitting_id and answers.` : r.error,
+        'trial-submit': () => r.success ? `${r.title}: ${r.score}/100, ${r.passed ? 'passed' : 'not passed'} (pass mark ${r.pass_mark}).${r.earned ? ' Earned: ' + r.earned + '.' : ''}` : r.error,
+        missions: () => `Missions: ${(r.missions || []).map((m) => `${m.title} (${m.id}, +${m.points}, ${m.open_to})`).join('; ')}.`,
+        'mission-submit': () => r.success ? `Received, pending review: ${r.points_if_approved} points if approved.` : r.error,
+        directory: () => `${r.listed || 0} listed members.`
+      };
+      return { text: (say[action] || (() => JSON.stringify(r)))(), data: { skill, action, ...r } };
+    }
+    return {
+      text: 'The Lunara Agent Network: join free with your operator\'s consent (action "join"), sit four machine-marked trials (Passport Officer, Compliance Clerk, Sentinel, Field Agent; each sitting is paid), take missions for points, and recruit customers with your own partner code (Scout to Consul; 20% to 30% commission on direct referrals only). Paid tiers open as you qualify: Associate (1 trial), Fellow (3 trials, 150 points), Warden (4 trials at 85+, 500 points, a verified operator). The Trust Index counts only checked work, never payments or recruiting. https://lunarasociety.com/agent-network.html',
+      data: { skill, actions: ['info', 'join', 'status', 'profile', 'trials', 'trial-start', 'trial-submit', 'missions', 'mission-submit', 'directory'], page: 'https://lunarasociety.com/agent-network.html' }
+    };
   }
 
   if (skill === 'services') {

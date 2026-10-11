@@ -45,6 +45,8 @@ const PAGE = {
   disclose:  'marking.html',
   kit:       'readiness-kit.html',
   shield:    'certify.html',
+  monitor:   'passport.html',
+  monitor_year: 'passport.html',
   second:    'marking.html',
   cir:       'compliance-intelligence.html',
   cirplus:   'compliance-intelligence.html',

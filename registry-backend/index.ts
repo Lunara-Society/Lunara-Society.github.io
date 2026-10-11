@@ -60,7 +60,7 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
-  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at&order=created_at.desc&limit=500'),
+  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at,subscription_id,sub_status,cancel_at_period_end,renewals,period_end&order=created_at.desc&limit=500'),
   countPassports: () => countOf('/passport_scans?select=domain'),
   countWatchers: () => countOf('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=token'),
   countSubscribers: () => countOf('/newsletter_subscribers?select=email'),
@@ -79,6 +79,9 @@ const db = {
   savePassport: (r: Record<string, unknown>) => rest('/passport_scans?on_conflict=domain', {
     method: 'POST', headers: { prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(r) }),
   watchedDomains: async () => [...new Set(((await rest('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=domain&limit=5000')) || []).map((w: { domain: string }) => w.domain))],
+  // Passport Monitor: watches tied to a paid order that has not lapsed.
+  monitoredDomains: async () => [...new Set(((await rest('/passport_watch?order_ref=not.is.null&unsubscribed_at=is.null&select=domain&limit=5000')) || []).map((w: { domain: string }) => w.domain))],
+  monitorFor: (d: string) => rest(`/passport_watch?domain=eq.${q(d)}&order_ref=not.is.null&unsubscribed_at=is.null&select=token&limit=1`).then(one),
   watchersFor: (d: string) => rest(`/passport_watch?domain=eq.${q(d)}&confirmed_at=not.is.null&unsubscribed_at=is.null&limit=100`),
   findWatch: (d: string, e: string) => rest(`/passport_watch?domain=eq.${q(d)}&email=eq.${q(e)}&limit=1`).then(one),
   getWatch: (t: string) => rest(`/passport_watch?token=eq.${q(t)}&limit=1`).then(one),

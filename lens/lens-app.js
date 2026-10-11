@@ -1757,7 +1757,7 @@
             h('p', { style: 'margin:.2em 0' }, h('b', null, fmt(tr.monthly) + L(' credits every month', ' créditos cada mes'))),
             h('p', { class: 'small muted', style: 'margin:0 0 .4em' }, approx(tr.monthly)),
             h('ul', { class: 'small' }, PLAN_POINTS[k]().map(function (x) { return h('li', null, x); })),
-            mine ? h('div', { class: 'btn ghost', 'aria-disabled': 'true' }, L('Your plan', 'Tu plan')) : buyBtn(k, (play ? L('Subscribe', 'Suscribirme') : L('Buy one month', 'Comprar un mes')), k === 'pro' ? 'gold' : ''));
+            mine ? h('div', { class: 'btn ghost', 'aria-disabled': 'true' }, L('Your plan', 'Tu plan')) : buyBtn(k, L('Subscribe', 'Suscribirme'), k === 'pro' ? 'gold' : ''));
         });
         var packCards = Object.keys(packs).map(function (k) {
           return h('div', { class: 'card pack' }, h('b', null, '✦ ' + fmt(packs[k].credits)), h('div', { class: 'price small' }, planPrice(k)),
@@ -1772,15 +1772,15 @@
         fill(box, bal,
           h('h2', null, L('Plans', 'Planes')),
           h('p', { class: 'small muted' }, play ? L('Billed monthly by Google Play. Cancel any time in Google Play → Subscriptions. Unused monthly credits don’t roll over.', 'Google Play lo cobra cada mes. Cancela cuando quieras en Google Play → Suscripciones. Los créditos del mes que no uses no se acumulan.')
-            : L('On the web, each payment is one month and never renews by itself. Unused monthly credits don’t roll over.', 'En la web, cada pago es un mes y nunca se renueva solo. Los créditos del mes que no uses no se acumulan.')),
+            : L('Billed monthly by card through Stripe, until you cancel. Cancel any time below with Manage subscription. Unused monthly credits don’t roll over.', 'Se cobra cada mes con tarjeta a través de Stripe, hasta que canceles. Cancela cuando quieras abajo, en Gestionar suscripción. Los créditos del mes que no uses no se acumulan.')),
           h('div', { class: 'plans' }, plans),
           h('h2', null, L('Top up', 'Recargar')),
           h('p', { class: 'small muted' }, L('Bought credits never expire and work with any plan, including Free.', 'Los créditos comprados no caducan y sirven con cualquier plan, también el gratuito.')),
           h('div', { class: 'packs' }, packCards),
           play ? null : h('h2', null, L('Detection API', 'API de detección')),
-          play ? null : h('div', { class: 'card pack' }, h('b', null, L('One month of API access', 'Un mes de acceso a la API')), h('div', { class: 'price small' }, usd(((window.LunaraPricing && LunaraPricing.get('lensapi')) || { price: 199 }).price)),
+          play ? null : h('div', { class: 'card pack' }, h('b', null, L('API access, monthly', 'Acceso a la API, mensual')), h('div', { class: 'price small' }, usd(((window.LunaraPricing && LunaraPricing.get('lensapi')) || { price: 199 }).price)),
             h('p', { class: 'small muted', style: 'margin:.2em 0 .5em' }, L('Image, video-frame and text detection as JSON. Create your keys under Account once it is active.', 'Detección de imágenes, fotogramas y texto en JSON. Crea tus claves en Cuenta cuando esté activa.')),
-            buyBtn('api_month', L('Buy one month', 'Comprar un mes'), '')),
+            buyBtn('api_month', L('Subscribe', 'Suscribirme'), '')),
           h('h2', null, L('What things cost', 'Lo que cuesta cada cosa')),
           h('div', { class: 'card' }, h('dl', { class: 'costs' }, prices.map(function (x) { return [h('dt', null, x[0]), h('dd', null, typeof x[1] === 'number' ? '✦ ' + x[1] : x[1])]; }))),
           h('p', { class: 'small muted' }, L('Free, always: everything that runs on your phone — reading text aloud, the magnifier, colours, QR and link checks, file checks, invisible Lunara Marks, reminders, lists, notes, memory, the safe word and the emergency screen. Rosario’s recorded voice and your phone’s voice are free too.',
@@ -1824,7 +1824,16 @@
       return h('div', { class: 'card screen', id: 'claim-box' },
         h('p', { class: 'small muted', style: 'margin:0 0 .6em' }, L('Pay by card, Apple Pay or Google Pay through Stripe. Your credits are added to this account as soon as the payment completes, and Stripe emails your receipt.', 'Paga con tarjeta, Apple Pay o Google Pay a través de Stripe. Los créditos se añaden a esta cuenta en cuanto se completa el pago, y Stripe te envía el recibo por correo.')),
         h('label', { class: 'f' }, t('pay_code'), code),
-        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')));
+        h('button', { class: 'btn ghost', onclick: function () { call('/redeem', { code: code.value }).then(done).catch(function (e) { say(aiError(e)); }); } }, t('redeem_go')),
+        me && me.source === 'stripe' ? h('button', { class: 'btn ghost', style: 'margin-top:.6em', onclick: manageSub }, L('Manage subscription', 'Gestionar suscripción')) : null);
+    }
+    /* Stripe's customer portal: cancel, change card, invoices. */
+    function manageSub() {
+      say(L('Opening your subscription…', 'Abriendo tu suscripción…'));
+      call('/pay/portal').then(function (r) {
+        if (!r || !r.url || r.url.indexOf('https://billing.stripe.com/') !== 0) throw { error: t('err') };
+        location.href = r.url;
+      }).catch(function (e) { say(aiError(e)); });
     }
     draw();
   };

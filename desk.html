@@ -62,6 +62,9 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       <p class="lede" id="ops-src">Read from Stripe-confirmed orders and the register, not from the retired Base44 app.</p>
       <div class="stats" id="ops-stats"></div>
       <div id="ops-orders"></div>
+      <h2 style="margin-top:40px">Leads</h2>
+      <p class="lede">People who asked for a passport report, newest first. Each one scanned a domain and gave an email: write to them while it is fresh.</p>
+      <div id="ops-leads"></div>
     </section>
   </div>
 </main>
@@ -105,15 +108,26 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       if (!r.ok) { $('ops-src').textContent = 'Operations could not be read: ' + (r.body && r.body.error || r.status); return; }
       var o = r.body, v = o.revenue, p = o.passport;
       $('ops-stats').innerHTML = '';
-      [['Paid orders', v.paid_orders], ['Net revenue', '$' + v.net_usd], ['To deliver', v.awaiting_delivery], ['Unfinished checkouts, 7d', v.unfinished_checkouts_7_days],
+      var sb = o.subscriptions || {}, ld = o.leads || {};
+      [['Monthly recurring', sb.mrr_usd == null ? null : '$' + sb.mrr_usd], ['Active subscriptions', sb.active], ['Passport Monitors', sb.monitors], ['Leads, 7d', ld.last_7_days],
+       ['Paid orders', v.paid_orders], ['Net revenue', '$' + v.net_usd], ['To deliver', v.awaiting_delivery], ['Unfinished checkouts, 7d', v.unfinished_checkouts_7_days],
        ['Passport scans, 7d', p.scans_7_days], ['Domains on record', p.domains_on_record], ['Watchers', p.watchers_confirmed], ['Newsletter', o.newsletter_subscribers]].forEach(function (x) {
         $('ops-stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] == null ? '—' : x[1]) }), el('span', { text: x[0] })]));
+      });
+      $('ops-leads').innerHTML = '';
+      var recent = ld.recent || [];
+      if (!recent.length) $('ops-leads').appendChild(el('p', { class: 'lede', text: 'No leads yet.' }));
+      recent.forEach(function (x) {
+        $('ops-leads').appendChild(el('div', { class: 'card' }, [
+          el('p', {}, [el('b', { text: (x.organization || 'unknown') + (x.grade ? ' · ' + x.grade + (x.score != null ? ', ' + x.score + '/100' : '') : '') }), ' ', tag(x.product || 'lead', '')]),
+          el('p', { class: 'lede', text: [x.email, (x.created_at || '').slice(0, 10), x.gaps && x.gaps.length ? 'gaps: ' + x.gaps.slice(0, 4).join(', ') : ''].filter(Boolean).join(' · ') })
+        ]));
       });
       $('ops-orders').innerHTML = '';
       if (!o.orders.length) { $('ops-orders').appendChild(el('p', { class: 'lede', text: 'No live orders yet.' })); return; }
       o.orders.slice(0, 20).forEach(function (x) {
         $('ops-orders').appendChild(el('div', { class: 'card' }, [
-          el('p', {}, [el('b', { text: x.order_ref + ' · ' + x.product + ' · $' + x.amount_usd }), ' ', tag(x.status, x.status === 'paid' ? 'ok' : ''), x.delivered ? tag('delivered', 'ok') : (x.status === 'paid' ? tag('to deliver', 'wait') : null)]),
+          el('p', {}, [el('b', { text: x.order_ref + ' · ' + x.product + ' · $' + x.amount_usd }), ' ', tag(x.status, x.status === 'paid' ? 'ok' : ''), x.sub_status ? tag((x.cancel_at_period_end ? 'cancelling' : x.sub_status) + (x.renewals ? ' · renewed ' + x.renewals + '×' : ''), x.sub_status === 'active' && !x.cancel_at_period_end ? 'ok' : 'wait') : null, x.delivered ? tag('delivered', 'ok') : (x.status === 'paid' ? tag('to deliver', 'wait') : null)]),
           el('p', { class: 'lede', text: [x.name, x.email, x.country, (x.paid_at || x.created_at || '').slice(0, 10)].filter(Boolean).join(' · ') })
         ]));
       });

@@ -305,6 +305,20 @@ h1 em{
 
 /* ── III. FOUR THINGS ───────────────────────────────────────────── */
 .offer{padding:110px 0 80px;position:relative}
+/* Start here: the price list, out loud */
+.ladder{padding:30px 0 90px;position:relative}
+.ladder-head{max-width:720px;margin-bottom:34px}
+.ladder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.rung{position:relative;display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:18px;padding:24px 22px;background:rgba(255,255,255,.025)}
+.rung.best{border-color:rgba(127,224,176,.5);background:radial-gradient(120% 90% at 50% 0%,rgba(127,224,176,.10),transparent 60%),rgba(255,255,255,.03);box-shadow:0 30px 60px -40px rgba(127,224,176,.5)}
+.rung .r-tag{font:600 10.5px "IBM Plex Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--gold,#E2C47A);margin-bottom:14px}
+.rung.best .r-tag{color:#7FE0B0}
+.rung h3{font:500 20px Inter,sans-serif;margin:0;color:#F4ECD8}
+.rung .r-price{font:500 40px/1 "Cormorant Garamond",serif;margin:14px 0 4px;color:#F4ECD8}
+.rung .r-per{font-size:13px;color:rgba(214,222,234,.6);min-height:20px}
+.rung p{font-size:14.5px;line-height:1.55;color:rgba(214,222,234,.75);margin:14px 0 20px}
+.rung .door{margin-top:auto;justify-content:center}
+.ladder-fine{margin-top:18px;font-size:13px;color:rgba(214,222,234,.55)}
 .offer-grid{display:grid;grid-template-columns:.9fr 1.3fr;gap:80px;align-items:start}
 .offer-head{position:sticky;top:130px}
 .offer-list{border-top:1px solid var(--hair)}
@@ -818,6 +832,48 @@ h1 em{
   </div>
 </section>
 
+<!-- ── START HERE: what it costs ──────────────────────────────────── -->
+<section class="ladder" id="start" aria-label="Start here">
+  <div class="wrap">
+    <div class="ladder-head">
+      <p class="kicker" data-rv>Start here</p>
+      <h2 data-rv="2">What it costs. <em>Plainly.</em></h2>
+      <p class="sec-lede" data-rv="3">Checking is free and always will be. Keeping a domain checked, and having a named person stand behind the business that runs it, is how this institution pays for itself.</p>
+    </div>
+    <div class="ladder-grid">
+      <div class="rung" data-rv>
+        <span class="r-tag">Free</span>
+        <h3>Passport scan</h3>
+        <div class="r-price">$0</div><div class="r-per">no account</div>
+        <p>Thirteen live security checks on any domain, a score out of 100, and the exact fix for everything that fails.</p>
+        <a class="door line" href="passport.html">Scan your domain</a>
+      </div>
+      <div class="rung best" data-rv>
+        <span class="r-tag">Most chosen</span>
+        <h3>Passport Monitor</h3>
+        <div class="r-price" data-lx-amount="monitor">$19</div><div class="r-per" data-lx-every="monitor">a month</div>
+        <p>Your domain rescanned every day, an email the moment anything slips, a weekly summary and the live Monitored badge.</p>
+        <a class="door solid" href="passport.html#monitor" data-lx-buy="monitor" data-lx-nonote>Start monitoring</a>
+      </div>
+      <div class="rung" data-rv>
+        <span class="r-tag">Human review</span>
+        <h3>Shield Verification</h3>
+        <div class="r-price" data-lx-amount="shield">$75</div><div class="r-per" data-lx-every="shield">every six months</div>
+        <p>A named person verifies the business behind the domain. Your entry goes live on the public register that AI systems query.</p>
+        <a class="door line" href="shield.html" data-lx-buy="shield" data-lx-nonote>Get verified</a>
+      </div>
+      <div class="rung" data-rv>
+        <span class="r-tag">EU AI Act · 2 Dec</span>
+        <h3>Article 50 Disclosure Pack</h3>
+        <div class="r-price" data-lx-amount="disclose">$75</div><div class="r-per">one payment</div>
+        <p>Disclosure wording and the machine-readable marking spec for your AI system, drafted for you, before the deadline lands.</p>
+        <a class="door line" href="article50.html" data-lx-buy="disclose" data-lx-nonote>Get the pack</a>
+      </div>
+    </div>
+    <p class="ladder-fine" data-rv>Card, Apple Pay or Google Pay through Stripe. Subscriptions renew until you cancel, which you can do yourself at any time from your order page. More: <a class="inline" href="certify.html">every service and price</a>.</p>
+  </div>
+</section>
+
 <!-- ── III. WHAT THIS PLACE DOES ──────────────────────────────────── -->
 <section class="offer">
   <div class="wrap offer-grid">
@@ -1126,5 +1182,6 @@ requestAnimationFrame(function () {
 <script src="lunara-home.js" defer></script>
 <script src="lunara-seal.js" defer></script>
 <script src="lunara-applies.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
 </body>
 </html>

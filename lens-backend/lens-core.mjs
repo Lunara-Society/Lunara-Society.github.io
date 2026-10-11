@@ -58,7 +58,8 @@ export const PLANS = {
 };
 
 /* The credit plans. Play subscription ids map onto them; on the web a
-   plan bought through Stripe is one month that does not renew. */
+   plan bought through Stripe is a monthly subscription that renews
+   until the member cancels (POST /pay/portal opens Stripe's portal). */
 export const TIERS = {
   free:    { monthly: 20,   price: 0,     voice: false, deep: false, label: 'Free' },
   starter: { monthly: 800,  price: 7.99,  voice: false, deep: false, label: 'Starter' },
@@ -476,6 +477,7 @@ export async function handleLens(req, deps) {
     case '/pay/create': return payCreate(email, body, deps);
     case '/pay/confirm': return payConfirm(email, body, deps);
     case '/pay/sync': return paySync(email, deps);
+    case '/pay/portal': return payPortal(email, deps);
     case '/history': return history(email, deps);
     case '/ai': return ai(email, body, deps);
     case '/mark': return mark(email, who, body, deps);
@@ -504,6 +506,7 @@ function catalogue() {
 }
 
 async function me(email, deps) {
+  await renewIfDue(email, deps);
   const lic = await legacyLicence(email, deps);
   if (lic && lic.plan === 'owner') {
     return json({ licensed: true, owner: true, unlimited: true, email, plan: 'owner', tier: 'owner', label: PLANS.owner.label, voice: true, expires_at: lic.expires_at, allowance_left_pct: 100, resets: nextMonthStart(), catalogue: catalogue() });
@@ -631,18 +634,22 @@ async function purchasePlay(email, body, deps) {
    that started it. The app confirms on return; /pay/sync finds any
    payment whose return was missed (a closed tab, another device). */
 const SELLABLE = (p) => (TIERS[p] && p !== 'free') || PACKS[p] || p === 'api_month';
+// Plans and the API month renew monthly on the web; credit packs are one payment.
+const RENEWS = (p) => (TIERS[p] && p !== 'free') || p === 'api_month';
 const orderTag = async (product, email) => product + '|' + (await sha256hex('order:' + email)).slice(0, 32);
 const APP = 'https://lunarasociety.com/lens/app.html';
 function productLabel(p) {
-  if (TIERS[p]) return `Rosario ${TIERS[p].label}, 1 month`;
+  if (TIERS[p]) return `Rosario ${TIERS[p].label}, monthly`;
   if (PACKS[p]) return `Rosario, ${PACKS[p].label}`;
   return PLANS[p].label;
 }
 function deliveryText(p, email) {
-  const what = TIERS[p] ? `${TIERS[p].monthly.toLocaleString('en-US')} credits a month for one month, starting now`
+  const what = TIERS[p] ? `${TIERS[p].monthly.toLocaleString('en-US')} credits every month, starting now`
     : PACKS[p] ? `${PACKS[p].credits.toLocaleString('en-US')} credits that never expire`
-    : 'one month of the Detection API; create your keys in the app';
-  return `Added to the Lunara Lens account ${email} as soon as the payment completes: ${what}. One payment; nothing renews by itself.`;
+    : 'one month of the Detection API, renewed each month; create your keys in the app';
+  return `Added to the Lunara Lens account ${email} as soon as the payment completes: ${what}. ` + (RENEWS(p)
+    ? 'Renews monthly at the same price until you cancel, which you can do any time in the app (Shop, Manage subscription).'
+    : 'One payment; nothing renews.');
 }
 const cents = (p) => Math.round(PRODUCT_PRICE(p) * 100);
 
@@ -651,16 +658,18 @@ async function payCreate(email, body, deps) {
   const product = String(body.product || '');
   if (!SELLABLE(product)) return json({ error: 'Choose a plan or a pack.' }, 400);
   const tag = await orderTag(product, email);
+  const sub = RENEWS(product);
   const s = await deps.stripe.createSession({
-    mode: 'payment',
+    mode: sub ? 'subscription' : 'payment',
     customer_email: email,
     client_reference_id: tag.split('|')[1],
-    line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: cents(product), product_data: { name: productLabel(product) } } }],
+    line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: cents(product), recurring: sub ? { interval: 'month' } : undefined, product_data: { name: productLabel(product) } } }],
     success_url: `${APP}?paid={CHECKOUT_SESSION_ID}#shop`,
     cancel_url: `${APP}#shop`,
     custom_text: { submit: { message: deliveryText(product, email) } },
     metadata: { kind: 'lens', lens_product: product, account: tag },
-    payment_intent_data: { description: productLabel(product), metadata: { kind: 'lens', lens_product: product } }
+    payment_intent_data: sub ? undefined : { description: productLabel(product), metadata: { kind: 'lens', lens_product: product } },
+    subscription_data: sub ? { description: productLabel(product), metadata: { kind: 'lens', lens_product: product, account: tag } } : undefined
   });
   return json({ url: s.url, session_id: s.id });
 }
@@ -690,13 +699,58 @@ async function payConfirm(email, body, deps) {
   return me(email, deps);
 }
 
-async function paySync(email, deps) {
-  if (!deps.stripe) return me(email, deps);
+/* A web subscription's later months: every paid renewal invoice of a
+   subscription this account started adds the plan's month once (the
+   invoice id is the purchase reference), at exactly the plan's price. */
+async function settleRenewals(email, s, deps) {
+  const subId = typeof s.subscription === 'string' ? s.subscription : s.subscription && s.subscription.id;
+  if (!subId || !deps.stripe.paidInvoices) return;
+  const product = s.metadata.lens_product;
+  for (const inv of (await deps.stripe.paidInvoices(subId)) || []) {
+    if (inv.billing_reason !== 'subscription_cycle' || inv.amount_paid !== cents(product) || inv.currency !== 'usd') continue;
+    const ref = 'stripe-inv:' + inv.id;
+    if (await deps.db.recordPurchase({ ref, email, product, source: 'stripe' })) await fulfil(email, product, 'stripe', ref, deps);
+  }
+}
+
+async function syncStripe(email, deps) {
   const sessions = await deps.stripe.paidSessionsFor(email);
   for (const s of sessions || []) {
-    if (s.metadata && s.metadata.kind === 'lens') await settleSession(email, s, deps);
+    if (!s.metadata || s.metadata.kind !== 'lens') continue;
+    if ((await settleSession(email, s, deps)) === null && s.mode === 'subscription') await settleRenewals(email, s, deps);
   }
+}
+
+async function paySync(email, deps) {
+  if (!deps.stripe) return me(email, deps);
+  await syncStripe(email, deps);
   return me(email, deps);
+}
+
+/* Stripe's customer portal for this account's web subscription: cancel,
+   change the card, download invoices. */
+async function payPortal(email, deps) {
+  if (!deps.stripe || !deps.stripe.portal) return json({ error: 'Card payments are not switched on yet.', code: 'offline' }, 503);
+  const sessions = (await deps.stripe.paidSessionsFor(email)) || [];
+  const tags = await Promise.all(sessions.map((s) => s.metadata && s.metadata.lens_product ? orderTag(s.metadata.lens_product, email) : null));
+  const mine = sessions.filter((s, i) => s.mode === 'subscription' && s.customer && s.metadata && s.metadata.kind === 'lens' && s.metadata.account === tags[i]);
+  if (!mine.length) return json({ error: 'No card subscription on this account. A Google Play subscription is managed in Google Play.' }, 404);
+  const customer = typeof mine[0].customer === 'string' ? mine[0].customer : mine[0].customer.id;
+  return json({ url: await deps.stripe.portal(customer, `${APP}#shop`) });
+}
+
+/* Near the end of a web plan's month, look for its renewal before the
+   wallet would drop to Free. At most once every ten minutes per account. */
+const renewChecked = new Map();
+async function renewIfDue(email, deps) {
+  if (!deps.stripe) return;
+  const w = await deps.db.getWallet(email);
+  if (!w || w.tier_source !== 'stripe' || !w.tier_expires_at) return;
+  if (new Date(w.tier_expires_at).getTime() - Date.now() > 36 * 3600e3) return;
+  const last = renewChecked.get(email) || 0;
+  if (Date.now() - last < 10 * 60e3) return;
+  renewChecked.set(email, Date.now());
+  try { await syncStripe(email, deps); } catch (e) { /* the shop's sync will try again */ }
 }
 
 /* Ask Google for a plan's state; grant a new month once per order id

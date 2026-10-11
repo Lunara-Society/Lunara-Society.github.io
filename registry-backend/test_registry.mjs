@@ -41,6 +41,8 @@ export function memoryDb() {
     async getPassports(ds) { return ds.filter((d) => passports.has(d)).map((d) => ({ ...passports.get(d) })); },
     async savePassport(r) { passports.set(r.domain, { ...(passports.get(r.domain) || {}), ...r }); },
     async watchedDomains() { return [...new Set([...watches.values()].filter((w) => w.confirmed_at && !w.unsubscribed_at).map((w) => w.domain))]; },
+    async monitoredDomains() { return [...new Set([...watches.values()].filter((w) => w.order_ref && !w.unsubscribed_at).map((w) => w.domain))]; },
+    async monitorFor(d) { return [...watches.values()].find((w) => w.domain === d && w.order_ref && !w.unsubscribed_at) || null; },
     async watchersFor(d) { return [...watches.values()].filter((w) => w.domain === d && w.confirmed_at && !w.unsubscribed_at); },
     async findWatch(d, e) { return [...watches.values()].find((w) => w.domain === d && w.email === e) || null; },
     async getWatch(t) { return watches.get(t) || null; },
@@ -461,6 +463,41 @@ await test('passport: watchers confirm, get told when it gets worse, and can sto
   eq((await call(deps, 'passportWatchSet', { token: 'x' })).status, 400);
 });
 
+await test('passport monitor: daily, first in line, a weekly summary, and marked in badge and league', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const { deps, db, mailbox } = setup({ ...web(site), leagueList: async () => [{ domain: 'good.example', name: 'Good' }] });
+  await call(deps, 'passportScan', { domain: 'good.example' });
+  // A day-old passport: too fresh for the weekly rescan, due for the daily one.
+  db.passports.get('good.example').scanned_at = '2026-10-03T10:00:00Z';
+  eq((await call(deps, 'passportTick', {})).body.due, 0, 'unmonitored: not due after a day');
+  db.watches.set('m'.repeat(24), { token: 'm'.repeat(24), domain: 'good.example', email: 'owner@good.example', order_ref: 'LO-AAAAAAAAAAAAAAAA', confirmed_at: '2026-10-03T00:00:00Z' });
+  const r = (await call(deps, 'passportTick', {})).body;
+  eq(r.due, 1, 'monitored: rescanned daily');
+  eq(mailbox.length, 1, 'nothing got worse, so the weekly summary goes');
+  ok(/this week: A\+, 100\/100/.test(mailbox[0].subject)); ok(mailbox[0].text.includes('manage.html?order=LO-AAAAAAAAAAAAAAAA'));
+  db.passports.get('good.example').scanned_at = '2026-10-03T10:00:00Z';
+  await call(deps, 'passportTick', {});
+  eq(mailbox.length, 1, 'one summary a week, not one a day');
+  eq((await call(deps, 'passportBadge', { domain: 'good.example' })).body.monitored, true);
+  eq((await call(deps, 'passportLeague', null, 'GET')).body.entries[0].monitored, true);
+  db.watches.get('m'.repeat(24)).unsubscribed_at = '2026-10-04T00:00:00Z';
+  eq((await call(deps, 'passportBadge', { domain: 'good.example' })).body.monitored, false, 'lapsed: no mark');
+});
+
+await test('passport lead: the visitor gets the report, the owner gets the lead', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  delete site.dns['TXT _dmarc.good.example'];
+  const { deps, db, mailbox } = setup(web(site));
+  eq((await call(deps, 'passportLead', { domain: 'good.example', email: 'a@b.example' })).status, 404, 'scan first');
+  await call(deps, 'passportScan', { domain: 'good.example' });
+  eq((await call(deps, 'passportLead', { domain: 'good.example', email: 'nope' })).status, 400);
+  const r = (await call(deps, 'passportLead', { domain: 'https://good.example/', email: 'Lead@B.example' })).body;
+  eq(r.success, true); eq(r.emailed, true);
+  eq(db.leads.length, 1); eq(db.leads[0].product, 'passport'); eq(db.leads[0].email, 'lead@b.example'); ok(db.leads[0].gaps.some((g) => /DMARC/.test(g)));
+  eq(mailbox[0].to, 'lead@b.example'); ok(/WHAT TO FIX/.test(mailbox[0].text) && /Fix: /.test(mailbox[0].text));
+  eq(mailbox[1].to, 'lunarasociety@gmail.com'); ok(mailbox[1].subject.startsWith('Lead: good.example'));
+});
+
 await test('agent passport: only a verified AI agent gets one, anyone can verify it, revocation kills it', async () => {
   const { deps, db } = setup();
   const base = { kind: 'ai_agent', status: 'approved', contact_email: 'ana@yavaya.lat', business_name: 'Yavaya', agent_name: 'Yavi', agent_operator: 'Yavaya', domain: 'yavaya.lat', expires_at: '2027-04-04T00:00:00Z' };
@@ -506,6 +543,23 @@ await test('ops: live numbers for the owner; figures without people for the agen
   eq((await callH({}, { session_token: 'member-session' })).status, 403, 'a member is not the owner');
   const none = setup().deps;
   eq((await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), none)).status, 403, 'no key configured, no key accepted');
+});
+
+await test('ops: recurring revenue per month, and the leads with their emails for the owner only', async () => {
+  const { deps, db } = setup({ env: { LUNARA_OPS_KEY: 'k'.repeat(32) } });
+  const at = '2026-10-03T00:00:00Z';
+  db.orders.set('LO-M', { order_ref: 'LO-M', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_m', sub_status: 'active' });
+  db.orders.set('LO-Y', { order_ref: 'LO-Y', product: 'monitor_year', amount_total: 19000, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_y', sub_status: 'active' });
+  db.orders.set('LO-S', { order_ref: 'LO-S', product: 'shield', amount_total: 7500, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_s', sub_status: 'active', renewals: 1 });
+  db.orders.set('LO-C', { order_ref: 'LO-C', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_c', sub_status: 'canceled' });
+  db.orders.set('LO-X', { order_ref: 'LO-X', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_x', sub_status: 'active', cancel_at_period_end: true });
+  db.leads.push({ product: 'passport', organization: 'acme.example', grade: 'C', score: 61, gaps: ['DMARC'], email: 'lead@acme.example', created_at: '2026-10-03T10:00:00Z' });
+  const o = (await call(deps, 'opsStats', { session_token: 'owner-session' })).body;
+  eq(o.subscriptions.active, 4); eq(o.subscriptions.cancelling, 1); eq(o.subscriptions.monitors, 3); eq(o.subscriptions.renewals_total, 1);
+  eq(o.subscriptions.mrr_usd, 19 + 15.83 + 12.5, 'monthly, yearly ÷ 12, six-monthly ÷ 6; a cancelling one is not recurring');
+  eq(o.leads.last_7_days, 1); eq(o.leads.recent[0].email, 'lead@acme.example');
+  const a = (await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), deps).then((r) => r.json()));
+  eq(a.leads.recent[0].organization, 'acme.example'); eq(a.leads.recent[0].email, undefined, 'the agent sees no lead email');
 });
 
 console.log(`${passed} passed, ${failed} failed`);

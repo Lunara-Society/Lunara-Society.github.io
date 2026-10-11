@@ -15,7 +15,9 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Nothing yet. Our email with your Disclosure Pack arrives within 24 hours; reply to it if anything about your system has changed.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "kit": {
     "name": "Compliance Kit",
@@ -29,17 +31,19 @@ export const CATALOG = {
     "access": "kit-access.html",
     "ask": [],
     "todo": "Open your kit with the link below and bookmark it. That is all.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "shield": {
     "name": "Shield Verification",
     "cents": 7500,
-    "terms": "Six months. Renewed only when you choose to pay again.",
+    "terms": "Six months, renewing automatically until you cancel. Cancel any time.",
     "delivery": [
       "Within 24 hours we email you your verification reference and a DNS record that proves you control your domain.",
       "A person reviews your business identity and your domain.",
       "When it passes, your entry goes live on the public register and we send your trust badge and machine-readable identity files.",
-      "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+      "Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
     ],
     "access": null,
     "ask": [
@@ -47,7 +51,58 @@ export const CATALOG = {
       "legal"
     ],
     "todo": "Complete your registry application with the link below. It takes two minutes and gives you a DNS record to add at your domain provider; adding it is the only technical step, and review starts as soon as it is seen.",
-    "apply": "business"
+    "apply": "business",
+    "renews": {
+      "interval": "month",
+      "count": 6
+    },
+    "monitor": false
+  },
+  "monitor": {
+    "name": "Passport Monitor",
+    "cents": 1900,
+    "terms": "Monthly, renewing automatically until you cancel. Cancel any time.",
+    "delivery": [
+      "Monitoring of the website you entered starts at once: its passport is rescanned every day instead of every week.",
+      "The moment a check stops passing (a certificate, a security header, an email record), we email you what changed and the exact fix.",
+      "Every week, a short summary of your grade and anything that moved.",
+      "Your passport badge carries the live Monitored mark, and your domain is marked as monitored in the AI Passport League.",
+      "Billed monthly until you cancel. Cancel any time from your order page; it runs to the end of the month you paid for."
+    ],
+    "access": null,
+    "ask": [
+      "website"
+    ],
+    "todo": "Nothing. Monitoring of the website you entered starts today. To show the live Monitored badge, paste the two lines from your passport page into your site.",
+    "apply": null,
+    "renews": {
+      "interval": "month",
+      "count": 1
+    },
+    "monitor": true
+  },
+  "monitor_year": {
+    "name": "Passport Monitor, yearly",
+    "cents": 19000,
+    "terms": "Yearly, renewing automatically until you cancel. Cancel any time.",
+    "delivery": [
+      "Monitoring of the website you entered starts at once: its passport is rescanned every day instead of every week.",
+      "The moment a check stops passing (a certificate, a security header, an email record), we email you what changed and the exact fix.",
+      "Every week, a short summary of your grade and anything that moved.",
+      "Your passport badge carries the live Monitored mark, and your domain is marked as monitored in the AI Passport League.",
+      "Billed yearly until you cancel. Cancel any time from your order page; it runs to the end of the year you paid for."
+    ],
+    "access": null,
+    "ask": [
+      "website"
+    ],
+    "todo": "Nothing. Monitoring of the website you entered starts today. To show the live Monitored badge, paste the two lines from your passport page into your site.",
+    "apply": null,
+    "renews": {
+      "interval": "year",
+      "count": 1
+    },
+    "monitor": true
   },
   "second": {
     "name": "Second Opinion",
@@ -62,7 +117,9 @@ export const CATALOG = {
       "website"
     ],
     "todo": "Reply to this email with the advice you were given, attached or pasted in. Our written opinion follows within 48 hours of receiving it.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "cir": {
     "name": "Compliance Intelligence Report",
@@ -78,16 +135,18 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Open the report page with the link below and describe your deployment to get your score now. Your written report follows by email within 24 hours.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "watch": {
     "name": "Regulatory Watch",
     "cents": 29000,
-    "terms": "Six months. Renewed only when you choose to pay again.",
+    "terms": "Six months, renewing automatically until you cancel. Cancel any time.",
     "delivery": [
       "Within 24 hours we email you to confirm the systems, sectors and jurisdictions we watch for you.",
       "For six months we write to you whenever something that binds you changes, and only then.",
-      "We remind you before the six months end; nothing is charged automatically."
+      "Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
     ],
     "access": null,
     "ask": [
@@ -95,7 +154,12 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Reply to this email with the systems, sectors and jurisdictions you want watched. Monitoring starts the day we have them.",
-    "apply": null
+    "apply": null,
+    "renews": {
+      "interval": "month",
+      "count": 6
+    },
+    "monitor": false
   },
   "cirplus": {
     "name": "Report with Governance Session",
@@ -112,17 +176,19 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Open the report page with the link below and describe your deployment. Reply to this email with two or three times that suit you for the governance session.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "agent": {
     "name": "AI Entity Verification",
     "cents": 54000,
-    "terms": "Six months. Renewed only when you choose to pay again.",
+    "terms": "Six months, renewing automatically until you cancel. Cancel any time.",
     "delivery": [
       "Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.",
       "A person verifies the agent and its operator.",
       "When it passes, its register entry with AI designation goes live, queryable by any system, and you can issue the agent its signed passport at lunarasociety.com/agent-passport.html.",
-      "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+      "Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
     ],
     "access": null,
     "ask": [
@@ -130,7 +196,12 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Complete your agent's registry application with the link below: the agent's name, who operates it, and its governance framework. It gives you a DNS record to add at your domain provider; review starts as soon as it is seen.",
-    "apply": "ai_agent"
+    "apply": "ai_agent",
+    "renews": {
+      "interval": "month",
+      "count": 6
+    },
+    "monitor": false
   },
   "clinical": {
     "name": "Clinical AI Governance Assessment",
@@ -146,7 +217,9 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Reply to this email with a short description of the deployment and any documentation you already have. We confirm what else we need within one working day.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "evidence": {
     "name": "Article 50 Evidence Pack",
@@ -162,7 +235,9 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Reply to this email with a short description of the system and where its output reaches the EU. We confirm what else we need within one working day.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   },
   "vendor": {
     "name": "Vendor Certification",
@@ -179,6 +254,8 @@ export const CATALOG = {
       "system"
     ],
     "todo": "Reply to this email with the up to three systems to certify and two or three times that suit you to start.",
-    "apply": null
+    "apply": null,
+    "renews": null,
+    "monitor": false
   }
 };

@@ -267,8 +267,68 @@
     }
     $('pp-call').textContent = 'curl -X POST ' + API + ' \\\n  -H "content-type: application/json" \\\n  -d \'{"domain":"' + domain + '"}\'';
     badge(domain, d);
+    offer(domain, d);
+    last = { domain: domain, d: d };
     $('pp-after').classList.add('on');
+    if (location.hash === '#monitor') setTimeout(function () { $('monitor').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 400);
   }
+
+  /* What to do about the score: keep it (Passport Monitor) or have the
+     business behind it verified (Shield). The buy buttons carry the
+     domain, so Stripe's page arrives with the website already filled. */
+  var last = null;
+  function offer(domain, d) {
+    var top = d.grade === 'A+' || d.grade === 'A';
+    $('pp-offer-h').innerHTML = top ? 'Keep this <em>' + esc(d.grade) + '</em>' : d.grade === 'B' ? 'Hold the B. <em>Then climb.</em>' : 'Fix it once. <em>Keep it fixed.</em>';
+    $('pp-offer-p').textContent = top
+      ? domain + ' scores ' + d.score + ' today. One expired certificate or one deleted DNS record and it drops, usually without anyone noticing until a customer, a partner or an AI system does.'
+      : domain + ' scores ' + d.score + '. The list below is the way up; Passport Monitor rescans it every day, tells you the moment anything slips, and puts the live Monitored badge on your site once you reach B.';
+    ['pp-buy-monitor', 'pp-buy-year', 'pp-buy-shield'].forEach(function (id) { $(id).setAttribute('data-lx-website', domain); });
+    var shield = $('pp-buy-shield').closest('.plan');
+    shield.hidden = d.visa === 'verified';
+    shield.parentNode.style.gridTemplateColumns = d.visa === 'verified' ? '1fr' : '';
+    if (window.LunaraPricing) window.LunaraPricing.refresh();
+  }
+
+  /* The full report: the lead goes to the register (and the report to
+     the visitor's inbox when mail is on); the PDF opens here either way,
+     so asking for it never ends in "check your email" and nothing. */
+  function reportHtml(domain, d) {
+    var fails = d.checks.filter(function (c) { return !c.pass; }).sort(function (a, b) { return (b.points - b.earned) - (a.points - a.earned); });
+    var row = function (c) {
+      return '<tr><td class="' + (c.pass ? 'ok' : c.partial ? 'part' : 'no') + '">' + (c.pass ? 'Pass' : c.partial ? 'Partly' : 'Fail') + '</td><td><b>' + esc(c.label) + '</b><br><span>' + esc(c.detail || '') + '</span>' + (!c.pass && c.fix ? '<br><i>Fix: ' + esc(c.fix) + '</i>' : '') + '</td><td>' + (Math.round(c.earned * 10) / 10) + ' / ' + c.points + '</td></tr>';
+    };
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lunara Passport report: ' + esc(domain) + '</title><style>'
+      + 'body{font:14px/1.5 Georgia,serif;color:#1d1a14;max-width:760px;margin:32px auto;padding:0 24px}h1{font-size:28px;margin:0}'
+      + '.k{font:11px monospace;letter-spacing:.2em;text-transform:uppercase;color:#8a7240}.big{font-size:44px;margin:14px 0 2px}'
+      + 'table{width:100%;border-collapse:collapse;margin-top:18px}td{border-top:1px solid #e6dfcf;padding:9px 8px;vertical-align:top}td:first-child{width:62px;font:600 12px monospace}td:last-child{width:70px;text-align:right;font:12px monospace}'
+      + 'td span{color:#6b6252;font-size:13px}td i{color:#3d5a4c;font-size:13px}.ok{color:#2e7d5b}.part{color:#a87b1f}.no{color:#b23b2e}'
+      + '.box{margin-top:24px;padding:14px 16px;border:1px solid #e6dfcf;border-radius:10px;font-size:13.5px}a{color:#8a7240}@media print{.noprint{display:none}}'
+      + '</style></head><body><p class="k">Lunara Society · Passport report</p><h1>' + esc(domain) + '</h1>'
+      + '<p class="big">' + esc(d.grade) + ' · ' + d.score + '/100</p><p>Scanned ' + esc(new Date(d.scanned_at || Date.now()).toUTCString()) + '. Visa on the public register: ' + esc(d.visa) + '. ' + fails.length + ' of ' + d.checks.length + ' checks need work.</p>'
+      + '<table>' + fails.concat(d.checks.filter(function (c) { return c.pass; })).map(row).join('') + '</table>'
+      + '<div class="box"><b>Next.</b> Live passport: <a href="https://lunarasociety.com/passport.html?d=' + encodeURIComponent(domain) + '">lunarasociety.com/passport.html?d=' + esc(domain) + '</a>. Passport Monitor rescans it every day and emails you the moment anything slips; Shield Verification has a person verify the business behind it.</div>'
+      + '<p class="noprint" style="margin-top:20px"><button onclick="print()">Save as PDF</button></p>'
+      + '<script>setTimeout(function(){print()},400)<\/script></body></html>';
+  }
+  $('pp-report').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!last) return;
+    var out = $('pp-report-out'), snap = last;
+    var w = window.open('', '_blank');
+    if (w) w.document.write('<p style="font:16px Georgia,serif;margin:40px">Preparing the report for ' + esc(snap.domain) + '…</p>');
+    out.className = 'watch-out'; out.textContent = 'Preparing…';
+    fetch(API.replace('passportScan', 'passportLead'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain: snap.domain, email: $('pp-report-email').value }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.success) { out.className = 'watch-out err'; out.textContent = j.error || 'Could not prepare the report.'; if (w) w.close(); return; }
+        out.textContent = j.emailed ? 'Done. A copy is on its way to your inbox too.' : 'Done. Your report opened in a new tab; save it as a PDF from there.';
+        var html = reportHtml(snap.domain, snap.d);
+        if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+        else { var b = new Blob([html], { type: 'text/html' }); location.href = URL.createObjectURL(b); }
+      })
+      .catch(function () { out.className = 'watch-out err'; out.textContent = 'Could not reach the server. Try again.'; if (w) w.close(); });
+  });
 
   var BADGE = ['A+', 'A', 'B'];
   function badge(domain, d) {

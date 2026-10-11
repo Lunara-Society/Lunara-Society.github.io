@@ -85,7 +85,7 @@ Checkout asks for: website, legal
 1. Within 24 hours we email you your verification reference and a DNS record that proves you control your domain.
 2. A person reviews your business identity and your domain.
 3. When it passes, your entry goes live on the public register and we send your trust badge and machine-readable identity files.
-4. Verification lasts six months. We remind you before it ends; nothing is charged automatically.
+4. Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for.
 
 ### Second Opinion — $240 (`second`)
 
@@ -128,7 +128,7 @@ Checkout asks for: website, system
 1. Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.
 2. A person verifies the agent and its operator.
 3. When it passes, its register entry with AI designation goes live, queryable by any system.
-4. Verification lasts six months. We remind you before it ends; nothing is charged automatically.
+4. Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for.
 
 ### Clinical AI Governance Assessment — $1,950 (`clinical`)
 

@@ -195,7 +195,7 @@ export function decisionEmail(a) {
       `<div data-lunara-shield="${a.public_id}"></div>`,
       `<script src="${SITE}badge.js" async></script>`,
       `Optionally publish ${a.domain ? `https://${a.domain}` : 'your site'}/.well-known/lunara-verify.json so AI systems can find it; the format is at ${SITE}badge.html.`,
-      'We remind you before it ends. Nothing renews or is charged automatically.'],
+      'A paid verification renews automatically every six months until you cancel, at lunarasociety.com/manage.html with your order reference; otherwise we remind you before it ends.'],
     rejected: [`The application ${a.public_id} for ${a.business_name} was not approved.`, a.decision_note ? `Reason: ${a.decision_note}` : '', 'Reply to this email if you want to discuss it.'],
     returned: [`The application ${a.public_id} for ${a.business_name} needs more before it can be decided.`, a.decision_note ? `What is needed: ${a.decision_note}` : '', 'Reply to this email with it.'],
     revoked: [`The registry entry ${a.public_id} for ${a.business_name} has been revoked, and the registry now says so to every query.`, a.revocation_reason ? `Reason: ${a.revocation_reason}` : '', 'Reply to this email if you believe this is wrong.']
@@ -346,8 +346,8 @@ export async function handleRegistry(req, deps) {
     }
 
     case 'passportScan': case 'passportBadge': case 'passportLeague': case 'passportTick':
-    case 'passportWatch': case 'passportWatchSet':
-      return passportRoute(name, body, deps, ipHash, { json, normDomain, limited, send, mailHtml, randomToken });
+    case 'passportWatch': case 'passportWatchSet': case 'passportLead':
+      return passportRoute(name, body, deps, ipHash, { json, normDomain, limited, send, mailHtml, randomToken, ownerEmail });
 
     case 'agentPassportKeys': case 'agentPassportVerify': case 'agentPassportIssue':
       return agentPassportRoute(name, body, deps, { json, isOwner });

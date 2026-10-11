@@ -15,10 +15,17 @@
      STRIPE_SECRET_KEY      a restricted key with Checkout Sessions: Write
                             (LUNA-SECRET-KEY is read too, the name it was
                             first saved under)
-     STRIPE_WEBHOOK_SECRET  optional; whsec_… of …/lunara-checkout/webhook
+     STRIPE_WEBHOOK_SECRET  optional; whsec_… of …/lunara-checkout/webhook.
+                            Events: those in EVENTS (checkout-core.mjs);
+                            the subscription ones are optional, as the
+                            hourly sweep reads subscriptions itself
      RESEND_API_KEY         optional; sends each buyer a short email of what
                             to do next. MAIL_FROM optional, default
                             "Lunara Society <hello@lunarasociety.com>"
+     CHECKOUT_RECOVERY      optional; "on" asks Stripe for abandoned-cart
+                            recovery links and promotional consent. Only
+                            a US Stripe account may collect that consent
+                            (Lunara's is refused), so it is off by default
      LUNARA_OWNER_EMAILS    optional; who may buy the owner's private
                             package. Default lunarasociety@gmail.com
    ═══════════════════════════════════════════════════════════════════ */
@@ -71,6 +78,39 @@ const db = {
       method: 'PATCH',
       body: JSON.stringify({ refunded_amount: amount, updated_at: new Date().toISOString() })
     }),
+  // Subscriptions the hourly sweep should read from Stripe again.
+  subscriptionsDue: (before: string) =>
+    rest(`/stripe_orders?status=eq.paid&subscription_id=not.is.null&or=(sub_checked_at.is.null,sub_checked_at.lt.${q(before)})&order=sub_checked_at.asc.nullsfirst&limit=40`),
+  orderBySubscription: (id: string) =>
+    rest(`/stripe_orders?subscription_id=eq.${q(id)}&limit=1`).then(one),
+  // Only the first caller records the recovery email as sent.
+  claimRecovery: (ref: string, patch: Record<string, unknown>) =>
+    rest(`/stripe_orders?order_ref=eq.${q(ref)}&recovery_sent_at=is.null`, {
+      method: 'PATCH',
+      headers: { prefer: 'return=representation' },
+      body: JSON.stringify({ ...present(patch), recovery_sent_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    }).then((r) => Array.isArray(r) && r.length === 1),
+  // A renewal moves the register entry the order paid for to the new end,
+  // never backwards.
+  extendRegistry: (ref: string, until: string) =>
+    rest(`/registry_entries?order_ref=eq.${q(ref)}&status=eq.approved&expires_at=lt.${q(until)}`, {
+      method: 'PATCH', body: JSON.stringify({ expires_at: until, updated_at: new Date().toISOString() })
+    }),
+  // Passport Monitor: a confirmed watch of the domain under the buyer's
+  // email, tied to the order, which lunara-registry rescans daily.
+  monitorWatch: async (w: { domain: string; email: string; order_ref: string }) => {
+    const at = new Date().toISOString();
+    const found = one(await rest(`/passport_watch?domain=eq.${q(w.domain)}&email=eq.${q(w.email)}&limit=1`));
+    if (found) {
+      return rest(`/passport_watch?token=eq.${q(found.token)}`, { method: 'PATCH', body: JSON.stringify({ order_ref: w.order_ref, confirmed_at: found.confirmed_at || at, unsubscribed_at: null }) });
+    }
+    const token = Array.from(crypto.getRandomValues(new Uint8Array(24)), (x) => 'abcdefghijklmnopqrstuvwxyz0123456789'[x % 36]).join('');
+    return rest('/passport_watch', { method: 'POST', body: JSON.stringify({ token, domain: w.domain, email: w.email, order_ref: w.order_ref, confirmed_at: at, created_at: at }) });
+  },
+  endMonitorWatch: (ref: string) =>
+    rest(`/passport_watch?order_ref=eq.${q(ref)}&unsubscribed_at=is.null`, {
+      method: 'PATCH', body: JSON.stringify({ unsubscribed_at: new Date().toISOString() })
+    }),
   // True only for the first delivery of an event id.
   claimEvent: (id: string, type: string) =>
     rest('/stripe_events?on_conflict=id', {
@@ -115,7 +155,7 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
   try {
-    const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
+    const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, now: () => Date.now(), webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
     return withCors(res, origin);
   } catch (e) {
     console.error('lunara-checkout', e?.message || e);

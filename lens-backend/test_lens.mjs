@@ -418,13 +418,17 @@ const licence = (deps, plan = 'app_month') => run(deps, post('/admin/grant', { s
   const stripe = {
     createSession: async (p) => {
       const id = 'cs_test_' + 'a'.repeat(10) + (++seq);
-      sessions[id] = { id, url: 'https://checkout.stripe.com/c/pay/' + id, payment_status: 'unpaid', status: 'open',
+      sessions[id] = { id, url: 'https://checkout.stripe.com/c/pay/' + id, payment_status: 'unpaid', status: 'open', mode: p.mode,
         amount_total: p.line_items[0].price_data.unit_amount, currency: p.line_items[0].price_data.currency,
-        customer_email: p.customer_email, metadata: { ...p.metadata }, params: p };
+        customer_email: p.customer_email, metadata: { ...p.metadata }, params: p,
+        subscription: p.mode === 'subscription' ? 'sub_' + seq : null, customer: p.mode === 'subscription' ? 'cus_' + seq : null };
       return sessions[id];
     },
     getSession: async (id) => sessions[id] || null,
-    paidSessionsFor: async (email) => Object.values(sessions).filter((s) => s.customer_email === email && s.payment_status === 'paid')
+    paidSessionsFor: async (email) => Object.values(sessions).filter((s) => s.customer_email === email && s.payment_status === 'paid'),
+    invoices: {},
+    paidInvoices: async (sub) => stripe.invoices[sub] || [],
+    portal: async (customer, back) => 'https://billing.stripe.com/p/session/' + customer + '?back=' + encodeURIComponent(back)
   };
   const pay = (id) => Object.assign(sessions[id], { payment_status: 'paid', status: 'complete' });
   const { deps } = makeDeps({ stripe });
@@ -437,6 +441,11 @@ const licence = (deps, plan = 'app_month') => run(deps, post('/admin/grant', { s
   assert.ok(r.body.url.startsWith('https://checkout.stripe.com/'));
   const sp = sessions[id].params;
   assert.equal(sp.line_items[0].price_data.unit_amount, 1999, 'the server sets the price');
+  assert.equal(sp.mode, 'subscription', 'a plan renews monthly on the web');
+  assert.equal(sp.line_items[0].price_data.recurring.interval, 'month');
+  assert.equal(sp.payment_intent_data, undefined);
+  assert.equal(sp.subscription_data.metadata.lens_product, 'pro');
+  assert.match(sp.custom_text.submit.message, /Renews monthly at the same price until you cancel/);
   assert.equal(sp.customer_email, 'buyer@example.com', 'locked to the account that pays');
   assert.match(sp.custom_text.submit.message, /buyer@example\.com/, 'says where the credits go before paying');
   r = await run(deps, post('/pay/confirm', { session_token: 'good', session_id: id }));
@@ -448,7 +457,24 @@ const licence = (deps, plan = 'app_month') => run(deps, post('/admin/grant', { s
   assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'a repeated confirm grants nothing twice');
   r = await run(deps, post('/pay/sync', { session_token: 'good' }));
   assert.equal(r.body.sub_credits, TIERS.pro.monthly, 'nor does a sync');
+  // A month later Stripe renews it: the invoice adds the month once.
+  stripe.invoices[sessions[id].subscription] = [
+    { id: 'in_first', billing_reason: 'subscription_create', amount_paid: 1999, currency: 'usd' },
+    { id: 'in_cycle1', billing_reason: 'subscription_cycle', amount_paid: 1999, currency: 'usd' },
+    { id: 'in_cheap', billing_reason: 'subscription_cycle', amount_paid: 1, currency: 'usd' }
+  ];
+  const before = (await run(deps, post('/me', { session_token: 'good' }))).body.renews;
+  r = await run(deps, post('/pay/sync', { session_token: 'good' }));
+  assert.equal(r.body.tier, 'pro');
+  assert.ok(new Date(r.body.renews) - new Date(before) > 30 * 86400e3, 'the renewal extends the plan by a month');
+  r = await run(deps, post('/pay/sync', { session_token: 'good' }));
+  assert.equal(new Date(r.body.renews).getTime(), new Date((await run(deps, post('/me', { session_token: 'good' }))).body.renews).getTime(), 'each renewal counts once');
+  r = await run(deps, post('/pay/portal', { session_token: 'good' }));
+  assert.ok(r.body.url.startsWith('https://billing.stripe.com/p/session/cus_'), 'the member can cancel');
+  r = await run(deps, post('/pay/portal', { session_token: 'admin' }));
+  assert.equal(r.status, 404, 'no subscription, no portal');
   r = await run(deps, post('/pay/create', { session_token: 'good', product: 'credits_1500' }));
+  assert.equal(sessions[r.body.session_id].params.mode, 'payment', 'a credit pack is one payment');
   const id2 = r.body.session_id; pay(id2);
   r = await run(deps, post('/pay/confirm', { session_token: 'admin', session_id: id2 }));
   assert.equal(r.status, 409, 'a payment by one account cannot credit another');
@@ -469,6 +495,6 @@ const licence = (deps, plan = 'app_month') => run(deps, post('/admin/grant', { s
   const nd = makeDeps();
   r = await run(nd.deps, post('/pay/create', { session_token: 'good', product: 'pro' }));
   assert.equal(r.status, 503);
-  ok('Stripe checkout: the server sets the price, credits arrive once, to the right account, only when Stripe shows the exact amount paid');
+  ok('Stripe checkout: the server sets the price, credits arrive once, to the right account, only when Stripe shows the exact amount paid; plans renew monthly, each renewal once, and can be cancelled');
 }
 console.log(`\n${n} passed`);

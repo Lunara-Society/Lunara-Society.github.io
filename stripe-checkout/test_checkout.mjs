@@ -104,7 +104,7 @@ await test('a buy records an order and opens Stripe at the catalogue price', asy
   eq(p.get('mode'), 'payment');
   eq(p.get('line_items[0][price_data][unit_amount]'), '9500');
   ok(!p.has('line_items[0][price_data][recurring][interval]'), 'a single charge does not recur');
-  eq(p.get('after_expiration[recovery][enabled]'), 'true');
+  ok(!p.has('consent_collection[promotions]') && !p.has('after_expiration[recovery][enabled]'), 'recovery options only where switched on');
   eq(p.get('line_items[0][price_data][currency]'), 'usd');
   eq(p.get('metadata[order]'), r.body.order);
   eq(p.get('client_reference_id'), r.body.order);
@@ -144,7 +144,8 @@ await test('a website hint that is not a domain is ignored', async () => {
 });
 
 await test('if Stripe refuses the recovery options, the sale goes ahead without them', async () => {
-  const { deps, calls } = setup({ refuseExtras: true });
+  const { deps: d0, calls } = setup({ refuseExtras: true });
+  const deps = { ...d0, env: { CHECKOUT_RECOVERY: 'on' } };
   const r = await buy(deps, { product: 'kit' });
   eq(r.status, 200);
   eq(calls.length, 2);
@@ -204,11 +205,12 @@ await test('the portal opens for an order with a subscription, and only then', a
 });
 
 await test('an abandoned checkout gets one recovery email, only with consent', async () => {
-  const { deps, sessions, db } = setup();
+  const { deps, sessions, db, calls } = setup();
   const sent = [];
-  const d = { ...deps, mail: { send: async (m) => { sent.push(m); } } };
+  const d = { ...deps, env: { CHECKOUT_RECOVERY: 'on' }, mail: { send: async (m) => { sent.push(m); } } };
   const a = await buy(d, { product: 'monitor' });
   const b = await buy(d, { product: 'kit' });
+  eq(calls[0].params.get('after_expiration[recovery][enabled]'), 'true', 'switched on: Stripe is asked for a recovery link');
   Object.assign(sessions.cs_test_1, { status: 'expired', customer_details: { email: 'lead@example.com' }, consent: { promotions: 'opt_in' }, after_expiration: { recovery: { url: 'https://buy.stripe.com/r/live_x' } } });
   Object.assign(sessions.cs_test_2, { status: 'expired', customer_details: { email: 'no@example.com' }, consent: { promotions: 'opt_out' }, after_expiration: { recovery: { url: 'https://buy.stripe.com/r/live_y' } } });
   await call(d, '/settle');

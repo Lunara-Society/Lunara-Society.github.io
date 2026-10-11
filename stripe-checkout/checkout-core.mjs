@@ -213,9 +213,12 @@ const ASK = {
 };
 
 /* Stripe options that not every account accepts: promotional consent
-   is offered only to businesses in the US. If Stripe refuses a session
-   that asks for them, it is asked again without, and they stay off for
-   the life of this instance, so a refusal can never stop a sale. */
+   is offered only to businesses in the US, and without consent there is
+   no recovery email to send. So they are asked for only when the
+   CHECKOUT_RECOVERY secret is "on" (a US account). Even then, if Stripe
+   refuses a session that asks for them, it is asked again without, and
+   they stay off for the life of this instance: a refusal never stops a
+   sale. (Lunara's account answered "not available in your country".) */
 let extrasOff = false;
 export function resetExtras() { extrasOff = false; }
 const EXTRAS = {
@@ -223,7 +226,7 @@ const EXTRAS = {
   consent_collection: { promotions: 'auto' }
 };
 
-export async function createSession(stripe, productId, returnTo, order, lockEmail, prefill = {}) {
+export async function createSession(stripe, productId, returnTo, order, lockEmail, prefill = {}, recovery = false) {
   const p = productFor(productId);
   if (!p) return null;
   const sub = !!p.renews;
@@ -267,7 +270,7 @@ export async function createSession(stripe, productId, returnTo, order, lockEmai
       metadata: { lunara_product: productId, order }
     } : undefined
   };
-  if (!extrasOff) {
+  if (recovery && !extrasOff) {
     try {
       return await stripe.post('/v1/checkout/sessions', { ...params, ...EXTRAS });
     } catch (e) {
@@ -706,7 +709,8 @@ export async function handleCheckout(req, deps) {
     }
     const order = newOrderRef();
     const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail,
-      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '' });
+      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '' },
+      String((deps.env && deps.env.CHECKOUT_RECOVERY) || '') === 'on');
     // Recorded before the buyer leaves, so a payment can never arrive for
     // an order this side has not heard of. If this fails, no checkout.
     await deps.db.createOrder({

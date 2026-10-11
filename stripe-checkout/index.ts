@@ -22,6 +22,10 @@
      RESEND_API_KEY         optional; sends each buyer a short email of what
                             to do next. MAIL_FROM optional, default
                             "Lunara Society <hello@lunarasociety.com>"
+     CHECKOUT_RECOVERY      optional; "on" asks Stripe for abandoned-cart
+                            recovery links and promotional consent. Only
+                            a US Stripe account may collect that consent
+                            (Lunara's is refused), so it is off by default
      LUNARA_OWNER_EMAILS    optional; who may buy the owner's private
                             package. Default lunarasociety@gmail.com
    ═══════════════════════════════════════════════════════════════════ */

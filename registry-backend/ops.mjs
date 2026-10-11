@@ -35,14 +35,15 @@ export async function opsStats(req, body, deps, h) {
 
   const now = deps.now(), day = 86400e3;
   const iso = (ms) => new Date(ms).toISOString();
-  const [orders, apps, scans7, scans30, stored, watchers, subs] = await Promise.all([
+  const [orders, apps, scans7, scans30, stored, watchers, subs, leads] = await Promise.all([
     deps.db.listOrders().catch(() => []),
     deps.db.listApplications().catch(() => []),
     deps.db.countHits('passport', null, iso(now - 7 * day)).catch(() => null),
     deps.db.countHits('passport', null, iso(now - 30 * day)).catch(() => null),
     deps.db.countPassports().catch(() => null),
     deps.db.countWatchers().catch(() => null),
-    deps.db.countSubscribers().catch(() => null)
+    deps.db.countSubscribers().catch(() => null),
+    deps.db.listLeads ? deps.db.listLeads().catch(() => []) : []
   ]);
 
   const live = (orders || []).filter((o) => o.livemode !== false);
@@ -58,7 +59,8 @@ export async function opsStats(req, body, deps, h) {
 
   const row = (o) => {
     const r = { order_ref: o.order_ref, product: o.product, amount_usd: cents(o.amount_total), status: o.status, country: o.country || null,
-      created_at: o.created_at, paid_at: o.paid_at || null, delivered: !!o.delivered_at };
+      created_at: o.created_at, paid_at: o.paid_at || null, delivered: !!o.delivered_at,
+      sub_status: o.sub_status || null, cancel_at_period_end: !!o.cancel_at_period_end, renewals: o.renewals || 0, period_end: o.period_end || null };
     if (owner) { r.name = o.name || null; r.email = o.email || null; }
     return r;
   };
@@ -69,6 +71,19 @@ export async function opsStats(req, body, deps, h) {
     return r;
   };
   const by = (s) => (apps || []).filter((a) => a.status === s).length;
+
+  /* Recurring revenue: subscriptions Stripe still holds as live, each
+     priced per month. The term lengths are lunara-pricing.js's renews. */
+  const TERM_MONTHS = { monitor: 1, monitor_year: 12, shield: 6, watch: 6, agent: 6 };
+  const isLive = (o) => o.status === 'paid' && o.sub_status && ['active', 'trialing', 'past_due'].includes(o.sub_status);
+  const subsLive = paid.filter((o) => o.subscription_id && isLive(o));
+  const mrrCents = subsLive.filter((o) => !o.cancel_at_period_end).reduce((sum, o) => sum + o.amount_total / (TERM_MONTHS[o.product] || 1), 0);
+  const leadRows = (leads || []).filter((l) => Date.parse(l.created_at) > now - 30 * day);
+  const leadRow = (l) => {
+    const r = { product: l.product || null, organization: l.organization || null, grade: l.grade || null, score: l.score ?? null, gaps: l.gaps || [], contacted: !!l.contacted, created_at: l.created_at };
+    if (owner) r.email = l.email || null;
+    return r;
+  };
 
   return json({
     success: true,
@@ -82,6 +97,14 @@ export async function opsStats(req, body, deps, h) {
       by_product: byProduct,
       unfinished_checkouts_7_days: live.filter((o) => o.status !== 'paid' && recent(o)).length
     },
+    subscriptions: {
+      active: subsLive.length,
+      cancelling: subsLive.filter((o) => o.cancel_at_period_end).length,
+      monitors: subsLive.filter((o) => o.product === 'monitor' || o.product === 'monitor_year').length,
+      mrr_usd: cents(mrrCents),
+      renewals_total: paid.reduce((n, o) => n + (o.renewals || 0), 0)
+    },
+    leads: { last_7_days: leadRows.filter((l) => Date.parse(l.created_at) > now - 7 * day).length, last_30_days: leadRows.length, recent: leadRows.slice(0, 25).map(leadRow) },
     orders: live.slice(0, 50).map(row),
     register: {
       total: (apps || []).length, pending: by('pending'), returned: by('returned'), approved: by('approved'), rejected: by('rejected'), revoked: by('revoked'),

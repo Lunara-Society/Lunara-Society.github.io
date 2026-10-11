@@ -60,7 +60,7 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
-  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at&order=created_at.desc&limit=500'),
+  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at,subscription_id,sub_status,cancel_at_period_end,renewals,period_end&order=created_at.desc&limit=500'),
   countPassports: () => countOf('/passport_scans?select=domain'),
   countWatchers: () => countOf('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=token'),
   countSubscribers: () => countOf('/newsletter_subscribers?select=email'),

@@ -545,5 +545,22 @@ await test('ops: live numbers for the owner; figures without people for the agen
   eq((await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), none)).status, 403, 'no key configured, no key accepted');
 });
 
+await test('ops: recurring revenue per month, and the leads with their emails for the owner only', async () => {
+  const { deps, db } = setup({ env: { LUNARA_OPS_KEY: 'k'.repeat(32) } });
+  const at = '2026-10-03T00:00:00Z';
+  db.orders.set('LO-M', { order_ref: 'LO-M', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_m', sub_status: 'active' });
+  db.orders.set('LO-Y', { order_ref: 'LO-Y', product: 'monitor_year', amount_total: 19000, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_y', sub_status: 'active' });
+  db.orders.set('LO-S', { order_ref: 'LO-S', product: 'shield', amount_total: 7500, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_s', sub_status: 'active', renewals: 1 });
+  db.orders.set('LO-C', { order_ref: 'LO-C', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_c', sub_status: 'canceled' });
+  db.orders.set('LO-X', { order_ref: 'LO-X', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, created_at: at, paid_at: at, subscription_id: 'sub_x', sub_status: 'active', cancel_at_period_end: true });
+  db.leads.push({ product: 'passport', organization: 'acme.example', grade: 'C', score: 61, gaps: ['DMARC'], email: 'lead@acme.example', created_at: '2026-10-03T10:00:00Z' });
+  const o = (await call(deps, 'opsStats', { session_token: 'owner-session' })).body;
+  eq(o.subscriptions.active, 4); eq(o.subscriptions.cancelling, 1); eq(o.subscriptions.monitors, 3); eq(o.subscriptions.renewals_total, 1);
+  eq(o.subscriptions.mrr_usd, 19 + 15.83 + 12.5, 'monthly, yearly ÷ 12, six-monthly ÷ 6; a cancelling one is not recurring');
+  eq(o.leads.last_7_days, 1); eq(o.leads.recent[0].email, 'lead@acme.example');
+  const a = (await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), deps).then((r) => r.json()));
+  eq(a.leads.recent[0].organization, 'acme.example'); eq(a.leads.recent[0].email, undefined, 'the agent sees no lead email');
+});
+
 console.log(`${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

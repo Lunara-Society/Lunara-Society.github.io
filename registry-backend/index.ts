@@ -60,7 +60,7 @@ const db = {
   countHits: (kind: string, ip: string | null, since: string) =>
     countOf(`/registry_hits?kind=eq.${q(kind)}${ip ? `&ip_hash=eq.${q(ip)}` : ''}&created_at=gte.${q(since)}&select=id`),
   hit: (kind: string, ip: string, at: string) => post('registry_hits', { kind, ip_hash: ip, created_at: at }, 'return=minimal'),
-  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at,subscription_id,sub_status,cancel_at_period_end,renewals,period_end&order=created_at.desc&limit=500'),
+  listOrders: () => rest('/stripe_orders?select=order_ref,product,amount_total,currency,status,email,name,country,refunded_amount,delivered_at,livemode,paid_at,created_at,subscription_id,sub_status,cancel_at_period_end,renewals,period_end,partner_ref&order=created_at.desc&limit=500'),
   countPassports: () => countOf('/passport_scans?select=domain'),
   countWatchers: () => countOf('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=token'),
   countSubscribers: () => countOf('/newsletter_subscribers?select=email'),
@@ -88,6 +88,11 @@ const db = {
   createWatch: (r: Record<string, unknown>) => post('passport_watch', r, 'return=minimal'),
   updateWatch: (t: string, patch: Record<string, unknown>) => rest(`/passport_watch?token=eq.${q(t)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   createPartner: (r: unknown) => post('registry_partners', r, 'return=minimal'),
+  findPartnerByCode: (c: string) => rest(`/registry_partners?code=eq.${q(c)}&limit=1`).then(one),
+  findPartnerByEmail: (e: string) => rest(`/registry_partners?contact_email=eq.${q(e)}&code=not.is.null&order=created_at.asc&limit=1`).then(one),
+  listPartners: () => rest('/registry_partners?order=created_at.desc&limit=200'),
+  updatePartner: (c: string, patch: Record<string, unknown>) => rest(`/registry_partners?code=eq.${q(c)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  ordersByPartner: (c: string) => rest(`/stripe_orders?partner_ref=eq.${q(c)}&select=order_ref,product,amount_total,status,livemode,sub_status,cancel_at_period_end,renewals,paid_at,created_at&limit=1000`),
   subscribe: async (email: string, source: string) => {
     const r = await rest('/newsletter_subscribers?on_conflict=email', { method: 'POST', headers: { prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify({ email, source_page: source || null }) });
     return Array.isArray(r) && r.length === 1;

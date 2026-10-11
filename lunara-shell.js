@@ -102,6 +102,8 @@
       ['glossary.html',                     'Glossary']
     ]},
     { head: 'For machines', links: [
+      ['agents.html',         'For AI agents · A2A'],
+      ['agents.html#partners','Partner program'],
       ['mcp.html',            'MCP server'],
       ['passport.html',       'Passport scan API'],
       ['agent-passport.html', 'Agent passports'],
@@ -295,7 +297,18 @@
     document.head.appendChild(s);
   }
 
-  function boot() { install(); loadMember(); loadCosmos(); loadEngine(); loadLocks(); }
+  /* A visitor sent by an Agent Partner Program partner arrives with
+     ?ref=P-XXXXXX. It is remembered on this device for 90 days, and
+     lunara-pricing.js sends it with a checkout so the partner is
+     credited. Nothing else is stored and nothing leaves the browser. */
+  function rememberReferral() {
+    try {
+      var r = (new URLSearchParams(location.search).get('ref') || '').trim().toUpperCase();
+      if (/^P-[0-9A-HJKMNP-TV-Z]{6}$/.test(r)) localStorage.setItem('lx-ref', JSON.stringify({ c: r, t: Date.now() }));
+    } catch (e) {}
+  }
+
+  function boot() { rememberReferral(); install(); loadMember(); loadCosmos(); loadEngine(); loadLocks(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

@@ -35,7 +35,7 @@ export async function opsStats(req, body, deps, h) {
 
   const now = deps.now(), day = 86400e3;
   const iso = (ms) => new Date(ms).toISOString();
-  const [orders, apps, scans7, scans30, stored, watchers, subs, leads] = await Promise.all([
+  const [orders, apps, scans7, scans30, stored, watchers, subs, leads, partners] = await Promise.all([
     deps.db.listOrders().catch(() => []),
     deps.db.listApplications().catch(() => []),
     deps.db.countHits('passport', null, iso(now - 7 * day)).catch(() => null),
@@ -43,7 +43,8 @@ export async function opsStats(req, body, deps, h) {
     deps.db.countPassports().catch(() => null),
     deps.db.countWatchers().catch(() => null),
     deps.db.countSubscribers().catch(() => null),
-    deps.db.listLeads ? deps.db.listLeads().catch(() => []) : []
+    deps.db.listLeads ? deps.db.listLeads().catch(() => []) : [],
+    deps.db.listPartners ? deps.db.listPartners().catch(() => []) : []
   ]);
 
   const live = (orders || []).filter((o) => o.livemode !== false);
@@ -79,6 +80,19 @@ export async function opsStats(req, body, deps, h) {
   const subsLive = paid.filter((o) => o.subscription_id && isLive(o));
   const mrrCents = subsLive.filter((o) => !o.cancel_at_period_end).reduce((sum, o) => sum + o.amount_total / (TERM_MONTHS[o.product] || 1), 0);
   const leadRows = (leads || []).filter((l) => Date.parse(l.created_at) > now - 30 * day);
+  // The Agent Partner Program: who applied, and what each code brought in.
+  const byPartner = {};
+  paid.filter((o) => o.partner_ref).forEach((o) => {
+    const b = byPartner[o.partner_ref] = byPartner[o.partner_ref] || { paid: 0, cents: 0 };
+    b.paid++; b.cents += o.amount_total * (1 + (o.renewals || 0));
+  });
+  const partnerRow = (p) => {
+    const b = byPartner[p.code] || { paid: 0, cents: 0 };
+    const r = { code: p.code || null, partner_name: p.partner_name, partner_type: p.partner_type, status: p.status || 'pending', website_url: p.website_url || null,
+      created_at: p.created_at, referred_paid: b.paid, referred_revenue_usd: cents(b.cents), notes: p.notes || null };
+    if (owner) r.contact_email = p.contact_email || null;
+    return r;
+  };
   const leadRow = (l) => {
     const r = { product: l.product || null, organization: l.organization || null, grade: l.grade || null, score: l.score ?? null, gaps: l.gaps || [], contacted: !!l.contacted, created_at: l.created_at };
     if (owner) r.email = l.email || null;
@@ -103,6 +117,13 @@ export async function opsStats(req, body, deps, h) {
       monitors: subsLive.filter((o) => o.product === 'monitor' || o.product === 'monitor_year').length,
       mrr_usd: cents(mrrCents),
       renewals_total: paid.reduce((n, o) => n + (o.renewals || 0), 0)
+    },
+    partners: {
+      total: (partners || []).length,
+      pending: (partners || []).filter((p) => (p.status || 'pending') === 'pending').length,
+      approved: (partners || []).filter((p) => p.status === 'approved').length,
+      referred_paid_orders: paid.filter((o) => o.partner_ref).length,
+      recent: (partners || []).slice(0, 30).map(partnerRow)
     },
     leads: { last_7_days: leadRows.filter((l) => Date.parse(l.created_at) > now - 7 * day).length, last_30_days: leadRows.length, recent: leadRows.slice(0, 25).map(leadRow) },
     orders: live.slice(0, 50).map(row),

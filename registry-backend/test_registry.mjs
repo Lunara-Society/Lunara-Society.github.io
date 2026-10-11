@@ -27,7 +27,12 @@ export function memoryDb() {
     async applicationsByEmail(e) { return [...apps.values()].filter((a) => a.contact_email === e); },
     async countHits(kind, ip, since) { return hits.filter((h) => h.kind === kind && (!ip || h.ip === ip) && h.at >= since).length; },
     async hit(kind, ip, at) { hits.push({ kind, ip, at }); },
-    async createPartner(r) { partners.push(r); },
+    async createPartner(r) { partners.push({ ...r, created_at: new Date().toISOString() }); },
+    async findPartnerByCode(c) { return partners.find((p) => p.code === c) || null; },
+    async findPartnerByEmail(e) { return partners.find((p) => p.contact_email === e && p.code) || null; },
+    async listPartners() { return partners.slice().reverse(); },
+    async updatePartner(c, patch) { Object.assign(partners.find((p) => p.code === c), patch); },
+    async ordersByPartner(c) { return [...orders.values()].filter((o) => o.partner_ref === c); },
     async subscribe(e) { if (subs.has(e)) return false; subs.add(e); return true; },
     async logVisit(r) { visits.push(r); },
     async createLead(r) { leads.push(r); },
@@ -496,6 +501,65 @@ await test('passport lead: the visitor gets the report, the owner gets the lead'
   eq(db.leads.length, 1); eq(db.leads[0].product, 'passport'); eq(db.leads[0].email, 'lead@b.example'); ok(db.leads[0].gaps.some((g) => /DMARC/.test(g)));
   eq(mailbox[0].to, 'lead@b.example'); ok(/WHAT TO FIX/.test(mailbox[0].text) && /Fix: /.test(mailbox[0].text));
   eq(mailbox[1].to, 'lunarasociety@gmail.com'); ok(mailbox[1].subject.startsWith('Lead: good.example'));
+});
+
+await test('partners: a code at once, stats need code and email, commission counts renewals inside a year', async () => {
+  const { deps, db, mailbox } = setup();
+  eq((await call(deps, 'partnerApply', { partner_name: 'A', contact_email: 'x' })).status, 400);
+  const r = (await call(deps, 'partnerApply', { partner_name: 'Acme Agents', contact_email: 'Ops@Acme.example', website_url: 'https://acme.example', partner_type: 'agent_platform' })).body;
+  eq(r.success, true); ok(/^P-[0-9A-HJKMNP-TV-Z]{6}$/.test(r.code)); eq(r.status, 'pending');
+  eq(r.referral_link, 'https://lunarasociety.com/?ref=' + r.code); ok(r.terms.commission.startsWith('20%'));
+  ok(mailbox.some((m) => m.to === 'ops@acme.example' && m.text.includes(r.code)), 'the partner gets the code by email');
+  ok(mailbox.some((m) => m.to === 'lunarasociety@gmail.com' && m.subject.includes(r.code)), 'the owner hears of it');
+  eq((await call(deps, 'partnerApply', { partner_name: 'Acme again', contact_email: 'ops@acme.example' })).body.code, r.code, 'one code per email');
+  const at = '2026-01-04T00:00:00Z';
+  db.orders.set('LO-A', { order_ref: 'LO-A', product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, partner_ref: r.code, paid_at: at, created_at: at, sub_status: 'active', renewals: 14 });
+  db.orders.set('LO-B', { order_ref: 'LO-B', product: 'shield', amount_total: 7500, status: 'paid', livemode: true, partner_ref: r.code, paid_at: at, created_at: at, sub_status: 'active', renewals: 3 });
+  db.orders.set('LO-C', { order_ref: 'LO-C', product: 'kit', amount_total: 9500, status: 'open', livemode: true, partner_ref: r.code, created_at: at });
+  db.orders.set('LO-D', { order_ref: 'LO-D', product: 'kit', amount_total: 9500, status: 'paid', livemode: false, partner_ref: r.code, created_at: at });
+  eq((await call(deps, 'partnerStats', { code: r.code, email: 'someone@else.example' })).status, 404, 'the code alone opens nothing');
+  const st = (await call(deps, 'partnerStats', { code: r.code.toLowerCase(), email: 'OPS@acme.example' })).body;
+  eq(st.referred_checkouts, 3, 'sandbox orders are not counted'); eq(st.referred_paid, 2);
+  eq(st.referred_revenue_usd, 19 * 12 + 75 * 2, 'twelve monthly payments, two six-monthly ones');
+  eq(st.commission_usd, Math.round((19 * 12 + 75 * 2) * 20) / 100);
+  eq(st.payable, false, 'not payable until approved');
+  eq((await call(deps, 'partnerDecide', { code: r.code, status: 'approved', session_token: 'member-session' })).status, 403, 'only the owner approves');
+  eq((await call(deps, 'partnerDecide', { code: r.code, status: 'approved', session_token: 'owner-session' })).body.success, true);
+  ok(mailbox.some((m) => m.subject.includes('approved Lunara partner')));
+  eq((await call(deps, 'partnerStats', { code: r.code, email: 'ops@acme.example' })).body.payable, true);
+  const page = readFileSync(new URL('../agents.html', import.meta.url), 'utf8');
+  ok(page.includes('20%') && page.includes('12 months'), 'agents.html states the same terms as partners.mjs');
+});
+
+await test('a2a: the card, JSON-RPC and HTTP+JSON, every skill answers through the REST routes', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const { deps, db } = setup({ ...web(site) });
+  const card = (await call(deps, 'a2a', null, 'GET')).body;
+  eq(card.name, 'Lunara Society'); eq(card.url, 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a');
+  ok(card.skills.length >= 5 && card.skills.every((sk) => sk.id && sk.name && sk.description && sk.tags.length));
+  const published = JSON.parse(readFileSync(new URL('../.well-known/agent-card.json', import.meta.url), 'utf8'));
+  eq(JSON.stringify(published), JSON.stringify(card), 'the published card is the one the endpoint serves');
+  const rpc = (method, parts, id = 1) => call(deps, 'a2a', { jsonrpc: '2.0', id, method, params: { message: { role: 'user', messageId: 'm' + id, parts } } }).then((r) => r.body);
+  let r = await rpc('message/send', [{ kind: 'text', text: 'Scan the passport of https://good.example/about' }]);
+  eq(r.jsonrpc, '2.0'); eq(r.id, 1); eq(r.result.kind, 'message'); eq(r.result.role, 'agent');
+  ok(/good\.example: 100\/100, grade A\+/.test(r.result.parts[0].text)); eq(r.result.parts[1].data.score, 100); eq(db.passports.get('good.example').score, 100);
+  r = await rpc('SendMessage', [{ text: 'Is good.example verified by Lunara?' }], 2);
+  eq(r.result.message.role, 'ROLE_AGENT'); ok(/not on the Lunara register/.test(r.result.message.parts[0].text));
+  r = await rpc('message/send', [{ kind: 'text', text: 'Tell me about your partner program' }], 3);
+  ok(/20% of every payment/.test(r.result.parts[0].text));
+  r = await rpc('message/send', [{ kind: 'data', data: { skill: 'partnership', partner_name: 'Bot Ops', contact_email: 'ops@bot.example', partner_type: 'ai_agent' } }], 4);
+  ok(/Partner code P-/.test(r.result.parts[0].text)); eq(db.partners.length, 1);
+  r = await rpc('message/send', [{ kind: 'text', text: 'What does Lunara sell?' }], 5);
+  ok(/Passport Monitor/.test(r.result.parts[0].text));
+  r = await rpc('message/send', [{ kind: 'text', text: 'hello' }], 6);
+  ok(/partner/i.test(r.result.parts[0].text) && r.result.parts[1].data.skills.length >= 5);
+  r = await rpc('message/send', [{ kind: 'data', data: { skill: 'agent-passport-verify', passport: 'abc.def' } }], 7);
+  eq(r.result.parts[1].data.valid, false);
+  const h = (await call(deps, 'a2a/message:send', { message: { role: 'ROLE_USER', parts: [{ text: 'scan good.example' }] } })).body;
+  eq(h.message.role, 'ROLE_AGENT'); ok(h.message.parts[0].text.startsWith('good.example'));
+  eq((await call(deps, 'a2a', { jsonrpc: '2.0', id: 9, method: 'tasks/get', params: {} })).body.error.code, -32001);
+  eq((await call(deps, 'a2a', { jsonrpc: '2.0', id: 9, method: 'nope' })).body.error.code, -32601);
+  eq((await call(deps, 'a2a', { hello: 1 })).body.error.code, -32600);
 });
 
 await test('agent passport: only a verified AI agent gets one, anyone can verify it, revocation kills it', async () => {

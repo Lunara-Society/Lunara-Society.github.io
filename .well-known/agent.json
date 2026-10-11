@@ -1,0 +1,124 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Lunara Society",
+  "description": "Passport control for the machine economy. Lunara scans any domain on thirteen public security signals and grades it, says whether the business behind it is verified on the public Lunara register (a named human review, revocable), and verifies signed passports that AI agents present. Agents and their builders can join the partner program and earn a share of what they refer.",
+  "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
+  "preferredTransport": "JSONRPC",
+  "additionalInterfaces": [
+    {
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
+      "transport": "JSONRPC"
+    },
+    {
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
+      "transport": "HTTP+JSON"
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    },
+    {
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "provider": {
+    "organization": "Lunara Society",
+    "url": "https://lunarasociety.com"
+  },
+  "version": "1.0.0",
+  "documentationUrl": "https://lunarasociety.com/agents.html",
+  "iconUrl": "https://lunarasociety.com/lunara_emblem_256.png",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "passport-scan",
+      "name": "Passport scan",
+      "description": "Scans a domain live on thirteen public security signals (HTTPS, HSTS, CSP, DNSSEC, SPF, DMARC, CAA, llms.txt, AI-crawler policy, security.txt and more) and returns a score out of 100, a grade, each failing check with its fix, and the register visa. Free.",
+      "tags": [
+        "security",
+        "trust",
+        "domain",
+        "due-diligence",
+        "passport"
+      ],
+      "examples": [
+        "Scan the passport of example.com",
+        "{\"skill\":\"passport-scan\",\"domain\":\"example.com\"}"
+      ]
+    },
+    {
+      "id": "register-lookup",
+      "name": "Register lookup",
+      "description": "Says whether the business behind a domain is verified on the public Lunara register: verified, revoked, expired or not_registered. A verification is a named human review of identity and domain control. Free.",
+      "tags": [
+        "verification",
+        "kyb",
+        "trust",
+        "registry"
+      ],
+      "examples": [
+        "Is acme.com verified by Lunara?",
+        "{\"skill\":\"register-lookup\",\"domain\":\"acme.com\"}"
+      ]
+    },
+    {
+      "id": "agent-passport-verify",
+      "name": "Agent passport check",
+      "description": "Verifies a signed Lunara agent passport that another AI agent presents: signature, issuer, expiry and whether the agent is still on the register. Free.",
+      "tags": [
+        "agents",
+        "identity",
+        "verification",
+        "ed25519"
+      ],
+      "examples": [
+        "{\"skill\":\"agent-passport-verify\",\"passport\":\"<the token the agent presented>\"}"
+      ]
+    },
+    {
+      "id": "partnership",
+      "name": "Agent Partner Program",
+      "description": "Terms of the Lunara Agent Partner Program, and joining it: a partner code at once, and 20% of every payment from referred customers for their first 12 months. Send partner_name and contact_email (the person or company the agent acts for) to apply.",
+      "tags": [
+        "partnership",
+        "affiliate",
+        "referral",
+        "revenue-share"
+      ],
+      "examples": [
+        "What does the Lunara partner program offer?",
+        "{\"skill\":\"partnership\",\"partner_name\":\"Acme Agents Ltd\",\"contact_email\":\"ops@acme.example\",\"website_url\":\"https://acme.example\",\"partner_type\":\"agent_platform\"}"
+      ]
+    },
+    {
+      "id": "services",
+      "name": "Services and prices",
+      "description": "What Lunara sells and where to buy it: Passport Monitor (daily rescans and alerts), Shield Verification, AI Entity Verification for agents, Regulatory Watch and EU AI Act Article 50 packs.",
+      "tags": [
+        "pricing",
+        "services"
+      ],
+      "examples": [
+        "What does Lunara sell?",
+        "How do I keep my domain monitored?"
+      ]
+    }
+  ]
+}

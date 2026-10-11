@@ -195,6 +195,10 @@ export function returnUrl(raw) {
 }
 
 const ORDER_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+/* An Agent Partner Program code (lunara-registry/partners.mjs). A sale
+   that arrives with one is written on the order and in Stripe's
+   metadata; the partner's commission is counted from there. */
+export const PARTNER_RE = /^P-[0-9A-HJKMNP-TV-Z]{6}$/;
 export const ORDER_RE = /^LO-[0-9A-HJKMNP-TV-Z]{16}$/;
 
 /* About 80 bits: unguessable, and still short enough to read out over
@@ -260,14 +264,14 @@ export async function createSession(stripe, productId, returnTo, order, lockEmai
       };
     }) : undefined,
     custom_text: { submit: { message: ('How you receive it: ' + how).slice(0, 1200) } },
-    metadata: { lunara_product: productId, order },
+    metadata: { lunara_product: productId, order, partner: prefill.partner || undefined },
     payment_intent_data: sub ? undefined : {
       description: `${p.name} (order ${order})`,
-      metadata: { lunara_product: productId, order }
+      metadata: { lunara_product: productId, order, partner: prefill.partner || undefined }
     },
     subscription_data: sub ? {
       description: `${p.name} (order ${order})`,
-      metadata: { lunara_product: productId, order }
+      metadata: { lunara_product: productId, order, partner: prefill.partner || undefined }
     } : undefined
   };
   if (recovery && !extrasOff) {
@@ -708,8 +712,9 @@ export async function handleCheckout(req, deps) {
       return refuse();
     }
     const order = newOrderRef();
+    const partner = typeof body.ref === 'string' && PARTNER_RE.test(body.ref.trim().toUpperCase()) && !lockEmail ? body.ref.trim().toUpperCase() : null;
     const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail,
-      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '' },
+      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '', partner },
       String((deps.env && deps.env.CHECKOUT_RECOVERY) || '') === 'on');
     // Recorded before the buyer leaves, so a payment can never arrive for
     // an order this side has not heard of. If this fails, no checkout.
@@ -720,7 +725,8 @@ export async function handleCheckout(req, deps) {
       amount_total: productFor(product).cents,
       currency: 'usd',
       status: 'open',
-      livemode: !!session.livemode
+      livemode: !!session.livemode,
+      partner_ref: partner || undefined
     });
     return json({ url: session.url, order });
   }

@@ -62,6 +62,9 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       <p class="lede" id="ops-src">Read from Stripe-confirmed orders and the register, not from the retired Base44 app.</p>
       <div class="stats" id="ops-stats"></div>
       <div id="ops-orders"></div>
+      <h2 style="margin-top:40px">Partners</h2>
+      <p class="lede">The Agent Partner Program, newest first. A code works the moment it is issued; commission is owed only to partners you approve, 20% of their referred payments for 12 months.</p>
+      <div id="ops-partners"></div>
       <h2 style="margin-top:40px">Leads</h2>
       <p class="lede">People who asked for a passport report, newest first. Each one scanned a domain and gave an email: write to them while it is fresh.</p>
       <div id="ops-leads"></div>
@@ -102,6 +105,13 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       ops();
     }).catch(function () { $('gate').textContent = 'The registry could not be reached.'; });
   }
+  function decidePartner(code, status) {
+    if (!window.confirm((status === 'approved' ? 'Approve ' : 'Reject ') + code + '? The partner is emailed.')) return;
+    post('partnerDecide', { code: code, status: status }).then(function (r) {
+      if (!r.ok || !r.body.success) { window.alert((r.body && r.body.error) || 'That did not go through.'); return; }
+      ops();
+    });
+  }
   /* The real numbers: what Stripe confirmed and what the register holds. */
   function ops() {
     post('opsStats').then(function (r) {
@@ -109,10 +119,21 @@ label.chk{font-size:13px;color:var(--dim);display:flex;gap:6px;align-items:cente
       var o = r.body, v = o.revenue, p = o.passport;
       $('ops-stats').innerHTML = '';
       var sb = o.subscriptions || {}, ld = o.leads || {};
-      [['Monthly recurring', sb.mrr_usd == null ? null : '$' + sb.mrr_usd], ['Active subscriptions', sb.active], ['Passport Monitors', sb.monitors], ['Leads, 7d', ld.last_7_days],
+      [['Monthly recurring', sb.mrr_usd == null ? null : '$' + sb.mrr_usd], ['Active subscriptions', sb.active], ['Passport Monitors', sb.monitors], ['Leads, 7d', ld.last_7_days], ['Partners', (o.partners || {}).total],
        ['Paid orders', v.paid_orders], ['Net revenue', '$' + v.net_usd], ['To deliver', v.awaiting_delivery], ['Unfinished checkouts, 7d', v.unfinished_checkouts_7_days],
        ['Passport scans, 7d', p.scans_7_days], ['Domains on record', p.domains_on_record], ['Watchers', p.watchers_confirmed], ['Newsletter', o.newsletter_subscribers]].forEach(function (x) {
         $('ops-stats').appendChild(el('div', { class: 'stat' }, [el('b', { text: String(x[1] == null ? '—' : x[1]) }), el('span', { text: x[0] })]));
+      });
+      var pt = o.partners || {};
+      $('ops-partners').innerHTML = '';
+      if (!(pt.recent || []).length) $('ops-partners').appendChild(el('p', { class: 'lede', text: 'No partners yet.' }));
+      (pt.recent || []).forEach(function (x) {
+        $('ops-partners').appendChild(el('div', { class: 'card' }, [
+          el('p', {}, [el('b', { text: (x.code || '—') + ' · ' + x.partner_name }), ' ', tag(x.status, x.status === 'approved' ? 'ok' : 'wait'), ' ', tag(x.partner_type || 'other', '')]),
+          el('p', { class: 'lede', text: [x.contact_email, x.website_url, (x.created_at || '').slice(0, 10), x.referred_paid ? x.referred_paid + ' paid referrals, $' + x.referred_revenue_usd : 'no paid referrals yet', x.notes].filter(Boolean).join(' · ') }),
+          x.code && x.status !== 'approved' ? el('button', { class: 'btn', text: 'Approve partner', onclick: function () { decidePartner(x.code, 'approved'); } }) : null,
+          x.code && x.status === 'pending' ? el('button', { class: 'btn', text: 'Reject', onclick: function () { decidePartner(x.code, 'rejected'); } }) : null
+        ]));
       });
       $('ops-leads').innerHTML = '';
       var recent = ld.recent || [];

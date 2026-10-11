@@ -16,7 +16,9 @@
      shieldApply           application → public id and a DNS token
      shieldVerifyDomain    { public_id }            looks for the DNS record now
      shieldMemberStatus    { session_token }        the signed-in member's status
-     shieldPartnerApply    registry partner application
+     shieldPartnerApply    registry partner application (now partnerApply)
+     partnerApply, partnerStats   the Agent Partner Program (partners.mjs)
+     a2a, a2a/message:send        Lunara as an A2A agent (a2a.mjs)
      newsletterSubscribe   { email }
      lunaraScoreReport     a scorer result, kept as a lead
      article50Assess       the Article 50 assessment engine
@@ -42,6 +44,8 @@
 import { passportRoute } from './passport-routes.mjs';
 import { agentPassportRoute } from './agent-passport.mjs';
 import { opsStats } from './ops.mjs';
+import { partnerRoute } from './partners.mjs';
+import { a2aRoute } from './a2a.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
 export const FOUNDING_CAP = 80;
@@ -316,6 +320,13 @@ export async function handleRegistry(req, deps) {
   deps = { ...deps, now: () => now };
   const ipHash = await sha256hex('lunara-registry:' + (deps.ip || ''));
 
+  if (name === 'a2a' || name.startsWith('a2a/')) {
+    // Other agents reach the REST routes through here, rate limits and all.
+    const call = (route, b) => handleRegistry(new Request(`https://lunara.internal/lunara-registry/${route}`, { method: 'POST', body: JSON.stringify(b || {}) }), deps)
+      .then((r) => r.json()).catch(() => ({ success: false, error: 'That could not be answered just now.' }));
+    return a2aRoute(name, req.method, body, { json, call });
+  }
+
   switch (name) {
     case '':
     case 'health':
@@ -356,15 +367,9 @@ export async function handleRegistry(req, deps) {
     case 'shieldVerifyDomain': return verifyDomain(body, deps);
     case 'shieldMemberStatus': return memberStatus(body, deps);
 
-    case 'shieldPartnerApply': {
+    case 'shieldPartnerApply': case 'partnerApply': case 'partnerStats': {
       if (req.method !== 'POST') return json({ error: 'Use POST.' }, 405);
-      const row = { partner_name: clean(body.partner_name, 200), website_url: clean(body.website_url, 300), contact_email: clean(body.contact_email, 254).toLowerCase(), partner_type: clean(body.partner_type, 40), embed_domain: normDomain(body.embed_domain) || null };
-      if (row.partner_name.length < 2 || !EMAIL.test(row.contact_email)) return json({ success: false, error: 'Enter your organisation name and a valid email address.' });
-      if (await limited('partner', ipHash, 5, deps)) return json({ success: false, error: 'Too many applications from here. Try again later.' });
-      await deps.db.createPartner(row);
-      await send(deps, { to: ownerEmail(deps.env), subject: `Partner application: ${row.partner_name}`, text: JSON.stringify(row, null, 2) });
-      await send(deps, { to: row.contact_email, subject: 'Your Registry Partner application', text: `Thank you. Your application for ${row.partner_name} is received. We reply within two working days with your partner terms and embed instructions.\n\nLunara Society · lunarasociety.com` });
-      return json({ success: true, message: 'Application received. We reply within two working days.' });
+      return partnerRoute(name, body, deps, ipHash, { json, normDomain, limited, send, ownerEmail });
     }
 
     case 'newsletterSubscribe': {
@@ -426,6 +431,7 @@ export async function handleRegistry(req, deps) {
     case 'shieldDashboard':
     case 'lunaraScorerLeads':
     case 'adminDecide':
+    case 'partnerDecide':
       return admin(name, body, deps);
 
     default:
@@ -563,6 +569,21 @@ function deskRecord(a) {
 async function admin(name, body, deps) {
   const who = deps.whoIs ? await deps.whoIs(body.session_token) : null;
   if (!who || !isOwner(who.email, deps.env)) return json({ success: false, error: 'Owner sign-in required.' }, 403);
+
+  if (name === 'partnerDecide') {
+    const code = clean(body.code, 12).toUpperCase();
+    const status = ['approved', 'rejected', 'pending'].includes(body.status) ? body.status : null;
+    const p = /^P-[0-9A-HJKMNP-TV-Z]{6}$/.test(code) ? await deps.db.findPartnerByCode(code) : null;
+    if (!p || !status) return json({ success: false, error: 'Send a partner code and a status: approved, rejected or pending.' }, 400);
+    const was = p.status;
+    await deps.db.updatePartner(code, { status, approved_at: status === 'approved' ? new Date(deps.now()).toISOString() : null });
+    if (status !== was && status !== 'pending') {
+      await send(deps, status === 'approved'
+        ? { to: p.contact_email, subject: `You are an approved Lunara partner (${code})`, text: `${p.partner_name} is approved in the Lunara Agent Partner Program. Your code ${code} now earns 20% of every payment from the customers it brings, for their first 12 months, paid monthly by bank transfer once the balance passes $50. Reply with your payout details.\n\nYour numbers: ${SITE}agents.html#stats\n\nLunara Society · lunarasociety.com` }
+        : { to: p.contact_email, subject: `Your Lunara partner application (${code})`, text: `Thank you for applying. We are not taking ${p.partner_name} into the partner program at this time${body.note ? ': ' + clean(body.note, 500) : '.'} Lunara's free tools stay open to you.\n\nLunara Society · lunarasociety.com` });
+    }
+    return json({ success: true, code, status });
+  }
 
   if (name === 'lunaraScorerLeads') {
     const records = (await deps.db.listLeads()) || [];

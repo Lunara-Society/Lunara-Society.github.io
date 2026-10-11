@@ -511,6 +511,20 @@
     return 'every ' + (COUNT_WORDS[r.count] || r.count) + ' ' + r.interval + 's';
   }
 
+  /* The Agent Partner Program code this visitor arrived with, if any,
+     within 90 days (lunara-shell.js remembers it; this reads it, and
+     remembers it too on pages that load pricing before the shell). */
+  var REF_RE = /^P-[0-9A-HJKMNP-TV-Z]{6}$/;
+  function partnerRef() {
+    try {
+      var now = (new URLSearchParams(window.location.search).get('ref') || '').trim().toUpperCase();
+      if (REF_RE.test(now)) { localStorage.setItem('lx-ref', JSON.stringify({ c: now, t: Date.now() })); return now; }
+      var kept = JSON.parse(localStorage.getItem('lx-ref') || 'null');
+      if (kept && REF_RE.test(kept.c) && Date.now() - kept.t < 90 * 86400e3) return kept.c;
+    } catch (e) {}
+    return undefined;
+  }
+
   /* A buy button asks lunara-checkout for a Stripe session and sends
      the buyer there. Nothing on this page decides the amount. If the
      function cannot be reached, the buyer is told so and given the
@@ -533,7 +547,7 @@
     fetch(CHECKOUT + '/checkout', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ product: a.getAttribute('data-lx-buy'), return_to: window.location.href, website: a.getAttribute('data-lx-website') || undefined })
+      body: JSON.stringify({ product: a.getAttribute('data-lx-buy'), return_to: window.location.href, website: a.getAttribute('data-lx-website') || undefined, ref: partnerRef() })
     }).then(function (r) { return r.json(); }).then(function (b) {
       if (b && b.url && b.url.indexOf('https://checkout.stripe.com/') === 0) {
         window.location.href = b.url;

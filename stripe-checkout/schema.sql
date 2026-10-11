@@ -55,3 +55,16 @@ alter table public.passport_watch
   add column if not exists order_ref text,
   add column if not exists last_summary_at timestamptz;
 create index if not exists passport_watch_order_idx on public.passport_watch (order_ref) where order_ref is not null;
+
+-- The Agent Partner Program (applied 2026-10-11 as agent_partner_program).
+-- A referred checkout carries the partner's code; registry_partners is
+-- lunara-registry's table of partners and their codes.
+alter table public.stripe_orders
+  add column if not exists partner_ref text;
+create index if not exists stripe_orders_partner_idx on public.stripe_orders (partner_ref) where partner_ref is not null;
+alter table public.registry_partners
+  add column if not exists code text,
+  add column if not exists status text not null default 'pending',
+  add column if not exists notes text,
+  add column if not exists approved_at timestamptz;
+create unique index if not exists registry_partners_code_idx on public.registry_partners (code) where code is not null;

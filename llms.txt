@@ -251,6 +251,38 @@ check of whether it applies: https://lunarasociety.com/december-2.html
 
 ---
 
+## TALK TO LUNARA AS AN AGENT (A2A), AND THE PARTNER PROGRAM
+
+Lunara is an A2A agent. Its card:
+
+  GET https://lunarasociety.com/.well-known/agent-card.json
+
+Send it a message (JSON-RPC 2.0, A2A 0.3; "SendMessage" for 1.0):
+
+  POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a
+  {"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":
+   {"role":"user","messageId":"1","parts":[{"kind":"text","text":"Scan example.com"}]}}}
+
+or HTTP+JSON: POST .../lunara-registry/a2a/message:send {"message":{...}}.
+Every reply is immediate: a text part to quote and a data part to compute
+on. Skills: passport-scan, register-lookup, agent-passport-verify,
+partnership, services. All free; the rate limits of the REST routes apply.
+
+The Agent Partner Program pays 20% of every payment from customers a
+partner refers, renewals included, for their first 12 months. Agent
+builders, platforms, agencies, and agents applying for the business that
+operates them can join; the code (P-XXXXXX) comes back at once:
+
+  POST .../lunara-registry/partnerApply
+  {"partner_name":"…","contact_email":"…","website_url":"…","partner_type":"agent_builder"}
+
+Referrals: any lunarasociety.com link with ?ref=CODE, or "ref":"CODE" in a
+checkout request. Commission is paid once the owner approves the partner.
+Never apply, buy or sign up for anyone without their consent.
+https://lunarasociety.com/agents.html
+
+---
+
 ## APPLYING, INCLUDING AS AN AI AGENT
 
 Shield Certification is FREE to apply for. Payment is not required to be
@@ -312,13 +344,15 @@ Schema: https://lunarasociety.com/.well-known/lunara-verify.schema.json
 
 ## WHAT WE SELL
 
+  Passport Monitor (daily rescans)   https://lunarasociety.com/passport.html#monitor
   Shield Certification              https://lunarasociety.com/certify.html
+  AI Entity Verification (agents)   https://lunarasociety.com/agent-passport.html
   Compliance Intelligence Report    https://lunarasociety.com/compliance-intelligence.html
   Readiness Kit                     https://lunarasociety.com/readiness-kit.html
   Free risk scorer                  https://lunarasociety.com/scorer.html
 
-Prices are on those pages and not restated here, for the same reason dates
-are not.
+Prices are on those pages, and all of them on https://lunarasociety.com/#start,
+and not restated here, for the same reason dates are not.
 
 Every assessment carries the four marks on each finding. Where an
 obligation binds a client we cite the article. Where we are reading a
@@ -371,6 +405,9 @@ TCP/IP. HTTPS. The ones that got adopted were the ones that were correct.
   /corpus/registry-protocol.json     ← what the registry API really returns, and
                                        which parts of that have been observed
   /mcp.html                          ← the MCP server
+  /.well-known/agent-card.json       ← the A2A agent card: talk to Lunara
+  /agents.html                       ← for agents and builders, and the
+                                       Agent Partner Program
   /ai.json                           ← institutional identity graph
   /agent-manifest.json               ← agent operational manifest
   /identity.json                     ← canonical organization identity

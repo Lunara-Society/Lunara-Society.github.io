@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.lunarasociety/intelligence",
+  "title": "Lunara Intelligence",
+  "description": "EU AI Act and SB 942 obligations for AI systems: each date, the article setting it, signed sources",
+  "version": "1.0.0",
+  "websiteUrl": "https://lunarasociety.com/mcp.html",
+  "repository": {
+    "url": "https://github.com/Lunara-Society/Lunara-Society.github.io",
+    "source": "github",
+    "subfolder": "mcp"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp"
+    }
+  ]
+}

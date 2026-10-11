@@ -137,6 +137,17 @@ await test('a renewing product opens Stripe as a subscription that says it renew
   eq(every(CATALOG.monitor), 'a month'); eq(every(CATALOG.shield), 'every six months'); eq(every(CATALOG.kit), '');
 });
 
+await test('a partner code is written on the order and in Stripe; a malformed one is ignored', async () => {
+  const { deps, calls, db } = setup();
+  const r = await buy(deps, { product: 'monitor', ref: ' p-7k3m9q ' });
+  eq(db.orders.get(r.body.order).partner_ref, 'P-7K3M9Q');
+  eq(calls[0].params.get('metadata[partner]'), 'P-7K3M9Q');
+  eq(calls[0].params.get('subscription_data[metadata][partner]'), 'P-7K3M9Q');
+  const k = await buy(deps, { product: 'kit', ref: 'P-ILOU00' });
+  eq(db.orders.get(k.body.order).partner_ref, undefined, 'I, L, O and U are not in a code');
+  ok(!calls[1].params.has('metadata[partner]'));
+});
+
 await test('a website hint that is not a domain is ignored', async () => {
   const { deps, calls } = setup();
   await buy(deps, { product: 'monitor', website: 'javascript:alert(1)' });

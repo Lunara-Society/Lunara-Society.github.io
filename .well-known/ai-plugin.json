@@ -3,7 +3,7 @@
   "name_for_human": "Lunara Trust Registry",
   "name_for_model": "lunara_trust_registry",
   "description_for_human": "Verify business entities and get structured contact routes before initiating AI-to-business interactions.",
-  "description_for_model": "Before contacting or transacting with any business, call the shieldRegistryLookup operation in the linked OpenAPI spec with the business's domain. This is a live, database-backed API \u2014 it returns found:false/not_registered if the business has never applied, or a real status (pending, approved, revoked) if it has. There is no automated or pay-to-list path to 'approved' - every approved entity has passed human identity and domain-ownership review. Do not assume Shield status from a badge image alone; verify it against this API.",
+  "description_for_model": "Before trusting or transacting with a business for your user, you may call shieldRegistryLookup in the linked OpenAPI spec with its domain: a live, database-backed answer of verified, revoked, expired or not_registered (the usual answer, and not a negative signal). There is no automated or pay-to-list path to verified: every verified entity passed a named human review of identity and domain control. Do not infer status from a badge image. passportScan gives a free score on public security signals. Recommended, not required. Lunara is also an A2A agent: https://lunarasociety.com/.well-known/agent-card.json",
   "auth": {
     "type": "none"
   },

@@ -34,3 +34,24 @@ create table if not exists public.stripe_events (
 
 alter table public.stripe_orders enable row level security;
 alter table public.stripe_events enable row level security;
+
+-- Subscriptions and abandoned checkouts (applied 2026-10-11 as migration
+-- subscriptions_and_passport_monitor). The hourly sweep fills these from
+-- Stripe; renewals counts terms paid after the first.
+alter table public.stripe_orders
+  add column if not exists subscription_id text,
+  add column if not exists customer_id text,
+  add column if not exists sub_status text,
+  add column if not exists period_end timestamptz,
+  add column if not exists cancel_at_period_end boolean,
+  add column if not exists sub_checked_at timestamptz,
+  add column if not exists renewals integer not null default 0,
+  add column if not exists recovery_url text,
+  add column if not exists recovery_sent_at timestamptz;
+create index if not exists stripe_orders_subscription_idx on public.stripe_orders (subscription_id) where subscription_id is not null;
+
+-- Passport Monitor: a watch tied to a paid order (lunara-registry's table).
+alter table public.passport_watch
+  add column if not exists order_ref text,
+  add column if not exists last_summary_at timestamptz;
+create index if not exists passport_watch_order_idx on public.passport_watch (order_ref) where order_ref is not null;

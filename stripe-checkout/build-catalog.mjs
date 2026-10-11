@@ -38,7 +38,9 @@ export function catalogFrom(products) {
       access: p.access || null,
       ask: p.ask || [],
       todo: p.todo || '',
-      apply: p.apply || null
+      apply: p.apply || null,
+      renews: p.renews || null,
+      monitor: !!p.monitor
     };
   }
   return out;

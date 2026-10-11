@@ -33,11 +33,11 @@ What we charge for is being **listed**, being **monitored**, and being
 - Never expire
 - Work with any plan, including Free
 
-### Rosario Starter, 1 month — $7.99
+### Rosario Starter, monthly — $7.99
 
 > 800 credits a month for Rosario’s AI.
 
-- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- **Terms:** Monthly, renewing automatically until you cancel. Cancel any time in the app.
 - 800 credits every month (about 80 AI checks or 400 questions)
 - Every Rosario feature
 - Unused monthly credits do not roll over
@@ -51,20 +51,31 @@ What we charge for is being **listed**, being **monitored**, and being
 - Never expire
 - Work with any plan, including Free
 
-### Rosario Pro, 1 month — $19.99
+### Passport Monitor — $19
+
+> Your domain checked every day, and a word the moment anything slips.
+
+- **Terms:** Monthly, renewing automatically until you cancel. Cancel any time.
+- Rescanned every day, not every week
+- An email the moment a check stops passing, with the fix
+- A weekly summary of your grade
+- The live Monitored badge for your site
+- Marked as monitored in the AI Passport League
+
+### Rosario Pro, monthly — $19.99
 
 > 2,500 credits a month and Rosario’s natural voice.
 
-- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- **Terms:** Monthly, renewing automatically until you cancel. Cancel any time in the app.
 - 2,500 credits every month
 - Rosario’s natural voice (Caty)
 - Every Rosario feature
 
-### Rosario Luna Max, 1 month — $49.99
+### Rosario Luna Max, monthly — $49.99
 
 > 7,000 credits a month, the deepest AI checks, new features first.
 
-- **Terms:** One month per payment on the web. Renewed by you, never auto-charged.
+- **Terms:** Monthly, renewing automatically until you cancel. Cancel any time in the app.
 - 7,000 credits every month
 - Deepest AI checks
 - Rosario’s natural voice
@@ -92,7 +103,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > Be checkable by anyone who asks, including a machine.
 
-- **Terms:** Six months. Renewed only when you choose to pay again.
+- **Terms:** Six months, renewing automatically until you cancel. Cancel any time.
 - Identity and domain ownership verified by human review
 - Public register entry anyone can query without an account
 - Trust badge and machine-readable identity files
@@ -107,11 +118,19 @@ What we charge for is being **listed**, being **monitored**, and being
 - Disclosure and synthetic-marking templates
 - The evidence log an auditor would ask to see
 
-### Lunara Detection API, 1 month — $199
+### Passport Monitor, yearly — $190
+
+> Twelve months of Passport Monitor for the price of ten.
+
+- **Terms:** Yearly, renewing automatically until you cancel. Cancel any time.
+- Everything in Passport Monitor
+- Two months free against paying monthly
+
+### Lunara Detection API, monthly — $199
 
 > The same evidence-first answers, as JSON.
 
-- **Terms:** One month per payment. Renewed by you, never auto-charged.
+- **Terms:** Monthly, renewing automatically until you cancel. Cancel any time in the app.
 - Image, video-frame and text detection
 - Keys created in the app, stored only as a fingerprint
 - Includes Rosario with a monthly AI allowance
@@ -129,7 +148,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > We tell you when something that binds you changes, and only then.
 
-- **Terms:** Six months. Renewed only when you choose to pay again.
+- **Terms:** Six months, renewing automatically until you cancel. Cancel any time.
 - Monitoring across the EU AI Act, SB 942 and your sector rules
 - A written note whenever a date moves or an obligation lands
 - No newsletter, no digest, nothing you did not ask for
@@ -148,7 +167,7 @@ What we charge for is being **listed**, being **monitored**, and being
 
 > An identity for your agent that a third party can check.
 
-- **Terms:** Six months. Renewed only when you choose to pay again.
+- **Terms:** Six months, renewing automatically until you cancel. Cancel any time.
 - Agent verified and its operator named
 - Declared governance framework recorded
 - Register entry with AI designation, queryable by any system

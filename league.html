@@ -97,6 +97,16 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
 .gx-legend{position:absolute;left:20px;bottom:16px;display:flex;gap:16px;font:11px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--lg-mute)}
 .gx-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);margin-right:7px}
 @media (prefers-reduced-motion:reduce){.bar i{animation:none}}
+/* the claim: a listed company keeping its own row */
+.claim{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;margin:0 0 26px;padding:22px 26px;border-radius:16px;
+  border:1px solid rgba(127,224,176,.35);background:radial-gradient(80% 160% at 0% 0%,rgba(127,224,176,.10),transparent 60%),rgba(255,255,255,.02)}
+.claim b.t{display:block;font:500 20px Inter,sans-serif;color:#F4ECD8;margin-bottom:6px}
+.claim p{margin:0;font-size:15px;color:rgba(214,222,234,.75);line-height:1.55}
+.claim .acts{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:220px}
+.claim .acts a{text-align:center}
+.claim .fine{font-size:12px;color:rgba(214,222,234,.5);text-align:center}
+.mon{display:inline-flex;align-items:center;gap:5px;margin-left:8px;color:#7FE0B0;font:600 10.5px "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+.mon::before{content:"";width:6px;height:6px;border-radius:50%;background:#7FE0B0;box-shadow:0 0 8px #7FE0B0}
 </style>
 </head>
 <body>
@@ -127,6 +137,17 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
   </section>
 
   <section class="wrap" aria-label="The table">
+    <div class="claim" id="claim">
+      <div>
+        <b class="t">Is your company in this table?</b>
+        <p>Every row here is public and rescanned every week, so a slip shows up here before most teams notice it themselves. Passport Monitor rescans your domain every day, emails you the moment a check stops passing with the exact fix, and marks your row <span class="mon">Monitored</span>. <span data-lx-amount="monitor">$19</span> <span data-lx-every="monitor">a month</span>; cancel any time.</p>
+      </div>
+      <div class="acts">
+        <a class="door solid" href="/passport.html#monitor" data-lx-buy="monitor" data-lx-nonote>Monitor my domain</a>
+        <a class="door line" href="/passport.html">Scan it first, free</a>
+        <span class="fine">Secure checkout by Stripe</span>
+      </div>
+    </div>
     <div class="tools">
       <input id="lg-q" type="search" placeholder="Find a company or domain" aria-label="Filter">
       <div id="lg-cats"></div>
@@ -138,12 +159,14 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
     <p class="note">The score reads only public signals, which anyone can verify for themselves, and says nothing about who runs a domain or how safe its products are. "Register" is the Lunara register: only a named human review sets it. The list of companies is <a class="inline" href="/league/domains.json">published</a>; the data is open at <code>GET lunara-registry/passportLeague</code>. A company that wants a row corrected can rescan itself on the <a class="inline" href="/passport.html">passport page</a> at any time.</p>
     <div class="doors">
       <a class="door solid" href="/passport.html">Scan your own domain</a>
+      <a class="door line" href="/passport.html#monitor">Monitor it daily</a>
       <a class="door line" href="/shield.html">Get the register's stamp</a>
     </div>
   </section>
 </main>
 
 <script src="lunara-shell.js" defer></script>
+<script src="lunara-pricing.js" defer></script>
 <script>
 (function () {
   'use strict';
@@ -164,7 +187,7 @@ tbody tr:hover{background:rgba(226,196,122,.05)}
       var dl = d == null ? '<span class="flat">new</span>' : d > 0 ? '<span class="up">▲ ' + d + '</span>' : d < 0 ? '<span class="down">▼ ' + (-d) + '</span>' : '<span class="flat">—</span>';
       var c = COLOR(e.grade);
       return '<tr data-d="' + esc(e.domain) + '"><td class="rk">' + e.rank + '</td>'
-        + '<td class="nm"><b>' + esc(e.name) + '</b><small>' + esc(e.domain) + '</small></td>'
+        + '<td class="nm"><b>' + esc(e.name) + (e.monitored ? '<span class="mon" title="Rescanned daily under Passport Monitor">Monitored</span>' : '') + '</b><small>' + esc(e.domain) + '</small></td>'
         + '<td class="cat">' + esc(e.category || '') + '</td>'
         + '<td><span class="gr" style="color:' + c + '">' + esc(e.grade) + '</span></td>'
         + '<td><span class="bar"><i style="width:' + e.score + '%;background:' + c + '"></i></span><span class="sc">' + e.score + '</span></td>'

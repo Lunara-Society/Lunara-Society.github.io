@@ -79,6 +79,9 @@ const db = {
   savePassport: (r: Record<string, unknown>) => rest('/passport_scans?on_conflict=domain', {
     method: 'POST', headers: { prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(r) }),
   watchedDomains: async () => [...new Set(((await rest('/passport_watch?confirmed_at=not.is.null&unsubscribed_at=is.null&select=domain&limit=5000')) || []).map((w: { domain: string }) => w.domain))],
+  // Passport Monitor: watches tied to a paid order that has not lapsed.
+  monitoredDomains: async () => [...new Set(((await rest('/passport_watch?order_ref=not.is.null&unsubscribed_at=is.null&select=domain&limit=5000')) || []).map((w: { domain: string }) => w.domain))],
+  monitorFor: (d: string) => rest(`/passport_watch?domain=eq.${q(d)}&order_ref=not.is.null&unsubscribed_at=is.null&select=token&limit=1`).then(one),
   watchersFor: (d: string) => rest(`/passport_watch?domain=eq.${q(d)}&confirmed_at=not.is.null&unsubscribed_at=is.null&limit=100`),
   findWatch: (d: string, e: string) => rest(`/passport_watch?domain=eq.${q(d)}&email=eq.${q(e)}&limit=1`).then(one),
   getWatch: (t: string) => rest(`/passport_watch?token=eq.${q(t)}&limit=1`).then(one),

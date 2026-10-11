@@ -20,6 +20,21 @@
      function, which asks Stripe. A guessed or edited address opens
      nothing.
 
+   Subscriptions. A product with `renews` (Passport Monitor, Shield
+   Verification, Regulatory Watch, AI Entity Verification) is sold in
+   Stripe's subscription mode: the same amount, charged again every
+   term until the customer cancels. They cancel themselves, any time,
+   through Stripe's customer portal (POST /portal, from manage.html and
+   the order email). The hourly sweep reads each subscription from
+   Stripe at most every six hours and records what it finds: a renewal
+   extends a register entry, a lapse stops a Passport Monitor. It does
+   not depend on any webhook beyond the ones this function already had.
+
+   Abandoned checkouts. Every session asks Stripe for a recovery link.
+   When a session expires and the buyer agreed to hear from us (Stripe
+   collects that consent where the law allows it), they get one email
+   with the link back to their cart, and only one.
+
    All of the logic is plain JavaScript over fetch and Web Crypto, so
    the tests run the code the edge function serves.
    ═══════════════════════════════════════════════════════════════════ */
@@ -80,6 +95,25 @@ export const STRIPE_API = 'https://api.stripe.com';
 export const STRIPE_VERSION = '2026-08-26.dahlia';
 const SITE = 'https://lunarasociety.com/';
 
+/* The domain a website field names, as lunara-registry writes it:
+   lower case, no scheme, no www. Empty when it is not a domain. */
+export function normDomain(raw) {
+  let s = String(raw || '').trim().toLowerCase();
+  if (!s) return '';
+  try { if (/^[a-z]+:\/\//.test(s)) s = new URL(s).hostname; } catch { return ''; }
+  s = s.replace(/^www\./, '').split(/[/?#:]/)[0].replace(/\.$/, '');
+  return /^(?=.{3,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(s) ? s : '';
+}
+
+/* "a month", "every six months": how often a subscription charges. */
+const COUNT_WORDS = ['', '', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+export function every(p) {
+  const r = p && p.renews;
+  if (!r) return '';
+  return (r.count || 1) === 1 ? `a ${r.interval}` : `every ${COUNT_WORDS[r.count] || r.count} ${r.interval}s`;
+}
+const dollars = (cents) => '$' + (cents / 100).toLocaleString('en-US');
+
 export function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status, headers: { 'content-type': 'application/json; charset=utf-8' }
@@ -137,6 +171,7 @@ export function stripeClient(secretKey, fetchImpl = fetch) {
   }
   return {
     livemode: /^(sk|rk)_live_/.test(secretKey),
+    kind: /^rk_/.test(secretKey) ? 'restricted' : 'secret',
     get: (path, params) => call('GET', path, params),
     post: (path, params) => call('POST', path, params)
   };
@@ -177,12 +212,25 @@ const ASK = {
   system:  { key: 'aisystem', label: 'AI system or product name', optional: true }
 };
 
-export async function createSession(stripe, productId, returnTo, order, lockEmail) {
+/* Stripe options that not every account accepts: promotional consent
+   is offered only to businesses in the US. If Stripe refuses a session
+   that asks for them, it is asked again without, and they stay off for
+   the life of this instance, so a refusal can never stop a sale. */
+let extrasOff = false;
+export function resetExtras() { extrasOff = false; }
+const EXTRAS = {
+  after_expiration: { recovery: { enabled: 'true' } },
+  consent_collection: { promotions: 'auto' }
+};
+
+export async function createSession(stripe, productId, returnTo, order, lockEmail, prefill = {}) {
   const p = productFor(productId);
   if (!p) return null;
-  const how = p.delivery.join(' ');
-  return stripe.post('/v1/checkout/sessions', {
-    mode: 'payment',
+  const sub = !!p.renews;
+  const site = prefill.website && normDomain(prefill.website) ? 'https://' + normDomain(prefill.website) : null;
+  const how = (sub ? `Renews automatically: ${dollars(p.cents)} ${every(p)} until you cancel, which you can do any time from your order page. ` : '') + p.delivery.join(' ');
+  const params = {
+    mode: sub ? 'subscription' : 'payment',
     client_reference_id: order,
     customer_email: lockEmail || undefined,
     line_items: [{
@@ -190,6 +238,7 @@ export async function createSession(stripe, productId, returnTo, order, lockEmai
       price_data: {
         currency: 'usd',
         unit_amount: p.cents,
+        recurring: sub ? { interval: p.renews.interval, interval_count: p.renews.count || 1 } : undefined,
         product_data: { name: p.name, description: p.terms, metadata: { lunara_product: productId } }
       }
     }],
@@ -197,20 +246,37 @@ export async function createSession(stripe, productId, returnTo, order, lockEmai
     cancel_url: returnUrl(returnTo),
     billing_address_collection: 'auto',
     tax_id_collection: { enabled: 'true' },
-    custom_fields: p.ask.length ? p.ask.map((k) => ({
-      key: ASK[k].key,
-      label: { type: 'custom', custom: ASK[k].label },
-      type: 'text',
-      text: p.defaults && p.defaults[k] ? { default_value: p.defaults[k] } : undefined,
-      optional: ASK[k].optional ? 'true' : 'false'
-    })) : undefined,
+    custom_fields: p.ask.length ? p.ask.map((k) => {
+      const preset = k === 'website' && site ? site : p.defaults && p.defaults[k];
+      return {
+        key: ASK[k].key,
+        label: { type: 'custom', custom: ASK[k].label },
+        type: 'text',
+        text: preset ? { default_value: preset } : undefined,
+        optional: ASK[k].optional ? 'true' : 'false'
+      };
+    }) : undefined,
     custom_text: { submit: { message: ('How you receive it: ' + how).slice(0, 1200) } },
     metadata: { lunara_product: productId, order },
-    payment_intent_data: {
+    payment_intent_data: sub ? undefined : {
       description: `${p.name} (order ${order})`,
       metadata: { lunara_product: productId, order }
+    },
+    subscription_data: sub ? {
+      description: `${p.name} (order ${order})`,
+      metadata: { lunara_product: productId, order }
+    } : undefined
+  };
+  if (!extrasOff) {
+    try {
+      return await stripe.post('/v1/checkout/sessions', { ...params, ...EXTRAS });
+    } catch (e) {
+      if (!(e instanceof StripeError) || e.status !== 400) throw e;
+      extrasOff = true;
+      console.warn('checkout: Stripe refused the recovery/consent options; selling without them.', e.message);
     }
-  });
+  }
+  return stripe.post('/v1/checkout/sessions', params);
 }
 
 /* Is this session a completed payment of exactly this product, at
@@ -269,7 +335,13 @@ export const EVENTS = [
   'checkout.session.completed',
   'checkout.session.async_payment_succeeded',
   'checkout.session.async_payment_failed',
-  'charge.refunded'
+  'checkout.session.expired',
+  'charge.refunded',
+  // Optional: the hourly sweep reads subscriptions anyway; these only
+  // make a renewal or a cancellation show up sooner.
+  'customer.subscription.updated',
+  'customer.subscription.deleted',
+  'invoice.paid'
 ];
 
 function paidPatch(s) {
@@ -280,9 +352,13 @@ function paidPatch(s) {
     country: s.customer_details?.address?.country || null,
     details: fieldsOf(s),
     payment_intent: typeof s.payment_intent === 'string' ? s.payment_intent : s.payment_intent?.id || null,
+    subscription_id: idOf(s.subscription),
+    customer_id: idOf(s.customer),
+    sub_status: s.subscription ? 'active' : null,
     paid_at: new Date().toISOString()
   };
 }
+const idOf = (x) => (typeof x === 'string' ? x : x && x.id) || null;
 
 /* Records a verified payment once. The row was written before the buyer
    left for Stripe, so this only ever fills it in. */
@@ -294,10 +370,114 @@ async function settle(order, session, deps) {
     // sweep and a webhook all notice the same payment at once, exactly
     // one of them records it and sends the email.
     const patch = paidPatch(session);
-    if (await db.markPaid(order.order_ref, patch)) await sendOrderEmail({ ...order, ...patch }, deps);
-  } else if (v !== 'paid' && v !== order.status && v !== 'unpaid') await db.updateOrder(order.order_ref, { status: v });
+    if (await db.markPaid(order.order_ref, patch)) {
+      const paid = { ...order, ...patch };
+      await provision(paid, deps);
+      await sendOrderEmail(paid, deps);
+    }
+  } else if (v !== 'paid' && v !== order.status && v !== 'unpaid') {
+    await db.updateOrder(order.order_ref, { status: v });
+    if (v === 'expired') await recover(order, session, deps);
+  }
   return v;
 }
+
+/* What a paid order switches on by itself. Passport Monitor: the domain
+   the buyer entered is watched, under their email, from this moment;
+   lunara-registry's rescans and alerts take it from there. */
+async function provision(order, deps) {
+  const p = productFor(order.product);
+  if (!p || !p.monitor || !deps.db.monitorWatch) return;
+  const domain = normDomain(order.details && order.details.website);
+  if (!domain || !order.email) return;
+  try {
+    await deps.db.monitorWatch({ domain, email: String(order.email).toLowerCase(), order_ref: order.order_ref });
+  } catch (e) { console.error('monitor provision failed', order.order_ref, e?.message || e); }
+}
+
+/* One email, to a buyer who left a checkout and said we may write, with
+   Stripe's link back to the same cart. claimRecovery lets exactly one
+   caller send it. */
+export function recoveryEmail(order, url) {
+  const p = productFor(order.product);
+  const price = dollars(p.cents) + (p.renews ? ' ' + every(p) : '');
+  const text = [
+    `You started checking out ${p.name} (${price}) at Lunara Society and did not finish.`,
+    '',
+    `Your cart is saved. Pick up where you left off: ${url}`,
+    '',
+    'If you changed your mind, ignore this email; it is the only one we send about it. Questions: reply here.',
+    'Lunara Society · lunarasociety.com'
+  ].join('\n');
+  const html = `<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1d1a14;line-height:1.6">
+<p style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#8a7240">Lunara Society</p>
+<p>You started checking out <b>${esc(p.name)}</b> (${esc(price)}) and did not finish.</p>
+<p><a href="${esc(url)}" style="display:inline-block;background:#c9a84c;color:#111;padding:10px 18px;border-radius:999px;text-decoration:none">Complete your purchase</a></p>
+<p style="font-size:13px;color:#6b6252">If you changed your mind, ignore this email; it is the only one we send about it. Questions: reply here.</p>
+</div>`;
+  return { to: order.email, subject: `Your ${p.name} checkout is saved`, text, html };
+}
+
+async function recover(order, session, deps) {
+  const url = session.after_expiration?.recovery?.url;
+  const email = session.customer_details?.email || session.customer_email;
+  if (!url || !email || session.consent?.promotions !== 'opt_in' || !deps.mail || !deps.db.claimRecovery) return false;
+  if (!(await deps.db.claimRecovery(order.order_ref, { recovery_url: url, email }))) return false;
+  try { await deps.mail.send(recoveryEmail({ ...order, email }, url)); return true; }
+  catch (e) { console.error('recovery email failed', order.order_ref, e?.message || e); return false; }
+}
+
+/* ── Subscriptions ─────────────────────────────────────────────────── */
+
+/* The end of the term a subscription has paid for. Newer Stripe API
+   versions keep it on the item rather than the subscription. */
+function periodEnd(sub) {
+  const t = sub.items?.data?.[0]?.current_period_end ?? sub.current_period_end;
+  return t ? new Date(t * 1000).toISOString() : null;
+}
+const LAPSED = new Set(['canceled', 'unpaid', 'incomplete_expired']);
+
+/* Reads one order's subscription from Stripe and records it: status,
+   the end of the paid term, whether it is set to cancel. A term that
+   moved forward is a renewal: a register entry the order paid for is
+   extended to the new end. A lapsed one stops Passport Monitor. */
+export async function syncSubscription(order, deps) {
+  const sub = await deps.stripe.get(`/v1/subscriptions/${order.subscription_id}`);
+  const end = periodEnd(sub);
+  const now = deps.now ? deps.now() : Date.now();
+  const patch = { sub_status: sub.status, period_end: end, cancel_at_period_end: !!(sub.cancel_at_period_end || sub.cancel_at), sub_checked_at: new Date(now).toISOString() };
+  const renewed = end && order.period_end && Date.parse(end) - Date.parse(order.period_end) > 86400e3;
+  if (renewed) patch.renewals = (order.renewals || 0) + 1;
+  await deps.db.updateOrder(order.order_ref, patch);
+  const p = productFor(order.product);
+  if (renewed && p && p.apply && deps.db.extendRegistry) await deps.db.extendRegistry(order.order_ref, end);
+  if (LAPSED.has(sub.status) && p && p.monitor && deps.db.endMonitorWatch) await deps.db.endMonitorWatch(order.order_ref);
+  return { ...order, ...patch };
+}
+
+/* The portal configuration this site uses: its own, found by metadata
+   or created once, so cancelling is always switched on whatever the
+   Dashboard's default says. */
+let portalConfig = null;
+async function portalConfiguration(stripe) {
+  if (portalConfig) return portalConfig;
+  const list = await stripe.get('/v1/billing_portal/configurations', { active: 'true', limit: 100 });
+  const mine = (list.data || []).find((c) => c.metadata && c.metadata.lunara === 'portal-v1');
+  if (mine) return (portalConfig = mine.id);
+  const made = await stripe.post('/v1/billing_portal/configurations', {
+    business_profile: { privacy_policy_url: `${SITE}privacy.html`, terms_of_service_url: `${SITE}terms.html` },
+    default_return_url: `${SITE}manage.html`,
+    features: {
+      customer_update: { enabled: 'true', allowed_updates: ['email', 'address', 'tax_id'] },
+      invoice_history: { enabled: 'true' },
+      payment_method_update: { enabled: 'true' },
+      subscription_cancel: { enabled: 'true', mode: 'at_period_end', cancellation_reason: { enabled: 'true', options: ['too_expensive', 'missing_features', 'switched_service', 'unused', 'other'] } }
+    },
+    metadata: { lunara: 'portal-v1' }
+  });
+  return (portalConfig = made.id);
+}
+export function resetPortal() { portalConfig = null; }
 
 /* ── The order email ─────────────────────────────────────────────────
    Short, and about the buyer: what they bought, the one thing they need
@@ -330,11 +510,13 @@ export function orderEmail(order) {
     .concat(accessLinks(p, ref).map((l) => ({ href: SITE + l.href, label: l.label })));
   const apply = applyLink(order, p);
   if (apply) links.unshift({ href: apply, label: 'Complete your registry application' });
+  if (p.renews) links.push({ href: `${SITE}manage.html?order=${ref}`, label: 'Manage or cancel your subscription' });
   const first = (order.name || '').split(' ')[0];
-  const amount = '$' + (p.cents / 100).toLocaleString('en-US');
+  const amount = dollars(p.cents) + (p.renews ? ' ' + every(p) : '');
   const subject = `Your order ${ref}: ${p.name}`;
   const text = [
     `${first ? first + ', t' : 'T'}hank you. Your payment of ${amount} for ${p.name} is confirmed.`,
+    ...(p.renews ? ['', `It renews automatically ${every(p)} until you cancel. Cancel any time: ${SITE}manage.html?order=${ref}`] : []),
     '',
     'WHAT YOU NEED TO DO',
     p.todo,
@@ -350,6 +532,7 @@ export function orderEmail(order) {
   const html = `<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1d1a14;line-height:1.6">
 <p style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#8a7240">Lunara Society</p>
 <p>${first ? esc(first) + ', t' : 'T'}hank you. Your payment of <b>${amount}</b> for <b>${esc(p.name)}</b> is confirmed.</p>
+${p.renews ? `<p style="font-size:14px;color:#6b6252">It renews automatically ${every(p)} until you cancel, which you can do any time from <a href="${SITE}manage.html?order=${ref}" style="color:#8a7240">your order page</a>.</p>` : ''}
 <p style="margin:20px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8a7240">What you need to do</p>
 <p style="margin:0 0 14px">${esc(p.todo)}</p>
 ${links.map((l, i) => `<p style="margin:${i ? 6 : 12}px 0"><a href="${esc(l.href)}" style="${i ? 'color:#8a7240' : 'display:inline-block;background:#c9a84c;color:#111;padding:10px 18px;border-radius:999px;text-decoration:none'}">${esc(l.label)}</a></p>`).join('\n')}
@@ -378,6 +561,10 @@ async function handleEvent(event, deps) {
   if (event.type.startsWith('checkout.session.')) {
     const order = o.metadata?.order && await deps.db.getOrder(o.metadata.order);
     if (order) await settle(order, o, deps);
+  } else if (event.type.startsWith('customer.subscription.') || event.type === 'invoice.paid') {
+    const subId = event.type === 'invoice.paid' ? idOf(o.subscription || o.parent?.subscription_details?.subscription) : o.id;
+    const order = subId && deps.db.orderBySubscription && await deps.db.orderBySubscription(subId);
+    if (order && deps.stripe) await syncSubscription(order, deps);
   } else if (event.type === 'charge.refunded') {
     const pi = typeof o.payment_intent === 'string' ? o.payment_intent : o.payment_intent?.id;
     if (pi) await deps.db.markRefunded(pi, o.amount_refunded);
@@ -400,6 +587,8 @@ export async function handleCheckout(req, deps) {
       configured: !!deps.stripe,
       mode: deps.stripe ? (deps.stripe.livemode ? 'live' : 'test') : null,
       webhook: !!deps.webhookSecret,
+      key: deps.stripe ? deps.stripe.kind : null,
+      subscriptions: Object.values(CATALOG).filter((p) => p.renews).length,
       products: Object.keys(CATALOG).length
     });
   }
@@ -430,7 +619,14 @@ export async function handleCheckout(req, deps) {
       delivery: p.delivery,
       access: links.length ? links[0].href : null,
       links,
-      email: paid ? mask(session.customer_details?.email) : null
+      email: paid ? mask(session.customer_details?.email) : null,
+      subscription: p.renews ? {
+        every: every(p),
+        status: order.sub_status || (paid ? 'active' : null),
+        period_end: order.period_end || null,
+        cancel_at_period_end: !!order.cancel_at_period_end,
+        manage: paid ? `manage.html?order=${ref}` : null
+      } : null
     });
   }
 
@@ -452,7 +648,13 @@ export async function handleCheckout(req, deps) {
       const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
       if ((await settle(order, session, deps)) === 'paid') paid++;
     }
-    return json({ ok: true, checked: open.length, paid });
+    // Subscriptions, each read from Stripe at most every six hours.
+    const due = deps.db.subscriptionsDue ? (await deps.db.subscriptionsDue(new Date(now - 6 * 3600e3).toISOString())) || [] : [];
+    let synced = 0;
+    for (const order of due) {
+      try { await syncSubscription(order, deps); synced++; } catch (e) { console.error('subscription sync failed', order.order_ref, e?.message || e); }
+    }
+    return json({ ok: true, checked: open.length, paid, subscriptions: synced });
   }
 
   if (req.method !== 'POST') return json({ error: 'Not found.' }, 404);
@@ -470,6 +672,24 @@ export async function handleCheckout(req, deps) {
     return json({ received: true });
   }
 
+  /* manage.html: the customer portal for an order's subscription, where
+     the customer cancels, changes card or downloads invoices. The order
+     reference is the key, as it is for every delivery page. */
+  if (path === '/portal') {
+    if (!deps.stripe) return json({ error: 'Card payments are not switched on yet.' }, 503);
+    let body;
+    try { body = await req.json(); } catch { return json({ error: 'Send JSON.' }, 400); }
+    const ref = String(body.order || '').trim().toUpperCase();
+    const order = ORDER_RE.test(ref) ? await deps.db.getOrder(ref) : null;
+    if (!order || !order.customer_id) return json({ error: 'No subscription was found for that order reference. It is in your order email and starts with LO-.' }, 404);
+    const session = await deps.stripe.post('/v1/billing_portal/sessions', {
+      customer: order.customer_id,
+      configuration: await portalConfiguration(deps.stripe),
+      return_url: `${SITE}manage.html?order=${ref}`
+    });
+    return json({ url: session.url });
+  }
+
   if (path === '/checkout' || path === '/') {
     if (!deps.stripe) return json({ error: 'Card payments are not switched on yet.' }, 503);
     let body;
@@ -485,7 +705,8 @@ export async function handleCheckout(req, deps) {
       return refuse();
     }
     const order = newOrderRef();
-    const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail);
+    const session = await createSession(deps.stripe, product, body.return_to, order, lockEmail,
+      { website: typeof body.website === 'string' ? body.website.slice(0, 300) : '' });
     // Recorded before the buyer leaves, so a payment can never arrive for
     // an order this side has not heard of. If this fails, no checkout.
     await deps.db.createOrder({

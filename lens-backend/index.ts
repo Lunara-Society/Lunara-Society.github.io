@@ -223,6 +223,32 @@ const stripe = STRIPE_KEY ? {
   paidSessionsFor: async (email: string) => {
     const r = await stripeCall('GET', '/v1/checkout/sessions', { customer_details: { email }, status: 'complete', limit: 20 });
     return (r && r.data) || [];
+  },
+  // A web plan's paid invoices: each renewal adds its month once.
+  paidInvoices: async (subscription: string) => {
+    const r = await stripeCall('GET', '/v1/invoices', { subscription, status: 'paid', limit: 24 });
+    return (r && r.data) || [];
+  },
+  // Stripe's customer portal, with the configuration lunara-checkout also
+  // uses (found by its metadata; made here if it does not exist yet), so
+  // cancelling is always switched on.
+  portal: async (customer: string, returnUrl: string) => {
+    const list = await stripeCall('GET', '/v1/billing_portal/configurations', { active: 'true', limit: 100 });
+    let config = ((list && list.data) || []).find((c: { metadata?: Record<string, string> }) => c.metadata && c.metadata.lunara === 'portal-v1')?.id;
+    if (!config) {
+      config = (await stripeCall('POST', '/v1/billing_portal/configurations', {
+        business_profile: { privacy_policy_url: 'https://lunarasociety.com/privacy.html', terms_of_service_url: 'https://lunarasociety.com/terms.html' },
+        default_return_url: 'https://lunarasociety.com/manage.html',
+        features: {
+          customer_update: { enabled: 'true', allowed_updates: ['email', 'address', 'tax_id'] },
+          invoice_history: { enabled: 'true' },
+          payment_method_update: { enabled: 'true' },
+          subscription_cancel: { enabled: 'true', mode: 'at_period_end', cancellation_reason: { enabled: 'true', options: ['too_expensive', 'missing_features', 'switched_service', 'unused', 'other'] } }
+        },
+        metadata: { lunara: 'portal-v1' }
+      })).id;
+    }
+    return (await stripeCall('POST', '/v1/billing_portal/sessions', { customer, configuration: config, return_url: returnUrl })).url;
   }
 } : null;
 

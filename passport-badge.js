@@ -12,6 +12,10 @@
    grade falls below B, or the scan is over a month old, the
    badge shows nothing rather than an old claim.
 
+   A domain under Passport Monitor (a paid subscription) shows the
+   live Monitored mark: a pulsing light and "Monitored daily". It goes
+   away by itself if the subscription lapses.
+
    It measures public security signals. It is not the Shield
    credential: that one needs a named human review (badge.js).
    Shadow DOM, no cookies, no tracking.
@@ -44,11 +48,15 @@
       + '.t{display:flex;flex-direction:column;line-height:1.25}'
       + '.k{font:600 10px ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:' + mute + '}'
       + '.v{font-size:14px;font-weight:600}.s{font-size:11px;color:' + mute + '}'
+      + '.m{display:inline-flex;align-items:center;gap:5px;color:#7FE0B0;font-weight:600}'
+      + '.m i{width:6px;height:6px;border-radius:50%;background:#7FE0B0;box-shadow:0 0 0 0 rgba(127,224,176,.7);animation:lp 1.8s ease-out infinite}'
+      + '@keyframes lp{0%{box-shadow:0 0 0 0 rgba(127,224,176,.7)}70%,100%{box-shadow:0 0 0 7px rgba(127,224,176,0)}}'
+      + '@media (prefers-reduced-motion:reduce){.m i{animation:none}}'
       + '</style>'
-      + '<a href="' + SITE + encodeURIComponent(d.domain) + '" target="_blank" rel="noopener" title="Lunara Passport: public security signals of ' + d.domain + ', checked ' + fmt(d.scanned_at) + '">'
+      + '<a href="' + SITE + encodeURIComponent(d.domain) + '" target="_blank" rel="noopener" title="Lunara Passport: public security signals of ' + d.domain + ', checked ' + fmt(d.scanned_at) + (d.monitored ? ', monitored daily' : '') + '">'
       + '<span class="g">' + d.grade + '</span>'
       + '<span class="t"><span class="k">Lunara Passport</span><span class="v">Grade ' + d.grade + ' · ' + d.score + '/100</span>'
-      + '<span class="s">Checked ' + fmt(d.scanned_at) + (d.visa === 'verified' ? ' · Shield verified' : '') + '</span></span></a>';
+      + '<span class="s">' + (d.monitored ? '<span class="m"><i></i>Monitored daily</span> · ' : '') + 'Checked ' + fmt(d.scanned_at) + (d.visa === 'verified' ? ' · Shield verified' : '') + '</span></span></a>';
   }
 
   function mount(el) {

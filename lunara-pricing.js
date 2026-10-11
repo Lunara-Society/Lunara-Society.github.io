@@ -31,10 +31,15 @@
    Every product is paid through Stripe Checkout (stripe-checkout/):
    card, Apple Pay or Google Pay, from any country. The server charges
    its own copy of this table, generated from it, never an amount from
-   the page. Everything is a one-time charge: a term that ends is
-   renewed by paying again, never automatically, and the terms text says
-   so because a customer who thinks they have subscribed and has not is
-   a dispute waiting to happen.
+   the page.
+
+   A product with `renews` is a subscription: Stripe charges the same
+   amount again every `interval` × `count` until the customer cancels,
+   which they can do themselves at any time from their order page
+   (manage.html, Stripe's customer portal). Its terms text says so in
+   plain words, on the page and on Stripe's, because a customer who did
+   not know they had subscribed is a dispute waiting to happen. Every
+   other product is a single charge.
 
    `delivery` is what the buyer is told they will receive and how. It is
    shown on the confirmation page (paid.html), and the same words go to
@@ -141,7 +146,8 @@
       price: 75,
       tier: 'business',
       lede: 'Be checkable by anyone who asks, including a machine.',
-      terms: 'Six months. Renewed only when you choose to pay again.',
+      terms: 'Six months, renewing automatically until you cancel. Cancel any time.',
+      renews: { interval: 'month', count: 6 },
       ask: ['website',  'legal'],
       todo: "Complete your registry application with the link below. It takes two minutes and gives you a DNS record to add at your domain provider; adding it is the only technical step, and review starts as soon as it is seen.",
       apply: 'business',
@@ -149,13 +155,66 @@
         "Within 24 hours we email you your verification reference and a DNS record that proves you control your domain.",
         "A person reviews your business identity and your domain.",
         "When it passes, your entry goes live on the public register and we send your trust badge and machine-readable identity files.",
-        "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+        "Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
       ],
       points: [
         'Identity and domain ownership verified by human review',
         'Public register entry anyone can query without an account',
         'Trust badge and machine-readable identity files',
         'Revocable, and revocations are published'
+      ]
+    },
+    /* Passport Monitor. The free passport is a snapshot; this keeps
+       watching. Fully automatic (the scan, the alerts, the summary and
+       the badge are all machine work), which is why it can cost less a
+       month than Shield, whose every verification a person reviews. */
+    {
+      id: 'monitor',
+      name: 'Passport Monitor',
+      price: 19,
+      tier: 'business',
+      monitor: true,
+      renews: { interval: 'month', count: 1 },
+      lede: 'Your domain checked every day, and a word the moment anything slips.',
+      terms: 'Monthly, renewing automatically until you cancel. Cancel any time.',
+      ask: ['website'],
+      todo: "Nothing. Monitoring of the website you entered starts today. To show the live Monitored badge, paste the two lines from your passport page into your site.",
+      delivery: [
+        "Monitoring of the website you entered starts at once: its passport is rescanned every day instead of every week.",
+        "The moment a check stops passing (a certificate, a security header, an email record), we email you what changed and the exact fix.",
+        "Every week, a short summary of your grade and anything that moved.",
+        "Your passport badge carries the live Monitored mark, and your domain is marked as monitored in the AI Passport League.",
+        "Billed monthly until you cancel. Cancel any time from your order page; it runs to the end of the month you paid for."
+      ],
+      points: [
+        'Rescanned every day, not every week',
+        'An email the moment a check stops passing, with the fix',
+        'A weekly summary of your grade',
+        'The live Monitored badge for your site',
+        'Marked as monitored in the AI Passport League'
+      ]
+    },
+    {
+      id: 'monitor_year',
+      name: 'Passport Monitor, yearly',
+      price: 190,
+      tier: 'business',
+      monitor: true,
+      renews: { interval: 'year', count: 1 },
+      lede: 'Twelve months of Passport Monitor for the price of ten.',
+      terms: 'Yearly, renewing automatically until you cancel. Cancel any time.',
+      ask: ['website'],
+      todo: "Nothing. Monitoring of the website you entered starts today. To show the live Monitored badge, paste the two lines from your passport page into your site.",
+      delivery: [
+        "Monitoring of the website you entered starts at once: its passport is rescanned every day instead of every week.",
+        "The moment a check stops passing (a certificate, a security header, an email record), we email you what changed and the exact fix.",
+        "Every week, a short summary of your grade and anything that moved.",
+        "Your passport badge carries the live Monitored mark, and your domain is marked as monitored in the AI Passport League.",
+        "Billed yearly until you cancel. Cancel any time from your order page; it runs to the end of the year you paid for."
+      ],
+      points: [
+        'Everything in Passport Monitor',
+        'Two months free against paying monthly'
       ]
     },
     {
@@ -233,29 +292,29 @@
        which the server charges. */
     {
       id: 'lens_starter',
-      name: 'Rosario Starter, 1 month',
+      name: 'Rosario Starter, monthly',
       price: 7.99,
       tier: 'entry',
       lede: '800 credits a month for Rosario’s AI.',
-      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      terms: 'Monthly, renewing automatically until you cancel. Cancel any time in the app.',
       points: ['800 credits every month (about 80 AI checks or 400 questions)', 'Every Rosario feature', 'Unused monthly credits do not roll over']
     },
     {
       id: 'lens_pro',
-      name: 'Rosario Pro, 1 month',
+      name: 'Rosario Pro, monthly',
       price: 19.99,
       tier: 'entry',
       lede: '2,500 credits a month and Rosario’s natural voice.',
-      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      terms: 'Monthly, renewing automatically until you cancel. Cancel any time in the app.',
       points: ['2,500 credits every month', 'Rosario’s natural voice (Caty)', 'Every Rosario feature']
     },
     {
       id: 'lens_max',
-      name: 'Rosario Luna Max, 1 month',
+      name: 'Rosario Luna Max, monthly',
       price: 49.99,
       tier: 'entry',
       lede: '7,000 credits a month, the deepest AI checks, new features first.',
-      terms: 'One month per payment on the web. Renewed by you, never auto-charged.',
+      terms: 'Monthly, renewing automatically until you cancel. Cancel any time in the app.',
       points: ['7,000 credits every month', 'Deepest AI checks', 'Rosario’s natural voice', 'New features first']
     },
     {
@@ -287,11 +346,11 @@
     },
     {
       id: 'lensapi',
-      name: 'Lunara Detection API, 1 month',
+      name: 'Lunara Detection API, monthly',
       price: 199,
       tier: 'business',
       lede: 'The same evidence-first answers, as JSON.',
-      terms: 'One month per payment. Renewed by you, never auto-charged.',
+      terms: 'Monthly, renewing automatically until you cancel. Cancel any time in the app.',
       points: [
         'Image, video-frame and text detection',
         'Keys created in the app, stored only as a fingerprint',
@@ -304,13 +363,14 @@
       price: 290,
       tier: 'org',
       lede: 'We tell you when something that binds you changes, and only then.',
-      terms: 'Six months. Renewed only when you choose to pay again.',
+      terms: 'Six months, renewing automatically until you cancel. Cancel any time.',
+      renews: { interval: 'month', count: 6 },
       ask: ['website',  'system'],
       todo: "Reply to this email with the systems, sectors and jurisdictions you want watched. Monitoring starts the day we have them.",
       delivery: [
         "Within 24 hours we email you to confirm the systems, sectors and jurisdictions we watch for you.",
         "For six months we write to you whenever something that binds you changes, and only then.",
-        "We remind you before the six months end; nothing is charged automatically."
+        "Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
       ],
       points: [
         'Monitoring across the EU AI Act, SB 942 and your sector rules',
@@ -345,7 +405,8 @@
       price: 540,
       tier: 'vendor',
       lede: 'An identity for your agent that a third party can check.',
-      terms: 'Six months. Renewed only when you choose to pay again.',
+      terms: 'Six months, renewing automatically until you cancel. Cancel any time.',
+      renews: { interval: 'month', count: 6 },
       ask: ['website',  'system'],
       todo: "Complete your agent's registry application with the link below: the agent's name, who operates it, and its governance framework. It gives you a DNS record to add at your domain provider; review starts as soon as it is seen.",
       apply: 'ai_agent',
@@ -353,7 +414,7 @@
         "Within 24 hours we email you your verification reference and ask who operates the agent and which governance framework it runs under.",
         "A person verifies the agent and its operator.",
         "When it passes, its register entry with AI designation goes live, queryable by any system, and you can issue the agent its signed passport at lunarasociety.com/agent-passport.html.",
-        "Verification lasts six months. We remind you before it ends; nothing is charged automatically."
+        "Verification lasts six months. Renews automatically every six months until you cancel. Cancel any time from your order page; it runs to the end of the term you paid for."
       ],
       points: [
         'Agent verified and its operator named',
@@ -440,6 +501,16 @@
     return '$' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
+  /* How often a subscription charges, as words that follow a price:
+     "$19 a month", "$75 every six months". Empty for a single charge. */
+  var COUNT_WORDS = ['', '', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  function every(p) {
+    var r = p && p.renews;
+    if (!r) return '';
+    if ((r.count || 1) === 1) return 'a ' + r.interval;
+    return 'every ' + (COUNT_WORDS[r.count] || r.count) + ' ' + r.interval + 's';
+  }
+
   /* A buy button asks lunara-checkout for a Stripe session and sends
      the buyer there. Nothing on this page decides the amount. If the
      function cannot be reached, the buyer is told so and given the
@@ -462,7 +533,7 @@
     fetch(CHECKOUT + '/checkout', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ product: a.getAttribute('data-lx-buy'), return_to: window.location.href })
+      body: JSON.stringify({ product: a.getAttribute('data-lx-buy'), return_to: window.location.href, website: a.getAttribute('data-lx-website') || undefined })
     }).then(function (r) { return r.json(); }).then(function (b) {
       if (b && b.url && b.url.indexOf('https://checkout.stripe.com/') === 0) {
         window.location.href = b.url;
@@ -478,7 +549,8 @@
       'data-lx-amount': function (p) { return money(p.price); },
       'data-lx-name':  function (p) { return p.name; },
       'data-lx-terms': function (p) { return p.terms; },
-      'data-lx-lede':  function (p) { return p.lede; }
+      'data-lx-lede':  function (p) { return p.lede; },
+      'data-lx-every': function (p) { return every(p); }
     };
 
     Object.keys(slots).forEach(function (attr) {
@@ -520,6 +592,7 @@
       products: PRODUCTS,
       get: byId,
       money: money,
+      every: function (id) { return every(byId(id)); },
       sellable: function (id) { var p = byId(id); return !!(p && sellable(p)); },
       /* Sends the buyer to Stripe Checkout for a product, for a page that
          places its own control rather than using data-lx-buy. */

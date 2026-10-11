@@ -1,7 +1,7 @@
 /* node stripe-checkout/test_checkout.mjs — runs in CI, needs no network. */
 
 import { createHmac } from 'node:crypto';
-import { handleCheckout, stripeClient, returnUrl, formEncode } from './checkout-core.mjs';
+import { handleCheckout, stripeClient, returnUrl, formEncode, resetExtras, resetPortal, every, recoveryEmail } from './checkout-core.mjs';
 import { CATALOG } from './catalog.mjs';
 import { loadPricing, catalogFrom, sellable } from './build-catalog.mjs';
 
@@ -12,13 +12,24 @@ async function test(name, fn) {
 function eq(a, b, msg) { if (a !== b) throw new Error(`${msg || ''} expected ${JSON.stringify(b)}, got ${JSON.stringify(a)}`); }
 function ok(c, msg) { if (!c) throw new Error(msg || 'not ok'); }
 
-function fakeStripe() {
-  const calls = [], sessions = {};
+function fakeStripe(opts = {}) {
+  const calls = [], sessions = {}, subs = {}, configs = [];
   let n = 0;
   const fetchImpl = async (url, init) => {
     const u = new URL(url);
     const params = init.body ? new URLSearchParams(init.body) : u.searchParams;
     calls.push({ method: init.method, path: u.pathname, params, headers: init.headers });
+    if (u.pathname === '/v1/checkout/sessions' && init.method === 'POST' && opts.refuseExtras && params.has('consent_collection[promotions]')) {
+      return new Response(JSON.stringify({ error: { message: 'consent_collection is not available for your account' } }), { status: 400 });
+    }
+    const sm = u.pathname.match(/^\/v1\/subscriptions\/(sub_\w+)$/);
+    if (sm) return subs[sm[1]] ? new Response(JSON.stringify(subs[sm[1]])) : new Response('{"error":{}}', { status: 404 });
+    if (u.pathname === '/v1/billing_portal/configurations') {
+      if (init.method === 'GET') return new Response(JSON.stringify({ data: configs }));
+      const c = { id: 'bpc_' + (configs.length + 1), metadata: { lunara: params.get('metadata[lunara]') }, cancel: params.get('features[subscription_cancel][enabled]') };
+      configs.push(c); return new Response(JSON.stringify(c));
+    }
+    if (u.pathname === '/v1/billing_portal/sessions') return new Response(JSON.stringify({ url: 'https://billing.stripe.com/p/session/test_' + params.get('customer') }));
     if (u.pathname === '/v1/checkout/sessions' && init.method === 'POST') {
       const id = 'cs_test_' + (++n);
       sessions[id] = {
@@ -38,7 +49,7 @@ function fakeStripe() {
     customer_details: { email: 'buyer@example.com', name: 'B AB', address: { country: 'SE' } },
     custom_fields: [{ key: 'website', text: { value: 'https://example.com' } }]
   }, extra);
-  return { stripe: stripeClient('sk_test_x', fetchImpl), calls, sessions, pay };
+  return { stripe: stripeClient('sk_test_x', fetchImpl), calls, sessions, subs, configs, pay };
 }
 function memoryDb() {
   const orders = new Map(), events = new Set();
@@ -50,7 +61,14 @@ function memoryDb() {
     async updateOrder(ref, patch) { Object.assign(orders.get(ref), patch); },
     async markPaid(ref, patch) { const o = orders.get(ref); if (o.status !== 'open') return false; Object.assign(o, patch); return true; },
     async markRefunded(pi, amount) { for (const o of orders.values()) if (o.payment_intent === pi) o.refunded_amount = amount; },
-    async claimEvent(id) { if (events.has(id)) return false; events.add(id); return true; }
+    async claimEvent(id) { if (events.has(id)) return false; events.add(id); return true; },
+    watches: [], extended: [],
+    async monitorWatch(w) { this.watches.push({ ...w, active: true }); },
+    async endMonitorWatch(ref) { for (const w of this.watches) if (w.order_ref === ref) w.active = false; },
+    async claimRecovery(ref, patch) { const o = orders.get(ref); if (o.recovery_sent_at) return false; Object.assign(o, patch, { recovery_sent_at: 'now' }); return true; },
+    async subscriptionsDue() { return [...orders.values()].filter((o) => o.subscription_id && o.status === 'paid').map((o) => ({ ...o })); },
+    async orderBySubscription(id) { const o = [...orders.values()].find((x) => x.subscription_id === id); return o ? { ...o } : null; },
+    async extendRegistry(ref, until) { this.extended.push([ref, until]); }
   };
 }
 const call = (deps, path, init = {}) =>
@@ -70,27 +88,147 @@ await test('only public products are sellable', async () => {
   ok(loadPricing().filter((p) => !sellable(p)).length >= 2);
 });
 
-function setup() { const f = fakeStripe(); const db = memoryDb(); return { ...f, db, deps: { stripe: f.stripe, db } }; }
+// Each setup lives an hour after the last, so the sweep's once-per-30s
+// guard never skips a test's knock.
+let clock = Date.now();
+function setup(opts) { resetExtras(); resetPortal(); const f = fakeStripe(opts); const db = memoryDb(); const at = (clock += 3600e3); return { ...f, db, deps: { stripe: f.stripe, db, now: () => at } }; }
 const order = (deps, ref) => call(deps, '/order?ref=' + ref);
 
 await test('a buy records an order and opens Stripe at the catalogue price', async () => {
   const { deps, calls, db } = setup();
-  const r = await buy(deps, { product: 'shield', return_to: 'https://lunarasociety.com/certify.html' });
+  const r = await buy(deps, { product: 'kit', return_to: 'https://lunarasociety.com/certify.html' });
   eq(r.status, 200);
   ok(/^LO-[0-9A-Z]{16}$/.test(r.body.order), 'order ref');
   ok(r.body.url.startsWith('https://checkout.stripe.com/'));
   const p = calls[0].params;
   eq(p.get('mode'), 'payment');
-  eq(p.get('line_items[0][price_data][unit_amount]'), '7500');
+  eq(p.get('line_items[0][price_data][unit_amount]'), '9500');
+  ok(!p.has('line_items[0][price_data][recurring][interval]'), 'a single charge does not recur');
+  eq(p.get('after_expiration[recovery][enabled]'), 'true');
   eq(p.get('line_items[0][price_data][currency]'), 'usd');
   eq(p.get('metadata[order]'), r.body.order);
   eq(p.get('client_reference_id'), r.body.order);
   eq(p.get('success_url'), 'https://lunarasociety.com/paid.html?order=' + r.body.order);
   eq(p.get('cancel_url'), 'https://lunarasociety.com/certify.html');
   ok(p.get('custom_text[submit][message]').startsWith('How you receive it: '), 'delivery shown before paying');
-  eq(p.get('custom_fields[0][key]'), 'website');
   const row = db.orders.get(r.body.order);
-  eq(row.status, 'open'); eq(row.product, 'shield'); eq(row.amount_total, 7500); eq(row.session_id, 'cs_test_1');
+  eq(row.status, 'open'); eq(row.product, 'kit'); eq(row.amount_total, 9500); eq(row.session_id, 'cs_test_1');
+});
+
+await test('a renewing product opens Stripe as a subscription that says it renews', async () => {
+  const { deps, calls } = setup();
+  const r = await buy(deps, { product: 'shield', website: 'https://www.acme.example/about' });
+  eq(r.status, 200);
+  const p = calls[0].params;
+  eq(p.get('mode'), 'subscription');
+  eq(p.get('line_items[0][price_data][unit_amount]'), '7500');
+  eq(p.get('line_items[0][price_data][recurring][interval]'), 'month');
+  eq(p.get('line_items[0][price_data][recurring][interval_count]'), '6');
+  ok(!p.has('payment_intent_data[description]'), 'no payment intent data in subscription mode');
+  eq(p.get('subscription_data[metadata][order]'), r.body.order);
+  ok(p.get('custom_text[submit][message]').includes('Renews automatically: $75 every six months until you cancel'));
+  eq(p.get('custom_fields[0][key]'), 'website');
+  eq(p.get('custom_fields[0][text][default_value]'), 'https://acme.example', 'website prefilled from the page, as a clean domain');
+  const m = (await buy(deps, { product: 'monitor' }), calls[1].params);
+  eq(m.get('line_items[0][price_data][recurring][interval]'), 'month'); eq(m.get('line_items[0][price_data][recurring][interval_count]'), '1');
+  eq(m.get('line_items[0][price_data][unit_amount]'), '1900');
+  const y = (await buy(deps, { product: 'monitor_year' }), calls[2].params);
+  eq(y.get('line_items[0][price_data][recurring][interval]'), 'year'); eq(y.get('line_items[0][price_data][unit_amount]'), '19000');
+  eq(every(CATALOG.monitor), 'a month'); eq(every(CATALOG.shield), 'every six months'); eq(every(CATALOG.kit), '');
+});
+
+await test('a website hint that is not a domain is ignored', async () => {
+  const { deps, calls } = setup();
+  await buy(deps, { product: 'monitor', website: 'javascript:alert(1)' });
+  ok(!calls[0].params.has('custom_fields[0][text][default_value]'));
+});
+
+await test('if Stripe refuses the recovery options, the sale goes ahead without them', async () => {
+  const { deps, calls } = setup({ refuseExtras: true });
+  const r = await buy(deps, { product: 'kit' });
+  eq(r.status, 200);
+  eq(calls.length, 2);
+  ok(!calls[1].params.has('consent_collection[promotions]'));
+  await buy(deps, { product: 'kit' });
+  eq(calls.length, 3, 'not asked again once refused');
+});
+
+await test('a paid Passport Monitor watches the domain; a lapse stops it', async () => {
+  const { deps, pay, subs, db } = setup();
+  const r = await buy(deps, { product: 'monitor' });
+  pay('cs_test_1', { subscription: 'sub_1', customer: 'cus_1', amount_total: 1900, custom_fields: [{ key: 'website', text: { value: 'https://WWW.Shop.example/' } }] });
+  const o = await order(deps, r.body.order);
+  eq(o.body.paid, true);
+  eq(o.body.subscription.every, 'a month');
+  eq(o.body.subscription.manage, 'manage.html?order=' + r.body.order);
+  const row = db.orders.get(r.body.order);
+  eq(row.subscription_id, 'sub_1'); eq(row.customer_id, 'cus_1'); eq(row.sub_status, 'active');
+  eq(db.watches.length, 1); eq(db.watches[0].domain, 'shop.example'); eq(db.watches[0].email, 'buyer@example.com'); eq(db.watches[0].order_ref, r.body.order);
+  subs.sub_1 = { id: 'sub_1', status: 'canceled', items: { data: [{ current_period_end: 1800000000 }] } };
+  const sw = await call(deps, '/settle');
+  eq(sw.body.subscriptions, 1);
+  eq(db.orders.get(r.body.order).sub_status, 'canceled');
+  eq(db.watches[0].active, false);
+});
+
+await test('a renewal extends the register entry the order paid for', async () => {
+  const { deps, pay, subs, db } = setup();
+  const r = await buy(deps, { product: 'shield' });
+  pay('cs_test_1', { subscription: 'sub_2', customer: 'cus_2' });
+  await order(deps, r.body.order);
+  subs.sub_2 = { id: 'sub_2', status: 'active', items: { data: [{ current_period_end: 1790000000 }] } };
+  await call(deps, '/settle');
+  eq(db.orders.get(r.body.order).renewals || 0, 0, 'the first read is not a renewal');
+  eq(db.extended.length, 0);
+  subs.sub_2.items.data[0].current_period_end = 1790000000 + 182 * 86400;
+  const { syncSubscription } = await import('./checkout-core.mjs');
+  await syncSubscription({ ...db.orders.get(r.body.order) }, deps);
+  eq(db.orders.get(r.body.order).renewals, 1);
+  eq(db.extended.length, 1); eq(db.extended[0][0], r.body.order);
+});
+
+await test('the portal opens for an order with a subscription, and only then', async () => {
+  const { deps, pay, configs } = setup();
+  const r = await buy(deps, { product: 'monitor' });
+  const portal = (ref) => call(deps, '/portal', { method: 'POST', body: JSON.stringify({ order: ref }) });
+  eq((await portal(r.body.order)).status, 404, 'unpaid: no customer yet');
+  eq((await portal('nonsense')).status, 404);
+  pay('cs_test_1', { subscription: 'sub_3', customer: 'cus_3', amount_total: 1900 });
+  await order(deps, r.body.order);
+  const p = await portal(r.body.order.toLowerCase());
+  eq(p.status, 200);
+  eq(p.body.url, 'https://billing.stripe.com/p/session/test_cus_3');
+  eq(configs.length, 1); eq(configs[0].cancel, 'true', 'cancelling is switched on');
+  await portal(r.body.order);
+  eq(configs.length, 1, 'configuration made once');
+});
+
+await test('an abandoned checkout gets one recovery email, only with consent', async () => {
+  const { deps, sessions, db } = setup();
+  const sent = [];
+  const d = { ...deps, mail: { send: async (m) => { sent.push(m); } } };
+  const a = await buy(d, { product: 'monitor' });
+  const b = await buy(d, { product: 'kit' });
+  Object.assign(sessions.cs_test_1, { status: 'expired', customer_details: { email: 'lead@example.com' }, consent: { promotions: 'opt_in' }, after_expiration: { recovery: { url: 'https://buy.stripe.com/r/live_x' } } });
+  Object.assign(sessions.cs_test_2, { status: 'expired', customer_details: { email: 'no@example.com' }, consent: { promotions: 'opt_out' }, after_expiration: { recovery: { url: 'https://buy.stripe.com/r/live_y' } } });
+  await call(d, '/settle');
+  await order(d, a.body.order);
+  eq(sent.length, 1);
+  eq(sent[0].to, 'lead@example.com');
+  ok(sent[0].text.includes('https://buy.stripe.com/r/live_x') && sent[0].text.includes('$19 a month'));
+  eq(db.orders.get(a.body.order).status, 'expired');
+  eq(db.orders.get(b.body.order).status, 'expired');
+  ok(recoveryEmail({ product: 'kit', email: 'x@example.com' }, 'https://u').subject.includes('Compliance Kit'));
+});
+
+await test('the order email of a subscription says it renews and how to cancel', async () => {
+  const { orderEmail } = await import('./checkout-core.mjs');
+  const m = orderEmail({ order_ref: 'LO-0000000000000000', product: 'monitor', email: 'a@b.co', name: 'Ann', details: {} });
+  ok(m.text.includes('$19 a month'));
+  ok(m.text.includes('renews automatically a month until you cancel') || m.text.includes('renews automatically'));
+  ok(m.text.includes('manage.html?order=LO-0000000000000000'));
+  const k = orderEmail({ order_ref: 'LO-0000000000000001', product: 'kit', email: 'a@b.co', details: {} });
+  ok(!k.text.includes('manage.html'), 'a single charge has nothing to cancel');
 });
 
 await test('an amount sent by the browser is ignored', async () => {
@@ -223,7 +361,7 @@ await test('the hourly sweep settles a paid order whose buyer never came back', 
   const a = await buy(deps, { product: 'shield' });
   const b = await buy(deps, { product: 'kit' });
   pay('cs_test_1');
-  let t = 1e12; deps.now = () => t;
+  let t = (clock += 3600e3); deps.now = () => t;
   let r = await call(deps, '/settle');
   eq(r.body.checked, 2); eq(r.body.paid, 1);
   eq(db.orders.get(a.body.order).status, 'paid'); eq(db.orders.get(b.body.order).status, 'open');

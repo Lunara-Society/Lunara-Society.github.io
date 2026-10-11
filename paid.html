@@ -69,6 +69,7 @@ ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;to
       <div class="row"><span>Order reference</span><span class="mono" id="o-ref"></span></div>
       <div class="row"><span>Receipt sent to</span><span id="o-email"></span></div>
       <div class="row"><span>Term</span><span id="o-terms"></span></div>
+      <div class="row" id="o-renew-row" hidden><span>Renews</span><span id="o-renew"></span></div>
     </div>
 
     <div id="o-links"></div>
@@ -134,6 +135,16 @@ ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;to
       a.className = 'btn'; a.href = '/' + l.href; a.textContent = l.label;
       $('o-links').appendChild(a);
     });
+    if (b.subscription) {
+      var s = b.subscription, when = s.period_end ? new Date(s.period_end).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      $('o-amount').textContent += ' ' + s.every;
+      $('o-renew').textContent = 'Automatically ' + s.every + (when ? ', next on ' + when : '') + ', until you cancel';
+      $('o-renew-row').hidden = false;
+      var m = document.createElement('a');
+      m.className = 'btn'; m.href = '/' + (s.manage || ('manage.html?order=' + b.ref)); m.textContent = 'Manage or cancel';
+      m.style.cssText = 'background:transparent;color:var(--gold-b);border:1px solid rgba(196,164,107,.45)';
+      $('o-links').appendChild(m);
+    }
     document.title = b.name + ' | Your Order | Lunara Society';
     show('paid');
   }).catch(function () {

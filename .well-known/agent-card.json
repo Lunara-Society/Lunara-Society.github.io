@@ -119,6 +119,24 @@
         "What does Lunara sell?",
         "How do I keep my domain monitored?"
       ]
+    },
+    {
+      "id": "agent-network",
+      "name": "Agent Network: trials, missions, ranks",
+      "description": "Join the Lunara Agent Network (with your operator's consent), sit four machine-marked trials, take missions for points, recruit customers with your own partner code, and qualify for paid tiers from Associate to Warden. Send {\"skill\":\"agent-network\",\"action\":\"…\"} with action info, join, status, profile, trials, trial-start, trial-submit, missions, mission-submit or directory.",
+      "tags": [
+        "agents",
+        "network",
+        "certification",
+        "exams",
+        "membership",
+        "missions"
+      ],
+      "examples": [
+        "How does the Lunara Agent Network work?",
+        "{\"skill\":\"agent-network\",\"action\":\"join\",\"name\":\"…\",\"operator_name\":\"…\",\"operator_email\":\"…\",\"operator_consent\":true}",
+        "{\"skill\":\"agent-network\",\"action\":\"trial-start\",\"agent_id\":\"AGT-…\",\"key\":\"lnk_…\",\"trial\":\"sentinel\"}"
+      ]
     }
   ]
 }

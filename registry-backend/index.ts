@@ -91,6 +91,26 @@ const db = {
   findPartnerByCode: (c: string) => rest(`/registry_partners?code=eq.${q(c)}&limit=1`).then(one),
   findPartnerByEmail: (e: string) => rest(`/registry_partners?contact_email=eq.${q(e)}&code=not.is.null&order=created_at.asc&limit=1`).then(one),
   listPartners: () => rest('/registry_partners?order=created_at.desc&limit=200'),
+  // The Agent Network (network.mjs).
+  netGetAgent: (id: string) => rest(`/network_agents?agent_id=eq.${q(id)}&limit=1`).then(one),
+  netFindAgent: (email: string, name: string) => rest(`/network_agents?operator_email=eq.${q(email)}&name=ilike.${q(name.replace(/[%_*\\]/g, ''))}&limit=1`).then(one),
+  netCreateAgent: (r: Record<string, unknown>) => post('network_agents', r, 'return=minimal'),
+  netUpdateAgent: (id: string, patch: Record<string, unknown>) => rest(`/network_agents?agent_id=eq.${q(id)}`, { method: 'PATCH', body: JSON.stringify({ ...patch, updated_at: new Date().toISOString() }) }),
+  netListAgents: (tiers: string[]) => rest(`/network_agents?tier=in.(${tiers.map(q).join(',')})&order=created_at.asc&limit=500`),
+  netCounts: async () => ({ total: await countOf('/network_agents?select=agent_id'), listed: await countOf('/network_agents?tier=neq.member&select=agent_id') }),
+  netAdd: (id: string, credits: number, points: number) => rest('/rpc/network_add', { method: 'POST', body: JSON.stringify({ p_agent: id, p_credits: credits, p_points: points }) }),
+  netSpendCredit: (id: string) => rest('/rpc/network_spend_credit', { method: 'POST', body: JSON.stringify({ p_agent: id }) }).then((r) => r === true),
+  sitCreate: (r: Record<string, unknown>) => post('trial_sittings', r, 'return=minimal'),
+  sitGet: (id: string) => rest(`/trial_sittings?sitting_id=eq.${q(id)}&limit=1`).then(one),
+  sitUpdate: (id: string, patch: Record<string, unknown>) => rest(`/trial_sittings?sitting_id=eq.${q(id)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  sitOpen: (agent: string, trial: string, nowIso: string) => rest(`/trial_sittings?agent_id=eq.${q(agent)}&trial=eq.${q(trial)}&submitted_at=is.null&expires_at=gt.${q(nowIso)}&select=sitting_id,tasks,expires_at&limit=1`).then(one),
+  sitIncludedSince: (agent: string, since: string) => countOf(`/trial_sittings?agent_id=eq.${q(agent)}&paid_with=eq.included&started_at=gte.${q(since)}&select=sitting_id`),
+  misCreate: (r: Record<string, unknown>) => post('mission_submissions', r).then(one),
+  misGet: (id: number) => rest(`/mission_submissions?id=eq.${id}&limit=1`).then(one),
+  misUpdate: (id: number, patch: Record<string, unknown>) => rest(`/mission_submissions?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  misList: () => rest('/mission_submissions?order=created_at.desc&limit=200'),
+  misExists: async (mission: string, key: string) => !!one(await rest(`/mission_submissions?mission=eq.${q(mission)}&payload->>dedupe=eq.${q(key)}&status=neq.rejected&select=id&limit=1`)),
+  verifiedAgentEntry: (email: string, nowIso: string) => rest(`/registry_entries?contact_email=ilike.${q(email)}&kind=eq.ai_agent&status=eq.approved&expires_at=gt.${q(nowIso)}&select=public_id&limit=1`).then(one),
   updatePartner: (c: string, patch: Record<string, unknown>) => rest(`/registry_partners?code=eq.${q(c)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   ordersByPartner: (c: string) => rest(`/stripe_orders?partner_ref=eq.${q(c)}&select=order_ref,product,amount_total,status,livemode,sub_status,cancel_at_period_end,renewals,paid_at,created_at&limit=1000`),
   subscribe: async (email: string, source: string) => {
@@ -191,6 +211,18 @@ async function leagueList() {
   return list;
 }
 
+/* Lunara's signed corpus of obligations, which the Compliance Clerk
+   trial is set from: the published file, read at most hourly. */
+let corpusCache: { at: number; list: unknown[] } | null = null;
+async function corpus() {
+  if (corpusCache && Date.now() - corpusCache.at < 3600e3) return corpusCache.list;
+  const r = await fetch('https://lunarasociety.com/corpus/obligations.json', { signal: AbortSignal.timeout(8000) });
+  if (!r.ok) throw new Error('corpus ' + r.status);
+  const j = await r.json();
+  corpusCache = { at: Date.now(), list: Array.isArray(j.obligations) ? j.obligations : [] };
+  return corpusCache.list;
+}
+
 async function whoIs(token: unknown) {
   if (typeof token !== 'string' || token.length < 20 || token.length > 4096) return null;
   const res = await fetch(`${env.SUPABASE_URL}/functions/v1/lunara-auth/session`, {
@@ -216,7 +248,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }));
   try {
     const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
-    return withCors(await handleRegistry(req, { db, mail, dns, resolve, fetchPage, leagueList, whoIs, ai, env, ip, now: () => Date.now() }));
+    return withCors(await handleRegistry(req, { db, mail, dns, resolve, fetchPage, leagueList, corpus, whoIs, ai, env, ip, now: () => Date.now() }));
   } catch (e) {
     console.error('lunara-registry', e?.message || e);
     return withCors(json({ success: false, error: 'Something went wrong on our side. Try again.' }, 500));

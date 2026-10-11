@@ -40,7 +40,8 @@ export function catalogFrom(products) {
       todo: p.todo || '',
       apply: p.apply || null,
       renews: p.renews || null,
-      monitor: !!p.monitor
+      monitor: !!p.monitor,
+      network: p.network || null
     };
   }
   return out;

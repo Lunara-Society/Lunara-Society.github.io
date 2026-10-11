@@ -47,6 +47,8 @@ const PAGE = {
   shield:    'certify.html',
   monitor:   'passport.html',
   monitor_year: 'passport.html',
+  trial_pass: 'agent-network.html', trial_pack: 'agent-network.html',
+  net_associate: 'agent-network.html', net_fellow: 'agent-network.html', net_warden: 'agent-network.html',
   second:    'marking.html',
   cir:       'compliance-intelligence.html',
   cirplus:   'compliance-intelligence.html',

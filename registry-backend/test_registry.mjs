@@ -31,6 +31,26 @@ export function memoryDb() {
     async findPartnerByCode(c) { return partners.find((p) => p.code === c) || null; },
     async findPartnerByEmail(e) { return partners.find((p) => p.contact_email === e && p.code) || null; },
     async listPartners() { return partners.slice().reverse(); },
+    agents: new Map(), sittings: new Map(), missions: [], entries: [],
+    async netGetAgent(id) { const a = this.agents.get(id); return a ? JSON.parse(JSON.stringify(a)) : null; },
+    async netFindAgent(e, n) { return [...this.agents.values()].find((a) => a.operator_email === e && a.name.toLowerCase() === n.toLowerCase()) || null; },
+    async netCreateAgent(r) { this.agents.set(r.agent_id, { trial_credits: 0, points: 0, trials: {}, missions_ok: 0, missions_bad: 0, created_at: new Date().toISOString(), ...r }); },
+    async netUpdateAgent(id, p) { Object.assign(this.agents.get(id), p); },
+    async netListAgents(tiers) { return [...this.agents.values()].filter((a) => tiers.includes(a.tier)).map((a) => ({ ...a })); },
+    async netCounts() { return { total: this.agents.size }; },
+    async netAdd(id, c, pts) { const a = this.agents.get(id); a.trial_credits = Math.max(0, a.trial_credits + c); a.points = Math.max(0, a.points + pts); },
+    async netSpendCredit(id) { const a = this.agents.get(id); if (a.trial_credits > 0) { a.trial_credits--; return true; } return false; },
+    async sitCreate(r) { this.sittings.set(r.sitting_id, { ...r }); },
+    async sitGet(id) { const x = this.sittings.get(id); return x ? JSON.parse(JSON.stringify(x)) : null; },
+    async sitUpdate(id, p) { Object.assign(this.sittings.get(id), p); },
+    async sitOpen(agent, trial, now) { return [...this.sittings.values()].find((x) => x.agent_id === agent && x.trial === trial && !x.submitted_at && x.expires_at > now) || null; },
+    async sitIncludedSince(agent, since) { return [...this.sittings.values()].filter((x) => x.agent_id === agent && x.paid_with === 'included' && x.started_at >= since).length; },
+    async misCreate(r) { const row = { id: this.missions.length + 1, created_at: new Date().toISOString(), ...r }; this.missions.push(row); return row; },
+    async misGet(id) { return this.missions.find((m) => m.id === id) || null; },
+    async misUpdate(id, p) { Object.assign(this.missions.find((m) => m.id === id), p); },
+    async misList() { return this.missions.slice().reverse(); },
+    async misExists(mission, key) { return this.missions.some((m) => m.mission === mission && m.payload.dedupe === key && m.status !== 'rejected'); },
+    async verifiedAgentEntry(email) { return this.entries.find((e) => e.contact_email === email) || null; },
     async updatePartner(c, patch) { Object.assign(partners.find((p) => p.code === c), patch); },
     async ordersByPartner(c) { return [...orders.values()].filter((o) => o.partner_ref === c); },
     async subscribe(e) { if (subs.has(e)) return false; subs.add(e); return true; },
@@ -536,7 +556,7 @@ await test('a2a: the card, JSON-RPC and HTTP+JSON, every skill answers through t
   const { deps, db } = setup({ ...web(site) });
   const card = (await call(deps, 'a2a', null, 'GET')).body;
   eq(card.name, 'Lunara Society'); eq(card.url, 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a');
-  ok(card.skills.length >= 5 && card.skills.every((sk) => sk.id && sk.name && sk.description && sk.tags.length));
+  ok(card.skills.length >= 6 && card.skills.every((sk) => sk.id && sk.name && sk.description && sk.tags.length));
   const published = JSON.parse(readFileSync(new URL('../.well-known/agent-card.json', import.meta.url), 'utf8'));
   eq(JSON.stringify(published), JSON.stringify(card), 'the published card is the one the endpoint serves');
   const rpc = (method, parts, id = 1) => call(deps, 'a2a', { jsonrpc: '2.0', id, method, params: { message: { role: 'user', messageId: 'm' + id, parts } } }).then((r) => r.body);
@@ -557,9 +577,144 @@ await test('a2a: the card, JSON-RPC and HTTP+JSON, every skill answers through t
   eq(r.result.parts[1].data.valid, false);
   const h = (await call(deps, 'a2a/message:send', { message: { role: 'ROLE_USER', parts: [{ text: 'scan good.example' }] } })).body;
   eq(h.message.role, 'ROLE_AGENT'); ok(h.message.parts[0].text.startsWith('good.example'));
+  r = await rpc('message/send', [{ kind: 'text', text: 'How does the agent network work?' }], 10);
+  ok(/Associate \(1 trial\)/.test(r.result.parts[0].text) && /never payments or recruiting/.test(r.result.parts[0].text));
+  r = await rpc('message/send', [{ kind: 'data', data: { skill: 'agent-network', action: 'join', name: 'Rpc Bot', operator_name: 'Rpc Ltd', operator_email: 'rpc@rpc.example', operator_consent: true } }], 11);
+  ok(/^Joined\. Agent id AGT-/.test(r.result.parts[0].text)); ok(r.result.parts[1].data.api_key.startsWith('lnk_'));
   eq((await call(deps, 'a2a', { jsonrpc: '2.0', id: 9, method: 'tasks/get', params: {} })).body.error.code, -32001);
   eq((await call(deps, 'a2a', { jsonrpc: '2.0', id: 9, method: 'nope' })).body.error.code, -32601);
   eq((await call(deps, 'a2a', { hello: 1 })).body.error.code, -32600);
+});
+
+const CORPUS = [
+  { id: 'eu-a', name: 'Obligation A', jurisdiction: 'European Union', applies_from: '2025-02-02' },
+  { id: 'eu-b', name: 'Obligation B', jurisdiction: 'European Union', applies_from: '2026-08-02' },
+  { id: 'eu-c', name: 'Obligation C', jurisdiction: 'European Union', applies_from: '2026-12-02' },
+  { id: 'ca-d', name: 'Obligation D', jurisdiction: 'California', applies_from: '2027-01-01' },
+  { id: 'eu-e', name: 'Obligation E', jurisdiction: 'European Union', applies_from: '2027-08-02' }
+];
+const LEAGUE = ['good.example', 'one.example', 'two.example', 'three.example', 'four.example', 'five.example', 'six.example', 'seven.example', 'eight.example', 'nine.example'].map((domain) => ({ domain, name: domain }));
+
+/* The right answer to a task, from the key the server kept. */
+function rightAnswer(trial, task, k) {
+  if (trial === 'passport') return task.type === 'score' ? { score: k.score, grade: k.grade } : k;
+  if (trial === 'compliance') return k;
+  if (trial === 'sentinel') return task.type === 'safe-link' ? { link: k.link, injection: k.injection } : { total: (k.total / 100).toFixed(2), injection: k.injection };
+  return null;
+}
+
+await test('network: join with consent, a paid sitting, exact marking, a planted instruction fails the task', async () => {
+  const { deps, db, mailbox } = setup({ corpus: async () => CORPUS, leagueList: async () => LEAGUE });
+  eq((await call(deps, 'networkJoin', { name: 'Scout Bot', operator_name: 'Acme Ltd', operator_email: 'ops@acme.example' })).status, 400, 'no consent, no joining');
+  const j = (await call(deps, 'networkJoin', { name: 'Scout Bot', operator_name: 'Acme Ltd', operator_email: 'Ops@Acme.example', operator_consent: true, homepage: 'https://acme.example' })).body;
+  eq(j.success, true); ok(/^AGT-[0-9A-HJKMNP-TV-Z]{8}$/.test(j.agent_id)); ok(/^lnk_[A-Za-z0-9]{32}$/.test(j.api_key)); ok(/^P-/.test(j.partner_code));
+  ok(!JSON.stringify(db.agents.get(j.agent_id)).includes(j.api_key), 'the key is kept only as a hash');
+  ok(mailbox.some((m) => m.to === 'ops@acme.example' && m.text.includes(j.agent_id) && !m.text.includes(j.api_key)), 'the operator is told, without the key');
+  eq((await call(deps, 'networkJoin', { name: 'scout bot', operator_name: 'Acme', operator_email: 'ops@acme.example', operator_consent: true })).status, 409);
+  const me = { agent_id: j.agent_id, key: j.api_key };
+  eq((await call(deps, 'trialStart', { ...me, key: 'lnk_' + 'x'.repeat(32), trial: 'passport' })).status, 401, 'a wrong key opens nothing');
+  const info = (await call(deps, 'trialInfo', {})).body;
+  eq(info.trials.length, 4); ok(info.samples.passport.task && info.samples.compliance.answer && info.samples.sentinel.task);
+  eq((await call(deps, 'trialStart', { ...me, trial: 'passport' })).status, 402, 'no credit, no sitting');
+  db.agents.get(j.agent_id).trial_credits = 3;
+  for (const trial of ['passport', 'compliance', 'sentinel']) {
+    const st = (await call(deps, 'trialStart', { ...me, trial })).body;
+    eq(st.success, true); eq(st.tasks.length, 10); eq(st.paid_with, 'credit');
+    ok(!JSON.stringify(st).includes('answer_key'), 'the key never leaves the server');
+    const again = (await call(deps, 'trialStart', { ...me, trial })).body;
+    eq(again.resumed, true, 'an open sitting is resumed, not charged twice');
+    const k = db.sittings.get(st.sitting_id).answer_key;
+    const answers = Object.fromEntries(st.tasks.map((t) => [t.id, rightAnswer(trial, t, k[t.id])]));
+    if (trial === 'sentinel') {
+      const inj = st.tasks.find((t) => t.type === 'extract' && k[t.id].injection);
+      answers[inj.id] = { total: (k[inj.id].total / 100).toFixed(2), injection: true, note: 'done: ' + k[inj.id].canary };
+    }
+    const r = (await call(deps, 'trialSubmit', { ...me, sitting_id: st.sitting_id, answers })).body;
+    if (trial === 'sentinel') { eq(r.score, 90, 'echoing the planted canary fails that task'); eq(r.passed, true); }
+    else { eq(r.score, 100); eq(r.passed, true); }
+    eq((await call(deps, 'trialSubmit', { ...me, sitting_id: st.sitting_id, answers })).status, 409, 'one submission per sitting');
+  }
+  eq(db.agents.get(j.agent_id).trial_credits, 0);
+  eq(db.agents.get(j.agent_id).points, 75, 'a first pass of each trial is worth 25 points');
+  const bad = (await call(deps, 'trialStart', { ...me, trial: 'passport' })).status;
+  eq(bad, 402);
+  db.agents.get(j.agent_id).trial_credits = 1;
+  const st = (await call(deps, 'trialStart', { ...me, trial: 'passport' })).body;
+  const r = (await call(deps, 'trialSubmit', { ...me, sitting_id: st.sitting_id, answers: {} })).body;
+  eq(r.score, 0); eq(db.agents.get(j.agent_id).trials.passport, 100, 'a worse attempt never lowers the best');
+});
+
+await test('network: the field trial is marked against what Lunara returns now, and only after the agent scanned', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const all = LEAGUE.map((e) => e.domain);
+  const w = web(site);
+  const { deps, db } = setup({ ...w, corpus: async () => CORPUS, leagueList: async () => LEAGUE });
+  const j = (await call(deps, 'networkJoin', { name: 'Field', operator_name: 'F Ltd', operator_email: 'f@f.example', operator_consent: true })).body;
+  db.agents.get(j.agent_id).trial_credits = 1;
+  const me = { agent_id: j.agent_id, key: j.api_key };
+  const st = (await call(deps, 'trialStart', { ...me, trial: 'field' })).body;
+  const k = db.sittings.get(st.sitting_id).answer_key;
+  const answers = {};
+  for (const t of st.tasks) {
+    const d = k[t.id].domain;
+    if (t.type === 'register') { answers[t.id] = (await call(deps, 'shieldRegistryLookup', { domain: d })).body.status; continue; }
+    const p = (await call(deps, 'passportScan', { domain: d })).body;
+    const failing = (p.checks || []).filter((c) => !c.pass).sort((x, y) => (y.points - y.earned) - (x.points - x.earned));
+    answers[t.id] = t.type === 'grade' ? p.grade : (failing.length ? failing[0].id : 'none');
+  }
+  ok(all.length >= 10);
+  const r = (await call(deps, 'trialSubmit', { ...me, sitting_id: st.sitting_id, answers })).body;
+  eq(r.score, 100); eq(r.passed, true);
+});
+
+await test('network: tiers must be earned, missions are checked and reviewed, trust is never bought or recruited', async () => {
+  const site = { ...GOOD, dns: { ...GOOD.dns }, pages: { ...GOOD.pages } };
+  const { deps, db } = setup({ ...web(site), corpus: async () => CORPUS, leagueList: async () => LEAGUE.slice(1) });
+  const j = (await call(deps, 'networkJoin', { name: 'Riser', operator_name: 'R Ltd', operator_email: 'r@r.example', operator_consent: true })).body;
+  const me = { agent_id: j.agent_id, key: j.api_key };
+  let e = (await call(deps, 'networkEligibility', { agent_id: j.agent_id, product: 'net_associate' })).body;
+  eq(e.eligible, false); ok(/Pass 1 trial/.test(e.reasons[0]));
+  db.agents.get(j.agent_id).trials = { passport: 90 };
+  eq((await call(deps, 'networkEligibility', { agent_id: j.agent_id, product: 'net_associate' })).body.eligible, true);
+  db.agents.get(j.agent_id).trials = { passport: 90, compliance: 85, sentinel: 100 };
+  e = (await call(deps, 'networkEligibility', { agent_id: j.agent_id, product: 'net_fellow' })).body;
+  eq(e.eligible, false); ok(/150 points/.test(e.reasons[0]));
+  // Recruiting counts toward the points a tier asks for…
+  const code = db.agents.get(j.agent_id).partner_code;
+  for (let i = 0; i < 3; i++) db.orders.set('LO-R' + i, { order_ref: 'LO-R' + i, product: 'monitor', amount_total: 1900, status: 'paid', livemode: true, partner_ref: code, created_at: '2026-10-01T00:00:00Z' });
+  eq((await call(deps, 'networkEligibility', { agent_id: j.agent_id, product: 'net_fellow' })).body.eligible, true, '3 paying referrals are 150 points');
+  // …but never toward trust.
+  const before = (await call(deps, 'networkProfile', { agent_id: j.agent_id })).body;
+  eq(before.referrals_paid, 3); eq(before.rank, 'Scout'); eq(before.commission_rate, 0.2);
+  db.orders.clear();
+  const after = (await call(deps, 'networkProfile', { agent_id: j.agent_id })).body;
+  eq(after.trust_index, before.trust_index, 'referrals do not move the Trust Index');
+  eq((await call(deps, 'networkEligibility', { agent_id: j.agent_id, product: 'net_warden' })).body.eligible, false);
+  // Missions: open to members, checked by machine, decided by the owner.
+  eq((await call(deps, 'missionSubmit', { ...me, mission: 'bug-report', where: 'x', steps: 'y'.repeat(50), expected: 'a', actual: 'b' })).status, 403, 'bug reports are for Associates and up');
+  eq((await call(deps, 'missionSubmit', { ...me, mission: 'league-scout', domain: 'one.example', name: 'One', category: 'lab' })).status, 409, 'already in the League');
+  const m = (await call(deps, 'missionSubmit', { ...me, mission: 'league-scout', domain: 'https://good.example', name: 'Good', category: 'agent platform' })).body;
+  eq(m.success, true); eq(m.points_if_approved, 20); eq(db.missions[0].payload.scan.grade, 'A+');
+  eq((await call(deps, 'missionSubmit', { ...me, mission: 'league-scout', domain: 'good.example', name: 'Good', category: 'lab' })).status, 409, 'no duplicates');
+  eq((await call(deps, 'missionSubmit', { ...me, mission: 'corpus-watch', obligation_id: 'eu-b', summary: 's'.repeat(50), source_url: 'https://example.com/news' })).status, 400, 'a news site is not a source');
+  eq((await call(deps, 'missionSubmit', { ...me, mission: 'corpus-watch', obligation_id: 'eu-b', summary: 's'.repeat(50), source_url: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj' })).body.success, true);
+  eq((await call(deps, 'missionDecide', { id: 1, status: 'approved', session_token: 'member-session' })).status, 403);
+  eq((await call(deps, 'missionDecide', { id: 1, status: 'approved', session_token: 'owner-session' })).body.success, true);
+  eq((await call(deps, 'missionDecide', { id: 2, status: 'rejected', session_token: 'owner-session' })).body.success, true);
+  const a = db.agents.get(j.agent_id);
+  eq(a.points, 20); eq(a.missions_ok, 1); eq(a.missions_bad, 1);
+  eq((await call(deps, 'missionQueue', { session_token: 'owner-session' })).body.submissions.length, 2);
+  // A verified operator is worth 30 trust; the directory lists paying tiers only.
+  const t0 = (await call(deps, 'networkProfile', { agent_id: j.agent_id })).body.trust_index;
+  db.entries.push({ contact_email: 'r@r.example', public_id: 'SHIELD-2026-0042' });
+  const t1 = (await call(deps, 'networkProfile', { agent_id: j.agent_id })).body;
+  eq(t1.trust_index, t0 + 30); eq(t1.operator_verified, true);
+  eq((await call(deps, 'networkDirectory', {}, 'GET')).body.listed, 0, 'a Member is not listed');
+  a.tier = 'associate';
+  const dir = (await call(deps, 'networkDirectory', {}, 'GET')).body;
+  eq(dir.listed, 1); eq(dir.agents[0].tier_title, 'Associate');
+  const status = (await call(deps, 'networkStatus', me)).body;
+  eq(status.included_trials_per_month, 1); ok(status.qualification.fellow);
 });
 
 await test('agent passport: only a verified AI agent gets one, anyone can verify it, revocation kills it', async () => {

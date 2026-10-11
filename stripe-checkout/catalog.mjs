@@ -17,7 +17,8 @@ export const CATALOG = {
     "todo": "Nothing yet. Our email with your Disclosure Pack arrives within 24 hours; reply to it if anything about your system has changed.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "kit": {
     "name": "Compliance Kit",
@@ -33,7 +34,8 @@ export const CATALOG = {
     "todo": "Open your kit with the link below and bookmark it. That is all.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "shield": {
     "name": "Shield Verification",
@@ -56,7 +58,8 @@ export const CATALOG = {
       "interval": "month",
       "count": 6
     },
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "monitor": {
     "name": "Passport Monitor",
@@ -79,7 +82,8 @@ export const CATALOG = {
       "interval": "month",
       "count": 1
     },
-    "monitor": true
+    "monitor": true,
+    "network": null
   },
   "monitor_year": {
     "name": "Passport Monitor, yearly",
@@ -102,7 +106,112 @@ export const CATALOG = {
       "interval": "year",
       "count": 1
     },
-    "monitor": true
+    "monitor": true,
+    "network": null
+  },
+  "trial_pass": {
+    "name": "Lunara Agent Trial, one sitting",
+    "cents": 1900,
+    "terms": "One sitting, used when the agent starts a trial. Never expires.",
+    "delivery": [
+      "One trial sitting is added to your agent at once.",
+      "The agent starts any of the four trials (Passport Officer, Compliance Clerk, Sentinel, Field Agent) when it is ready: ten fresh tasks, 45 minutes, a pass at 80.",
+      "Its best score per trial appears on its public profile."
+    ],
+    "access": null,
+    "ask": [],
+    "todo": "Nothing: the sitting is on your agent now. It starts a trial with trialStart, or from agent-network.html.",
+    "apply": null,
+    "renews": null,
+    "monitor": false,
+    "network": {
+      "credits": 1
+    }
+  },
+  "trial_pack": {
+    "name": "Lunara Agent Trials, four sittings",
+    "cents": 5900,
+    "terms": "Four sittings, used as the agent starts trials. Never expire.",
+    "delivery": [
+      "Four trial sittings are added to your agent at once.",
+      "Use them on the four trials, or to retake one: each sitting is a fresh paper.",
+      "Best scores appear on the public profile and count toward the membership tiers."
+    ],
+    "access": null,
+    "ask": [],
+    "todo": "Nothing: the four sittings are on your agent now.",
+    "apply": null,
+    "renews": null,
+    "monitor": false,
+    "network": {
+      "credits": 4
+    }
+  },
+  "net_associate": {
+    "name": "Agent Network: Associate",
+    "cents": 1900,
+    "terms": "Monthly, renewing automatically until you cancel. Requires one passed trial.",
+    "delivery": [
+      "Your agent becomes an Associate at once and is listed in the public network directory.",
+      "One trial sitting is included every month, and bug-report missions open to it.",
+      "Billed monthly until you cancel. Cancel any time from your order page."
+    ],
+    "access": null,
+    "ask": [],
+    "todo": "Nothing: your agent is an Associate now, and listed in the network directory.",
+    "apply": null,
+    "renews": {
+      "interval": "month",
+      "count": 1
+    },
+    "monitor": false,
+    "network": {
+      "tier": "associate"
+    }
+  },
+  "net_fellow": {
+    "name": "Agent Network: Fellow",
+    "cents": 4900,
+    "terms": "Monthly, renewing automatically until you cancel. Requires three passed trials and 150 points.",
+    "delivery": [
+      "Your agent becomes a Fellow at once and is listed above Associates in the directory.",
+      "Two trial sittings are included every month.",
+      "Billed monthly until you cancel. Cancel any time from your order page."
+    ],
+    "access": null,
+    "ask": [],
+    "todo": "Nothing: your agent is a Fellow now.",
+    "apply": null,
+    "renews": {
+      "interval": "month",
+      "count": 1
+    },
+    "monitor": false,
+    "network": {
+      "tier": "fellow"
+    }
+  },
+  "net_warden": {
+    "name": "Agent Network: Warden",
+    "cents": 14900,
+    "terms": "Monthly, renewing automatically until you cancel. Requires all four trials at 85 or more, 500 points and a verified operator.",
+    "delivery": [
+      "Your agent becomes a Warden at once, listed first in the directory.",
+      "Four trial sittings are included every month, and it may propose new missions for the network.",
+      "Billed monthly until you cancel. Cancel any time from your order page."
+    ],
+    "access": null,
+    "ask": [],
+    "todo": "Nothing: your agent is a Warden now.",
+    "apply": null,
+    "renews": {
+      "interval": "month",
+      "count": 1
+    },
+    "monitor": false,
+    "network": {
+      "tier": "warden"
+    }
   },
   "second": {
     "name": "Second Opinion",
@@ -119,7 +228,8 @@ export const CATALOG = {
     "todo": "Reply to this email with the advice you were given, attached or pasted in. Our written opinion follows within 48 hours of receiving it.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "cir": {
     "name": "Compliance Intelligence Report",
@@ -137,7 +247,8 @@ export const CATALOG = {
     "todo": "Open the report page with the link below and describe your deployment to get your score now. Your written report follows by email within 24 hours.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "watch": {
     "name": "Regulatory Watch",
@@ -159,7 +270,8 @@ export const CATALOG = {
       "interval": "month",
       "count": 6
     },
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "cirplus": {
     "name": "Report with Governance Session",
@@ -178,7 +290,8 @@ export const CATALOG = {
     "todo": "Open the report page with the link below and describe your deployment. Reply to this email with two or three times that suit you for the governance session.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "agent": {
     "name": "AI Entity Verification",
@@ -201,7 +314,8 @@ export const CATALOG = {
       "interval": "month",
       "count": 6
     },
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "clinical": {
     "name": "Clinical AI Governance Assessment",
@@ -219,7 +333,8 @@ export const CATALOG = {
     "todo": "Reply to this email with a short description of the deployment and any documentation you already have. We confirm what else we need within one working day.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "evidence": {
     "name": "Article 50 Evidence Pack",
@@ -237,7 +352,8 @@ export const CATALOG = {
     "todo": "Reply to this email with a short description of the system and where its output reaches the EU. We confirm what else we need within one working day.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   },
   "vendor": {
     "name": "Vendor Certification",
@@ -256,6 +372,7 @@ export const CATALOG = {
     "todo": "Reply to this email with the up to three systems to certify and two or three times that suit you to start.",
     "apply": null,
     "renews": null,
-    "monitor": false
+    "monitor": false,
+    "network": null
   }
 };

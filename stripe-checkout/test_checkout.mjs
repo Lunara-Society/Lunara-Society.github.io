@@ -148,6 +148,32 @@ await test('a partner code is written on the order and in Stripe; a malformed on
   ok(!calls[1].params.has('metadata[partner]'));
 });
 
+await test('network products need an agent that has qualified, and are delivered to it', async () => {
+  const { deps, pay, subs, db } = setup();
+  const net = [];
+  db.networkAddCredits = async (a, n) => net.push(['credits', a, n]);
+  db.networkSetTier = async (a, t, ref) => net.push(['tier', a, t, ref]);
+  db.networkEndTier = async (ref) => net.push(['end', ref]);
+  const asked = [];
+  const d = { ...deps, networkEligibility: async (a, p) => { asked.push([a, p]); return a === 'AGT-QWAMF1D7' ? { eligible: true, reasons: [] } : { eligible: false, reasons: ['Pass 1 trial with 80 or more (passed: 0).'] }; } };
+  let r = await buy(d, { product: 'trial_pack' });
+  eq(r.status, 400); ok(r.body.reasons[0].includes('agent id'));
+  r = await buy(d, { product: 'net_associate', agent_id: 'AGT-NTREADY1' });
+  eq(r.status, 403); ok(/Pass 1 trial/.test(r.body.reasons[0]), 'the registry says why');
+  r = await buy(d, { product: 'trial_pack', agent_id: 'agt-qwamf1d7' });
+  eq(r.status, 200); eq(db.orders.get(r.body.order).agent_id, 'AGT-QWAMF1D7');
+  pay('cs_test_1', { amount_total: 5900 });
+  await order(d, r.body.order);
+  eq(JSON.stringify(net[0]), JSON.stringify(['credits', 'AGT-QWAMF1D7', 4]), 'four sittings land on the agent');
+  r = await buy(d, { product: 'net_fellow', agent_id: 'AGT-QWAMF1D7' });
+  pay('cs_test_2', { amount_total: 4900, subscription: 'sub_n', customer: 'cus_n' });
+  await order(d, r.body.order);
+  eq(net[1][0], 'tier'); eq(net[1][2], 'fellow');
+  subs.sub_n = { id: 'sub_n', status: 'canceled', items: { data: [{ current_period_end: 1800000000 }] } };
+  await call(d, '/settle');
+  eq(JSON.stringify(net[2]), JSON.stringify(['end', r.body.order]), 'a lapsed membership drops the agent back to Member');
+});
+
 await test('a website hint that is not a domain is ignored', async () => {
   const { deps, calls } = setup();
   await buy(deps, { product: 'monitor', website: 'javascript:alert(1)' });

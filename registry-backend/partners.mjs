@@ -28,6 +28,24 @@
 
 export const COMMISSION_RATE = 0.2;
 export const COMMISSION_MONTHS = 12;
+
+/* Ranks, from the paying customers a partner (or a network agent)
+   brought in directly. A higher rank earns a higher rate on its own
+   referrals. Only direct referrals count, and nothing is ever paid on a
+   referral's referrals: paying people for their recruits' recruits is
+   how a pyramid scheme is built, and it is unlawful almost everywhere. */
+export const RANKS = [
+  { id: 'scout', title: 'Scout', min: 1, rate: 0.2 },
+  { id: 'envoy', title: 'Envoy', min: 5, rate: 0.2 },
+  { id: 'ambassador', title: 'Ambassador', min: 20, rate: 0.25 },
+  { id: 'consul', title: 'Consul', min: 50, rate: 0.3 }
+];
+export function rankFor(paidReferrals) {
+  let r = null;
+  for (const x of RANKS) if (paidReferrals >= x.min) r = x;
+  return r;
+}
+export const rateForRank = (rank) => (rank ? rank.rate : COMMISSION_RATE);
 // Months between charges of each renewing product (lunara-pricing.js renews).
 const TERM_MONTHS = { monitor: 1, monitor_year: 12, shield: 6, watch: 6, agent: 6 };
 export const PARTNER_TYPES =['agent_builder', 'agent_platform', 'agency', 'ai_agent', 'integrator', 'other'];
@@ -45,7 +63,8 @@ export const referralLink = (code, page = '') => `${SITE}${page}?ref=${code}`;
 
 export function terms() {
   return {
-    commission: `${Math.round(COMMISSION_RATE * 100)}% of every payment from customers you refer, renewals included, for their first ${COMMISSION_MONTHS} months`,
+    commission: `${Math.round(COMMISSION_RATE * 100)}% of every payment from customers you refer, renewals included, for their first ${COMMISSION_MONTHS} months; 25% from the rank of Ambassador (20 paying customers) and 30% from Consul (50)`,
+    ranks: RANKS.map(({ title, min, rate }) => ({ title, paying_customers: min, rate })),
     rate: COMMISSION_RATE,
     months: COMMISSION_MONTHS,
     tracking: 'Share any lunarasociety.com link with ?ref=YOUR_CODE, or send "ref" with a checkout request. A referral is remembered for 90 days.',
@@ -116,13 +135,16 @@ export async function partnerRoute(name, body, deps, ipHash, h) {
       const renewals = term ? Math.min(o.renewals || 0, Math.ceil(COMMISSION_MONTHS / term) - 1) : 0;
       return sum + o.amount_total * (1 + renewals);
     }, 0);
+    const rank = rankFor(paid.length);
+    const rate = rateForRank(rank);
     return json({
       success: true, code, partner_name: p.partner_name, status: p.status,
+      rank: rank ? rank.title : null, rate,
       referral_link: referralLink(code),
       referred_checkouts: orders.length, referred_paid: paid.length,
       active_subscriptions: paid.filter((o) => o.sub_status === 'active' && !o.cancel_at_period_end).length,
       referred_revenue_usd: Math.round(earned) / 100,
-      commission_usd: Math.round(earned * COMMISSION_RATE) / 100,
+      commission_usd: Math.round(earned * rate) / 100,
       payable: p.status === 'approved',
       note: p.status === 'approved' ? 'Paid monthly by bank transfer once the balance passes $50.' : 'Commission accrues now and is paid once your application is approved.'
     });

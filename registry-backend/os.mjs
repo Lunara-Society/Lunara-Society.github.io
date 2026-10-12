@@ -34,6 +34,8 @@
    the table immutable, and the pages say so.
    ═══════════════════════════════════════════════════════════════════ */
 
+import { STALE, MONITOR_STALE } from './passport-routes.mjs';
+
 export const AUDIT_GENESIS = '0'.repeat(64);
 const DAY = 86400e3;
 
@@ -200,9 +202,29 @@ export async function osRoute(name, req, body, deps, h) {
     } catch { database = { status: 'unavailable', latency_ms: Date.now() - t0 }; }
     let signing = { status: 'unknown' };
     try { signing = { status: deps.db.getActiveKey && (await deps.db.getActiveKey()) ? 'configured' : 'not_configured', note: 'Agent-passport signing key; created when the first passport is issued.' }; } catch { signing = { status: 'unknown' }; }
-    let lastScan = null;
-    try { const s = deps.db.recentScans ? await deps.db.recentScans(1) : null; lastScan = s && s[0] ? iso(s[0].scanned_at) : null; } catch { lastScan = null; }
-    const lastScanAge = lastScan ? now - Date.parse(lastScan) : null;
+    // The rescan job is judged by whether it keeps up with its own policy:
+    // every league domain rescanned within a week, every monitored one
+    // within a day. A quiet hour is not a fault; an overdue domain is.
+    let rescans = { status: 'unknown', note: 'The league or the passport store did not answer.' };
+    try {
+      const league = ((deps.leagueList ? await deps.leagueList() : null) || []).map((e) => e.domain);
+      const monitored = new Set((deps.db.monitoredDomains ? await deps.db.monitoredDomains().catch(() => []) : []) || []);
+      const all = [...new Set([...league, ...monitored])];
+      if (all.length && deps.db.getPassports) {
+        const rows = new Map(((await deps.db.getPassports(all)) || []).map((r) => [r.domain, r]));
+        const grace = 1 * DAY, mgrace = 6 * 3600e3;
+        const overdue = all.filter((d) => { const r = rows.get(d); if (!r) return true; const age = now - Date.parse(r.scanned_at); return monitored.has(d) ? age > MONITOR_STALE + mgrace : age > STALE + grace; });
+        const times = [...rows.values()].map((r) => Date.parse(r.scanned_at)).filter(Number.isFinite);
+        const share = overdue.length / all.length;
+        rescans = {
+          status: overdue.length === 0 ? 'operational' : share < 0.25 ? 'degraded' : 'unavailable',
+          last_run: times.length ? iso(Math.max(...times)) : null,
+          oldest: times.length ? iso(Math.min(...times)) : null,
+          tracked: all.length, overdue: overdue.length,
+          note: overdue.length ? `${overdue.length} of ${all.length} tracked domains are past their rescan date.` : `All ${all.length} tracked domains are within their rescan policy (league weekly, monitored daily).`
+        };
+      } else if (!all.length) rescans = { status: 'unknown', note: 'No domain is tracked yet.' };
+    } catch { /* stays unknown */ }
     return json({
       success: true,
       checked_at: iso(now),
@@ -214,11 +236,7 @@ export async function osRoute(name, req, body, deps, h) {
         mail: { status: deps.mail ? 'configured' : 'not_configured', note: deps.mail ? 'A mail provider key is set; delivery itself is not tested here.' : 'No mail provider key: nothing is emailed.' },
         model: { status: deps.ai ? 'configured' : 'not_configured', note: 'The language model behind the public chat.' },
         signing,
-        passport_rescans: {
-          status: lastScanAge == null ? 'unknown' : lastScanAge <= 2 * 3600e3 ? 'operational' : lastScanAge <= DAY ? 'degraded' : 'unavailable',
-          last_run: lastScan,
-          note: 'The hourly rescan job (passport-tick). Judged by the newest stored scan.'
-        }
+        passport_rescans: rescans
       }
     });
   }

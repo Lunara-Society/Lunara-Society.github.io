@@ -803,21 +803,24 @@ function withAudit(db) {
 }
 
 await test('systemStatus measures the database and reports what is not configured', async () => {
-  const { deps, db } = setup({ mail: null });
+  const { deps, db } = setup({ mail: null, leagueList: async () => [{ domain: 'acme.example' }, { domain: 'quiet.example' }] });
   withAudit(db);
   db.passports.set('acme.example', { domain: 'acme.example', score: 70, grade: 'B', scanned_at: '2026-10-04T11:30:00Z', checks: [] });
+  db.passports.set('quiet.example', { domain: 'quiet.example', score: 50, grade: 'C', scanned_at: '2026-09-30T00:00:00Z', checks: [] });
   let r = (await call(deps, 'systemStatus', null, 'GET')).body;
   eq(r.components.database.status, 'operational'); ok(typeof r.components.database.latency_ms === 'number');
   eq(r.components.mail.status, 'not_configured');
   eq(r.components.signing.status, 'not_configured');
-  eq(r.components.passport_rescans.status, 'operational');
+  eq(r.components.passport_rescans.status, 'operational', 'a domain scanned five days ago is within the weekly policy');
+  eq(r.components.passport_rescans.tracked, 2); eq(r.components.passport_rescans.overdue, 0);
   eq(r.checked_at, '2026-10-04T12:00:00.000Z');
   ok(!JSON.stringify(r).match(/supabase|service_role|apikey/i), 'no hostnames or keys');
   db.ping = async () => { throw new Error('connection refused'); };
-  db.passports.get('acme.example').scanned_at = '2026-10-01T00:00:00Z';
+  db.passports.get('quiet.example').scanned_at = '2026-09-20T00:00:00Z';
   r = (await call(deps, 'systemStatus', null, 'GET')).body;
   eq(r.components.database.status, 'unavailable', 'a failed probe is never reported as up');
-  eq(r.components.passport_rescans.status, 'unavailable');
+  eq(r.components.passport_rescans.status, 'unavailable', 'half the league overdue: the job is not keeping up');
+  eq(r.components.passport_rescans.overdue, 1);
 });
 
 await test('activityFeed shows only what is already public, each event with its source', async () => {

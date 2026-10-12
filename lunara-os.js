@@ -271,11 +271,11 @@
           return { status: st, ms: r.ms, at: j.last_sweep, note: 'Last sweep ' + ago(j.last_sweep) + ' · ' + (j.sources || []).length + ' sources' + (failing ? ', ' + failing + ' failing' : ', none failing') + '.' };
         });
       } },
-    { id: 'rescans', name: 'Passport rescans (hourly)', group: 'Workers', core: true, derive: 'registry', proves: 'The newest stored passport scan, as the registry reports it.',
+    { id: 'rescans', name: 'Passport rescans (hourly)', group: 'Workers', core: true, derive: 'registry', proves: 'Whether every tracked domain was rescanned within its policy (league weekly, monitored daily), as the registry counts it.',
       from: function (reg) {
         var c = reg && reg.detail && reg.detail.components && reg.detail.components.passport_rescans;
         if (!c) return { status: 'unknown', note: 'Not reported: the detailed status route is not deployed yet.' };
-        return { status: c.status, at: c.last_run, note: c.last_run ? 'Newest scan ' + ago(c.last_run) + '.' : 'No scan stored.' };
+        return { status: c.status, at: c.last_run, note: (c.note || '') + (c.last_run ? ' Newest scan ' + ago(c.last_run) + '.' : '') };
       } },
     { id: 'mail', name: 'Outgoing email', group: 'Core', core: false, derive: 'registry', proves: 'Whether a mail provider key is set. Delivery itself is not tested.',
       from: function (reg) {

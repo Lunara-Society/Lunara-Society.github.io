@@ -193,7 +193,7 @@ await test('the health vocabulary is the five honest words, and a failed request
 });
 await test('page transitions make no security claim', async () => {
   const locks = readText('lunara-locks.js');
-  for (const bad of ['Access granted', 'Authenticating', 'SIG ED25519', 'CLEARANCE Λ5 · GRANTED', 'CHANNEL SECURED', 'ML-KEM', 'REVOCATION · CLEAR', 'IRIS CODE', 'VEIN MAP']) ok(!locks.includes(bad), 'still says ' + bad);
+  for (const bad of ['Access granted', 'Authenticating', 'SIG ED25519', 'CLEARANCE Λ5 · GRANTED', 'CHANNEL SECURED', 'ML-KEM', 'REVOCATION · CLEAR', 'IRIS CODE', 'VEIN MAP', 'ISO 19794-6', 'PQC', 'Clearance reader']) ok(!locks.includes(bad), 'still says ' + bad);
   ok(locks.includes('not a security check'), 'says what it is');
   ok(/COOLDOWN = 60e3/.test(locks), 'a full lock at most once a minute');
   ok(/'Escape'/.test(locks), 'Esc skips it');

@@ -411,7 +411,7 @@
 
     /* A holographic clearance card drops into a reader; red, amber, green. */
     card: {
-      name: 'Clearance reader · level 5', dur: 1450,
+      name: 'Card reader · Λ5', dur: 1450,
       html: function () {
         return '<div class="kc"><div class="kc-card"><img src="/lunara_emblem_96.png" alt=""><div class="kc-chip"></div>'
           + '<p style="top:16px">Lunara Society</p><p style="top:84px;font-size:13px;letter-spacing:.3em;color:#F4ECD8">TRANSIT Λ5</p><p style="top:106px;color:rgba(127,224,176,.85)">Between pages · no access check</p></div>'
@@ -431,7 +431,7 @@
 
     /* A palm on glass: the wireframe drawn by laser, the vein map matched. */
     palm: {
-      name: 'Palm-vein scanner · NIR', dur: 1550,
+      name: 'Palm plate · NIR glow', dur: 1550,
       html: function () {
         var hand = [
           // one continuous outline, wrist to wrist: thumb, index, middle, ring, little finger
@@ -468,7 +468,7 @@
 
     /* An iris, generated: eyelids open, rings turn, a laser fan reads it. */
     iris: {
-      name: 'Iris recognition · ISO 19794-6', dur: 1500,
+      name: 'Iris aperture · twelve blades', dur: 1500,
       html: function () {
         var hud = '<g class="spin"><circle cx="200" cy="200" r="168" fill="none" stroke="rgba(127,224,176,.45)" stroke-width="1" stroke-dasharray="2 6"/>'
           + Array.apply(null, Array(24)).map(function (_, i) { var a = polar(200, 200, 168, i * 15), b = polar(200, 200, i % 6 === 0 ? 150 : 160, i * 15); return '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="rgba(127,224,176,.7)"/>'; }).join('') + '</g>'
@@ -513,7 +513,7 @@
 
     /* A double helix turns in depth while its base pairs are matched. */
     genome: {
-      name: 'Genome lock · 2,048 bp', dur: 1500,
+      name: 'Helix lock · 2,048 rungs', dur: 1500,
       html: function () { return '<div class="dn"><canvas width="800" height="560"></canvas></div>'; },
       run: function (root, side) {
         var cv = q(root, 'canvas'), x = cv.getContext('2d'), W = 800, H = 560, t0 = performance.now(), dur = 1500, N = 30;
@@ -606,7 +606,7 @@
 
     /* Two key streams meet; three hexagonal shells unlock in turn. */
     handshake: {
-      name: 'Quantum handshake · PQC', dur: 1450,
+      name: 'Hexagon handshake · three shells', dur: 1450,
       html: function () {
         function hex(r) { var p = []; for (var i = 0; i < 6; i++) { var pt = polar(200, 200, r, i * 60 + 30); p.push(pt[0].toFixed(1) + ',' + pt[1].toFixed(1)); } return p.join(' '); }
         function stream() { var s = ''; for (var i = 0; i < 48; i++) s += Math.random().toString(16).slice(2, 8).toUpperCase() + '<br>'; return '<div>' + s + s + '</div>'; }

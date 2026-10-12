@@ -516,6 +516,38 @@ paths:
         '200':
           description: A JSON-RPC response whose result is the agent's message
 
+  /systemStatus:
+    get:
+      tags: [Operations]
+      summary: Measured status of the registry and its dependencies
+      description: A timed database round trip, and whether mail, the model and the passport signing key are configured. Booleans and latencies only; no keys, hostnames or traces.
+      operationId: systemStatus
+      responses:
+        '200':
+          description: "{checked_at, components: {api, database, mail, model, signing, passport_rescans}}, each with status operational | degraded | unavailable | unknown | configured | not_configured"
+
+  /activityFeed:
+    get:
+      tags: [Operations]
+      summary: The public activity record
+      description: Events already public on the site, each with its source table and recorded time. Optional since (ISO time) and limit (1-100).
+      operationId: activityFeed
+      responses:
+        '200':
+          description: "{generated_at, scope: public, sources, events: [{id, type, at, source, title, subject, detail, link}]}"
+
+  /missionHistory:
+    post:
+      tags: [Agents]
+      summary: An agent's own mission submissions and how each was decided
+      description: Requires the agent_id and the key issued at networkJoin. Returns only that agent's submissions.
+      operationId: missionHistory
+      responses:
+        '200':
+          description: "{agent_id, tier, submissions: [{id, mission, title, state: under_review | approved | rejected, points, submitted_at, decided_at, note}]}"
+        '401':
+          description: Wrong agent id or key
+
   /visitorTrack:
     post:
       summary: Track page visit
@@ -523,6 +555,8 @@ paths:
       operationId: visitorTrack
 
 tags:
+  - name: Operations
+    description: Measured status and the public activity record
   - name: Registry
     description: Entity verification and registry lookup
   - name: Compliance

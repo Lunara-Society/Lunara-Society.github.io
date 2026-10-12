@@ -147,7 +147,7 @@ async function publicEvents(deps, h, since) {
     const moved = s.prev_score != null && s.prev_score !== s.score;
     ev.push({ id: `pp:${s.domain}:${s.scanned_at}`, type: moved ? 'passport.changed' : 'passport.scanned', at: iso(s.scanned_at), source: 'passport_scans',
       title: moved ? `${names.get(s.domain) || s.domain}: passport ${s.prev_score} → ${s.score}` : `${names.get(s.domain) || s.domain}: passport ${s.score} (${s.grade})`,
-      subject: s.domain, detail: moved ? `${s.prev_grade} → ${s.grade}` : s.grade,
+      subject: s.domain, detail: moved ? `grade ${s.prev_grade} → ${s.grade}` : null,
       link: `https://lunarasociety.com/passport.html?d=${encodeURIComponent(s.domain)}` });
   }
 

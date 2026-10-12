@@ -111,3 +111,37 @@ create table if not exists public.registry_keys (
   active boolean not null default true, created_at timestamptz not null default now()
 );
 alter table public.registry_keys enable row level security;
+
+-- The audit chain (os.mjs). One row per privileged decision: who, what,
+-- on which record, the outcome, the reason and a correlation id. Each row
+-- carries the hash of the row before it and its own hash, so an edit,
+-- a removal or an insertion in the middle breaks the chain. Append-only:
+-- UPDATE, DELETE and TRUNCATE raise. prev_hash is unique, so two writers
+-- cannot fork the chain. The database owner can still drop the trigger;
+-- the chain makes that evident, it does not make it impossible.
+create table if not exists public.admin_audit (
+  seq bigserial primary key,
+  at timestamptz not null,
+  actor text not null,
+  action text not null,
+  target text,
+  outcome text not null,
+  reason text,
+  correlation_id text not null,
+  detail jsonb,
+  prev_hash text not null unique,
+  hash text not null unique
+);
+alter table public.admin_audit enable row level security;
+revoke all on public.admin_audit from anon, authenticated;
+create or replace function public.admin_audit_append_only() returns trigger
+  language plpgsql set search_path = '' as $$
+begin
+  raise exception 'admin_audit is append-only';
+end $$;
+drop trigger if exists admin_audit_no_change on public.admin_audit;
+create trigger admin_audit_no_change before update or delete on public.admin_audit
+  for each row execute function public.admin_audit_append_only();
+drop trigger if exists admin_audit_no_truncate on public.admin_audit;
+create trigger admin_audit_no_truncate before truncate on public.admin_audit
+  for each statement execute function public.admin_audit_append_only();

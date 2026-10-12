@@ -31,8 +31,8 @@ export const PASSPORT_LIMIT_HOUR = 30;
 export const BADGE_GRADES = ['A+', 'A', 'B'];
 const GRADE_RANK = { F: 0, D: 1, C: 2, B: 3, A: 4, 'A+': 5 };
 const DAY = 86400e3;
-const STALE = 6.5 * DAY;
-const MONITOR_STALE = 20 * 3600e3;   // daily, with slack for the schedule
+export const STALE = 6.5 * DAY;
+export const MONITOR_STALE = 20 * 3600e3;   // daily, with slack for the schedule
 const TICK_BATCH = 6;
 const SITE = 'https://lunarasociety.com/';
 const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i;
@@ -104,6 +104,9 @@ export async function passportRoute(name, body, deps, ipHash, h) {
       const monitored = !!(deps.db.monitorFor && await deps.db.monitorFor(domain).catch(() => null));
       return json({
         success: true, found: true, ...brief(r), fresh, monitored,
+        // What each check earned on that scan, partial credit included, so
+        // the scenario lab (simulate.html) starts from the measured score.
+        earned: Array.isArray(r.checks) ? Object.fromEntries(r.checks.map((c) => [c.id, c.earned])) : null,
         eligible: fresh && BADGE_GRADES.includes(r.grade),
         passport: passportUrl(domain)
       });

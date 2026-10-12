@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Activity and Audit: The Record of What Happened | Lunara Society</title>
+<meta name="description" content="Lunara's public activity record with its sources, and the owner's hash-linked audit chain of every privileged decision, re-verified in your browser.">
+<link rel="canonical" href="https://lunarasociety.com/audit.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/audit.html">
+<meta property="og:title" content="Lunara activity and audit">
+<meta property="og:description" content="The public activity record, and a tamper-evident chain of every privileged decision.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.au-hash{font:400 11px/1.4 var(--os-mono);color:var(--os-muted-2);word-break:break-all}
+.au-link{display:flex;align-items:center;gap:8px;color:var(--os-muted);font:400 10.5px/1 var(--os-mono)}
+.au-link i{flex:1;height:1px;background:linear-gradient(90deg,var(--os-gold-line),transparent)}
+</style>
+</head>
+<body class="os" data-workspace="Activity and Audit">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/command.html">Command Center</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Activity and audit</div>
+            <h1>What happened, <em>and who decided it.</em></h1>
+            <p class="os-lede">Two records. The public activity stream is everything the site already publishes, in one place, each event with the table it came from. The audit chain is every privileged decision: who made it, on what, with what outcome and why, each linked by hash to the one before. The chain is for the owner; the server refuses it to anyone else.</p>
+          </div>
+        </div>
+
+        <div class="os-tabs" role="tablist" aria-label="Record">
+          <button type="button" role="tab" id="tab-act" aria-selected="true" aria-controls="pan-act">Public activity</button>
+          <button type="button" role="tab" id="tab-chain" aria-selected="false" aria-controls="pan-chain">Audit chain</button>
+        </div>
+
+        <section id="pan-act" role="tabpanel" aria-labelledby="tab-act">
+          <div class="os-plate">
+            <div class="os-plate-h">
+              <div class="os-chips" id="au-filters" role="group" aria-label="Filter by kind"></div>
+              <span class="r"><span class="os-fresh" id="au-fresh"></span><button type="button" class="os-btn small" id="au-export">Export JSON</button></span>
+            </div>
+            <div id="au-feed"><div class="os-plate-b"><div class="os-skel"></div><div class="os-skel"></div></div></div>
+          </div>
+        </section>
+
+        <section id="pan-chain" role="tabpanel" aria-labelledby="tab-chain" hidden>
+          <div id="au-chain"><div class="os-plate os-plate-b"><div class="os-skel"></div></div></div>
+        </section>
+
+        <section class="os-grid c2" style="margin-top:22px">
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">What the chain proves</h2></div>
+            <div class="os-plate-b">
+              <p>Each record carries the SHA-256 of the record before it and its own SHA-256 over a canonical form of its fields. Change one word in an old record, remove one, or slip one in between, and every hash after it stops matching. This page recomputes every hash in your browser, with the same code the server runs, rather than trusting the server's own verdict.</p>
+              <p>The table refuses updates, deletions and truncation at the database, and two decisions made at once cannot fork the chain, because a hash can be the predecessor of only one record.</p>
+            </div>
+          </div>
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">What it does not prove</h2></div>
+            <div class="os-plate-b">
+              <p>Whoever controls the database could switch the guard off and rewrite the whole chain consistently from the first record. A chain that checks out says the records agree with one another; it does not say they are the records that were first written. That is why the head hash can be downloaded: keep a copy, and a later rewrite will not match it.</p>
+              <p>The timestamps are the application's clock, not an independent timestamping authority. Nothing here is described as immutable, because it is not.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">This page reads the live record and needs JavaScript.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script type="module" src="/os/audit.js"></script>
+</body>
+</html>

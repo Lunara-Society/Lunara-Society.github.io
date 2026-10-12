@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Intelligence Workspace: Sourced Search | Lunara Society</title>
+<meta name="description" content="Search Lunara's real records with their sources and dates, and ask an AI separately, its answer clearly marked as generated and unsourced.">
+<link rel="canonical" href="https://lunarasociety.com/investigate.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/investigate.html">
+<meta property="og:title" content="The Lunara Intelligence workspace">
+<meta property="og:description" content="Sourced records and AI answers, side by side and never confused.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.iv-q{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:14px}
+.iv-q .os-input{min-height:52px;font-size:16px}
+.iv-cols{display:grid;grid-template-columns:230px 1fr 400px;gap:18px;align-items:start}
+.iv-src label{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;cursor:pointer}
+.iv-src input{accent-color:var(--os-gold);width:16px;height:16px}
+.iv-src .st{margin-left:auto;font:400 10px var(--os-mono);color:var(--os-muted)}
+.iv-hit{padding:12px 18px;border-bottom:1px solid var(--os-hair)}
+.iv-hit:last-child{border-bottom:0}
+.iv-hit .t{font-size:14px}
+.iv-hit .m{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:6px}
+.iv-ai{border:1px dashed rgba(217,166,79,.45)}
+.iv-ai .ans{white-space:pre-wrap;font-size:13.5px;line-height:1.65;color:var(--os-platinum)}
+.iv-hist button{all:unset;display:block;cursor:pointer;padding:5px 0;font-size:12.5px;color:var(--os-muted-2)}
+.iv-hist button:hover,.iv-hist button:focus-visible{color:var(--os-gold-hi)}
+</style>
+</head>
+<body class="os" data-workspace="Intelligence">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea" data-dock="off">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/intelligence.html">The Regulatory Record</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Intelligence</div>
+            <h1>Ask a question. <em>Keep the sources.</em></h1>
+            <p class="os-lede">The middle column searches Lunara's records as they stand now, grouped by kind, each with its source, its date and the time it was read. The right column asks an AI model the same question; its answer is generated, unsourced and can be wrong, and it is never mixed into the records. Your searches stay in this browser.</p>
+          </div>
+        </div>
+
+        <form class="iv-q" id="iv-form" role="search">
+          <label class="os-sr" for="iv-in">Question or search terms</label>
+          <input class="os-input" id="iv-in" placeholder="Which obligations apply from December 2026? Is example.com on the register?" autocomplete="off">
+          <button class="os-btn primary" type="submit">Search records</button>
+          <button class="os-btn" type="button" id="iv-ask">Also ask the AI</button>
+        </form>
+
+        <div class="iv-cols">
+          <aside>
+            <div class="os-plate">
+              <div class="os-plate-h"><span class="os-eyebrow">Sources</span></div>
+              <div class="os-plate-b iv-src" id="iv-src" role="group" aria-label="Sources to search"></div>
+            </div>
+            <div class="os-plate" style="margin-top:14px">
+              <div class="os-plate-h"><span class="os-eyebrow">Filters</span></div>
+              <div class="os-plate-b iv-src">
+                <label><input type="checkbox" id="iv-verified"> Verified or signed only</label>
+                <label><input type="checkbox" id="iv-dated"> Has a date</label>
+              </div>
+            </div>
+            <div class="os-plate" style="margin-top:14px">
+              <div class="os-plate-h"><span class="os-eyebrow">History</span><span class="r"><button type="button" class="os-btn small quiet" id="iv-clear">Clear</button></span></div>
+              <div class="os-plate-b iv-hist" id="iv-hist"></div>
+            </div>
+          </aside>
+
+          <section aria-labelledby="iv-res-h">
+            <div class="os-plate">
+              <div class="os-plate-h"><h2 id="iv-res-h" style="font-size:19px">Records</h2><span class="os-note" id="iv-mode">Global search</span><span class="r"><button type="button" class="os-btn small" id="iv-save" disabled>Save</button><button type="button" class="os-btn small" id="iv-export" disabled>Export</button></span></div>
+              <div id="iv-res" aria-live="polite"><div class="os-empty"><strong>Search Lunara's records</strong><p>Type a question or a few words. Matching uses the words you type against the records' own text: it finds, it does not interpret.</p></div></div>
+            </div>
+          </section>
+
+          <section aria-labelledby="iv-ai-h">
+            <div class="os-plate iv-ai">
+              <div class="os-plate-h"><h2 id="iv-ai-h" style="font-size:19px">AI answer</h2><span class="r"><span class="os-trust ai" title="Generated by a language model. Not sourced, and not checked against the records.">AI-generated · unsourced</span></span></div>
+              <div class="os-plate-b" id="iv-ai-b"><p class="os-note">Press "Also ask the AI" to put the question to Rosario, Lunara's assistant, running on a language model. The answer appears here, marked as generated. Check anything it says against a record on the left before relying on it.</p></div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">This workspace searches live records and needs JavaScript.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script src="/os/investigate.js"></script>
+</body>
+</html>

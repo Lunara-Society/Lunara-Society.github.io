@@ -23,6 +23,9 @@
      networkEligibility, trialInfo, trialStart, trialSubmit,
      missionList, missionSubmit   the Agent Network (network.mjs, trials.mjs)
    Owner only: missionQueue, missionDecide
+     systemStatus, activityFeed   the operating picture, public (os.mjs)
+     osSession                    is this session the owner? (for the shell)
+     opsActivity, auditLog        the owner's activity, queue and audit chain
      newsletterSubscribe   { email }
      lunaraScoreReport     a scorer result, kept as a lead
      article50Assess       the Article 50 assessment engine
@@ -51,6 +54,7 @@ import { opsStats } from './ops.mjs';
 import { partnerRoute } from './partners.mjs';
 import { a2aRoute } from './a2a.mjs';
 import { networkRoute, decideMission } from './network.mjs';
+import { osRoute, recordAudit, correlationId } from './os.mjs';
 
 export const PROTOCOL = 'LUNA-PROTO-1';
 export const FOUNDING_CAP = 80;
@@ -364,15 +368,29 @@ export async function handleRegistry(req, deps) {
     case 'passportWatch': case 'passportWatchSet': case 'passportLead':
       return passportRoute(name, body, deps, ipHash, { json, normDomain, limited, send, mailHtml, randomToken, ownerEmail });
 
-    case 'agentPassportKeys': case 'agentPassportVerify': case 'agentPassportIssue':
+    case 'agentPassportKeys': case 'agentPassportVerify':
       return agentPassportRoute(name, body, deps, { json, isOwner });
+    case 'agentPassportIssue': {
+      // Issuing a signed passport is a consequential trust act: audited.
+      const res = await agentPassportRoute(name, body, deps, { json, isOwner });
+      const out = await res.clone().json().catch(() => null);
+      if (out && out.success) {
+        const who = deps.whoIs ? await deps.whoIs(body.session_token) : null;
+        await recordAudit(deps, { actor: who && who.email, action: 'agent_passport.issue', target: out.payload && out.payload.sub, outcome: 'issued',
+          detail: { kid: out.payload && out.payload.kid, exp: out.payload && out.payload.exp } }, sha256hex);
+      }
+      return res;
+    }
+
+    case 'systemStatus': case 'activityFeed': case 'opsActivity': case 'auditLog': case 'osSession':
+      return osRoute(name, req, body, deps, { json, isOwner, sha256hex, PROTOCOL });
 
     case 'shieldApply': return apply(body, deps, ipHash);
     case 'shieldVerifyDomain': return verifyDomain(body, deps);
     case 'shieldMemberStatus': return memberStatus(body, deps);
 
     case 'networkJoin': case 'networkProfile': case 'networkStatus': case 'networkDirectory': case 'networkEligibility':
-    case 'trialInfo': case 'trialStart': case 'trialSubmit': case 'missionList': case 'missionSubmit':
+    case 'trialInfo': case 'trialStart': case 'trialSubmit': case 'missionList': case 'missionSubmit': case 'missionHistory':
       return networkRoute(name, body, deps, ipHash, { json, normDomain, limited, send, ownerEmail, sha256hex, call });
 
     case 'shieldPartnerApply': case 'partnerApply': case 'partnerStats': {
@@ -579,12 +597,27 @@ function deskRecord(a) {
 async function admin(name, body, deps) {
   const who = deps.whoIs ? await deps.whoIs(body.session_token) : null;
   if (!who || !isOwner(who.email, deps.env)) return json({ success: false, error: 'Owner sign-in required.' }, 403);
+  // Every decision that changes a record is appended to the audit chain
+  // (os.mjs) with the actor, the target, the outcome, the reason and one
+  // correlation id, which the answer carries back to the desk.
+  const cid = correlationId();
+  const audited = async (res, entry) => {
+    const out = await res.clone().json().catch(() => null);
+    if (!out || !out.success) return res;
+    const e = entry(out);
+    if (!e) return res;
+    const a = await recordAudit(deps, { ...e, actor: who.email, correlation_id: cid }, sha256hex);
+    return json({ ...out, correlation_id: cid, audited: a.audited }, res.status);
+  };
 
   if (name === 'missionQueue') {
     const rows = (await deps.db.misList()) || [];
     return json({ success: true, submissions: rows.slice(0, 200) });
   }
-  if (name === 'missionDecide') return decideMission(body, deps, { json, clean });
+  if (name === 'missionDecide') {
+    return audited(await decideMission(body, deps, { json, clean }), (o) => ({
+      action: 'mission.decide', target: `mission_submission:${o.id}`, outcome: o.status, reason: clean(body.note, 500) || null }));
+  }
 
   if (name === 'partnerDecide') {
     const code = clean(body.code, 12).toUpperCase();
@@ -598,7 +631,8 @@ async function admin(name, body, deps) {
         ? { to: p.contact_email, subject: `You are an approved Lunara partner (${code})`, text: `${p.partner_name} is approved in the Lunara Agent Partner Program. Your code ${code} now earns 20% of every payment from the customers it brings, for their first 12 months, paid monthly by bank transfer once the balance passes $50. Reply with your payout details.\n\nYour numbers: ${SITE}agents.html#stats\n\nLunara Society · lunarasociety.com` }
         : { to: p.contact_email, subject: `Your Lunara partner application (${code})`, text: `Thank you for applying. We are not taking ${p.partner_name} into the partner program at this time${body.note ? ': ' + clean(body.note, 500) : '.'} Lunara's free tools stay open to you.\n\nLunara Society · lunarasociety.com` });
     }
-    return json({ success: true, code, status });
+    return audited(json({ success: true, code, status }), () => (status === was ? null : {
+      action: 'partner.decide', target: `partner:${code}`, outcome: status, reason: clean(body.note, 500) || null, detail: { from: was } }));
   }
 
   if (name === 'lunaraScorerLeads') {
@@ -649,5 +683,7 @@ async function admin(name, body, deps) {
   const updated = { ...a, ...patch };
   const mail = decisionEmail(updated);
   const emailed = mail ? await send(deps, mail) : false;
-  return json({ success: true, record: deskRecord(updated), emailed });
+  return audited(json({ success: true, record: deskRecord(updated), emailed }), () => ({
+    action: `registry.${decision}`, target: `registry_entry:${id}`, outcome: patch.status, reason: note,
+    detail: { from: a.status, reviewer: reviewer || null, identity_checked: decision === 'approve' ? true : undefined, expires_at: patch.expires_at || undefined } }));
 }

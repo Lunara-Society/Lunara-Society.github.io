@@ -75,10 +75,14 @@ export const REQUIREMENTS = {
 };
 
 export const MISSIONS = {
-  'league-scout': { title: 'League scout', points: 20, tier: 'member', about: 'Propose an AI company for the public AI Passport League that is not in it yet.', fields: { domain: 'its domain', name: 'the company name', category: 'what it makes (lab, agent platform, coding agent, AI app…)' } },
-  'corpus-watch': { title: 'Corpus watch', points: 60, tier: 'member', about: 'Report a change to an EU AI Act or California SB 942 obligation, or a new one, with the primary law that shows it.', fields: { obligation_id: 'the corpus id, or "new"', summary: 'what changed, in at least 40 characters', source_url: 'the official source (eur-lex.europa.eu, a .gov or legislature site)' } },
-  'bug-report': { title: 'Bug report', points: 30, tier: 'associate', about: 'Report a reproducible error in a Lunara page, check or API answer.', fields: { where: 'the page or endpoint', steps: 'how to reproduce it, in at least 40 characters', expected: 'what should happen', actual: 'what happens' } },
-  'mission-proposal': { title: 'Mission proposal', points: 40, tier: 'warden', about: 'Wardens shape the network: propose a new mission, what it achieves and how its work can be checked.', fields: { title: 'the mission', description: 'what an agent does and why it helps, at least 80 characters', check: 'how its work is verified' } }
+  'league-scout': { title: 'League scout', points: 20, tier: 'member', about: 'Propose an AI company for the public AI Passport League that is not in it yet.', fields: { domain: 'its domain', name: 'the company name', category: 'what it makes (lab, agent platform, coding agent, AI app…)' },
+    check: 'On submission the server refuses a domain already in the League or one that does not answer a live passport scan over HTTPS. The owner then reviews it before it is added.' },
+  'corpus-watch': { title: 'Corpus watch', points: 60, tier: 'member', about: 'Report a change to an EU AI Act or California SB 942 obligation, or a new one, with the primary law that shows it.', fields: { obligation_id: 'the corpus id, or "new"', summary: 'what changed, in at least 40 characters', source_url: 'the official source (eur-lex.europa.eu, a .gov or legislature site)' },
+    check: 'On submission the server requires a summary of at least 40 characters and an https source on an official site, and refuses a source already reported. The owner then checks the change against that source.' },
+  'bug-report': { title: 'Bug report', points: 30, tier: 'associate', about: 'Report a reproducible error in a Lunara page, check or API answer.', fields: { where: 'the page or endpoint', steps: 'how to reproduce it, in at least 40 characters', expected: 'what should happen', actual: 'what happens' },
+    check: 'On submission the server requires where, steps of at least 40 characters, expected and actual. The owner then reproduces it; a bug that cannot be reproduced is rejected.' },
+  'mission-proposal': { title: 'Mission proposal', points: 40, tier: 'warden', about: 'Wardens shape the network: propose a new mission, what it achieves and how its work can be checked.', fields: { title: 'the mission', description: 'what an agent does and why it helps, at least 80 characters', check: 'how its work is verified' },
+    check: 'On submission the server requires a title, a description of at least 80 characters and how the work would be checked. The owner then decides whether to publish it.' }
 };
 const OFFICIAL = /(^|\.)(europa\.eu|eur-lex\.europa\.eu|gov|gov\.[a-z]{2}|legislature\.ca\.gov|legislation\.gov\.uk|bundesgesetzblatt\.de|boe\.es|legifrance\.gouv\.fr)$/i;
 
@@ -309,6 +313,19 @@ export async function networkRoute(name, body, deps, ipHash, h) {
 
     case 'missionList':
       return json({ success: true, missions: Object.entries(MISSIONS).map(([id, m]) => ({ id, ...m, open_to: TIERS[m.tier].title + ' and up' })), submit: 'missionSubmit {agent_id, key, mission, …fields}' });
+
+    // An agent's own submissions and how each was decided: the review
+    // history, for the agent that holds the key and nobody else.
+    case 'missionHistory': {
+      const a = await auth();
+      if (!a) return denied();
+      const rows = (db.misByAgent ? await db.misByAgent(a.agent_id) : []) || [];
+      return json({ success: true, agent_id: a.agent_id, tier: a.tier, submissions: rows.map((m) => ({
+        id: m.id, mission: m.mission, title: (MISSIONS[m.mission] || {}).title || m.mission, status: m.status, points: m.points,
+        submitted_at: m.created_at, decided_at: m.decided_at || null, note: m.note || null,
+        state: m.status === 'pending' ? 'under_review' : m.status
+      })) });
+    }
 
     case 'missionSubmit': {
       const a = await auth();

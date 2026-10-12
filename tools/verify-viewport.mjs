@@ -39,7 +39,8 @@ const VIEWPORT = /<meta[^>]*name=["']viewport["'][^>]*>/gi;
 const pages = readdirSync('.')
   .filter((f) => f.endsWith('.html'))
   .filter((f) => !/-backup|-old/.test(f))
-  .filter((f) => readFileSync(f, 'utf8').includes('lunara-shell.js'))
+  // The shell, or the OS shell: both are pages of this site.
+  .filter((f) => { const h = readFileSync(f, 'utf8'); return h.includes('lunara-shell.js') || h.includes('lunara-os.js'); })
   .sort();
 
 let bad = 0;

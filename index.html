@@ -6,13 +6,15 @@
 <meta name="viewport" content="width=1120">
 <script>
 /* The threshold: decided before anything paints, so the homepage never
-   flashes underneath it. Once per visit; never for crawlers, never for
-   a link to a #section; ?intro=1 plays it again. lunara-intro.js plays it. */
+   flashes underneath it. Once per device: a returning visitor is never
+   made to sit through it again. Never for crawlers, never for a link to
+   a #section; ?intro=1 plays it again. lunara-intro.js plays it. */
 (function () {
   try {
     var q = location.search, force = /[?&]intro=1/.test(q);
     var skip = /[?&]nointro/.test(q) || !!location.hash || /bot|crawl|spider|slurp|lighthouse|headless|preview|facebookexternalhit|embedly/i.test(navigator.userAgent);
-    if (force || (!skip && !sessionStorage.getItem('lx-intro-seen'))) document.documentElement.classList.add('lx-intro');
+    var seen = sessionStorage.getItem('lx-intro-seen'); try { seen = seen || localStorage.getItem('lx-intro-seen'); } catch (e) {}
+    if (force || (!skip && !seen)) document.documentElement.classList.add('lx-intro');
   } catch (e) {}
 })();
 </script>

@@ -9,9 +9,15 @@
    running. Each is built from layered metal, glass and light (CSS
    gradients, SVG, a little canvas), seen through a slightly tilted
    camera, and each has its own sound, synthesized here with the Web
-   Audio API (no files). Every one opens by itself in about two seconds:
-   ACCESS GRANTED, the lock folds into a seam of light, and the next page
-   opens on that seam (lunara-shell.css draws the opening).
+   Audio API (no files). Every one opens by itself in about two seconds,
+   the lock folds into a seam of light, and the next page opens on that
+   seam (lunara-shell.css draws the opening).
+
+   It is a scene, and it says so: the labels name the destination and
+   the mechanism, never a sign-in or a clearance, because nothing about
+   the visitor is being checked. A full lock plays at most once a minute;
+   between, a brief shutter names where the visitor is going. Esc, Enter
+   or the Skip button goes at once.
 
    Sound starts only because the visitor clicked; the speaker button in
    the corner turns it off for good. Reduced motion skips all of it.
@@ -127,6 +133,11 @@
     '#lxl .side.l{text-align:right}#lxl .side b{color:#F4ECD8;font-weight:500}#lxl .side .st{color:#E2C47A}',
     '#lxl .side .ok{color:#7FE0B0;font-size:22px;letter-spacing:.3em;font-weight:500;opacity:0;transform:translateX(-10px);text-shadow:0 0 18px rgba(127,224,176,.8);transition:opacity .2s,transform .3s}',
     '#lxl.granted .side .ok{opacity:1;transform:none}',
+    '#lxl .side .nb{font-size:9.5px;letter-spacing:.14em;color:rgba(214,222,234,.38);margin-top:6px}',
+    '#lxl .dest{position:absolute;left:50%;top:50%;transform:translate(-50%,14px);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:rgba(226,196,122,.75);opacity:0;transition:opacity .15s;white-space:nowrap}',
+    '#lxl.brief .dest{opacity:1}',
+    '#lxl .skip{position:absolute;right:24px;bottom:22px;pointer-events:auto;font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(214,222,234,.6);background:none;border:1px solid rgba(214,222,234,.22);border-radius:3px;padding:9px 13px;cursor:pointer;opacity:0;transition:opacity .2s}',
+    '#lxl.on .skip{opacity:1}#lxl .skip:focus-visible{outline:2px solid #E2C47A;outline-offset:2px}',
     '#lxl .side .code{font-size:15px;letter-spacing:.3em;white-space:nowrap;color:rgba(214,222,234,.4);min-height:2em}#lxl .side .code i{font-style:normal;transition:color .15s,text-shadow .15s}#lxl .side .code i.on{color:#7FE0B0;text-shadow:0 0 12px rgba(127,224,176,.9)}',
     '#lxl-snd{position:fixed;left:16px;bottom:16px;z-index:2147483000;width:34px;height:34px;border-radius:50%;border:1px solid rgba(226,196,122,.3);background:rgba(8,10,14,.75);',
     '  color:rgba(226,196,122,.75);cursor:pointer;display:grid;place-items:center;padding:0;opacity:.55;transition:opacity .2s}',
@@ -400,10 +411,10 @@
 
     /* A holographic clearance card drops into a reader; red, amber, green. */
     card: {
-      name: 'Clearance reader · level 5', dur: 1450,
+      name: 'Card reader · Λ5', dur: 1450,
       html: function () {
         return '<div class="kc"><div class="kc-card"><img src="/lunara_emblem_96.png" alt=""><div class="kc-chip"></div>'
-          + '<p style="top:16px">Lunara Society</p><p style="top:84px;font-size:13px;letter-spacing:.3em;color:#F4ECD8">CLEARANCE Λ5</p><p style="top:106px;color:rgba(127,224,176,.85)">Passport control · all gates</p></div>'
+          + '<p style="top:16px">Lunara Society</p><p style="top:84px;font-size:13px;letter-spacing:.3em;color:#F4ECD8">TRANSIT Λ5</p><p style="top:106px;color:rgba(127,224,176,.85)">Between pages · no access check</p></div>'
           + '<div class="kc-reader"><div class="kc-slot"></div><div class="kc-led"></div><div class="kc-oled"><div class="ol">AWAITING CARD</div><div class="kc-bar"><i></i></div><div class="ol2" style="margin-top:10px;color:rgba(127,224,176,.6)"></div></div><div class="kc-grill"></div></div></div>';
       },
       run: function (root) {
@@ -411,16 +422,16 @@
         anim(card, [{ transform: 'translateY(-70px) rotateY(-50deg) rotateX(14deg)', opacity: 0 }, { transform: 'translateY(-14px) rotateY(0) rotateX(0)', opacity: 1, offset: 0.4 }, { transform: 'translateY(-8px)', opacity: 1, offset: 0.78 }, { transform: 'translateY(160px)', opacity: 1 }], { duration: 740, easing: 'cubic-bezier(.4,0,.2,1)' });
         at(740, function () { led.classList.add('amber'); ol.textContent = 'READING CHIP'; });
         anim(bar, [{ width: '0%' }, { width: '100%' }], { duration: 400, delay: 760, easing: 'linear' });
-        var lines = ['CERT 0x4C55-4E41', 'SIG ED25519 · OK', 'REVOCATION · CLEAR'];
+        var lines = ['CARD 0x4C55-4E41', 'TRACK 1 · READ', 'TRACK 2 · READ'];
         lines.forEach(function (l, i) { at(790 + i * 120, function () { ol2.textContent = l; }); });
-        at(1190, function () { led.classList.remove('amber'); led.classList.add('ok'); ol.textContent = 'CLEARANCE Λ5 · GRANTED'; });
+        at(1190, function () { led.classList.remove('amber'); led.classList.add('ok'); ol.textContent = 'TRANSIT Λ5 · RELEASED'; });
         play(function (t) { S.sweep(t + 0.56, 0.2, 600, 2400, 0.24); S.click(t + 0.74, 900, 0.6, 0.06); S.data(t + 0.76, 0.42, 14); S.beep(t + 1.19, 1046.5, 0.08, 'square', 0.06); S.beep(t + 1.29, 1568, 0.12, 'square', 0.06); S.thud(t + 1.3, 0.35); });
       }
     },
 
     /* A palm on glass: the wireframe drawn by laser, the vein map matched. */
     palm: {
-      name: 'Palm-vein scanner · NIR', dur: 1550,
+      name: 'Palm plate · NIR glow', dur: 1550,
       html: function () {
         var hand = [
           // one continuous outline, wrist to wrist: thumb, index, middle, ring, little finger
@@ -450,14 +461,14 @@
         qa(root, '.pt').forEach(function (p, i) { anim(p, [{ opacity: 0, transform: 'scale(1.8)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 160, delay: 820 + i * 80 }); });
         at(1380, function () { qa(root, '.vn').forEach(function (v) { v.parentNode.setAttribute('stroke', '#7FE0B0'); }); });
         var p0 = performance.now();
-        (function pct(now) { var k = Math.min(1, (now - p0) / 1400); side.set('VEIN MAP ' + Math.round(k * 2048) + ' / 2048'); if (k < 1) requestAnimationFrame(pct); })(p0);
+        (function pct(now) { var k = Math.min(1, (now - p0) / 1400); side.set('SURFACE ' + Math.round(k * 2048) + ' / 2048'); if (k < 1) requestAnimationFrame(pct); })(p0);
         play(function (t) { S.hum(t, 1.4); S.sweep(t + 0.38, 0.9, 400, 900, 0.06); for (var i = 0; i < 7; i++) S.beep(t + 0.82 + i * 0.08, 2093 + i * 120, 0.04, 'sine', 0.05); S.beep(t + 1.38, 1318, 0.1, 'sine', 0.07); });
       }
     },
 
     /* An iris, generated: eyelids open, rings turn, a laser fan reads it. */
     iris: {
-      name: 'Iris recognition · ISO 19794-6', dur: 1500,
+      name: 'Iris aperture · twelve blades', dur: 1500,
       html: function () {
         var hud = '<g class="spin"><circle cx="200" cy="200" r="168" fill="none" stroke="rgba(127,224,176,.45)" stroke-width="1" stroke-dasharray="2 6"/>'
           + Array.apply(null, Array(24)).map(function (_, i) { var a = polar(200, 200, 168, i * 15), b = polar(200, 200, i % 6 === 0 ? 150 : 160, i * 15); return '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="rgba(127,224,176,.7)"/>'; }).join('') + '</g>'
@@ -495,14 +506,14 @@
         anim(q(root, '.box'), [{ opacity: 0, transform: 'scale(1.6)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 260, delay: 1200 });
         q(root, '.box').style.cssText = 'transform-box:view-box;transform-origin:200px 200px';
         var p0 = performance.now() + 420;
-        (function pct(now) { var k = Math.max(0, Math.min(1, (now - p0) / 1000)); side.set('IRIS CODE ' + (k * 99.98).toFixed(2) + '%'); if (k < 1) requestAnimationFrame(pct); })(performance.now());
+        (function pct(now) { var k = Math.max(0, Math.min(1, (now - p0) / 1000)); side.set('APERTURE ' + (k * 99.98).toFixed(2) + '%'); if (k < 1) requestAnimationFrame(pct); })(performance.now());
         play(function (t) { S.sweep(t + 0.06, 0.4, 200, 600, 0.08); S.hum(t + 0.4, 1.0); S.data(t + 0.45, 0.9, 16); S.beep(t + 1.2, 1760, 0.08, 'sine', 0.07); });
       }
     },
 
     /* A double helix turns in depth while its base pairs are matched. */
     genome: {
-      name: 'Genome lock · 2,048 bp', dur: 1500,
+      name: 'Helix lock · 2,048 rungs', dur: 1500,
       html: function () { return '<div class="dn"><canvas width="800" height="560"></canvas></div>'; },
       run: function (root, side) {
         var cv = q(root, 'canvas'), x = cv.getContext('2d'), W = 800, H = 560, t0 = performance.now(), dur = 1500, N = 30;
@@ -529,7 +540,7 @@
             items.forEach(function (it) { var z = (it[s[1]] + 1) / 2; x.globalAlpha = 0.35 + z * 0.65; x.fillStyle = s[2]; x.beginPath(); x.arc(it.x, it[s[0]], 5 + z * 7, 0, 7); x.fill(); });
           });
           x.globalAlpha = 1;
-          side.set('MATCH ' + Math.min(2048, Math.round(k * 1.15 * 2048)) + '/2048 BP');
+          side.set('HELIX ' + Math.min(2048, Math.round(k * 1.15 * 2048)) + '/2048');
           if (k < 1) requestAnimationFrame(draw);
         })(t0);
         play(function (t) { S.hum(t, 1.5); for (var i = 0; i < 30; i++) S.beep(t + i * 0.043, 1400 + (i % 5) * 220, 0.02, 'sine', 0.035); S.beep(t + 1.35, 1318, 0.1, 'sine', 0.07); });
@@ -595,7 +606,7 @@
 
     /* Two key streams meet; three hexagonal shells unlock in turn. */
     handshake: {
-      name: 'Quantum handshake · PQC', dur: 1450,
+      name: 'Hexagon handshake · three shells', dur: 1450,
       html: function () {
         function hex(r) { var p = []; for (var i = 0; i < 6; i++) { var pt = polar(200, 200, r, i * 60 + 30); p.push(pt[0].toFixed(1) + ',' + pt[1].toFixed(1)); } return p.join(' '); }
         function stream() { var s = ''; for (var i = 0; i < 48; i++) s += Math.random().toString(16).slice(2, 8).toUpperCase() + '<br>'; return '<div>' + s + s + '</div>'; }
@@ -605,7 +616,7 @@
             + '<g class="shell s2"><polygon points="' + hex(128) + '" stroke="#8a7240" stroke-dasharray="26 8"/></g>'
             + '<g class="shell s1"><polygon points="' + hex(86) + '" stroke="#C9A55E" stroke-dasharray="14 6"/></g>'
             + '<polygon points="' + hex(46) + '" fill="rgba(127,224,176,.08)" stroke="#7FE0B0" stroke-width="2" filter="url(#lxGl)"/>'
-            + '<text x="200" y="205" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" letter-spacing="2" fill="#BFFFE6">ML-KEM</text>'
+            + '<text x="200" y="205" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" letter-spacing="2" fill="#BFFFE6">LUNARA</text>'
             + '<line class="beam l" x1="40" y1="200" x2="40" y2="200" stroke="#7FE0B0" stroke-width="2" filter="url(#lxGl)"/>'
             + '<line class="beam r" x1="360" y1="200" x2="360" y2="200" stroke="#E2C47A" stroke-width="2" filter="url(#lxGl)"/>') + '</div>';
       },
@@ -616,10 +627,10 @@
         shells.forEach(function (s, i) {
           var el = q(root, s);
           anim(el, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(' + (i % 2 ? -120 : 120) + 'deg)' }], { duration: 400 + i * 120, delay: 200, easing: 'cubic-bezier(.4,0,.2,1)' });
-          at(560 + i * 230, function () { el.classList.add('ok'); side.set('KEY EXCHANGE ' + (i + 1) + ' / 3'); });
+          at(560 + i * 230, function () { el.classList.add('ok'); side.set('SHELL ' + (i + 1) + ' / 3'); });
           at(700 + i * 230, function () { anim(el, [{ transform: 'rotate(' + (i % 2 ? -120 : 120) + 'deg) scale(1)', opacity: 1 }, { transform: 'rotate(' + (i % 2 ? -150 : 150) + 'deg) scale(' + (1.25 + i * 0.1) + ')', opacity: 0 }], { duration: 300 }); });
         });
-        at(1300, function () { side.set('CHANNEL SECURED'); });
+        at(1300, function () { side.set('SHELLS OPEN'); });
         play(function (t) { S.data(t, 1.2, 28); for (var i = 0; i < 3; i++) { S.sweep(t + 0.56 + i * 0.23, 0.2, 800, 3000, 0.12); S.beep(t + 0.56 + i * 0.23, 1046 + i * 262, 0.08, 'sine', 0.06); } S.thud(t + 1.25, 0.35); });
       }
     }
@@ -632,7 +643,7 @@
     if (box) return box;
     var st = document.createElement('style'); st.id = 'lxl-css'; st.textContent = CSS; document.head.appendChild(st);
     box = document.createElement('div'); box.id = 'lxl'; box.setAttribute('aria-hidden', 'true');
-    box.innerHTML = '<i class="h t"></i><i class="h b"></i><s class="seam"></s><div class="core"><div class="side l"></div><div class="lk"></div><div class="side r"></div></div>';
+    box.innerHTML = '<i class="h t"></i><i class="h b"></i><s class="seam"></s><span class="dest"></span><div class="core"><div class="side l"></div><div class="lk"></div><div class="side r"></div></div><button type="button" class="skip">Skip · Esc</button>';
     document.body.appendChild(box);
     return box;
   }
@@ -643,15 +654,38 @@
     try { sessionStorage.setItem('lxl-last', k); } catch (e) {}
     return k;
   }
+  /* A transition, not a security check: the labels say where the visitor
+     is going and nothing about who they are. A full lock plays at most
+     once a minute; in between, a brief shutter names the destination and
+     opens in under half a second. Esc, Enter or a click goes at once. */
+  var COOLDOWN = 60e3;
+  function lastFull() { try { return +sessionStorage.getItem('lxl-full') || 0; } catch (e) { return 0; } }
   function open(url, kind) {
     if (busy) return; busy = true;
     if (REDUCED) { location.href = url; return; }
     try { var pf = document.createElement('link'); pf.rel = 'prefetch'; pf.href = url; document.head.appendChild(pf); } catch (e) {}
-    var b = build(), lock = LOCKS[kind && LOCKS[kind] ? kind : pick()];
+    var b = build();
     var dest = (new URL(url, location.href).pathname || '/').replace(/\.html$/, '') || '/';
     var serial = 'LX-' + Math.floor(Math.random() * 1e6).toString(36).toUpperCase().padStart(4, '0');
-    q(b, '.side.l').innerHTML = '<p>Lunara · passport control</p><p>Gate <b>' + dest.toUpperCase() + '</b></p><p>Lock <b>' + lock.name + '</b></p><p>Ref ' + serial + '</p>';
-    q(b, '.side.r').innerHTML = '<p class="st">Authenticating…</p><p class="code"></p><p class="ok">Access granted</p>';
+    var gone = false, timers = [];
+    function go() { if (gone) return; gone = true; timers.forEach(clearTimeout); document.removeEventListener('keydown', key, true); location.href = url; }
+    function key(e) { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); go(); } }
+    function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+    document.addEventListener('keydown', key, true);
+    q(b, '.skip').onclick = go;
+    q(b, '.dest').textContent = dest === '/' ? 'Home' : dest.replace(/^\//, '');
+    b.className = '';
+    void b.offsetWidth;
+    if (!kind && Date.now() - lastFull() < COOLDOWN) {
+      b.classList.add('go', 'brief');
+      later(260, function () { b.classList.add('fold'); });
+      later(420, go);
+      return;
+    }
+    try { sessionStorage.setItem('lxl-full', String(Date.now())); } catch (e) {}
+    var lock = LOCKS[kind && LOCKS[kind] ? kind : pick()];
+    q(b, '.side.l').innerHTML = '<p>Lunara · transition</p><p>To <b>' + dest.toUpperCase() + '</b></p><p>Mechanism <b>' + lock.name + '</b></p><p>Ref ' + serial + '</p>';
+    q(b, '.side.r').innerHTML = '<p class="st">Opening…</p><p class="code"></p><p class="ok">Opened</p><p class="nb">A scene between pages · not a security check</p>';
     q(b, '.lk').innerHTML = lock.html();
     var side = {
       code: function (i) { var c = qa(b, '.side.r .code i')[i]; if (c) c.classList.add('on'); },
@@ -661,14 +695,12 @@
         else c.textContent = txt;
       }
     };
-    b.className = '';
-    void b.offsetWidth;
     b.classList.add('go');
     play(function (t) { S.servo(t, 0.3, 90, 50, 0.05); S.thud(t + 0.3, 0.35); });
-    at(300, function () { b.classList.add('on'); try { lock.run(q(b, '.lk'), side); } catch (e) { if (window.console) console.warn('[lunara-locks]', e); } });
-    at(300 + lock.dur, function () { b.classList.add('granted'); q(b, '.side.r .st').textContent = 'Verified'; play(function (t) { S.granted(t); }); });
-    at(300 + lock.dur + 380, function () { b.classList.add('fold'); });
-    at(300 + lock.dur + 560, function () { location.href = url; });
+    later(300, function () { b.classList.add('on'); try { lock.run(q(b, '.lk'), side); } catch (e) { if (window.console) console.warn('[lunara-locks]', e); } });
+    later(300 + lock.dur, function () { b.classList.add('granted'); q(b, '.side.r .st').textContent = 'Open'; play(function (t) { S.granted(t); }); });
+    later(300 + lock.dur + 380, function () { b.classList.add('fold'); });
+    later(300 + lock.dur + 560, go);
   }
   window.addEventListener('pageshow', function (e) { if (e.persisted && box) { box.className = ''; busy = false; } });
 

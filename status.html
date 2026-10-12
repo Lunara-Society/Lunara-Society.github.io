@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>System Status: Every Lunara Service, Measured | Lunara Society</title>
+<meta name="description" content="The status of every Lunara service, measured from your browser: what each check proves, its latency and when it ran. Unknown and not configured are said plainly.">
+<link rel="canonical" href="https://lunarasociety.com/status.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/status.html">
+<meta property="og:title" content="Lunara system status, measured from your browser">
+<meta property="og:description" content="Every service checked directly, with what the check proves and when it ran.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.st-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--os-hair);border-radius:var(--os-r);margin-bottom:22px;background:var(--os-surface)}
+.st-sum div{padding:16px 18px;border-right:1px solid var(--os-hair)}
+.st-sum div:last-child{border-right:0}
+.st-sum b{display:block;font:300 34px/1 var(--os-display);color:var(--os-text);font-variant-numeric:lining-nums}
+.st-spark{display:inline-flex;align-items:flex-end;gap:2px;height:20px}
+.st-spark i{display:block;width:4px;background:var(--os-muted);opacity:.7}
+.st-spark i.ok{background:var(--os-ok)}.st-spark i.warn{background:var(--os-warn)}.st-spark i.bad{background:var(--os-bad)}
+</style>
+</head>
+<body class="os" data-workspace="System Status">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/command.html">Command Center</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">System status</div>
+            <h1>Every service, <em>asked directly.</em></h1>
+            <p class="os-lede">Each row is one request from your browser to one service, with what that request can and cannot prove. A page loading proves the site was served; it says nothing about the functions behind it, so each of those is asked on its own. Checks repeat every minute while this tab is open.</p>
+          </div>
+          <button type="button" class="os-btn primary" id="st-run">Check every service now</button>
+        </div>
+
+        <div class="st-sum" id="st-sum" aria-live="polite"></div>
+
+        <section class="os-plate" aria-labelledby="st-h">
+          <div class="os-plate-h"><h2 id="st-h" style="font-size:19px">Checks</h2><span class="r os-fresh" id="st-fresh"></span></div>
+          <table class="os-table" aria-describedby="st-h">
+            <thead><tr><th scope="col">Service</th><th scope="col">Status</th><th scope="col">Latency</th><th scope="col">This session</th><th scope="col">What it found</th><th scope="col">Checked</th></tr></thead>
+            <tbody id="st-rows"></tbody>
+          </table>
+        </section>
+
+        <section class="os-grid c2" style="margin-top:22px">
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">The words used here</h2></div>
+            <div class="os-plate-b">
+              <dl class="os-kv">
+                <dt>Operational</dt><dd>The service answered the check the way a working service answers it.</dd>
+                <dt>Degraded</dt><dd>It answered, but something it reports is wrong: a failing source, a paused service, a stale job, test mode.</dd>
+                <dt>Unavailable</dt><dd>No answer within nine seconds, or a server error.</dd>
+                <dt>Unknown</dt><dd>It could not be checked from here, or the check itself could not run. Never counted as healthy.</dd>
+                <dt>Not configured</dt><dd>The service works but an optional part is not set up, such as an email provider key. Shown, not hidden.</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">What is not measured here</h2></div>
+            <div class="os-plate-b">
+              <p>These checks run from your browser, so they show what you can reach, from where you are, now. They do not show uptime history: nothing on this page is stored after you close it, and the small bars under "this session" are only the checks this tab has run. Email delivery is not tested, because the only honest test is sending one. Payments are not tested by charging a card; the check reads the checkout function's own report of its Stripe configuration.</p>
+              <p class="os-note">The overall status counts the core services only. Rows marked "information" are shown for completeness and never turn the overall status amber.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">This page measures each service from your browser and needs JavaScript.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script>
+(function () {
+  var OS = window.LunaraOS; if (!OS) return;
+  var esc = OS.esc, hist = {};
+  try { hist = JSON.parse(sessionStorage.getItem('lx-os-hist') || '{}'); } catch (e) {}
+  function cls(s) { return s === 'operational' ? 'ok' : s === 'degraded' ? 'warn' : s === 'unavailable' ? 'bad' : ''; }
+  function paint() {
+    var h = OS.health(), res = h.results || {}, s = OS.summary();
+    var c = s.counts || {};
+    document.getElementById('st-sum').innerHTML =
+      '<div><span class="os-label">Overall</span><b style="font-size:20px;margin-top:10px">' + OS.stateTag(h.inFlight && !h.results ? 'checking' : s.status) + '</b></div>' +
+      ['operational', 'degraded', 'unavailable', 'unknown'].map(function (k) { return '<div><span class="os-label">' + esc(OS.LABEL[k]) + '</span><b>' + (c[k] || 0) + '</b></div>'; }).join('');
+    document.getElementById('st-fresh').textContent = h.at ? 'checked ' + OS.stamp(h.at) + (h.cached ? ' · carried from the previous page' : '') : (h.inFlight ? 'checking…' : '');
+    document.getElementById('st-rows').innerHTML = OS.CHECKS.map(function (ch) {
+      var r = res[ch.id], st = r ? r.status : h.inFlight ? 'checking' : 'unknown';
+      var bars = (hist[ch.id] || []).slice(-16).map(function (x) { return '<i class="' + cls(x.s) + '" style="height:' + Math.max(3, Math.min(20, (x.ms || 60) / 40)) + 'px" title="' + esc(OS.utc(x.at) + ' · ' + OS.LABEL[x.s] + (x.ms != null ? ' · ' + x.ms + ' ms' : '')) + '"></i>'; }).join('');
+      return '<tr data-pick="' + ch.id + '" tabindex="0"><td><div style="color:var(--os-text)">' + esc(ch.name) + '</div><div class="os-note">' + esc(ch.group) + (ch.core ? '' : ' · information') + '</div></td><td>' + OS.stateTag(st) + '</td>' +
+        '<td class="os-num">' + (r && r.ms != null ? r.ms + ' ms' : '—') + '</td><td><span class="st-spark" aria-label="' + (hist[ch.id] || []).length + ' checks this session">' + bars + '</span></td>' +
+        '<td style="max-width:420px"><div>' + esc(r ? r.note || '' : '') + '</div><div class="os-note" style="margin-top:4px">' + esc(ch.proves) + '</div></td><td class="os-fresh">' + (r && r.checked_at ? esc(OS.utc(r.checked_at)) : '—') + '</td></tr>';
+    }).join('');
+    [].forEach.call(document.querySelectorAll('#st-rows tr'), function (tr) {
+      function open() {
+        var ch = OS.CHECKS.filter(function (x) { return x.id === tr.dataset.pick; })[0], r = res[ch.id] || {};
+        OS.inspect({ kind: 'Service', title: ch.name, subtitle: ch.group, source: 'health check from this browser', asOf: r.checked_at,
+          sections: [{ label: 'Measured', html: OS.stateTag(r.status || 'unknown') + '<p style="margin:10px 0 0">' + esc(r.note || 'Not checked yet.') + '</p>' },
+            { label: 'What this check proves', html: '<p>' + esc(ch.proves) + '</p>' },
+            { label: 'This session', kv: (hist[ch.id] || []).slice(-6).reverse().map(function (x) { return [OS.utc(x.at), OS.LABEL[x.s] + (x.ms != null ? ' · ' + x.ms + ' ms' : '')]; }) }],
+          actions: [{ label: 'Check again', run: function () { OS.checkHealth(true); } }] });
+      }
+      tr.addEventListener('click', open);
+      tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+  OS.on('health', function (h) {
+    if (!h.cached) Object.keys(h.results).forEach(function (k) { var r = h.results[k]; (hist[k] = hist[k] || []).push({ s: r.status, ms: r.ms, at: r.checked_at }); hist[k] = hist[k].slice(-40); });
+    try { sessionStorage.setItem('lx-os-hist', JSON.stringify(hist)); } catch (e) {}
+    paint();
+  });
+  OS.on('health:start', paint);
+  OS.on('ready', function () {
+    paint(); OS.checkHealth(true);
+    document.getElementById('st-run').addEventListener('click', function () { OS.checkHealth(true); });
+    setInterval(function () { if (!document.hidden) OS.checkHealth(true); }, 60e3);
+  });
+})();
+</script>
+</body>
+</html>

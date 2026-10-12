@@ -49,6 +49,7 @@ export function memoryDb() {
     async misGet(id) { return this.missions.find((m) => m.id === id) || null; },
     async misUpdate(id, p) { Object.assign(this.missions.find((m) => m.id === id), p); },
     async misList() { return this.missions.slice().reverse(); },
+    async misByAgent(id) { return this.missions.filter((m) => m.agent_id === id).slice().reverse(); },
     async misExists(mission, key) { return this.missions.some((m) => m.mission === mission && m.payload.dedupe === key && m.status !== 'rejected'); },
     async verifiedAgentEntry(email) { return this.entries.find((e) => e.contact_email === email) || null; },
     async updatePartner(c, patch) { Object.assign(partners.find((p) => p.code === c), patch); },
@@ -779,6 +780,195 @@ await test('ops: recurring revenue per month, and the leads with their emails fo
   eq(o.leads.last_7_days, 1); eq(o.leads.recent[0].email, 'lead@acme.example');
   const a = (await handleRegistry(new Request('https://p.supabase.co/functions/v1/lunara-registry/opsStats', { method: 'POST', headers: { 'x-lunara-ops-key': 'k'.repeat(32) }, body: '{}' }), deps).then((r) => r.json()));
   eq(a.leads.recent[0].organization, 'acme.example'); eq(a.leads.recent[0].email, undefined, 'the agent sees no lead email');
+});
+
+
+/* ═══ the operating picture (os.mjs) ═══════════════════════════════ */
+
+function withAudit(db) {
+  db.audit = [];
+  db.auditLast = async () => (db.audit.length ? { seq: db.audit.at(-1).seq, hash: db.audit.at(-1).hash } : null);
+  db.auditAppend = async (r) => {
+    // the database's unique constraint on prev_hash and hash
+    if (db.audit.some((x) => x.prev_hash === r.prev_hash || x.hash === r.hash)) throw new Error('POST /admin_audit 409: {"code":"23505"}');
+    db.audit.push({ ...JSON.parse(JSON.stringify(r)), seq: db.audit.length + 1 });
+  };
+  db.auditList = async (n) => db.audit.slice(-n).map((r) => ({ ...r }));
+  db.ping = async () => [];
+  db.recentScans = async (n) => [...db.passports.values()].sort((a, b) => b.scanned_at.localeCompare(a.scanned_at)).slice(0, n);
+  db.listPublishedAll = async () => [...db.apps.values()].filter((a) => ['approved', 'revoked'].includes(a.status));
+  db.misRecentApproved = async () => db.missions.filter((m) => m.status === 'approved');
+  db.sitRecentPassed = async () => [...db.sittings.values()].filter((x) => x.passed);
+  return db;
+}
+
+await test('systemStatus measures the database and reports what is not configured', async () => {
+  const { deps, db } = setup({ mail: null });
+  withAudit(db);
+  db.passports.set('acme.example', { domain: 'acme.example', score: 70, grade: 'B', scanned_at: '2026-10-04T11:30:00Z', checks: [] });
+  let r = (await call(deps, 'systemStatus', null, 'GET')).body;
+  eq(r.components.database.status, 'operational'); ok(typeof r.components.database.latency_ms === 'number');
+  eq(r.components.mail.status, 'not_configured');
+  eq(r.components.signing.status, 'not_configured');
+  eq(r.components.passport_rescans.status, 'operational');
+  eq(r.checked_at, '2026-10-04T12:00:00.000Z');
+  ok(!JSON.stringify(r).match(/supabase|service_role|apikey/i), 'no hostnames or keys');
+  db.ping = async () => { throw new Error('connection refused'); };
+  db.passports.get('acme.example').scanned_at = '2026-10-01T00:00:00Z';
+  r = (await call(deps, 'systemStatus', null, 'GET')).body;
+  eq(r.components.database.status, 'unavailable', 'a failed probe is never reported as up');
+  eq(r.components.passport_rescans.status, 'unavailable');
+});
+
+await test('activityFeed shows only what is already public, each event with its source', async () => {
+  const { deps, db, txt } = setup({ leagueList: async () => [{ domain: 'acme.example', name: 'Acme' }] });
+  withAudit(db);
+  const id = await approved(deps, txt);
+  db.passports.set('acme.example', { domain: 'acme.example', score: 72, grade: 'B', prev_score: 60, prev_grade: 'C', scanned_at: '2026-10-04T10:00:00Z' });
+  db.passports.set('private-curiosity.example', { domain: 'private-curiosity.example', score: 10, grade: 'F', scanned_at: '2026-10-04T11:00:00Z' });
+  await db.netCreateAgent({ agent_id: 'AGT-LST1NG00', name: 'Listed', operator_name: 'Op Ltd', operator_email: 'op@x.example', tier: 'associate', status: 'active' });
+  await db.netCreateAgent({ agent_id: 'AGT-MEMBER00', name: 'Quiet', operator_name: 'Q Ltd', operator_email: 'q@x.example', tier: 'member', status: 'active' });
+  const r = (await call(deps, 'activityFeed', null, 'GET')).body;
+  eq(r.scope, 'public');
+  const types = r.events.map((e) => e.type);
+  ok(types.includes('register.verified'), 'the register decision');
+  ok(r.events.some((e) => e.type === 'passport.changed' && e.subject === 'acme.example'), 'the league rescan');
+  ok(!r.events.some((e) => e.subject === 'private-curiosity.example'), 'a scan outside the league stays private');
+  ok(r.events.some((e) => e.subject === 'AGT-LST1NG00'), 'a listed agent');
+  ok(!r.events.some((e) => e.subject === 'AGT-MEMBER00'), 'an unlisted member stays out of the public feed');
+  ok(r.events.every((e) => e.source && e.at && e.id), 'every event has a source, a time and an id');
+  ok(!JSON.stringify(r).includes('ana@yavaya.lat'), 'no email address');
+  eq(r.events.find((e) => e.type === 'register.verified').subject, id);
+  eq(new Set(r.events.map((e) => e.id)).size, r.events.length, 'no duplicate ids');
+  const later = (await call(deps, 'activityFeed', { since: '2026-10-04T11:59:00Z' })).body;
+  ok(later.events.every((e) => Date.parse(e.at) > Date.parse('2026-10-04T11:59:00Z')), 'since filters');
+});
+
+await test('decisions are appended to a hash-linked audit chain, and tampering is detected', async () => {
+  const { deps, db, txt } = setup();
+  withAudit(db);
+  const id = await approved(deps, txt);
+  eq(db.audit.length, 1);
+  const first = db.audit[0];
+  eq(first.action, 'registry.approve'); eq(first.target, `registry_entry:${id}`); eq(first.outcome, 'approved');
+  eq(first.actor, 'lunarasociety@gmail.com'); eq(first.prev_hash, '0'.repeat(64)); ok(/^cor-[0-9a-f]{18}$/.test(first.correlation_id));
+  const rev = (await call(deps, 'adminDecide', { session_token: 'owner-session', public_id: id, decision: 'revoke', reviewer_name: 'Johan', note: 'Registration lapsed' })).body;
+  eq(rev.audited, true); ok(rev.correlation_id);
+  eq(db.audit.length, 2); eq(db.audit[1].prev_hash, first.hash); eq(db.audit[1].reason, 'Registration lapsed');
+  // a refused decision changes nothing and records nothing
+  const again = await call(deps, 'adminDecide', { session_token: 'owner-session', public_id: id, decision: 'revoke', reviewer_name: 'Johan', note: 'x' });
+  eq(again.status, 409); eq(db.audit.length, 2);
+  let log = (await call(deps, 'auditLog', { session_token: 'owner-session' })).body;
+  eq(log.chain.intact, true); eq(log.count, 2); eq(log.records[0].seq, 2, 'newest first');
+  // the database spells timestamps its own way; the chain still holds
+  db.audit.forEach((r) => { r.at = r.at.replace('Z', '+00:00'); });
+  eq((await call(deps, 'auditLog', { session_token: 'owner-session' })).body.chain.intact, true, 'timestamp spelling does not break the chain');
+  db.audit[0].reason = 'quietly edited';
+  log = (await call(deps, 'auditLog', { session_token: 'owner-session' })).body;
+  eq(log.chain.intact, false); eq(log.chain.broken_at, 1);
+  db.audit[0].reason = null; db.audit.splice(0, 1);
+  log = (await call(deps, 'auditLog', { session_token: 'owner-session' })).body;
+  eq(log.chain.intact, false, 'a removed record breaks the chain too');
+});
+
+await test('the audit log and the owner activity are refused to everyone but the owner', async () => {
+  const { deps, db } = setup();
+  withAudit(db);
+  for (const t of [undefined, 'member-session', 'forged']) {
+    eq((await call(deps, 'auditLog', { session_token: t })).status, 403);
+    eq((await call(deps, 'opsActivity', { session_token: t })).status, 403);
+  }
+  const agent = { ...deps, env: { LUNARA_OPS_KEY: 'k'.repeat(32) } };
+  const req = (name, key) => handleRegistry(new Request(`https://p.supabase.co/functions/v1/lunara-registry/${name}`, { method: 'POST', headers: { 'x-lunara-ops-key': key }, body: '{}' }), agent);
+  eq((await req('opsActivity', 'k'.repeat(32))).status, 200, 'the ops key reads figures');
+  eq((await req('opsActivity', 'k'.repeat(31) + 'x')).status, 403);
+  eq((await req('auditLog', 'k'.repeat(32))).status, 403, 'but never the audit log');
+});
+
+await test('opsActivity queues what waits on a human, most blocking first', async () => {
+  const { deps, db, txt, mailbox } = setup();
+  withAudit(db);
+  const a = await call(deps, 'shieldApply', APP);
+  const b = await call(deps, 'shieldApply', { ...APP, business_name: 'Other', website_url: 'https://other.example', contact_email: 'o@other.example' });
+  txt[a.body.dns_record.name] = [a.body.dns_record.value];
+  await call(deps, 'shieldVerifyDomain', { public_id: a.body.public_id });
+  await call(deps, 'partnerApply', { partner_name: 'Agency', contact_email: 'p@agency.example', partner_type: 'agency' });
+  db.orders.set('LO-AAAAAAAAAAAAAAAA', { order_ref: 'LO-AAAAAAAAAAAAAAAA', product: 'monitor', amount_total: 1900, currency: 'usd', status: 'paid', paid_at: '2026-10-04T09:00:00Z', created_at: '2026-10-04T08:59:00Z', email: 'buyer@x.example', livemode: true });
+  const r = (await call(deps, 'opsActivity', { session_token: 'owner-session' })).body;
+  eq(r.scope, 'owner');
+  eq(r.queue[0].id, a.body.public_id, 'DNS proven comes first'); eq(r.queue[0].urgency, 2);
+  ok(r.queue.some((q) => q.id === b.body.public_id && q.urgency === 4));
+  ok(r.queue.some((q) => q.kind === 'partner'));
+  const pay = r.events.find((e) => e.type === 'payment.confirmed');
+  ok(pay && pay.private && pay.detail.startsWith('19.00 USD'));
+  ok(!JSON.stringify(r).includes('buyer@x.example'), 'no customer email in the stream');
+  // partner approval is audited with its previous status
+  const code = db.partners[0].code;
+  const d = (await call(deps, 'partnerDecide', { session_token: 'owner-session', code, status: 'approved' })).body;
+  eq(d.audited, true); eq(db.audit.at(-1).action, 'partner.decide'); eq(db.audit.at(-1).detail.from, 'pending');
+  ok(mailbox.length > 0);
+});
+
+await test('without the audit table, decisions still work and the log says it is not installed', async () => {
+  const { deps, db, txt } = setup();
+  const id = await approved(deps, txt);
+  eq(db.apps.get(id).status, 'approved', 'the decision stands');
+  db.auditList = async () => { throw new Error('GET /admin_audit 404: relation does not exist'); };
+  const r = await call(deps, 'auditLog', { session_token: 'owner-session' });
+  eq(r.status, 503); eq(r.body.status, 'not_configured');
+});
+
+await test('missionHistory gives an agent its own submissions and their decisions, and nobody else', async () => {
+  const { deps, db } = setup({ leagueList: async () => [] });
+  withAudit(db);
+  const j = (await call(deps, 'networkJoin', { name: 'Histor', operator_name: 'H Ltd', operator_email: 'h@h.example', operator_consent: true })).body;
+  const k = (await call(deps, 'networkJoin', { name: 'Other', operator_name: 'O Ltd', operator_email: 'o@o.example', operator_consent: true })).body;
+  const sub = (await call(deps, 'missionSubmit', { agent_id: j.agent_id, key: j.api_key, mission: 'corpus-watch', obligation_id: 'eu-art50', summary: 'The marking obligation moved by the Digital Omnibus, see the act.', source_url: 'https://eur-lex.europa.eu/eli/reg/2026/1744/oj' })).body;
+  eq(sub.status, 'pending');
+  let h = (await call(deps, 'missionHistory', { agent_id: j.agent_id, key: j.api_key })).body;
+  eq(h.submissions.length, 1); eq(h.submissions[0].state, 'under_review'); eq(h.submissions[0].decided_at, null);
+  const d = (await call(deps, 'missionDecide', { session_token: 'owner-session', id: sub.id, status: 'rejected', note: 'Already in the corpus' })).body;
+  eq(d.audited, true); eq(db.audit.at(-1).action, 'mission.decide'); eq(db.audit.at(-1).outcome, 'rejected');
+  h = (await call(deps, 'missionHistory', { agent_id: j.agent_id, key: j.api_key })).body;
+  eq(h.submissions[0].state, 'rejected'); eq(h.submissions[0].note, 'Already in the corpus'); ok(h.submissions[0].decided_at);
+  eq((await call(deps, 'missionDecide', { session_token: 'owner-session', id: sub.id, status: 'approved' })).status, 409, 'a decided submission cannot be decided again');
+  eq((await call(deps, 'missionHistory', { agent_id: j.agent_id, key: k.api_key })).status, 401, 'another agent\'s key is refused');
+  eq((await call(deps, 'missionHistory', { agent_id: k.agent_id, key: k.api_key })).body.submissions.length, 0, 'and sees only its own');
+  const list = (await call(deps, 'missionList', null, 'GET')).body;
+  ok(list.missions.every((m) => m.check && m.check.length > 40), 'every mission states how it is checked');
+});
+
+await test('osSession tells a session holder only about their own session', async () => {
+  const { deps } = setup();
+  eq(JSON.stringify((await call(deps, 'osSession', {})).body), JSON.stringify({ success: true, signed_in: false, owner: false }));
+  const m = (await call(deps, 'osSession', { session_token: 'member-session' })).body;
+  eq(m.signed_in, true); eq(m.owner, false); eq(m.email, 'ana@yavaya.lat');
+  eq((await call(deps, 'osSession', { session_token: 'owner-session' })).body.owner, true);
+});
+
+await test('two writers racing on the audit tail cannot fork it', async () => {
+  const { deps, db } = setup();
+  withAudit(db);
+  const { recordAudit } = await import('./os.mjs');
+  const { sha256hex } = await import('./registry-core.mjs');
+  let raced = false;
+  const append = db.auditAppend;
+  db.auditAppend = async (r) => {
+    if (!raced) { raced = true; await append({ ...r, hash: 'f'.repeat(64), action: 'other-writer' }); }
+    return append(r);
+  };
+  const out = await recordAudit(deps, { actor: 'x', action: 'test', target: 't', outcome: 'ok' }, sha256hex);
+  eq(out.audited, true);
+  eq(db.audit.length, 2); eq(db.audit[1].prev_hash, db.audit[0].hash, 'the loser retried on the new tail');
+});
+
+await test('passportBadge carries what each check earned, so the scenario lab starts from the measured score', async () => {
+  const { deps, db } = setup();
+  const checks = CHECKS.map((c) => ({ id: c.id, points: c.points, earned: c.id === 'spf' ? c.points / 2 : c.id === 'https' ? c.points : 0, pass: c.id === 'https' }));
+  db.passports.set('acme.example', { domain: 'acme.example', score: 19, grade: 'F', visa: 'not_registered', checks, scanned_at: '2026-10-04T11:00:00Z' });
+  const r = (await call(deps, 'passportBadge', { domain: 'acme.example' })).body;
+  eq(r.earned.https, 15); eq(r.earned.spf, 4); eq(r.earned.dmarc, 0);
+  eq(Math.round(Object.values(r.earned).reduce((a, b) => a + b, 0)), r.score);
 });
 
 console.log(`${passed} passed, ${failed} failed`);

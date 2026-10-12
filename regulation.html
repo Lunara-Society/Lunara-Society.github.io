@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Regulatory Intelligence: Obligations by Date | Lunara Society</title>
+<meta name="description" content="Every AI obligation Lunara tracks, by jurisdiction and article, with dates computed against today, the official source, when each was last checked, and a signed corpus.">
+<link rel="canonical" href="https://lunarasociety.com/regulation.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/regulation.html">
+<meta property="og:title" content="Lunara Regulatory Intelligence">
+<meta property="og:description" content="AI obligations by jurisdiction and article, dates computed against today, each with its official source.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.rg-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:18px}
+.rg-bar .os-field{min-width:200px}
+.rg-time{position:relative;height:150px;margin:6px 6px 0}
+.rg-time svg{width:100%;height:100%;overflow:visible}
+.rg-time .lbl{font:400 10.5px var(--os-mono);fill:var(--os-muted)}
+.rg-time .now{font:500 10.5px var(--os-mono);fill:var(--os-gold-hi)}
+.rg-time circle{cursor:pointer}
+.rg-time circle:focus{outline:none;stroke:var(--os-gold-hi);stroke-width:2}
+.rg-prov{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--os-hair);border-radius:var(--os-r);margin-bottom:18px;background:var(--os-surface)}
+.rg-prov div{padding:14px 16px;border-right:1px solid var(--os-hair);font-size:12.5px}
+.rg-prov div:last-child{border-right:0}
+.rg-prov .os-label{display:block;margin-bottom:8px}
+</style>
+</head>
+<body class="os" data-workspace="Regulatory Intelligence">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea" data-dock="off">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/intelligence.html">The Regulatory Record</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Regulatory intelligence</div>
+            <h1>Every date, <em>and the article that sets it.</em></h1>
+            <p class="os-lede">The obligations Lunara tracks, from the signed corpus: jurisdiction, instrument, the article that sets the date, the official source and the day it was last checked against that source. Whether an obligation applies yet is computed from today's date as you read, never stored. Lunara's summaries are marked as Lunara's words: read the source before relying on any of them. Nothing here is legal advice.</p>
+          </div>
+        </div>
+
+        <div class="rg-prov" id="rg-prov" aria-live="polite"></div>
+
+        <section class="os-plate" style="margin-bottom:18px" aria-label="Timeline">
+          <div class="os-plate-h"><span class="os-eyebrow">Timeline</span><span class="r os-note">Today is marked in gold. Select a date to inspect it.</span></div>
+          <div class="os-plate-b"><div class="rg-time" id="rg-time"></div></div>
+        </section>
+
+        <div class="rg-bar">
+          <div class="os-field"><label for="rg-q">Search</label><input class="os-input" id="rg-q" type="search" placeholder="Article 50, watermark, platforms…"></div>
+          <div class="os-field"><label for="rg-j">Jurisdiction</label><select id="rg-j"><option value="">All</option></select></div>
+          <div class="os-field"><label for="rg-s">As of today</label><select id="rg-s"><option value="">All</option><option value="applies">Applies now</option><option value="upcoming">Not yet applying</option></select></div>
+        </div>
+
+        <section class="os-plate">
+          <table class="os-table"><thead><tr><th scope="col">Obligation</th><th scope="col">Jurisdiction</th><th scope="col">Applies from</th><th scope="col">As of today</th><th scope="col">Article</th><th scope="col">Checked</th><th scope="col">Source</th></tr></thead>
+            <tbody id="rg-rows"><tr><td colspan="7"><div class="os-skel"></div></td></tr></tbody></table>
+        </section>
+
+        <section class="os-grid c2" style="margin-top:22px">
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">Source, summary, interpretation</h2></div>
+            <div class="os-plate-b">
+              <p>Three kinds of text appear here and they are labelled apart. The <strong>source</strong> is the official instrument, linked for every row; Lunara does not reproduce it. The <strong>summary</strong> is Lunara's own short reading, written against that source. An <strong>AI answer</strong>, if you ask Rosario from the inspector, is generated by a model, is not sourced, and opens in the Intelligence workspace marked as such.</p>
+              <p>Which of these obligations reaches a particular deployment is a further question, answered by the applicability model on <a href="/check.html">Does the law reach your AI?</a>, which is marked interpretation for that reason.</p>
+            </div>
+          </div>
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">How the corpus is kept</h2></div>
+            <div class="os-plate-b">
+              <p>No automated monitor watches these instruments. The corpus is maintained by hand, each row checked against its primary source on the date shown, and every deploy refuses to publish if the corpus and the site disagree. Changes reach it through editorial review and through the Agent Network's <a href="/missions.html#corpus-watch">Corpus watch</a> mission, where a reported change needs an official source and the owner's approval. Every edit is in the <a href="https://github.com/Lunara-Society/Lunara-Society.github.io/commits/main/corpus/obligations.json" rel="noopener">public change history</a>.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">The same obligations are on <a href="/intelligence.html">the Regulatory Record</a>, which needs no JavaScript.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script type="module" src="/os/regulation.js"></script>
+</body>
+</html>

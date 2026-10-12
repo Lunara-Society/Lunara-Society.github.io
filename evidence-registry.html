@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Evidence Registry: Verify Our Records | Lunara Society</title>
+<meta name="description" content="Every signed document, register entry and agent passport Lunara stands behind, verified in your browser with Ed25519 and SHA-256, with what each check does not prove.">
+<link rel="canonical" href="https://lunarasociety.com/evidence-registry.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/evidence-registry.html">
+<meta property="og:title" content="The Lunara Evidence Registry">
+<meta property="og:description" content="Verify every record yourself: signatures, digests, terms and revocation, checked in your browser.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.ev-steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.ev-steps li{position:relative;padding:8px 0 8px 30px;border-bottom:1px solid var(--os-hair);font-size:12.5px}
+.ev-steps li:last-child{border-bottom:0}
+.ev-steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:9px;width:20px;height:20px;border-radius:50%;border:1px solid var(--os-hair-2);font:500 10px/18px var(--os-mono);text-align:center;color:var(--os-muted)}
+.ev-steps li.ok::before{border-color:var(--os-ok);color:var(--os-ok);content:"✓"}
+.ev-steps li.bad::before{border-color:var(--os-bad);color:var(--os-bad);content:"✕"}
+.ev-steps li.na::before{content:"–"}
+.ev-steps .n{color:var(--os-text)}
+.ev-steps .d{color:var(--os-muted);font-family:var(--os-mono);font-size:11px;word-break:break-all;margin-top:2px}
+.ev-limits{margin:0;padding-left:18px;font-size:12.5px;color:var(--os-muted-2)}
+.ev-limits li{margin:6px 0}
+.ev-sum{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--os-hair);border-radius:var(--os-r);margin-bottom:22px;background:var(--os-surface)}
+.ev-sum div{padding:16px 18px;border-right:1px solid var(--os-hair)}
+.ev-sum div:last-child{border-right:0}
+.ev-sum b{display:block;margin-top:8px;font:300 32px/1 var(--os-display);color:var(--os-text);font-variant-numeric:lining-nums}
+</style>
+</head>
+<body class="os" data-workspace="Evidence Registry">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea" data-dock="off">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/signing.html">How to verify us</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Evidence Registry</div>
+            <h1>Don't take our word. <em>Check it here.</em></h1>
+            <p class="os-lede">Everything Lunara asks anyone to rely on, in one place, with a check you run yourself. Signed documents are verified in this browser: the Ed25519 signature over the canonical statement, the SHA-256 of the document as served now, the term and the key's status. Register entries show the method a named reviewer used. Every result says what it does not establish.</p>
+          </div>
+          <button type="button" class="os-btn primary" id="verify-all">Verify every document</button>
+        </div>
+
+        <div class="ev-sum" id="ev-sum" aria-live="polite"></div>
+
+        <section class="os-plate" aria-labelledby="ev-docs-h">
+          <div class="os-plate-h"><h2 id="ev-docs-h" style="font-size:19px">Signed documents</h2><span class="r os-fresh" id="ev-docs-fresh"></span></div>
+          <table class="os-table"><thead><tr><th scope="col">Document</th><th scope="col">Claim</th><th scope="col">Issued</th><th scope="col">Expires</th><th scope="col">Key</th><th scope="col">Result</th></tr></thead>
+            <tbody id="ev-docs"><tr><td colspan="6"><div class="os-skel"></div></td></tr></tbody></table>
+        </section>
+
+        <section class="os-grid c2" style="margin-top:22px">
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">The public register</h2><span class="r os-fresh" id="ev-reg-fresh"></span></div>
+            <div id="ev-reg"><div class="os-plate-b"><div class="os-skel"></div></div></div>
+          </div>
+          <div class="os-plate" id="passport">
+            <div class="os-plate-h"><h2 style="font-size:19px">Verify an agent passport</h2></div>
+            <div class="os-plate-b">
+              <p class="os-note">An AI agent with a verified credential presents a passport in a <code>Lunara-Passport</code> header. Paste one: its signature is checked in this browser against Lunara's published passport keys, and its current status is read from the register.</p>
+              <div class="os-field" style="margin-top:12px"><label for="pp-in">Passport</label><textarea id="pp-in" spellcheck="false" placeholder="eyJ2Ijox…"></textarea></div>
+              <div style="display:flex;gap:10px;margin-top:12px"><button type="button" class="os-btn primary" id="pp-go">Verify</button><span class="os-err" id="pp-err" role="alert"></span></div>
+              <div id="pp-out" aria-live="polite" style="margin-top:14px"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="os-plate" style="margin-top:22px" aria-labelledby="ev-tamper-h">
+          <div class="os-plate-h"><h2 id="ev-tamper-h" style="font-size:19px">See a check fail</h2><span class="r"><span class="os-trust simulated" title="Runs only in this browser; nothing is changed anywhere.">Local demonstration</span></span></div>
+          <div class="os-plate-b">
+            <p>A verifier that never says no proves nothing. This alters one character of the obligation corpus <em>in this browser's memory only</em>, the kind of edit that would move a legal date, and runs the same check on the altered copy. Nothing is changed on the server, and the real document's result above is unaffected.</p>
+            <button type="button" class="os-btn" id="tamper-go">Alter one character and verify</button>
+            <div id="tamper-out" aria-live="polite" style="margin-top:14px"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">Verification runs in your browser and needs JavaScript. The same checks can be run in a terminal: see <a href="/signing.html">How to verify us</a>.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script type="module" src="/os/evidence-page.js"></script>
+</body>
+</html>

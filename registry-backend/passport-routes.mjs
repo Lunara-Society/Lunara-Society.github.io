@@ -104,6 +104,9 @@ export async function passportRoute(name, body, deps, ipHash, h) {
       const monitored = !!(deps.db.monitorFor && await deps.db.monitorFor(domain).catch(() => null));
       return json({
         success: true, found: true, ...brief(r), fresh, monitored,
+        // What each check earned on that scan, partial credit included, so
+        // the scenario lab (simulate.html) starts from the measured score.
+        earned: Array.isArray(r.checks) ? Object.fromEntries(r.checks.map((c) => [c.id, c.earned])) : null,
         eligible: fresh && BADGE_GRADES.includes(r.grade),
         passport: passportUrl(domain)
       });

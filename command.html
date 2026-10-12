@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Command Center: Lunara's Operating Picture | Lunara Society</title>
+<meta name="description" content="Lunara's live operating picture: health measured against every backend, the public activity record, and what waits on a human. Nothing on it is simulated.">
+<link rel="canonical" href="https://lunarasociety.com/command.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/command.html">
+<meta property="og:title" content="Lunara Command Center: the operating picture, as measured">
+<meta property="og:description" content="Service health measured from your browser, the public activity record with sources, and the queue of what waits on a human.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.cc-stage{display:grid;grid-template-columns:286px minmax(400px,1fr) 286px;gap:22px;align-items:stretch;margin-bottom:22px}
+.cc-core{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:620px}
+/* distant geometry: engraved arcs far behind the structure */
+.cc-core::before{content:"";position:absolute;left:50%;top:46%;width:820px;height:820px;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:repeating-radial-gradient(circle,transparent 0 79px,rgba(198,203,211,.045) 80px,transparent 81px);
+  -webkit-mask-image:radial-gradient(closest-side,#000 40%,transparent);mask-image:radial-gradient(closest-side,#000 40%,transparent)}
+.cc-core::after{content:"";position:absolute;left:50%;top:46%;width:2px;height:760px;transform:translate(-50%,-50%);pointer-events:none;
+  background:linear-gradient(transparent,rgba(240,217,155,.10),transparent)}
+.cc-core canvas{position:relative;z-index:1;width:100%;max-width:600px;aspect-ratio:1/1;display:block}
+.cc-cap{position:relative;z-index:1;margin-top:-10px;text-align:center}
+.cc-cap .st{font:500 12px/1 var(--os-mono);letter-spacing:.34em;text-transform:uppercase;color:var(--os-gold-hi)}
+.cc-cap .why{margin-top:8px;font-size:12.5px;color:var(--os-muted-2);max-width:420px}
+.cc-svc{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;padding:9px 16px;border:0;border-bottom:1px solid var(--os-hair);background:none;text-align:left;cursor:pointer}
+.cc-svc:hover{background:rgba(198,203,211,.03)}
+.cc-svc:last-child{border-bottom:0}
+.cc-svc .n{font-size:13px;color:var(--os-text)}
+.cc-svc .m{grid-column:1/3;font-size:11.5px;color:var(--os-muted);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc-fig{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline;padding:13px 16px;border-bottom:1px solid var(--os-hair)}
+.cc-fig:last-child{border-bottom:0}
+.cc-fig .v{font:300 32px/1 var(--os-display);color:var(--os-text);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
+.cc-fig .v small{font:400 13px/1 var(--os-ui);color:var(--os-muted-2);margin-left:3px}
+.cc-fig .l{font-size:12.5px;color:var(--os-platinum);line-height:1.35}
+.cc-fig .s{grid-column:1/3;font:400 10.5px/1.4 var(--os-mono);color:var(--os-muted)}
+.cc-ev{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:12px 18px;border-bottom:1px solid var(--os-hair)}
+.cc-ev .tm{font:400 11px/1.5 var(--os-mono);color:var(--os-muted);font-variant-numeric:tabular-nums}
+.cc-ev .tp{font:500 9.5px/1 var(--os-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--os-gold);margin-bottom:5px}
+.cc-ev .tp.priv{color:var(--os-info)}
+.cc-ev .sr{font:400 10.5px/1.4 var(--os-mono);color:var(--os-muted);margin-top:4px}
+.cc-feed{max-height:560px;overflow-y:auto}
+.cc-q{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;padding:12px 18px;border-bottom:1px solid var(--os-hair)}
+.cc-q .u{font:500 11px/22px var(--os-mono);text-align:center;border:1px solid var(--os-hair-2);border-radius:2px;color:var(--os-muted-2)}
+.cc-q .u.u1,.cc-q .u.u2{color:var(--os-gold-hi);border-color:var(--os-gold-line)}
+.cc-q .u.svc{color:var(--os-warn);border-color:rgba(217,166,79,.5)}
+.cc-method{columns:2;column-gap:40px;font-size:13px;color:var(--os-muted-2)}
+.cc-method p{break-inside:avoid}
+</style>
+</head>
+<body class="os" data-workspace="Command Center">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+
+<div class="os-entrance" id="cc-entrance" hidden data-state="boot" role="dialog" aria-label="Opening the Command Center">
+  <div class="grid" aria-hidden="true"></div>
+  <div class="signal" aria-hidden="true"></div>
+  <div class="mark">
+    <img src="/lunara_emblem_256.png" alt="" width="132" height="132">
+    <div class="n">Lunara</div>
+    <div class="s">Sovereign Intelligence OS</div>
+    <div class="line" id="cc-entrance-line" role="status" aria-live="polite"></div>
+  </div>
+  <button type="button" class="skip" id="cc-skip">Skip intro</button>
+</div>
+
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea" data-dock="off">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/status.html">System status</a> · <a href="/audit.html">Activity</a> · <a href="/agent-atlas.html">Agent Network</a> · <a href="/evidence-registry.html">Evidence Registry</a></nav>
+
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Command Center</div>
+            <h1>The operating picture, <em>as measured.</em></h1>
+            <p class="os-lede">Every status here was measured from your browser against the service itself, a moment ago. Every event names the table it came from. Where something has not been checked, failed, or is not set up, the page says so in those words.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex:none">
+            <button type="button" class="os-btn" id="cc-check">Check every service now</button>
+            <button type="button" class="os-btn primary" id="cc-pal">Search or command</button>
+          </div>
+        </div>
+
+        <section class="cc-stage" aria-label="System overview">
+          <div class="os-plate">
+            <div class="os-plate-h"><span class="os-eyebrow">Operational status</span><span class="r"><a href="/status.html" class="os-note">Details</a></span></div>
+            <div id="cc-svcs" role="list"><div class="os-plate-b"><div class="os-skel"></div><div class="os-skel"></div><div class="os-skel"></div></div></div>
+          </div>
+
+          <div class="cc-core">
+            <canvas id="cc-canvas" aria-hidden="true"></canvas>
+            <div class="cc-cap">
+              <div class="st" id="cc-state">Connecting</div>
+              <div class="why" id="cc-why" role="status" aria-live="polite">Asking each service for its status.</div>
+              <div class="os-fresh" id="cc-fresh" style="margin-top:8px"></div>
+            </div>
+          </div>
+
+          <div class="os-plate">
+            <div class="os-plate-h"><span class="os-eyebrow">The record today</span></div>
+            <div id="cc-figs"><div class="os-plate-b"><div class="os-skel"></div><div class="os-skel"></div><div class="os-skel"></div></div></div>
+          </div>
+        </section>
+
+        <section class="os-grid c32" aria-label="Activity and priorities">
+          <div class="os-plate">
+            <div class="os-plate-h"><span class="os-eyebrow">Activity</span><span class="os-note" id="cc-scope">Public record</span><span class="r"><span class="os-fresh" id="cc-feed-fresh"></span></span></div>
+            <div class="cc-feed" id="cc-feed" aria-live="polite"><div class="os-plate-b"><div class="os-skel"></div><div class="os-skel"></div></div></div>
+          </div>
+          <div class="os-plate" id="queue">
+            <div class="os-plate-h"><span class="os-eyebrow">Priority queue</span><span class="r os-note" id="cc-qscope"></span></div>
+            <div id="cc-queue"><div class="os-plate-b"><div class="os-skel"></div></div></div>
+          </div>
+        </section>
+
+        <section class="os-plate" style="margin-top:22px" aria-labelledby="cc-method-h">
+          <div class="os-plate-h"><h2 id="cc-method-h" style="font-size:19px">How this page knows what it shows</h2></div>
+          <div class="os-plate-b cc-method">
+            <p><strong>Status.</strong> Each service is asked directly from this browser: the registry's status route (which times its own database read), the checkout function's Stripe configuration, the agent card, the MCP server's tool list, the sign-in function's refusal of an empty session, the Lens service and the background monitor's last sweep. A service that does not answer within nine seconds is marked unavailable; one we could not probe is marked unknown. Neither is ever painted green.</p>
+            <p><strong>Activity.</strong> The public stream holds only what the site already publishes: register decisions, rescans of the AI Passport League's domains, and listed agents joining, passing trials and completing missions, plus public cases from the monitor. A scan of any other domain is not shown, because who looked at what is nobody else's business. Signed in as the owner, the stream adds payments, applications, partners and audited decisions.</p>
+            <p><strong>The queue.</strong> Public visitors see services that are degraded and verified regulatory dates within 180 days, taken from the signed corpus. The owner also sees applications, mission submissions and partner applications waiting on a decision, the ones a customer is blocked on first. Urgency follows from what blocks a paying customer; nothing is marked urgent to make the page look busy.</p>
+            <p><strong>The structure.</strong> The object at the centre draws one satellite for each service checked, in its measured colour. A light travels in only when that check has just finished. It turns amber when a service is degraded and drains of colour when nothing answers. It does not animate work that is not happening.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">The Command Center measures services from your browser and needs JavaScript. The same records are on <a href="/registry.html">the public register</a> and <a href="/league.html">the AI Passport League</a>.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script src="/lunara-os-core.js"></script>
+<script src="/os/command.js"></script>
+</body>
+</html>

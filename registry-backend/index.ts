@@ -109,6 +109,7 @@ const db = {
   misGet: (id: number) => rest(`/mission_submissions?id=eq.${id}&limit=1`).then(one),
   misUpdate: (id: number, patch: Record<string, unknown>) => rest(`/mission_submissions?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   misList: () => rest('/mission_submissions?order=created_at.desc&limit=200'),
+  misByAgent: (id: string) => rest(`/mission_submissions?agent_id=eq.${q(id)}&select=id,mission,status,points,note,created_at,decided_at&order=created_at.desc&limit=100`),
   misExists: async (mission: string, key: string) => !!one(await rest(`/mission_submissions?mission=eq.${q(mission)}&payload->>dedupe=eq.${q(key)}&status=neq.rejected&select=id&limit=1`)),
   verifiedAgentEntry: (email: string, nowIso: string) => rest(`/registry_entries?contact_email=ilike.${q(email)}&kind=eq.ai_agent&status=eq.approved&expires_at=gt.${q(nowIso)}&select=public_id&limit=1`).then(one),
   updatePartner: (c: string, patch: Record<string, unknown>) => rest(`/registry_partners?code=eq.${q(c)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
@@ -127,7 +128,16 @@ const db = {
   },
   saveChat: (cid: string, persona: string, message: string, reply: string) =>
     post('chat_turns', { conversation_id: cid, persona, message, reply }, 'return=minimal'),
-  getOrder: (ref: string) => rest(`/stripe_orders?order_ref=eq.${q(ref)}&select=order_ref,status,product&limit=1`).then(one)
+  getOrder: (ref: string) => rest(`/stripe_orders?order_ref=eq.${q(ref)}&select=order_ref,status,product&limit=1`).then(one),
+  // The operating picture (os.mjs).
+  ping: () => rest('/registry_entries?select=public_id&limit=1'),
+  listPublishedAll: () => rest('/registry_entries?status=in.(approved,revoked)&select=public_id,business_name,domain,status,verified_at,revoked_at,revocation_reason,reviewer_name&order=decided_at.desc.nullslast&limit=500'),
+  recentScans: (n: number) => rest(`/passport_scans?select=domain,score,grade,prev_score,prev_grade,scanned_at&order=scanned_at.desc&limit=${Math.min(200, n | 0)}`),
+  misRecentApproved: (n: number) => rest(`/mission_submissions?status=eq.approved&select=id,agent_id,mission,status,points,decided_at&order=decided_at.desc&limit=${Math.min(200, n | 0)}`),
+  sitRecentPassed: (n: number) => rest(`/trial_sittings?passed=is.true&select=sitting_id,agent_id,trial,score,passed,submitted_at&order=submitted_at.desc&limit=${Math.min(200, n | 0)}`),
+  auditLast: () => rest('/admin_audit?select=seq,hash&order=seq.desc&limit=1').then(one),
+  auditAppend: (r: Record<string, unknown>) => post('admin_audit', r, 'return=minimal'),
+  auditList: async (n: number) => ((await rest(`/admin_audit?order=seq.desc&limit=${Math.min(1000, n | 0)}`)) || []).reverse()
 };
 
 /* Mail through Resend. Absent key: nothing is sent, nothing fails. */

@@ -201,6 +201,12 @@ jobs:
       - name: Test the registry
         run: node registry-backend/test_registry.mjs
 
+      # The OS pages claim things about evidence, dates, simulations and
+      # relationships; each claim is a pure module, held here to the real
+      # signatures and corpus in this commit.
+      - name: Test the Sovereign Intelligence OS
+        run: node tools/test-os.mjs
+
       # The WhatsApp Worker has no deploy gate of its own — it is pasted
       # into Cloudflare by hand — so this is the only thing standing between
       # a bad edit and a webhook Meta silently drops.

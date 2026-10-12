@@ -101,6 +101,17 @@
       ['ai-agent-verification.html',        'AI agent verification'],
       ['glossary.html',                     'Glossary']
     ]},
+    { head: 'Operations', links: [
+      ['command.html',           'Command Center'],
+      ['status.html',            'System status'],
+      ['investigate.html',       'Intelligence workspace'],
+      ['agent-atlas.html',       'Agent atlas · A2A inspector'],
+      ['missions.html',          'Missions'],
+      ['evidence-registry.html', 'Evidence Registry'],
+      ['regulation.html',        'Regulatory intelligence'],
+      ['simulate.html',          'Scenario Lab'],
+      ['audit.html',             'Activity and audit']
+    ]},
     { head: 'For machines', links: [
       ['agents.html',         'For AI agents · A2A'],
       ['agents.html#partners','Partner program'],
@@ -133,6 +144,7 @@
       }).join('') +
     '</div>' +
     '<div class="lxn-end">' +
+      '<a class="lxn-os" href="/command.html" aria-label="Command Center: the live operating picture" title="Command Center"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></a>' +
       '<a class="lxn-ghost" href="/member.html">Sign in</a>' +
       '<a class="lxn-cta" href="/shield.html">Apply</a>' +
       '<button class="lxn-burger" type="button" aria-label="Open navigation" aria-expanded="false"><i></i></button>' +
@@ -147,6 +159,7 @@
     '<button class="lxn-x" type="button" aria-label="Close navigation">&times;</button>' +
     '<a href="/">Home</a>' +
     NAV.map(function (n) { return '<a href="/' + esc(n.href) + '">' + esc(n.label) + '</a>'; }).join('') +
+    '<a href="/command.html">Command Center</a>' +
     '<a href="/member.html">Sign in</a>';
 
   /* ── the footer ─────────────────────────────────────────────── */

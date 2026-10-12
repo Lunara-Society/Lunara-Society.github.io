@@ -9,7 +9,8 @@
    through: a shockwave, a burst of light, the seal flying into the
    camera, and the homepage arriving behind it.
 
-   Once per visit. Never for crawlers or for a link with a #section.
+   Once per device: a returning visitor goes straight in. Never for
+   crawlers or for a link with a #section.
    ?intro=1 plays it again; Escape or the faint "Skip" leaves at once.
    Reduced motion gets the seal and the door, without the film.
    ═══════════════════════════════════════════════════════════════════ */
@@ -211,7 +212,7 @@
   function finish() {
     done = true;
     timers.forEach(clearTimeout);
-    try { sessionStorage.setItem('lx-intro-seen', '1'); } catch (e) {}
+    try { sessionStorage.setItem('lx-intro-seen', '1'); localStorage.setItem('lx-intro-seen', '1'); } catch (e) {}
     root.classList.add('lx-introdone');
     root.classList.remove('lx-intro');
     if (box.parentNode) box.parentNode.removeChild(box);

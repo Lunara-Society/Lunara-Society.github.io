@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Scenario Lab: What Would Fixing It Score? | Lunara Society</title>
+<meta name="description" content="Start from a domain's recorded passport scan, assume fixes it has not made, and see what the same scoring code would give. Observed, assumed and simulated stay apart.">
+<link rel="canonical" href="https://lunarasociety.com/simulate.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/simulate.html">
+<meta property="og:title" content="The Lunara Scenario Lab">
+<meta property="og:description" content="What would your passport score if you fixed it? Simulated from your recorded scan, never written back.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta name="theme-color" content="#08090C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="stylesheet" href="/lunara-os.css">
+<style>
+.sl-form{display:flex;gap:12px;align-items:flex-end;margin-bottom:22px}
+.sl-form .os-field{width:380px}
+.sl-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.sl-big{display:flex;align-items:baseline;gap:12px;margin:6px 0 4px}
+.sl-big b{font:300 64px/1 var(--os-display);color:var(--os-text);font-variant-numeric:lining-nums}
+.sl-big span{font:400 22px/1 var(--os-display);color:var(--os-muted-2)}
+.sl-sim b{color:var(--os-warn)}
+.sl-check{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--os-hair);font-size:12.5px}
+.sl-check:last-child{border-bottom:0}
+.sl-check input{width:16px;height:16px;margin-top:2px;accent-color:var(--os-gold)}
+.sl-check .p{font:400 11px/1.4 var(--os-mono);color:var(--os-muted);white-space:nowrap}
+.sl-check .f{grid-column:2/4;color:var(--os-muted);font-size:11.5px}
+.sl-bar{display:flex;height:8px;border-radius:2px;overflow:hidden;background:rgba(198,203,211,.06);margin:10px 0}
+.sl-bar i{display:block;height:100%}
+.sl-bar .o{background:var(--os-info)}
+.sl-bar .s{background:repeating-linear-gradient(45deg,var(--os-warn) 0 4px,rgba(217,166,79,.5) 4px 8px)}
+</style>
+</head>
+<body class="os" data-workspace="Scenario Lab">
+<a class="os-skip" href="#os-main">Skip to the workspace</a>
+<div class="os-frame">
+  <div class="os-body">
+    <div class="os-workarea" data-dock="off">
+      <main class="os-main" id="os-main">
+        <nav class="os-fallback" aria-label="Workspaces"><a href="/">Lunara Society</a> · <a href="/passport.html">Passport control</a></nav>
+        <div class="os-head">
+          <div>
+            <div class="os-eyebrow">Scenario Lab</div>
+            <h1>What would fixing it <em>score?</em></h1>
+            <p class="os-lede">Start from a domain's recorded passport scan, assume some of the fixes it has not made, and see what the same scoring code would give. Four kinds of number are kept apart and labelled: what was observed, what you assumed, what is simulated, and what a real scan later records. Nothing here is written anywhere.</p>
+          </div>
+        </div>
+
+        <form class="sl-form" id="sl-form" novalidate>
+          <div class="os-field"><label for="sl-d">Domain</label><input class="os-input" id="sl-d" name="d" placeholder="example.com" autocomplete="off" spellcheck="false" required aria-describedby="sl-err"></div>
+          <button class="os-btn primary" type="submit">Load its recorded scan</button>
+          <span class="os-err" id="sl-err" role="alert"></span>
+        </form>
+
+        <div id="sl-out">
+          <div class="os-plate"><div class="os-empty"><strong>Choose a domain</strong><p>The lab reads the domain's most recent stored scan (the same one its badge and the league show). A domain never scanned has nothing to start from: scan it on Passport control first, for free.</p></div></div>
+        </div>
+
+        <section class="os-grid c2" style="margin-top:22px">
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">The model</h2></div>
+            <div class="os-plate-b">
+              <p>The model is the scanner's own scoring code, <a href="/registry-backend/passport.mjs">registry-backend/passport.mjs</a>, imported by this page: thirteen public checks, their points, and the grade boundaries. No AI model estimates anything here. The lab assumes a fix earns the check's full points, which is what the scanner awards when the fix is made correctly.</p>
+            </div>
+          </div>
+          <div class="os-plate">
+            <div class="os-plate-h"><h2 style="font-size:19px">Its limits</h2></div>
+            <div class="os-plate-b">
+              <p>A simulated score is not a score. A header sent with a typo, a DMARC record at <code>p=none</code>, or DNSSEC that the registrar never switched on earns less than full points, and only a real scan will say so. The passport also says nothing about who runs a domain: that is the register's job, and no simulation reaches it.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+<noscript><p style="padding:20px;color:#C6CBD3">The lab computes in your browser and needs JavaScript.</p></noscript>
+<script src="/lunara-os.js"></script>
+<script type="module" src="/os/simulate.js"></script>
+</body>
+</html>

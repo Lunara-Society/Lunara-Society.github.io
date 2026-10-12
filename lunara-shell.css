@@ -74,6 +74,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   padding:9px 14px;border-radius:100px;transition:color .22s ease;
 }
 .lxn-ghost:hover{color:var(--lx-white)}
+/* The Command Center, as a glyph: the operating picture is one click away
+   from every page without costing the navigation a seventh label. */
+.lxn-os{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;
+  color:var(--lx-gold);border:1px solid rgba(196,164,107,.35);transition:color .2s,border-color .2s,box-shadow .2s}
+.lxn-os svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.lxn-os:hover,.lxn-os:focus-visible{color:var(--lx-gold-lit);border-color:rgba(226,196,122,.7);box-shadow:0 0 18px -6px rgba(226,196,122,.7)}
 .lxn-cta{
   font-size:12.5px;text-decoration:none;color:#141210;
   background:linear-gradient(180deg,#F0E6CE,#CBB07C);
@@ -153,7 +159,7 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 }
 .lxf-in{max-width:1280px;margin:0 auto}
 .lxf-grid{
-  display:grid;grid-template-columns:1.35fr repeat(4,1fr);
+  display:grid;grid-template-columns:1.35fr repeat(5,1fr);
   gap:clamp(18px,2.2vw,34px);margin-bottom:40px;
 }
 .lxf-brand p{font-size:13px;color:var(--lx-grey-2);max-width:34ch;margin:14px 0 0;line-height:1.7}

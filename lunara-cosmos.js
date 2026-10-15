@@ -332,7 +332,9 @@
     safe('css', injectCss);
     // The starfield is retired: the site is lit by light and haze now,
     // not stars (lunara-engine.js). buildSky stays for reference only.
-    safe('touch', buildTouch);
+    // The touch ring under every click is retired: controls answer a
+    // press themselves now (lunara-materials.css). buildTouch stays
+    // for reference only, like buildSky.
     safe('light', buildLight);
     safe('rise', buildRise);
   }

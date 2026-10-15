@@ -48,16 +48,10 @@
      tilts its hero as you walk is a phone with a broken hero. */
   if (!reduce && window.matchMedia('(hover: hover) and (min-width: 981px)').matches) {
     var rack = document.querySelector('.lxs-rack');
-    var raf = 0, tx = 0, ty = 0;
-    window.addEventListener('pointermove', function (e) {
-      var nx = (e.clientX / window.innerWidth) - 0.5;
-      var ny = (e.clientY / window.innerHeight) - 0.5;
-      tx = -nx * 4.2; ty = ny * 3.4;
-      if (!raf) raf = requestAnimationFrame(function apply() {
-        raf = 0;
-        rack.style.transform = 'rotateY(' + tx.toFixed(2) + 'deg) rotateX(' + ty.toFixed(2) + 'deg)';
-      });
-    }, { passive: true });
+    // the shared pointer field (lunara-field.js) is already eased: the rack turns with the moon, not after it
+    if (rack) (window.__lxField = window.__lxField || []).push(function (f) {
+      rack.style.transform = 'rotateY(' + (-f.x * 4.2).toFixed(2) + 'deg) rotateX(' + (f.y * 3.4).toFixed(2) + 'deg)';
+    });
   }
 
   /* ── instrument one: the clock ─────────────────────────────────── */

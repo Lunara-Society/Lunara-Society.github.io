@@ -5,8 +5,9 @@
    Everything the homepage draws, except the three instruments (those
    are lunara-stage.js) and the moon's surface (lunara-moon.js).
 
-     THE SKY        decoration, and quiet about it
      THE MOON       mounted here, captioned with its computed phase
+     THE DEPTH      moon, halo and horizon as planes at different
+                    distances, answering the pointer and the scroll
      THE HORIZON    the obligation register laid along a planet's rim,
                     by application date, from /corpus/obligations.json
      THE CHAIN      the six steps as a chain of custody the reader
@@ -27,7 +28,6 @@
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hover  = window.matchMedia && window.matchMedia('(hover: hover)').matches;
-  var DPR = Math.min(window.devicePixelRatio || 1, 2);
   var $ = function (id) { return document.getElementById(id); };
   var NS = 'http://www.w3.org/2000/svg';
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -96,58 +96,32 @@
     if (window.LunaraMoon) window.LunaraMoon.mount($('moon'), { relief: 7.5 });
   });
 
-  /* ── the sky ───────────────────────────────────────────────────── */
-  safe('sky', function () {
-    var c = $('sky'); if (!c) return;
-    var ctx = c.getContext('2d'), stars = [], W = 0, H = 0, raf = 0, visible = true, mx = 0, my = 0, px = 0, py = 0;
-    var moonWrap = document.querySelector('.moon-wrap');
-
-    function build() {
-      var b = c.getBoundingClientRect(); W = b.width; H = b.height;
-      c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
-      var r = rng(20260802), mb = moonWrap.getBoundingClientRect(), ob = c.getBoundingClientRect();
-      var mcx = mb.left - ob.left + mb.width / 2, mcy = mb.top - ob.top + mb.height / 2, mr = mb.width / 2;
-      stars = [];
-      var count = Math.round(W * H / 2600);
-      for (var i = 0; i < count; i++) {
-        var x = r() * W, y = r() * H * 0.86;
-        /* the moon washes the sky out around itself, as it does */
-        var d = Math.hypot(x - mcx, y - mcy) / mr;
-        if (d < 1.02) continue;
-        var wash = Math.min(1, Math.max(0.12, (d - 1) / 1.6));
-        var m = Math.pow(r(), 5);
-        stars.push({ x: x, y: y, s: 0.35 + m * 1.35, a: (0.18 + m * 0.75) * wash, tw: r() < 0.14 ? 0.6 + r() * 2.2 : 0, ph: r() * 6.28, z: 0.3 + r() * 0.7,
-          c: r() < 0.12 ? '226,205,160' : (r() < 0.2 ? '190,210,255' : '236,238,244') });
-      }
-      /* a faint band of the galaxy, far off to the left, low contrast */
-      for (var k = 0; k < 900; k++) {
-        var t = r(), g = (r() + r() + r() - 1.5) * 0.09;
-        var bx = W * (-0.05 + t * 0.62), by = H * (0.95 - t * 0.9) + g * H;
-        stars.push({ x: bx, y: by, s: 0.3 + r() * 0.5, a: 0.07 + r() * 0.12, tw: 0, ph: 0, z: 0.2, c: '220,224,236' });
-      }
-    }
-    function draw(t) {
+  /* ── the depth ─────────────────────────────────────────────────
+     The opening is three planes: the moon far off, its halo of light
+     behind it, the horizon and its register in front. They answer the
+     pointer by different amounts, through the one shared pointer field
+     (lunara-field.js), so the moon reads as distance rather than as a
+     picture of one; and as the page scrolls away the moon sinks more
+     slowly than the page, as far things do. No scroll is taken over:
+     this only listens. Pointer and scroll are written in one place per
+     plane per frame, with the individual translate property so nothing
+     else's transform is disturbed. */
+  safe('depth', function () {
+    if (reduce) return;
+    var open = $('open'), moon = document.querySelector('.moon-wrap'), halo = document.querySelector('.moon-halo'), hz = $('horizon');
+    if (!open || !moon) return;
+    var f = { x: 0, y: 0 }, sy = 0, raf = 0, onScreen = true;
+    function paint() {
       raf = 0;
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      px += (mx - px) * 0.05; py += (my - py) * 0.05;
-      for (var i = 0; i < stars.length; i++) {
-        var s = stars[i], a = s.a;
-        if (s.tw && !reduce) a *= 0.72 + 0.28 * Math.sin(t / 1000 * s.tw + s.ph);
-        ctx.fillStyle = 'rgba(' + s.c + ',' + a.toFixed(3) + ')';
-        var x = s.x - px * 14 * s.z, y = s.y - py * 9 * s.z;
-        if (s.s > 1.1) {
-          ctx.beginPath(); ctx.arc(x, y, s.s, 0, 6.2832); ctx.fill();
-          ctx.fillStyle = 'rgba(' + s.c + ',' + (a * 0.12).toFixed(3) + ')';
-          ctx.beginPath(); ctx.arc(x, y, s.s * 3.2, 0, 6.2832); ctx.fill();
-        } else ctx.fillRect(x, y, s.s, s.s);
-      }
-      if (!reduce && visible) raf = requestAnimationFrame(draw);
+      if (!onScreen) return;
+      moon.style.translate = (-f.x * 22).toFixed(1) + 'px ' + (-f.y * 14 + sy * 0.18).toFixed(1) + 'px';
+      if (halo) halo.style.translate = (-f.x * 34).toFixed(1) + 'px ' + (-f.y * 22).toFixed(1) + 'px';
+      if (hz) hz.style.translate = (f.x * 10).toFixed(1) + 'px ' + (f.y * 6).toFixed(1) + 'px';
     }
-    build(); draw(0);
-    window.addEventListener('resize', function () { build(); if (!raf) raf = requestAnimationFrame(draw); });
-    if (hover && !reduce) window.addEventListener('pointermove', function (e) { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; }, { passive: true });
-    new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(draw); }).observe(c);
+    function ask() { if (!raf) raf = requestAnimationFrame(paint); }
+    (window.__lxField = window.__lxField || []).push(function (st) { f.x = st.x; f.y = st.y; ask(); });
+    window.addEventListener('scroll', function () { sy = Math.min(window.scrollY || 0, open.offsetHeight); ask(); }, { passive: true });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; if (onScreen) ask(); }).observe(open);
   });
 
   /* ── the horizon ───────────────────────────────────────────────── */

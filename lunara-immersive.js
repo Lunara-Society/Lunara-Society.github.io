@@ -35,7 +35,7 @@
 
   /* ==========================================================
      1. ATMOSPHERE LAYERS
-     Ink wash, vignette and dust canvas, all at z-index -1 so
+     Ink wash and vignette, both at z-index -1 so
      they paint behind every piece of real content.
      ========================================================== */
 
@@ -45,10 +45,6 @@
     var frag = document.createDocumentFragment();
     frag.appendChild(el('div', 'lx-ink'));
     frag.appendChild(el('div', 'lx-vignette'));
-
-    if (!REDUCED && !COARSE) {
-      frag.appendChild(el('canvas', 'lx-dust'));
-    }
 
     document.body.insertBefore(frag, document.body.firstChild);
 
@@ -488,103 +484,11 @@
     }
   }
 
-  /* ==========================================================
-     2. GOLD DUST
-     A slow drift of motes, lit like flecks of metal in the air.
-     Deliberately sparse — atmosphere, not snow.
-     ========================================================== */
+  /* (The dust canvas, embers drifting up behind every page, is gone:
+     particles belong to moments when something is made, never to a
+     background. See lunara-engine.js.) */
 
-  function buildDust() {
-    var canvas = document.getElementById('lx-dust');
-    if (!canvas) return;
 
-    var ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var motes = [];
-    var w = 0, h = 0;
-    var running = true;
-    var raf = null;
-
-    function resize() {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = w + 'px';
-      canvas.style.height = h + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      // Density scales with area, capped so large displays stay cheap.
-      var target = Math.min(46, Math.round((w * h) / 34000));
-      motes = [];
-      for (var i = 0; i < target; i++) motes.push(mote());
-    }
-
-    function mote() {
-      return {
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: 0.4 + Math.random() * 1.5,
-        // Drifting upward, as embers do.
-        vy: -(0.05 + Math.random() * 0.16),
-        vx: (Math.random() - 0.5) * 0.10,
-        a: 0.10 + Math.random() * 0.38,
-        // Each mote breathes at its own rate.
-        phase: Math.random() * Math.PI * 2,
-        rate: 0.004 + Math.random() * 0.010
-      };
-    }
-
-    function frame() {
-      if (!running) return;
-      ctx.clearRect(0, 0, w, h);
-
-      for (var i = 0; i < motes.length; i++) {
-        var m = motes[i];
-        m.x += m.vx;
-        m.y += m.vy;
-        m.phase += m.rate;
-
-        // Recycle motes that drift off the top.
-        if (m.y < -8) { m.y = h + 8; m.x = Math.random() * w; }
-        if (m.x < -8) m.x = w + 8;
-        if (m.x > w + 8) m.x = -8;
-
-        var twinkle = 0.55 + 0.45 * Math.sin(m.phase);
-        var alpha = m.a * twinkle;
-
-        var g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 4);
-        g.addColorStop(0, 'rgba(244,229,196,' + alpha.toFixed(3) + ')');
-        g.addColorStop(0.4, 'rgba(196,164,107,' + (alpha * 0.5).toFixed(3) + ')');
-        g.addColorStop(1, 'rgba(196,164,107,0)');
-
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, m.r * 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      raf = requestAnimationFrame(frame);
-    }
-
-    resize();
-    frame();
-
-    window.addEventListener('resize', debounce(resize, 180), { passive: true });
-
-    // Stop painting entirely when the tab is in the background.
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) {
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-      } else if (!running) {
-        running = true;
-        frame();
-      }
-    });
-  }
 
   /* ==========================================================
      3. HEADER GEOMETRY
@@ -1140,7 +1044,6 @@
 
   function init() {
     safe('atmosphere', buildAtmosphere);
-    // Gold dust (the embers) is retired; see lunara-engine.js.
     safe('header-geometry', fixHeaderGeometry);
     safe('scroll-aids', buildScrollAids);
     safe('light-follow', buildLightFollow);
@@ -1363,26 +1266,17 @@
       return true;
     }
 
-    function ledger() {
-      /* A single registry or clock row briefly illuminates, as though
-         somebody just queried it. */
-      var rows = document.querySelectorAll('.lxc-row, .reg-entry, .pillar-row');
-      var vis = [].filter.call(rows, isOnScreen);
-      if (!vis.length) return false;
-      var row = vis[Math.floor(Math.random() * vis.length)];
-      row.classList.remove('lx-ping');
-      void row.offsetWidth;
-      row.classList.add('lx-ping');
-      setTimeout(function () { row.classList.remove('lx-ping'); }, 2600);
-      return true;
-    }
+    /* There used to be a third event here: a register row lighting up
+       "as though somebody just queried it". Nobody had. A row that
+       signals activity that did not happen is fake data, however
+       faint, so it is gone. */
 
     function isOnScreen(el) {
       var r = el.getBoundingClientRect();
       return r.bottom > 60 && r.top < window.innerHeight - 60 && r.width > 0;
     }
 
-    var pool = [sweep, rake, ledger];
+    var pool = [sweep, rake];
 
     function fire() {
       if (!document.hidden) {

@@ -30,7 +30,7 @@
 
   /* ── sound ──────────────────────────────────────────────────────── */
   var A = null, OUT = null, NB = null;
-  function muted() { try { return localStorage.getItem('lx-sound') === '0'; } catch (e) { return false; } }
+  function muted() { try { return localStorage.getItem('lx-sound') !== '1'; } catch (e) { return true; } }   // off until switched on
   function audio() {
     if (muted()) return null;
     try {

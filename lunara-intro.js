@@ -1,18 +1,30 @@
 /* ═══════════════════════════════════════════════════════════════════
-   THE THRESHOLD — the intro to lunarasociety.com
+   THE THRESHOLD: the intro to lunarasociety.com
    ═══════════════════════════════════════════════════════════════════
 
-   The seal assembles out of light: rays build in the dark, a grid floor
-   runs into the haze, engraved rings draw themselves, the emblem is
-   read out of a single scan line and settles, and after seven and a
-   half seconds it waits to be touched. Touching it sends the visitor
-   through: a shockwave, a burst of light, the seal flying into the
-   camera, and the homepage arriving behind it.
+   A  void       0.0s   obsidian; a point of light
+   B  signal     0.9s   the point draws out into a gold line, which
+                        folds into a ring around where the seal will be
+   C  artifact   2.2s   sparks converge on the ring and the official
+                        emblem is forged inside it: dark first, then a
+                        raking light across its relief
+   D  chamber    2.6s   blades of light rise either side and recede to
+                        a lit doorway; the floor gives the emblem back
+   E  wordmark   4.3s   Lunara Society, then the line beneath it
+   F  open              Enter (or, after a few seconds, by itself): the
+                        chamber parts down the middle, the emblem flies
+                        to its place in the navigation, and the
+                        homepage is there behind it
 
-   At most once every twelve hours per device. Never for
-   crawlers or for a link with a #section.
-   ?intro=1 plays it again; Escape or the faint "Skip" leaves at once.
-   Reduced motion gets the seal and the door, without the film.
+   Particles appear only in C and F, as part of something being made or
+   opened; they are never a background. Nothing here claims a check it
+   has not made: there is no status read-out. Sound is off unless the
+   visitor has switched it on (lx-sound = 1).
+
+   At most once every twelve hours per device (the <head> of index.html
+   decides, before anything paints). Never for crawlers or for a link to
+   a #section; ?intro=1 plays it again. Escape or Skip leaves at once.
+   Reduced motion gets the composed scene, still, and a fade.
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -21,229 +33,303 @@
   if (!root.classList.contains('lx-intro')) { box.parentNode.removeChild(box); return; }
 
   var REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
   var $ = function (id) { return document.getElementById(id); };
-  var seal = $('lxi-seal'), rig = $('lxi-rig'), stage = $('lxi-stage');
-  var timers = [], done = false, ready = false;
-  function at(ms, fn) { timers.push(setTimeout(fn, REDUCED ? Math.min(ms, 600) : ms)); }
+  var rig = $('lxi-rig'), coin = $('lxi-coin'), hall = $('lxi-hall'), enterBtn = $('lxi-enter'), skipBtn = $('lxi-skip');
+  var timers = [], done = false, ready = false, opening = false;
+  var WAIT = 3600;                                   // how long the open door waits for a touch
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function stage(c) { box.classList.add(c); }
 
-  /* ── the rings: engraved, drawn on, turning ─────────────────────── */
-  (function rings() {
-    var svg = $('lxi-rings'), ns = 'http://www.w3.org/2000/svg', C = 500;
-    function el(tag, attrs, parent) { var e = document.createElementNS(ns, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; }
-    function circle(r, attrs, parent) { var c = el('circle', Object.assign({ cx: C, cy: C, r: r, class: 'draw' }, attrs), parent); c.style.setProperty('--len', (2 * Math.PI * r).toFixed(1)); return c; }
-    var g1 = el('g', { class: 'spin', style: '--s:90s' });
-    circle(250, { stroke: 'rgba(226,196,122,.55)', 'stroke-width': 1.2 }, g1);
-    for (var i = 0; i < 120; i++) {                       // the bezel: a tick every three degrees
-      var a = i * 3 * Math.PI / 180, long = i % 10 === 0, r1 = 250, r2 = long ? 270 : 260;
-      el('line', { x1: C + Math.cos(a) * r1, y1: C + Math.sin(a) * r1, x2: C + Math.cos(a) * r2, y2: C + Math.sin(a) * r2,
-        stroke: long ? 'rgba(255,236,190,.8)' : 'rgba(226,196,122,.35)', 'stroke-width': long ? 2 : 1, class: 'tick', opacity: 0 }, g1);
+  /* ── where the seal sits: everything else is drawn relative to it ── */
+  var E = { x: 0, y: 0, r: 0 }, P = { x: 0, y: 0, tx: 0, ty: 0 };
+  function measure() {
+    var b = rig.getBoundingClientRect();
+    E.x = b.left + b.width / 2; E.y = b.top + b.height / 2; E.r = b.width * 0.383;   // the coin's rim, in the artwork
+    box.style.setProperty('--hz', (E.y / innerHeight * 100).toFixed(2) + '%');
+    box.style.setProperty('--ey', (E.y / innerHeight * 100).toFixed(2) + '%');
+  }
+
+  /* ── C: the coin's edge. Darker copies behind the face give it a
+     thickness that shows when it turns; the artwork is untouched. ── */
+  (function edge() {
+    var face = coin.querySelector('img.face');
+    for (var i = 1; i <= 4; i++) {
+      var e = face.cloneNode(false); e.className = 'edge'; e.alt = '';
+      e.style.transform = 'translateZ(' + (-i * 1.6) + 'px)';
+      coin.insertBefore(e, face);
     }
-    var g2 = el('g', { class: 'spin rev', style: '--s:120s' });
-    el('path', { id: 'lxi-tp', d: 'M500 500m-300 0a300 300 0 1 1 600 0a300 300 0 1 1-600 0', stroke: 'none' }, g2);
-    var t = el('text', {}, g2), tp = el('textPath', { href: '#lxi-tp' }, t);
-    tp.textContent = 'LUNARA SOCIETY · CONSTITUTIONAL AUTHORITY FOR THE MACHINE ECONOMY · PASSPORT CONTROL · EST. MMXXVI · ';
-    var g3 = el('g', { class: 'spin', style: '--s:40s' });
-    circle(338, { stroke: 'rgba(127,224,176,.55)', 'stroke-width': 2, 'stroke-dasharray': '120 40 18 40 60 90', class: '' }, g3).style.opacity = '0';
-    circle(338, { stroke: 'rgba(127,224,176,.12)', 'stroke-width': 1 }, g3);
-    var g4 = el('g', { class: 'spin rev', style: '--s:200s' });
-    circle(392, { stroke: 'rgba(226,196,122,.22)', 'stroke-width': 1 }, g4);
-    for (var j = 0; j < 4; j++) {                           // four bracket marks, like a sight
-      var b = j * Math.PI / 2 + Math.PI / 4;
-      el('path', { d: 'M' + (C + Math.cos(b - .08) * 408) + ' ' + (C + Math.sin(b - .08) * 408) + ' A408 408 0 0 1 ' + (C + Math.cos(b + .08) * 408) + ' ' + (C + Math.sin(b + .08) * 408),
-        stroke: 'rgba(255,236,190,.7)', 'stroke-width': 3 }, g4);
-    }
-    // ticks and the segmented ring arrive after their circles
-    at(3300, function () { svg.querySelectorAll('.tick').forEach(function (l, k) { setTimeout(function () { l.setAttribute('opacity', 1); }, k * 6); }); g3.firstChild.style.transition = 'opacity 1.2s'; g3.firstChild.style.opacity = '1'; });
   })();
 
-  /* ── the light: rays, haze, a grid floor and a seam ─────────────── */
+  /* ── D: the chamber ────────────────────────────────────────────── */
+  (function chamber() {
+    var html = '<div class="floor"></div><div class="door"></div>', n = COARSE ? 5 : 7;
+    for (var i = 0; i < n; i++) {
+      [-1, 1].forEach(function (side) {
+        var z = 30 - i * 56, o = Math.max(0.28, 1 - i * 0.11);
+        html += '<i class="blade" style="--x:' + (side * 40) + 'vmin;--z:' + z + 'vmin;--o:' + o.toFixed(2) + ';--d:' + (i * 110 + (side > 0 ? 55 : 0)) + 'ms"></i>';
+      });
+    }
+    hall.innerHTML = html;
+  })();
+
+  /* ── the light: one fragment shader, falling back to gradients ──── */
   var GL = null;
   (function light() {
-    var cv = $('lxi-gl'), gl = cv.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'high-performance' });
-    if (!gl) return;
+    var cv = $('lxi-gl'), gl = null;
+    try { gl = cv.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'high-performance' }); } catch (e) {}
+    if (!gl) { box.classList.add('nogl'); return; }
     var FRAG = [
-      'precision highp float;uniform vec2 R;uniform float T,P,B;uniform vec2 M;',
+      'precision highp float;',
+      'uniform vec2 R,E,M;uniform float T,K,A,L,C,O,F;',
       'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
       'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}',
-      'float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}',
+      'float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}',
       'void main(){',
-      ' vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;vec2 c=uv-M*.025;float r=length(c),a=atan(c.y,c.x);',
-      ' vec2 q=uv*1.3+vec2(T*.02,0.);float sm=fbm(q+fbm(q*1.8+vec2(T*.04,-T*.02)));',
-      ' vec3 col=vec3(.02,.035,.04)*sm*2.+vec3(.08,.38,.36)*pow(sm,3.2)*.6*P;',
-      ' float rays=pow(n(vec2(a*9.,T*.16))*.6+n(vec2(a*23.,-T*.11))*.4,3.);',
-      ' float halo=exp(-r*3.4);',
-      ' col+=vec3(1.,.76,.40)*(rays*smoothstep(1.5,.12,r)*.65*(.5+.5*sm)+halo*.85)*P;',
-      ' float y=uv.y+.30;',
-      ' if(y<0.){float z=.32/(-y);vec2 g=vec2(uv.x*z*1.4,z+T*.5);vec2 gr=abs(fract(g)-.5);',
-      '  float ln=smoothstep(.47,.5,max(gr.x,gr.y));float fog=exp(-z*.16)*smoothstep(0.,.05,-y);',
-      '  float pulse=exp(-pow(z-mod(T*2.6,24.),2.)*.6);',
-      '  col+=vec3(.25,.85,.75)*(ln*.32+pulse*.25)*fog*P;}',
-      ' float fl=exp(-pow((uv.y+.004*sin(T))*70.,2.))*exp(-abs(uv.x)*1.3);',
-      ' col+=vec3(.55,.78,1.)*fl*(.25+.9*P);',
-      ' col+=vec3(1.,.92,.75)*B*exp(-r*(2.4-B*2.))*1.8;',
-      ' col*=smoothstep(1.6,.25,r);',
-      ' col=col/(1.+col*.35);',                                   // a gentle filmic roll-off
-      ' gl_FragColor=vec4(col,1.);}'
+      ' vec2 p=(gl_FragCoord.xy-E)/K;',                                  // vmin units, the seal at the origin, y up
+      ' vec2 pm=p-M*1.6;float r=length(pm);',
+      ' vec3 col=vec3(.016,.016,.02)+vec3(.012,.010,.008)*smoothstep(-60.,60.,p.y);',
+      ' float sm=fbm(p*.045+vec2(T*.018,-T*.011)+fbm(p*.07+T*.02));',
+      /* the shaft: a cone of light falling from above onto the seal */
+      ' float cw=7.+max(0.,60.-p.y)*.30;float cone=smoothstep(1.,.15,abs(p.x-M.x*3.)/cw)*smoothstep(-20.,40.,p.y);',
+      ' col+=vec3(1.,.84,.6)*cone*(.035+.10*sm)*C;',
+      /* the halo behind the seal, and the first point of light */
+      ' col+=vec3(1.,.78,.46)*exp(-r*.085)*(.22*C)+vec3(1.,.9,.72)*exp(-r*.45)*A*(1.-C*.75)*1.3;',
+      /* B: the signal, a line drawn out of the point */
+      ' float ext=mix(.5,70.,L);float sx=smoothstep(ext,ext*.55,abs(p.x));',
+      ' col+=vec3(1.,.88,.66)*(exp(-pow(p.y*K/1.7,2.))*1.2+exp(-pow(p.y*.9,2.))*.22)*sx*L;',
+      /* the floor: polished stone below the seal, giving the halo back */
+      ' float fy=-16.;if(p.y<fy){float d=fy-p.y;vec2 q=vec2(pm.x*.8,(p.y-2.*fy));',
+      '  col*=.55;col+=vec3(1.,.8,.5)*exp(-length(vec2(q.x,d*2.4))*.07)*.10*C*(.7+.3*sm);',
+      '  col+=vec3(1.,.86,.6)*exp(-pow(d*.9,2.))*.05*C;}',
+      /* F: the seam where the chamber parts */
+      ' col+=vec3(1.,.9,.72)*O*exp(-abs(p.x)*.6)*.9;',
+      ' col*=smoothstep(150.,30.,length(p*vec2(.8,1.)));',
+      ' col=1.-exp(-col*1.7);',                                          // a filmic shoulder: highlights roll off, never clip
+      ' col+=(h(gl_FragCoord.xy+T)-.5)/255.;',                           // dither: no banding in the dark gradients
+      ' gl_FragColor=vec4(col*F,1.);}'
     ].join('\n');
     function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+    var prog;
     try {
-      var prog = gl.createProgram();
+      prog = gl.createProgram();
       gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));
       gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-      gl.linkProgram(prog); gl.useProgram(prog);
-    } catch (e) { return; }
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('link');
+      gl.useProgram(prog);
+    } catch (e) { box.classList.add('nogl'); return; }
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    var U = {}; ['R', 'T', 'P', 'B', 'M'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
-    var scale = 0.75, W, H;
-    function size() { W = innerWidth; H = innerHeight; cv.width = Math.round(W * scale); cv.height = Math.round(H * scale); gl.viewport(0, 0, cv.width, cv.height); }
-    size(); window.addEventListener('resize', size);
-    GL = { p: 0, b: 0, mx: 0, my: 0, tx: 0, ty: 0 };
-    var t0 = performance.now(), last = t0, slow = 0;
+    var U = {}; ['R', 'E', 'M', 'T', 'K', 'A', 'L', 'C', 'O', 'F'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+    var scale = COARSE ? 0.5 : 0.7, slow = 0;
+    function size() { cv.width = Math.round(innerWidth * scale); cv.height = Math.round(innerHeight * scale); gl.viewport(0, 0, cv.width, cv.height); }
+    size();
+    GL = { A: 0, L: 0, C: 0, O: 0, F: 1, size: size };
+    var t0 = performance.now(), last = t0;
+    function draw(now) {
+      gl.uniform2f(U.R, cv.width, cv.height);
+      gl.uniform2f(U.E, E.x * scale, (innerHeight - E.y) * scale);
+      gl.uniform1f(U.K, Math.min(innerWidth, innerHeight) / 100 * scale);
+      gl.uniform2f(U.M, P.x, -P.y);
+      gl.uniform1f(U.T, (now - t0) / 1000);
+      ['A', 'L', 'C', 'O', 'F'].forEach(function (k) { gl.uniform1f(U[k], GL[k]); });
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    GL.draw = draw;
     (function frame(now) {
       if (done) return;
       var dt = now - last; last = now;
-      if (dt > 40 && dt < 300 && ++slow > 20 && scale > 0.4) { scale -= 0.15; slow = 0; size(); }
-      GL.mx += (GL.tx - GL.mx) * 0.05; GL.my += (GL.ty - GL.my) * 0.05;
-      gl.uniform2f(U.R, cv.width, cv.height);
-      gl.uniform1f(U.T, REDUCED ? 4 : (now - t0) / 1000);
-      gl.uniform1f(U.P, GL.p); gl.uniform1f(U.B, GL.b);
-      gl.uniform2f(U.M, GL.mx, GL.my);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      if (!REDUCED || GL.b > 0) requestAnimationFrame(frame); else setTimeout(function () { requestAnimationFrame(frame); }, 200);
+      if (dt > 34 && dt < 300 && ++slow > 24 && scale > 0.35) { scale -= 0.12; slow = 0; size(); }
+      draw(now);
+      if (!REDUCED) requestAnimationFrame(frame);
     })(t0);
   })();
   function ramp(key, to, ms, ease) {
     if (!GL) return;
     var from = GL[key], t0 = performance.now();
+    if (REDUCED) { GL[key] = to; if (GL.draw) GL.draw(t0); return; }
     (function f(now) { var k = Math.min(1, (now - t0) / ms); GL[key] = from + (to - from) * (ease ? ease(k) : k); if (k < 1 && !done) requestAnimationFrame(f); })(t0);
   }
+  var outExpo = function (k) { return k === 1 ? 1 : 1 - Math.pow(2, -10 * k); };
   var inOut = function (k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
 
-  /* ── the read-out ───────────────────────────────────────────────── */
-  var log = $('lxi-log');
-  function line(label, result, ms) {
-    at(ms, function () {
-      var row = document.createElement('div'); log.appendChild(row);
-      var text = label + ' ', dots = 20 - label.length, i = 0;
-      (function type() {
-        if (i <= text.length) { row.textContent = text.slice(0, i++); return setTimeout(type, 22); }
-        row.textContent = text + '.'.repeat(Math.max(2, dots)) + ' ';
-        var b = document.createElement('b'); b.textContent = result; row.appendChild(b);
-      })();
-    });
-  }
-  line('PASSPORT CONTROL', 'ARMED', 500);
-  line('CHANNEL', 'SECURE', 1500);
-  line('ED25519 SEAL', 'VALID', 2500);
-  line('REGISTER', 'ONLINE', 3500);
-  line('VISITOR', 'UNVERIFIED', 4800);
-  line('THRESHOLD', 'AWAITING TOUCH', 6900);
-  (function clock() {
-    var c = $('lxi-clock'); if (!c || done) return;
-    c.textContent = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-    setTimeout(clock, 1000);
+  /* ── C and F: sparks, only while something is being made or opened ─ */
+  var motes = (function () {
+    var cv = $('lxi-motes'), cx = cv.getContext('2d'), dpr = Math.min(1.5, window.devicePixelRatio || 1), list = [], raf = 0;
+    function size() { cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr); cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    size();
+    function loop(now) {
+      raf = 0;
+      cx.globalCompositeOperation = 'destination-out'; cx.fillStyle = 'rgba(0,0,0,.28)'; cx.fillRect(0, 0, innerWidth, innerHeight);
+      cx.globalCompositeOperation = 'lighter';
+      var live = 0;
+      for (var i = 0; i < list.length; i++) {
+        var m = list[i], k = (now - m.t0) / m.dur;
+        if (k < 0) { live++; continue; }
+        if (k > 1.25) continue;
+        live++;
+        var x, y, a, s;
+        if (m.kind === 'in') {                                     // a spiral onto the rim, then a flare
+          var e = inOut(Math.min(1, k)), ang = m.a0 + (m.a1 - m.a0) * e, rad = m.r0 + (E.r - m.r0) * e;
+          x = E.x + Math.cos(ang) * rad; y = E.y + Math.sin(ang) * rad;
+          a = k < 1 ? Math.min(1, k * 2.5) * 0.9 : (1.25 - k) * 4; s = k < 1 ? m.s : m.s * (1 + (k - 1) * 10);
+        } else {                                                   // carried outward by the parting doors
+          var o = outExpo(Math.min(1, k));
+          x = E.x + m.vx * o; y = m.y0 + m.vy * o;
+          a = Math.max(0, 1 - k) * 0.9; s = m.s;
+        }
+        var col = 'rgba(255,' + (226 + (m.hue * 20 | 0)) + ',' + (170 + (m.hue * 50 | 0)) + ',' + Math.max(0, a).toFixed(3) + ')';
+        if (m.px != null && k < 1) {                               // a streak from where it was: motion reads at any frame rate
+          var dx = x - m.px, dy = y - m.py, d = Math.hypot(dx, dy), l = Math.min(d, 70) / (d || 1);
+          cx.strokeStyle = col; cx.lineWidth = s; cx.lineCap = 'round';
+          cx.beginPath(); cx.moveTo(x - dx * l, y - dy * l); cx.lineTo(x, y); cx.stroke();
+        }
+        cx.fillStyle = col; cx.beginPath(); cx.arc(x, y, s, 0, 6.2832); cx.fill();
+        m.px = x; m.py = y;
+      }
+      if (live && !done) raf = requestAnimationFrame(loop); else { cx.clearRect(0, 0, innerWidth, innerHeight); list = []; }
+    }
+    function go() { if (!raf) raf = requestAnimationFrame(loop); }
+    return {
+      size: size,
+      forge: function () {
+        if (REDUCED) return;
+        var n = COARSE ? 100 : 160, t = performance.now();
+        for (var i = 0; i < n; i++) {                              // one direction of turn: a vortex, not a scatter
+          var a1 = Math.random() * 6.2832, sweep = 1.1 + Math.random() * 1.6;
+          list.push({ kind: 'in', t0: t + Math.random() * 650, dur: 1000 + Math.random() * 500, a0: a1 - sweep, a1: a1,
+            r0: E.r * (1.5 + Math.random() * 2.2), s: 0.6 + Math.random() * 1.1, hue: Math.random() });
+        }
+        go();
+      },
+      part: function () {
+        if (REDUCED) return;
+        var n = COARSE ? 50 : 90, t = performance.now();
+        for (var i = 0; i < n; i++) {
+          var side = Math.random() < .5 ? -1 : 1;
+          list.push({ kind: 'out', t0: t + Math.random() * 260, dur: 1100 + Math.random() * 700, y0: Math.random() * innerHeight,
+            vx: side * (innerWidth * (0.25 + Math.random() * 0.4)), vy: (Math.random() - .5) * 60, s: 0.6 + Math.random() * 1.2, hue: Math.random() });
+        }
+        go();
+      }
+    };
   })();
 
-  /* ── the title, resolving out of noise ──────────────────────────── */
-  function decode(el, text, ms) {
-    var G = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789<>/#', t0 = performance.now();
-    (function f(now) {
-      var k = Math.min(1, (now - t0) / ms), n = Math.floor(k * text.length), out = '';
-      for (var i = 0; i < text.length; i++) out += i < n || text[i] === ' ' ? text[i] : G[(Math.random() * G.length) | 0];
-      el.textContent = out;
-      if (k < 1 && !done) requestAnimationFrame(f); else el.textContent = text;
-    })(t0);
+  /* ── the pointer: the seal turns toward it, with weight ─────────── */
+  if (!REDUCED && !COARSE) {
+    box.addEventListener('pointermove', function (e) { P.tx = e.clientX / innerWidth - 0.5; P.ty = e.clientY / innerHeight - 0.5; }, { passive: true });
+    (function follow() {
+      if (done) return;
+      P.x += (P.tx - P.x) * 0.06; P.y += (P.ty - P.y) * 0.06;     // inertia: it arrives, it does not snap
+      if (!box.classList.contains('fly')) {
+        rig.style.transform = 'rotateX(' + (-P.y * 12).toFixed(2) + 'deg) rotateY(' + (P.x * 16).toFixed(2) + 'deg)';
+        coin.style.setProperty('--sx', (38 - P.x * 60).toFixed(1) + '%'); coin.style.setProperty('--sy', (30 - P.y * 50).toFixed(1) + '%');
+        box.style.setProperty('--pox', (50 + P.x * 6).toFixed(2) + '%');
+      }
+      requestAnimationFrame(follow);
+    })();
   }
+  window.addEventListener('resize', function () { measure(); motes.size(); if (GL) GL.size(); });
 
-  /* ── sound, which only a touch may start ─────────────────────────── */
-  function boom() {
-    var A; try { if (localStorage.getItem('lx-sound') === '0') return; A = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
-    var t = A.currentTime, out = A.createGain(); out.gain.value = 0.9; out.connect(A.destination);
-    var o = A.createOscillator(), g = A.createGain();                      // the drop
-    o.type = 'sine'; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(28, t + 1.4);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.7, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
-    o.connect(g); g.connect(out); o.start(t); o.stop(t + 1.9);
-    var len = A.sampleRate * 1.4, buf = A.createBuffer(1, len, A.sampleRate), d = buf.getChannelData(0);
+  /* ── F: the way through ─────────────────────────────────────────── */
+  function chord() {
+    var A;
+    try { if (localStorage.getItem('lx-sound') !== '1') return; A = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+    var t = A.currentTime, out = A.createGain(); out.gain.value = 0.5; out.connect(A.destination);
+    [[55, .5], [82.4, .3], [110, .22], [164.8, .1], [220, .06]].forEach(function (v) {   // A, its fifth and octaves: a hall resonating
+      var o = A.createOscillator(), g = A.createGain(); o.type = 'sine'; o.frequency.value = v[0];
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v[1], t + 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.2);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + 3.3);
+    });
+    var len = A.sampleRate * 1.6, buf = A.createBuffer(1, len, A.sampleRate), d = buf.getChannelData(0);
     for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    var nz = A.createBufferSource(), bp = A.createBiquadFilter(), ng = A.createGain();   // the rush of air
-    nz.buffer = buf; bp.type = 'bandpass'; bp.Q.value = 1.2;
-    bp.frequency.setValueAtTime(180, t); bp.frequency.exponentialRampToValueAtTime(5200, t + 1.1);
-    ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.35, t + 0.5); ng.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+    var nz = A.createBufferSource(), bp = A.createBiquadFilter(), ng = A.createGain();   // air, as the doors part
+    nz.buffer = buf; bp.type = 'bandpass'; bp.Q.value = 0.8;
+    bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(2400, t + 1.4);
+    ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.12, t + 0.6); ng.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);
     nz.connect(bp); bp.connect(ng); ng.connect(out); nz.start(t);
-    [523.25, 783.99, 1046.5, 1567.98].forEach(function (f, k) {         // the shimmer, a fifth above
-      var s = A.createOscillator(), sg = A.createGain(); s.type = 'sine'; s.frequency.value = f * (1 + (k % 2 ? 0.003 : -0.003));
-      sg.gain.setValueAtTime(0.0001, t + 0.25); sg.gain.exponentialRampToValueAtTime(0.06 / (k + 1), t + 0.5); sg.gain.exponentialRampToValueAtTime(0.0001, t + 3.2);
-      s.connect(sg); sg.connect(out); s.start(t + 0.25); s.stop(t + 3.3);
-    });
   }
-
-  /* ── the timeline ───────────────────────────────────────────────── */
-  at(200, function () { box.classList.add('p1'); });
-  at(700, function () { ramp('p', 1, 3600, inOut); });
-  at(2000, function () { box.classList.add('p2'); });
-  at(3200, function () { box.classList.add('p3'); });
-  at(4600, function () { box.classList.add('p4'); });
-  at(5600, function () { decode($('lxi-title'), 'The standard for verified AI', 1500); });
-  at(6200, function () { if (!REDUCED) { box.classList.add('glitch'); setTimeout(function () { box.classList.remove('glitch'); }, 110); } });
-  at(7500, function () {
-    ready = true; box.classList.add('ready');
-    seal.disabled = false; seal.focus({ preventScroll: true });
-  });
-  // An occasional glitch while it waits, as if the signal were live.
-  (function flicker() {
-    if (done) return;
-    if (ready && !REDUCED && Math.random() < 0.5) { box.classList.add('glitch'); setTimeout(function () { box.classList.remove('glitch'); }, 70 + Math.random() * 90); }
-    setTimeout(flicker, 2200 + Math.random() * 2600);
-  })();
-
-  // The seal turns toward the pointer, the foil against it, and the light follows.
-  if (!REDUCED) box.addEventListener('pointermove', function (e) {
-    var x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
-    rig.style.transform = 'rotateX(' + (-y * 16).toFixed(2) + 'deg) rotateY(' + (x * 22).toFixed(2) + 'deg)';
-    seal.style.setProperty('--fx', (50 - x * 100).toFixed(0) + '%'); seal.style.setProperty('--fy', (50 - y * 100).toFixed(0) + '%');
-    if (GL) { GL.tx = x * 2; GL.ty = -y * 2; }
-  });
-  seal.addEventListener('pointerenter', function () { if (ready) box.classList.add('hot'); });
-  seal.addEventListener('pointerleave', function () { box.classList.remove('hot'); });
-
-  /* ── the way through ─────────────────────────────────────────────── */
   function finish() {
+    if (done) return;
     done = true;
     timers.forEach(clearTimeout);
     try { localStorage.setItem('lx-intro-at', String(Date.now())); } catch (e) {}
-    root.classList.add('lx-introdone');
+    var brand = document.querySelector('.lxn-brand img'); if (brand) { brand.style.opacity = ''; brand.style.transition = ''; }
     root.classList.remove('lx-intro');
+    root.classList.add('lx-introdone');
     if (box.parentNode) box.parentNode.removeChild(box);
     try { window.dispatchEvent(new Event('lunara:intro-done')); } catch (e) {}
-    var main = document.querySelector('main,#main,h1'); if (main && main.focus) { main.setAttribute('tabindex', '-1'); main.focus({ preventScroll: true }); }
+    var main = document.querySelector('main'); if (main) { main.setAttribute('tabindex', '-1'); main.focus({ preventScroll: true }); }
   }
   function enter() {
-    if (!ready || box.classList.contains('enter')) return;
-    box.classList.remove('hot'); box.classList.add('enter');
-    boom();
-    if (!REDUCED) {
-      ['s1', 's2'].forEach(function (k) { var s = document.createElement('i'); s.className = 'lxi-shock ' + k; box.appendChild(s); });
-      ramp('b', 1, 900, function (k) { return 1 - Math.pow(1 - k, 3); });
+    if (!ready || opening || done) return;
+    opening = true;
+    box.classList.remove('count');
+    chord();
+    if (REDUCED) { box.classList.add('out'); setTimeout(finish, 450); return; }
+    // the seal goes home: to the emblem in the navigation, if it is there
+    var brand = document.querySelector('.lxn-brand img'), b = rig.getBoundingClientRect();
+    box.classList.add('fly');
+    if (brand) {
+      var t = brand.getBoundingClientRect(), s = t.width / (b.width * 0.766);  // the coin fills 76.6% of the 512 artwork, all of the 96
+      brand.style.opacity = '0';
+      rig.style.transform = 'translate(' + (t.left + t.width / 2 - (b.left + b.width / 2)).toFixed(1) + 'px,' + (t.top + t.height / 2 - (b.top + b.height / 2)).toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+      setTimeout(function () { brand.style.transition = 'opacity .4s ease'; brand.style.opacity = '1'; }, 1150);
+    } else {
+      rig.style.transform = 'scale(.4)'; rig.style.opacity = '0';
     }
-    setTimeout(function () {
-      root.classList.add('lx-arrive');
-      box.classList.add('out');
-      setTimeout(function () { root.classList.remove('lx-arrive'); }, 1700);
-    }, REDUCED ? 200 : 1050);
-    setTimeout(finish, REDUCED ? 900 : 2200);
+    stage('open');
+    ramp('O', 1, 600, outExpo);
+    setTimeout(function () { ramp('O', 0, 900); ramp('F', 0, 1200); }, 500);
+    motes.part();
+    root.classList.add('lx-arrive');
+    setTimeout(function () { root.classList.remove('lx-arrive'); }, 1600);
+    setTimeout(finish, 1700);
   }
   function skip() {
-    if (box.classList.contains('out')) return;
+    if (done || opening) return;
+    opening = true;
     box.classList.add('out');
-    setTimeout(finish, 800);
+    setTimeout(finish, 650);
   }
-  seal.addEventListener('click', enter);
-  $('lxi-skip').addEventListener('click', skip);
+  enterBtn.addEventListener('click', enter);
+  skipBtn.addEventListener('click', skip);
+  // A click anywhere on the scene, once it is ready, is also a way in.
+  box.addEventListener('click', function (e) { if (ready && e.target !== skipBtn && !skipBtn.contains(e.target)) enter(); });
   document.addEventListener('keydown', function (e) {
     if (done) return;
-    if (e.key === 'Escape') skip();
-    else if ((e.key === 'Enter' || e.key === ' ') && ready && document.activeElement !== $('lxi-skip')) { e.preventDefault(); enter(); }
+    if (e.key === 'Escape') { e.preventDefault(); skip(); return; }
+    if (e.key === 'Tab') {                                          // a dialog keeps focus inside itself
+      var stops = [enterBtn, skipBtn].filter(function (b) { return !b.disabled; });
+      var i = stops.indexOf(document.activeElement);
+      e.preventDefault();
+      stops[(i + (e.shiftKey ? stops.length - 1 : 1)) % stops.length].focus();
+    }
+  });
+
+  /* ── the clock ──────────────────────────────────────────────────── */
+  measure();
+  if (REDUCED) {
+    ['a', 'b', 'ring', 'c', 'd', 'e', 'e2'].forEach(stage);
+    if (GL) { GL.A = 1; GL.L = 0; GL.C = 1; GL.draw(performance.now()); }
+    at(300, function () { ready = true; stage('ready'); enterBtn.disabled = false; enterBtn.focus({ preventScroll: true }); });
+    return;
+  }
+  at(250, function () { stage('a'); ramp('A', 1, 800, inOut); });
+  at(950, function () { stage('b'); ramp('L', 1, 1000, outExpo); });
+  at(2000, function () { stage('ring'); ramp('L', 0, 900, inOut); });
+  at(2150, function () { motes.forge(); });
+  at(2500, function () { stage('c'); });
+  at(2700, function () { stage('d'); ramp('C', 1, 2600, inOut); ramp('A', 0.35, 2000); });
+  at(3500, function () { stage('rake'); });
+  at(4300, function () { stage('e'); });
+  at(4950, function () { stage('e2'); });
+  at(5700, function () {
+    ready = true; stage('ready'); enterBtn.disabled = false; enterBtn.focus({ preventScroll: true });
+    box.style.setProperty('--wait', WAIT + 'ms');
+    requestAnimationFrame(function () { stage('count'); });
+    at(WAIT + 150, enter);
   });
 })();

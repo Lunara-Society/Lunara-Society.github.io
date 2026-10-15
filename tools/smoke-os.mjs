@@ -40,7 +40,7 @@ let passed = 0, failed = 0;
 const check = (ok, msg) => { if (ok) passed++; else { failed++; console.error('FAIL', msg); } };
 const browser = await chromium.launch();
 const errors = [];
-const entered = () => { try { localStorage.setItem('lx-os-entered', '1'); } catch (e) {} };
+const entered = () => { try { localStorage.setItem('lx-os-entered', String(Date.now())); } catch (e) {} };
 try {
   for (const dev of ['iPhone 13', 'Pixel 7']) {
     const ctx = await browser.newContext({ ...devices[dev] });
@@ -69,7 +69,7 @@ try {
     await page.keyboard.press('Escape'); await page.waitForTimeout(700);
     check(await page.evaluate(() => !document.getElementById('cc-entrance')), 'Escape skips the entrance');
     const again = await ctx.newPage(); await again.goto(base + 'command.html'); await again.waitForTimeout(400);
-    check(await again.evaluate(() => { const e = document.getElementById('cc-entrance'); return !e || e.hidden; }), 'the entrance does not come back');
+    check(await again.evaluate(() => { const e = document.getElementById('cc-entrance'); return !e || e.hidden; }), 'the entrance does not come back within 12 hours');
     await ctx.close();
   }
   {

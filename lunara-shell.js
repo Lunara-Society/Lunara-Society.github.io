@@ -98,8 +98,7 @@
       ['verify-an-ai-business.html',        'How to verify an AI business'],
       ['ai-trust-standards.html',           'AI trust standards'],
       ['trust-badges.html',                 'What a trust badge proves'],
-      ['ai-agent-verification.html',        'AI agent verification'],
-      ['glossary.html',                     'Glossary']
+      ['ai-agent-verification.html',        'AI agent verification']
     ]},
     { head: 'Operations', links: [
       ['command.html',           'Command Center'],
@@ -117,7 +116,6 @@
       ['agents.html#partners','Partner program'],
       ['agent-network.html',  'Agent Network · trials'],
       ['mcp.html',            'MCP server'],
-      ['passport.html',       'Passport scan API'],
       ['agent-passport.html', 'Agent passports'],
       ['test.html',           'The Lunara Test'],
       ['embed.html',          'Embed the AI Act countdown'],

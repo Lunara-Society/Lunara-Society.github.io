@@ -167,6 +167,12 @@ jobs:
       - name: Verify the desktop viewport
         run: node tools/verify-viewport.mjs
 
+      # The visual system's decisions: no background particles, sound off
+      # until switched on, no security theatre on navigation, the intro's
+      # twelve-hour contract, one set of materials. See docs/visual-system.md.
+      - name: Verify the visual rules
+        run: node tools/verify-visual.mjs
+
       - name: Verify install commands resolve
         run: node tools/verify-install-commands.mjs
 

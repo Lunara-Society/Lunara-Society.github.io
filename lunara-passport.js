@@ -65,10 +65,10 @@
   /* ── the cinema ────────────────────────────────────────────────────
      The cover opens on its spine, the booklet follows the pointer and
      catches light in its foil, each check lands with a tick, and the
-     stamp comes down with ink, a flash and a thud. Sound starts only
-     after the reader has clicked, and one button turns it off for good. */
-  var AC = null, soundOn = true;
-  try { soundOn = localStorage.getItem('lx-sound') !== '0'; } catch (e) {}
+     stamp comes down with ink, a flash and a thud. Sound is off until
+     the reader switches it on with the button, and stays as they left it. */
+  var AC = null, soundOn = false;
+  try { soundOn = localStorage.getItem('lx-sound') === '1'; } catch (e) {}      // off until the visitor switches it on
   function snd() {
     if (!soundOn || reduce) return null;
     try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) { AC = null; }

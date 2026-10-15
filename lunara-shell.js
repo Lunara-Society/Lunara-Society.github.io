@@ -288,9 +288,21 @@
     document.head.appendChild(s);
   }
 
+  /* ── the field ────────────────────────────────────────────────
+     lunara-field.js: the one pointer listener everything that follows
+     the pointer reads from. Loaded before the engine, which uses it. */
+  function loadField() {
+    if (window.LunaraField || document.querySelector('script[src*="lunara-field.js"]')) return;
+    var s = document.createElement('script');
+    s.src = '/lunara-field.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
   /* ── the engine ───────────────────────────────────────────────
-     lunara-engine.js: the WebGL sky, the opening, 3D depth on cards
-     and the light cursor. Same pattern, same reason. */
+     lunara-engine.js: the lit environment, the veil between pages,
+     material light on panels and the verdict stamp. Same pattern,
+     same reason. */
   function loadEngine() {
     if (document.querySelector('script[src*="lunara-engine.js"]')) return;
     var s = document.createElement('script');
@@ -320,7 +332,7 @@
     } catch (e) {}
   }
 
-  function boot() { rememberReferral(); install(); loadMember(); loadCosmos(); loadEngine(); loadLocks(); }
+  function boot() { rememberReferral(); install(); loadMember(); loadCosmos(); loadField(); loadEngine(); loadLocks(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

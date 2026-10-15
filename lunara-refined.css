@@ -76,15 +76,6 @@
               transparent 52%, rgba(0,0,0,0.55) 100%);
 }
 
-/* Ambient gold dust. Canvas is painted by the motion engine. */
-#lx-dust {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.55;
-}
-
 /* ============================================================
    2. THE HEADER COLLISION FIX
    The enforcement banner is a normal-flow div; the nav is
@@ -947,7 +938,6 @@ html { scroll-behavior: smooth; }
   }
 
   /* Dust is a desktop luxury; keep mobile scrolling cheap. */
-  #lx-dust { display: none; }
 
   .section-body,
   .card-text { max-width: none; }
@@ -1121,7 +1111,6 @@ a.back,
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
-  #lx-dust { display: none; }
 
   .lx-banner::after { animation: none; }
 
@@ -1148,7 +1137,7 @@ a.back,
 
 /* Printing: drop the theatre, keep the substance. */
 @media print {
-  #lx-ink, #lx-vignette, #lx-dust, #lx-rail, #lx-top { display: none !important; }
+  #lx-ink, #lx-vignette, #lx-rail, #lx-top { display: none !important; }
   .reveal, .fade-in, .lx-rise, .lx-rise-soft {
     opacity: 1 !important; transform: none !important;
   }
@@ -2731,25 +2720,6 @@ a.back,
   to   { left: 118%; opacity: 0; }
 }
 
-/* A row briefly illuminating, as though it had just been read. */
-.lx-ping {
-  animation: lx-ping-glow 2.5s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
-}
-@keyframes lx-ping-glow {
-  0%   { background-color: rgba(196,164,107,0); }
-  18%  { background-color: rgba(196,164,107,0.055); }
-  100% { background-color: rgba(196,164,107,0); }
-}
-.lx-ping .lxc-count,
-.lx-ping .pillar-name,
-.lx-ping .reg-name {
-  animation: lx-ping-text 2.5s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
-}
-@keyframes lx-ping-text {
-  0%   { color: inherit; }
-  18%  { color: #FFF6DC; }
-  100% { color: inherit; }
-}
 
 /* The emblem catching a rake of light. */
 .lx-rake-once { animation: lx-emblem-rake 2.4s cubic-bezier(0.3,0.7,0.2,1) forwards; }

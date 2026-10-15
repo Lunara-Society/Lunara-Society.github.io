@@ -18,7 +18,9 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root{
-  /* palette */
+  /* palette. The gold, the states and the easing come from
+     lunara-materials.css (linked first on every OS page), so the OS and
+     the public site cannot drift apart; the fallbacks are the same values. */
   --os-obsidian:#08090C;
   --os-graphite:#11141A;
   --os-graphite-2:#191D25;
@@ -27,11 +29,11 @@
   --os-text:#F1F2F4;
   --os-muted:#858D99;
   --os-muted-2:#A3AAB5;
-  --os-gold:#C6A15B;
-  --os-gold-hi:#F0D99B;
-  --os-ok:#58C79A;
-  --os-warn:#D9A64F;
-  --os-bad:#E26D73;
+  --os-gold:var(--m-gold,#C6A15B);
+  --os-gold-hi:var(--m-gold-hi,#F0D99B);
+  --os-ok:var(--m-ok,#58C79A);
+  --os-warn:var(--m-warn,#D9A64F);
+  --os-bad:var(--m-bad,#E26D73);
   --os-info:#8FB3D9;
   /* lines and surfaces */
   --os-hair:rgba(198,203,211,.10);
@@ -54,7 +56,7 @@
   --os-fast:.14s;
   --os-mid:.22s;
   --os-slow:.6s;
-  --os-ease:cubic-bezier(.2,.7,.1,1);
+  --os-ease:var(--ease-out,cubic-bezier(.2,.7,.1,1));
 }
 
 *,*::before,*::after{box-sizing:border-box}

@@ -235,10 +235,8 @@
 
     var pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     if (!reduce && window.matchMedia('(hover: hover)').matches) {
-      window.addEventListener('pointermove', function (e) {
-        pointer.tx = ((e.clientX / window.innerWidth) - 0.5) * 0.07;
-        pointer.ty = ((e.clientY / window.innerHeight) - 0.5) * 0.05;
-      }, { passive: true });
+      // the shared pointer field (lunara-field.js), so the sphere turns with the rest of the opening
+      (window.__lxField = window.__lxField || []).push(function (f) { pointer.tx = f.x * 0.07; pointer.ty = f.y * 0.05; });
     }
 
     var visible = true, raf = 0, t0 = performance.now(), texReady = false;

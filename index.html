@@ -17,6 +17,7 @@
   } catch (e) {}
 })();
 </script>
+<link rel="stylesheet" href="lunara-materials.css">
 <link rel="stylesheet" href="lunara-intro.css">
 <link rel="preload" as="image" href="/lunara_emblem_512.png">
 
@@ -162,8 +163,6 @@ h2 em,h1 em{font-style:italic;font-weight:300}
     radial-gradient(80% 60% at 10% 0%, rgba(26,30,40,.5), transparent 70%),
     var(--ink);
 }
-#sky{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0;transition:opacity 2.4s ease}
-.lit #sky{opacity:1}
 
 .moon-wrap{
   position:absolute;z-index:1;
@@ -574,7 +573,7 @@ h1 em{
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition-duration:.01ms !important;transition-delay:0s !important}
-  h1 .ln > span,.fade,.lxs-panel,#moon,.moon-halo,.moon-cap,#sky{transform:none !important;opacity:1 !important}
+  h1 .ln > span,.fade,.lxs-panel,#moon,.moon-halo,.moon-cap{transform:none !important;opacity:1 !important}
 }
 
 /* the league teaser */
@@ -583,6 +582,8 @@ h1 em{
 .lgt h2{font-family:var(--serif);font-weight:300;font-size:clamp(46px,4.4vw,64px);line-height:1.02;margin-top:18px}
 .lgt h2 em{color:var(--gold-lit)}
 .lgt-list{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:l}
+.lgt-wait{height:72px;border:1px solid var(--hair);border-radius:14px;background:rgba(12,14,19,.75);padding:16px 18px;box-sizing:border-box}
+.lgt-wait .m-loading{display:block;height:100%;border-radius:8px}
 .lgt-list a{display:grid;grid-template-columns:36px 1fr 150px 46px;gap:14px;align-items:center;padding:14px 18px;border:1px solid var(--hair);border-radius:14px;background:rgba(12,14,19,.75);text-decoration:none;color:var(--white);transition:transform .2s,border-color .2s}
 .lgt-list a:hover{transform:translateX(4px);border-color:rgba(226,196,122,.4)}
 .lgt-list .r{font:13px var(--mono);color:var(--grey-2)}
@@ -700,41 +701,41 @@ h1 em{
 </script></head>
 <body>
 <div id="lx-intro" role="dialog" aria-modal="true" aria-label="Lunara Society">
-  <canvas id="lxi-gl" aria-hidden="true"></canvas>
-  <div class="lxi-vig" aria-hidden="true"></div>
-  <div class="lxi-grain" aria-hidden="true"></div>
-  <div class="lxi-frame" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i></div>
-  <div class="lxi-hud lxi-hud-l" id="lxi-log" aria-hidden="true"></div>
-  <div class="lxi-hud lxi-hud-r" aria-hidden="true"><span id="lxi-clock"></span><span>Key luna-2026 · Ed25519</span><span>Register · live</span></div>
+  <div class="lxi-world" aria-hidden="true">
+    <canvas id="lxi-gl"></canvas>
+    <div class="lxi-fb"><i class="cone"></i><i class="halo"></i><i class="line"></i><i class="floor"></i></div>
+    <div class="lxi-hall" id="lxi-hall"></div>
+    <div class="lxi-vig"></div>
+    <div class="lxi-grain"></div>
+  </div>
+  <canvas id="lxi-motes" aria-hidden="true"></canvas>
   <div class="lxi-stage" id="lxi-stage">
     <div class="lxi-rig" id="lxi-rig">
-      <svg class="lxi-rings" id="lxi-rings" viewBox="0 0 1000 1000" aria-hidden="true"></svg>
-      <div class="lxi-orbit o1" aria-hidden="true"></div>
-      <div class="lxi-orbit o2" aria-hidden="true"></div>
-      <button class="lxi-seal" id="lxi-seal" type="button" aria-label="Enter Lunara Society" disabled>
-        <img src="/lunara_emblem_512.png" alt="" width="512" height="512">
-        <span class="lxi-m lxi-ghost r" aria-hidden="true"></span>
-        <span class="lxi-m lxi-ghost c" aria-hidden="true"></span>
-        <span class="lxi-m lxi-foil" aria-hidden="true"></span>
-        <span class="lxi-m lxi-spec" aria-hidden="true"></span>
-        <span class="lxi-laser" aria-hidden="true"></span>
-      </button>
+      <i class="lxi-line" aria-hidden="true"></i>
+      <svg class="lxi-ring" viewBox="0 0 200 200" aria-hidden="true"><circle class="a" cx="100" cy="100" r="96" pathLength="100"/><circle class="b" cx="100" cy="100" r="96" pathLength="100"/></svg>
+      <div class="lxi-coin" id="lxi-coin" aria-hidden="true">
+        <img class="face" src="/lunara_emblem_512.png" alt="" width="512" height="512" decoding="async">
+        <i class="lxi-m lxi-rake"></i>
+        <i class="lxi-m lxi-spec"></i>
+      </div>
+      <div class="lxi-reflect" aria-hidden="true"><img src="/lunara_emblem_512.png" alt="" width="512" height="512" decoding="async"></div>
     </div>
-    <p class="lxi-title" id="lxi-title" aria-hidden="true"></p>
-    <p class="lxi-prompt">Touch the seal to enter</p>
+    <div class="lxi-words">
+      <p class="lxi-mark" aria-hidden="true"><span>Lunara</span> <span>Society</span></p>
+      <p class="lxi-sub" aria-hidden="true">The standard for verified AI</p>
+      <button class="lxi-enter" id="lxi-enter" type="button" disabled><span>Enter</span><i class="lxi-fill" aria-hidden="true"></i></button>
+    </div>
   </div>
-  <div class="lxi-flash" aria-hidden="true"></div>
+  <i class="lxi-seam l" aria-hidden="true"></i><i class="lxi-seam r" aria-hidden="true"></i>
   <button class="lxi-skip" id="lxi-skip" type="button">Skip</button>
-  <i class="lxi-bar t" aria-hidden="true"></i><i class="lxi-bar b" aria-hidden="true"></i>
 </div>
 
 
 <main>
 
 <!-- ── I. MOONRISE ──────────────────────────────────────────────────
-     Three things are drawn here and none of them is illustration.
-     The stars are decoration and say so by being quiet. The moon is lit
-     from tonight's phase. The horizon is the obligation register, read
+     Two things are drawn here and neither is illustration. There is no
+     starfield behind them: the moon is lit from tonight's phase. The horizon is the obligation register, read
      from /corpus/obligations.json and laid out by application date. -->
 <header id="open">
 
@@ -804,8 +805,10 @@ h1 em{
 
 <!-- ── II¼. THE LEAGUE ──────────────────────────────────────────────
      Live from lunara-registry/passportLeague: the top of the weekly
-     table, never typed in. Hidden entirely if it cannot be read. -->
-<section class="lgt" id="lgt" aria-label="The AI Passport League" hidden>
+     table, never typed in. Its five rows hold their place as plain
+     loading bars (no names, no numbers) so nothing below jumps when
+     the table arrives; if it cannot be read the section is removed. -->
+<section class="lgt" id="lgt" aria-label="The AI Passport League">
   <div class="wrap lgt-grid">
     <div>
       <p class="kicker">The AI Passport League · this week</p>
@@ -816,7 +819,7 @@ h1 em{
         <a class="door line" href="passport.html">Scan your domain</a>
       </div>
     </div>
-    <ol class="lgt-list" id="lgt-list"></ol>
+    <ol class="lgt-list" id="lgt-list" aria-busy="true"><li class="lgt-wait"><span class="m-loading"></span></li><li class="lgt-wait"><span class="m-loading"></span></li><li class="lgt-wait"><span class="m-loading"></span></li><li class="lgt-wait"><span class="m-loading"></span></li><li class="lgt-wait"><span class="m-loading"></span></li></ol>
   </div>
 </section>
 
@@ -1152,7 +1155,7 @@ h1 em{
 
 <script>
 /* One class, one frame after paint, and the night arrives as a single
-   movement: the stars, the moon, the horizon drawing out from the
+   movement: the moon, the horizon drawing out from the
    middle, the type rising. The page is scrollable throughout. */
 requestAnimationFrame(function () {
   requestAnimationFrame(function () { document.body.classList.add('lit'); });
@@ -1167,13 +1170,14 @@ requestAnimationFrame(function () {
     .then(function (r) { return r.json(); })
     .then(function (j) {
       var top = (j.entries || []).slice(0, 5);
-      if (top.length < 5) return;
-      document.getElementById('lgt-list').innerHTML = top.map(function (e, i) {
+      if (top.length < 5) throw new Error('short table');
+      var list = document.getElementById('lgt-list');
+      list.removeAttribute('aria-busy');
+      list.innerHTML = top.map(function (e, i) {
         var c = C(e.grade);
         return '<li><a href="passport.html?d=' + encodeURIComponent(e.domain) + '"><span class="r">' + (i + 1) + '</span><span><b>' + E(e.name) + '</b><small>' + E(e.domain) + '</small></span><span class="bar"><i style="width:' + e.score + '%;background:' + c + '"></i></span><span class="g" style="color:' + c + '">' + E(e.grade) + '</span></a></li>';
       }).join('');
-      document.getElementById('lgt').hidden = false;
-    }).catch(function () {});
+    }).catch(function () { document.getElementById('lgt').hidden = true; });
 })();
 </script>
 <script src="lunara-intro.js" defer></script>

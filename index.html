@@ -6,15 +6,14 @@
 <meta name="viewport" content="width=1120">
 <script>
 /* The threshold: decided before anything paints, so the homepage never
-   flashes underneath it. Once per device: a returning visitor is never
-   made to sit through it again. Never for crawlers, never for a link to
+   flashes underneath it. At most once every twelve hours per device. Never for crawlers, never for a link to
    a #section; ?intro=1 plays it again. lunara-intro.js plays it. */
 (function () {
   try {
     var q = location.search, force = /[?&]intro=1/.test(q);
     var skip = /[?&]nointro/.test(q) || !!location.hash || /bot|crawl|spider|slurp|lighthouse|headless|preview|facebookexternalhit|embedly/i.test(navigator.userAgent);
-    var seen = sessionStorage.getItem('lx-intro-seen'); try { seen = seen || localStorage.getItem('lx-intro-seen'); } catch (e) {}
-    if (force || (!skip && !seen)) document.documentElement.classList.add('lx-intro');
+    var at = 0; try { at = +localStorage.getItem('lx-intro-at') || 0; } catch (e) {}
+    if (force || (!skip && Date.now() - at > 12 * 3600e3)) document.documentElement.classList.add('lx-intro');
   } catch (e) {}
 })();
 </script>

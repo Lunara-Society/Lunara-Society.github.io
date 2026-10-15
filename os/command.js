@@ -9,16 +9,16 @@
   var esc = OS.esc, $ = function (id) { return document.getElementById(id); };
   var core = null, session = { owner: false }, events = new Map(), feedAt = null, feedErr = null, queue = [], obligations = [];
 
-  /* ── the entrance: first visit only, never more than ~2.6 s ──────
+  /* ── the entrance: once every 12 hours, never more than ~2.6 s ────
      A component with explicit states, not loose timeouts:
        boot → signal → mark → resolve → done
      "resolve" reports the real result of the health checks, or that
      they are still running. It never claims a sign-in happened. */
   function entrance() {
     var box = $('cc-entrance');
-    var seen = OS.store('lx-os-entered') === '1';
+    var seen = Date.now() - (+OS.store('lx-os-entered') || 0) < 12 * 3600e3;
     if (OS.REDUCED || seen || /[?&]intro=0/.test(location.search)) { box.parentNode.removeChild(box); return; }
-    OS.store('lx-os-entered', '1');
+    OS.store('lx-os-entered', String(Date.now()));
     box.hidden = false;
     var line = $('cc-entrance-line'), timers = [], state = 'boot', finished = false;
     function go(s) { state = s; box.dataset.state = s; }

@@ -85,3 +85,29 @@ The intro's contract:
 3. No "access granted" on navigation, and no register row lit up as though someone had just queried it.
 4. The intro keeps its contract (above).
 5. Every shell and OS page links `lunara-materials.css` before its own styles.
+
+## Email (`emails/lunara-letter.mjs`)
+
+Outgoing letters use the same materials, adapted for email:
+
+- **Layout:** an ivory letter on an obsidian frame, edged in champagne gold. It is not white text on black: dark ink on paper reads well in every client, and the frame keeps it recognisably Lunara.
+- **Header:** a serif headline on obsidian, plus an optional dated mark such as "2 December 2026 · 47 days".
+- **Findings panel:** for real data only, such as a passport result with grade, score and fixes.
+- **Button:** a gold call-to-action.
+- **Footer:** small print, including why the reader received the email and how to stop further emails.
+
+How it is built:
+
+- Tables for layout, every style inline, and a `bgcolor` under every gradient.
+- Web-safe fonts sit behind the brand fonts.
+- A 600px column that narrows on phones.
+- Images are hosted on lunarasociety.com.
+- Every message has a plain-text twin.
+
+Usage:
+
+```
+node emails/lunara-letter.mjs spec.json out.html   # writes out.html and out.txt
+```
+
+Subjects stay plain ASCII. The August outreach arrived with garbled dashes in every subject line, and a reply address that did not exist.

@@ -861,6 +861,20 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     </div>
   </div>
 
+  <!-- Who reads the record. Accountability for AI agents is being assigned
+       before anyone has agreed what evidence discharges it; a first-party
+       log answers what a system did, never who stands behind it. -->
+  <section class="lx-acct" aria-labelledby="lx-acct-h" style="margin:56px 0 8px">
+    <h2 id="lx-acct-h" class="page-title" style="font-size:clamp(20px,2.6vw,32px)">An accountability record, <em>not a trust badge</em></h2>
+    <p class="page-sub" style="max-width:760px">When an AI agent acting for your business does something it should not, two questions come first: who stands behind it, and did anyone outside it check? Your own logs answer what happened. They cannot answer those, because you wrote them. A Shield entry can: a named reviewer's dated decision about your business, kept by someone else, revocable, and readable by anyone.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px">
+      <div style="padding:20px 22px;border:1px solid var(--border);border-radius:14px;background:rgba(14,16,21,.5)"><div class="step-title">For general counsel</div><div class="step-text">A dated, third-party record of who you are and that you control your domain, to point to when a regulator, a court or a counterparty asks.</div></div>
+      <div style="padding:20px 22px;border:1px solid var(--border);border-radius:14px;background:rgba(14,16,21,.5)"><div class="step-title">For security leads</div><div class="step-text">A status any partner's AI system can query before it trusts yours, and a passport scan of your domain's public defences, rechecked daily with Passport Monitor.</div></div>
+      <div style="padding:20px 22px;border:1px solid var(--border);border-radius:14px;background:rgba(14,16,21,.5)"><div class="step-title">For procurement</div><div class="step-text">One link instead of a questionnaire answer: the register entry, which says verified, revoked or expired, and never says more than was checked.</div></div>
+    </div>
+    <p class="page-sub" style="margin-top:16px">Why your own logs cannot do this job: <a href="/independent-verification.html" style="color:var(--gold-light,#E2C47A)">self-generated evidence is not independent verification</a>.</p>
+  </section>
+
 <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);"><div id="domain-checker">  <span id="domain-checker-label">Check if your business is in the registry</span>  <div id="domain-checker-row">    <input id="domain-input" type="text" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false">    <button id="domain-check-btn">Check</button>  </div>  <div id="domain-result"></div></div>
 How verification actually works</h2>
     <div class="step-list">

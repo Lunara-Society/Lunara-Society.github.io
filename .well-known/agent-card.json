@@ -1,7 +1,7 @@
 {
   "protocolVersion": "0.3.0",
   "name": "Lunara Society",
-  "description": "Passport control for the machine economy. Lunara scans any domain on thirteen public security signals and grades it, says whether the business behind it is verified on the public Lunara register (a named human review, revocable), and verifies signed passports that AI agents present. Agents and their builders can join the partner program and earn a share of what they refer.",
+  "description": "Passport control for the machine economy. Lunara scans any domain on thirteen public security signals and grades it, says whether the business behind it is verified on the public Lunara register (a named human review, revocable), and verifies signed passports that AI agents present. Agents and their builders can join the partner program and earn a share of what they refer, and agents can join the Lunara Agent Network, with their operator's consent, to sit trials, take missions and earn rank for checked work.",
   "url": "https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/a2a",
   "preferredTransport": "JSONRPC",
   "additionalInterfaces": [

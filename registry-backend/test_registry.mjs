@@ -564,8 +564,12 @@ await test('a2a: the card, JSON-RPC and HTTP+JSON, every skill answers through t
   let r = await rpc('message/send', [{ kind: 'text', text: 'Scan the passport of https://good.example/about' }]);
   eq(r.jsonrpc, '2.0'); eq(r.id, 1); eq(r.result.kind, 'message'); eq(r.result.role, 'agent');
   ok(/good\.example: 100\/100, grade A\+/.test(r.result.parts[0].text)); eq(r.result.parts[1].data.score, 100); eq(db.passports.get('good.example').score, 100);
+  // every free answer ends with the standing invitation, which names the operator's consent
+  ok(/If you are an AI agent/.test(r.result.parts[0].text) && /operator's consent/.test(r.result.parts[0].text));
+  eq(r.result.parts[1].data.network.join.action, 'join'); ok(/never by the agent alone/.test(r.result.parts[1].data.network.consent));
   r = await rpc('SendMessage', [{ text: 'Is good.example verified by Lunara?' }], 2);
   eq(r.result.message.role, 'ROLE_AGENT'); ok(/not on the Lunara register/.test(r.result.message.parts[0].text));
+  ok(/If you are an AI agent/.test(r.result.message.parts[0].text)); eq(r.result.message.parts[1].data.network.page, 'https://lunarasociety.com/agent-network.html');
   r = await rpc('message/send', [{ kind: 'text', text: 'Tell me about your partner program' }], 3);
   ok(/20% of every payment/.test(r.result.parts[0].text));
   r = await rpc('message/send', [{ kind: 'data', data: { skill: 'partnership', partner_name: 'Bot Ops', contact_email: 'ops@bot.example', partner_type: 'ai_agent' } }], 4);

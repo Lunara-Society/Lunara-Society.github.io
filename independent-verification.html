@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1120">
+<title>Self-Generated Evidence Is Not Verification | Lunara Society</title>
+<meta name="description" content="An agent's own logs record what it did. They cannot show who stands behind it or that anyone outside checked. Why accountability needs a record someone else keeps.">
+<link rel="canonical" href="https://lunarasociety.com/independent-verification.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lunara Society">
+<meta property="og:url" content="https://lunarasociety.com/independent-verification.html">
+<meta property="og:title" content="Self-generated evidence is not independent verification">
+<meta property="og:description" content="An AI agent's own logs record what it did. They cannot show who stands behind it, or that anyone outside it checked.">
+<meta property="og:image" content="https://lunarasociety.com/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The moon rising over a lit horizon, beside the words: The standard for verified AI. Lunara Society.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Self-generated evidence is not independent verification">
+<meta name="twitter:description" content="An AI agent's own logs record what it did. They cannot show who stands behind it, or that anyone outside it checked.">
+<meta name="twitter:image" content="https://lunarasociety.com/og-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="lunara-materials.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/lunara_logo_512.png">
+<link rel="apple-touch-icon" href="/lunara_logo_512.png">
+
+<link rel="stylesheet" href="lunara-page.css">
+<link rel="stylesheet" href="lunara-answer.css">
+<link rel="stylesheet" href="lunara-shell.css">
+<style>
+  .iv-dates{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid rgba(214,222,234,.13)}
+  .iv-dates li{display:grid;grid-template-columns:140px 1fr;gap:22px;padding:16px 0;border-bottom:1px solid rgba(214,222,234,.13)}
+  .iv-dates time{font:500 12px/1.6 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--m-gold,#C6A15B)}
+  .iv-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0 0}
+  .iv-two > div{padding:22px 24px;border:1px solid rgba(214,222,234,.13);border-radius:14px;background:rgba(14,16,21,.55)}
+  .iv-two h3{margin:0 0 10px}
+  .iv-two ul{margin:0;padding-left:18px}
+  .iv-two li{margin:6px 0}
+  .iv-src{font-size:13px;opacity:.8}
+</style>
+</head>
+<body>
+<div id="wash"></div>
+<div id="grain"></div>
+
+<main>
+  <header class="wrap phead">
+    <p class="eyebrow">Position · October 2026</p>
+    <h1>Self-generated evidence is not <em>independent verification</em></h1>
+  </header>
+
+  <section class="wrap" style="padding-top:0">
+    <div class="prose">
+      <p class="answer">An AI agent's own logs, an identity platform's audit trail and a vendor's self-assessment all record what a system did. They are produced and held by the party being judged, so they cannot settle the question a regulator, a customer or a court eventually asks: who stands behind this system, and did anyone outside it check? That needs a record someone else keeps, can withdraw, and anyone can read.</p>
+
+      <p>This is not an argument against logs. Keep them; you will need them. It is an argument about what they can prove, written because the people who will ask for proof are now asking.</p>
+
+      <h2>Why this is being asked now</h2>
+
+      <ul class="iv-dates">
+        <li><time datetime="2026-10-08">8 October 2026</time><div>The UK Information Commissioner's Office opened a call for evidence on agentic AI and data protection. It asks about agent identities and permissions, audit logging, accountability frameworks and meaningful human oversight, and closes on <strong>20 November 2026</strong>. <span class="iv-src"><a href="https://ico.org.uk/about-the-ico/ico-and-stakeholder-consultations/2026/10/agentic-ai-call-for-evidence/">ICO</a></span></div></li>
+        <li><time datetime="2026-10-09">9 October 2026</time><div>Axios reported that the White House's new Super Intelligence Force told AI companies operating in the United States to report incidents involving their models promptly and to remedy the harm. The reporting describes no enforcement mechanism. <span class="iv-src"><a href="https://axios.com/2026/10/09/anthropic-ai-security-white-house">Axios</a></span></div></li>
+        <li><time datetime="2026-10-13">13 October 2026</time><div>In a survey of 1,001 US IT decision-makers published by Workato, 74% said IT leadership would be held accountable if an AI agent caused harm. It is a vendor's own survey, so read it as a mood rather than a measurement. <span class="iv-src"><a href="https://www.workato.com/the-connector/ai-challenges-report/">Workato</a></span></div></li>
+        <li><time datetime="2026-12-02">2 December 2026</time><div>Under the EU AI Act, the four months of relief from Article 50(2) machine-readable marking for generative systems already on the market end. <span class="iv-src"><a href="/intelligence.html">The register of obligations</a></span></div></li>
+      </ul>
+
+      <p>Accountability is being assigned before anyone has agreed what evidence discharges it. That gap is where the difference between recording and verifying starts to matter.</p>
+
+      <h2>What first-party evidence is good for</h2>
+
+      <p>A great deal. Agent identity platforms now register each agent with a named human owner and a risk tier, apply policy as agents reach for tools, ask a named person to approve risky actions, and keep auditable records of what was governed. RSA's Agent ID, announced on 29 September 2026, is one of several (<a href="https://secure.businesswire.com/news/home/20260929156008/en/Hope-Isnt-an-AI-Strategy-RSA-Agent-ID-Closes-the-Agentic-Identity-Gap-for-Highly-Regulated-Industries">Business Wire</a>). That is real control, and an organisation running agents without something like it is running them blind.</p>
+
+      <p>What such a record answers is: <strong>what did the system do, and under which policy?</strong> It is the evidence of conduct. Nobody else can produce it for you.</p>
+
+      <h2>What it cannot prove</h2>
+
+      <div class="iv-two">
+        <div>
+          <h3>Four limits of a record you keep yourself</h3>
+          <ul>
+            <li><strong>Its author is the party being judged.</strong> The operator runs the system that writes the record, stores it and could change it.</li>
+            <li><strong>It is not public.</strong> Nobody outside can read it without the operator's cooperation, at the operator's pace.</li>
+            <li><strong>It does not say who stands behind the system.</strong> A complete log can belong to a company that is not who it says it is.</li>
+            <li><strong>Nobody else can withdraw it.</strong> There is no outside party able to mark it no longer true.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>What an independent record adds</h3>
+          <ul>
+            <li><strong>Someone else keeps it.</strong> The party being described does not hold the pen.</li>
+            <li><strong>A named person decided.</strong> Not a form that approved itself, not a payment that bought the outcome.</li>
+            <li><strong>It can be revoked.</strong> A status that can change without the subject's permission is the only kind that carries information.</li>
+            <li><strong>Anyone can query it</strong>, a customer, a journalist, a regulator or another AI system, for free and without an account.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Using both</h2>
+
+      <p>The two answer different questions, and an accountable organisation needs both answers. Keep first-party records of conduct; they prove what happened. Have an outside record of identity; it proves who you are and that someone other than you checked. And know which obligations actually bind you and when, rather than which ones are being talked about.</p>
+
+      <p>Lunara keeps the second kind of record. <a href="/shield.html">Shield Verification</a> has a named reviewer check that a business is legally registered and controls its domain, and publishes the decision on a <a href="/registry.html">public register</a> that answers any query, revocably. <a href="/agent-passport.html">AI Entity Verification</a> does the same for an AI agent and its operator, with a signed passport another agent can check. It is not an audit of your models, it is not legal advice, and Lunara is not a regulator or a notified body. It is a record that does not depend on you.</p>
+
+      <h2>Where to go next</h2>
+
+      <div class="next">
+        <a href="/check.html"><b>What applies to you</b><span>The free Article 50 check, from the same decision model AI systems query.</span></a>
+        <a href="/passport.html"><b>Your domain's passport</b><span>Thirteen public signals, scored in seconds. Free.</span></a>
+        <a href="/shield.html"><b>Shield Verification</b><span>An outside record of who stands behind your business.</span></a>
+        <a href="/registry.html"><b>The public register</b><span>Query any domain, free and unauthenticated.</span></a>
+        <a href="/what-is-shield-certification.html"><b>What Shield checks</b><span>And, as plainly, what it does not.</span></a>
+        <a href="/agents.html"><b>For AI agents</b><span>The same answers over A2A, MCP and REST.</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="lunara-shell.js" defer></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://lunarasociety.com/independent-verification.html#article",
+      "headline": "Self-generated evidence is not independent verification",
+      "description": "An AI agent's own logs record what it did. They cannot show who stands behind it, or that anyone outside it checked.",
+      "datePublished": "2026-10-16",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+      "publisher": { "@type": "Organization", "name": "Lunara Society", "url": "https://lunarasociety.com" },
+      "mainEntityOfPage": "https://lunarasociety.com/independent-verification.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Lunara Society", "item": "https://lunarasociety.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Certification", "item": "https://lunarasociety.com/shield.html" },
+        { "@type": "ListItem", "position": 3, "name": "Self-generated evidence is not independent verification", "item": "https://lunarasociety.com/independent-verification.html" }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>

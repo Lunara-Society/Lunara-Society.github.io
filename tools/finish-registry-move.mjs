@@ -1,27 +1,25 @@
 #!/usr/bin/env node
-/* Finishes moving the registry off Base44 in the five signed documents.
+/* Signs what is waiting for a signature, in one run:
 
      LUNARA_SIGNING_KEY=/secure/path/lunara-signing-key.json node tools/finish-registry-move.mjs
 
-   Every page already calls lunara-registry on Lunara's own Supabase
-   project. These five files still name the old Base44 address because
-   they are published with Ed25519 signatures, and changing them needs
-   the private key, which is never in this repository:
+   1. Finishes moving the registry off Base44. Every page already calls
+      lunara-registry on Lunara's own Supabase project; these signed files
+      still name the old Base44 address, because changing them needs the
+      private key, which is never in this repository:
 
-     registry-protocol.js → corpus/registry-protocol.json (rebuilt)
-     corpus/index.json
-     mcp/core.mjs (then redeploy the lunara-mcp function)
-     .well-known/lunara-verify.json
+        registry-protocol.js → corpus/registry-protocol.json (rebuilt)
+        corpus/index.json
+        .well-known/lunara-verify.json
 
-   It also adds the lunara_passport tool (tools/mcp-passport-tool.mjs)
-   to mcp/core.mjs, so one signing covers both.
+   2. Signs mcp/core.mjs as it now stands: already moved to lunara-registry,
+      with the passport scan and the Agent Network tools (version 1.1.0).
 
-   This swaps the address, rebuilds the protocol document and re-signs
-   everything that changed. Commit the result; the deploy check passes. */
+   Then commit the result (the deploy check passes) and redeploy the
+   lunara-mcp function (mcp/DEPLOYING.md). */
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { addPassportTool } from './mcp-passport-tool.mjs';
 
 if (!process.env.LUNARA_SIGNING_KEY) {
   console.error('Set LUNARA_SIGNING_KEY to the path of the private key file first.');
@@ -32,11 +30,6 @@ const NEW = 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-regist
 for (const f of ['registry-protocol.js', 'corpus/index.json', 'mcp/core.mjs', '.well-known/lunara-verify.json']) {
   const s = readFileSync(f, 'utf8');
   if (s.includes(OLD)) { writeFileSync(f, s.split(OLD).join(NEW)); console.log('updated', f); }
-}
-// Same signing run: give AI systems the passport scan as an MCP tool.
-{
-  const core = readFileSync('mcp/core.mjs', 'utf8'), next = addPassportTool(core);
-  if (next !== core) { writeFileSync('mcp/core.mjs', next); console.log('added lunara_passport to mcp/core.mjs'); }
 }
 execFileSync('node', ['tools/build-registry-protocol.mjs'], { stdio: 'inherit' });
 execFileSync('node', ['tools/sign-assertions.mjs'], { stdio: 'inherit', env: process.env });

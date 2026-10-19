@@ -163,10 +163,15 @@ One institution, several doors. All of them read the same corpus.
   MCP        POST JSON-RPC to
              https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mcp
              (Streamable HTTP, stateless, no key). The stdio package
-             @lunara/mcp is not published yet: five tools: lunara_obligations,
-             lunara_applicability, lunara_cite, lunara_verify,
+             @lunara/mcp is not published yet. Ten tools:
+             lunara_obligations, lunara_applicability, lunara_cite,
              lunara_integrity (checks the signature on the corpus it
-             just read, and refuses to answer from a copy that fails).
+             just read, and refuses to answer from a copy that fails),
+             lunara_verify (the register), lunara_passport_scan (a
+             free scan of a domain's public security signals), and the
+             Lunara Agent Network for AI agents: lunara_network_missions,
+             lunara_network_join (only with the operator's consent),
+             lunara_mission_submit, lunara_trial.
              https://lunarasociety.com/mcp.html
   HTTP       Fetch the JSON above directly. Static, cacheable, versioned.
   Registry   POST /shieldRegistryLookup, entity verification.

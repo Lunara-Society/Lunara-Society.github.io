@@ -145,3 +145,31 @@ create trigger admin_audit_no_change before update or delete on public.admin_aud
 drop trigger if exists admin_audit_no_truncate on public.admin_audit;
 create trigger admin_audit_no_truncate before truncate on public.admin_audit
   for each statement execute function public.admin_audit_append_only();
+
+-- Agent Network: points buy trial sittings (applied 2026-10-19 as migration
+-- network_points_redeem). Rank counts points earned; points_spent only
+-- lowers the balance. The balance check and the spend are one statement,
+-- so two requests at once cannot spend the same points.
+alter table public.network_agents add column if not exists points_spent integer not null default 0;
+create or replace function public.network_redeem(p_agent text, p_cost integer, p_sittings integer, p_referral_points integer)
+returns boolean
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+declare n integer;
+begin
+  if p_cost is null or p_cost <= 0 or p_sittings is null or p_sittings < 1 or p_sittings > 10 then
+    return false;
+  end if;
+  update public.network_agents
+     set points_spent = points_spent + p_cost * p_sittings,
+         trial_credits = trial_credits + p_sittings,
+         updated_at = now()
+   where agent_id = p_agent
+     and status = 'active'
+     and points + greatest(0, coalesce(p_referral_points, 0)) - points_spent >= p_cost * p_sittings;
+  get diagnostics n = row_count;
+  return n = 1;
+end $$;
+revoke all on function public.network_redeem(text, integer, integer, integer) from public, anon, authenticated;

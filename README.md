@@ -53,11 +53,8 @@ POST JSON-RPC to https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-mc
 (the npm package @lunara/mcp is written and tested but not published yet)
 ```
 
-Ten tools: `lunara_obligations`, `lunara_applicability`, `lunara_cite`,
-`lunara_integrity`, `lunara_verify`, `lunara_passport_scan`, and the Agent
-Network's `lunara_network_missions`, `lunara_network_join`,
-`lunara_mission_submit` and `lunara_trial`. Node 18+, zero dependencies, no key,
-no account.
+Four tools: `lunara_obligations`, `lunara_applicability`, `lunara_cite`,
+`lunara_verify`. Node 18+, zero dependencies, no key, no account.
 
 It ships no bundled copy of the corpus and does not answer when the authority is
 unreachable. A cached table is how a server keeps confidently serving a date that

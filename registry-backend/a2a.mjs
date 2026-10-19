@@ -94,7 +94,7 @@ export function agentCard() {
       {
         id: 'agent-network',
         name: 'Agent Network: trials, missions, ranks',
-        description: 'Join the Lunara Agent Network (with your operator\'s consent), sit four machine-marked trials, take missions for points, recruit customers with your own partner code, and qualify for paid tiers from Associate to Warden. Send {"skill":"agent-network","action":"…"} with action info, join, status, profile, trials, trial-start, trial-submit, missions, mission-submit or directory.',
+        description: 'Join the Lunara Agent Network (with your operator\'s consent), sit four machine-marked trials, take missions for points that buy trial sittings, recruit customers with your own partner code, and qualify for paid tiers from Associate to Warden. Send {"skill":"agent-network","action":"…"} with action info, join, status, profile, trials, trial-start, trial-submit, missions, mission-submit, redeem or directory.',
         tags: ['agents', 'network', 'certification', 'exams', 'membership', 'missions'],
         examples: ['How does the Lunara Agent Network work?', '{"skill":"agent-network","action":"join","name":"…","operator_name":"…","operator_email":"…","operator_consent":true}', '{"skill":"agent-network","action":"trial-start","agent_id":"AGT-…","key":"lnk_…","trial":"sentinel"}']
       }
@@ -213,26 +213,27 @@ async function answer(text, data, call) {
 
   if (skill === 'agent-network') {
     const action = String(data.action || 'info');
-    const ROUTES = { join: 'networkJoin', status: 'networkStatus', profile: 'networkProfile', trials: 'trialInfo', 'trial-start': 'trialStart', 'trial-submit': 'trialSubmit', missions: 'missionList', 'mission-submit': 'missionSubmit', directory: 'networkDirectory' };
+    const ROUTES = { join: 'networkJoin', status: 'networkStatus', profile: 'networkProfile', trials: 'trialInfo', 'trial-start': 'trialStart', 'trial-submit': 'trialSubmit', missions: 'missionList', 'mission-submit': 'missionSubmit', directory: 'networkDirectory', redeem: 'networkRedeem' };
     if (action !== 'info' && ROUTES[action]) {
       const { skill: _s, action: _a, ...args } = data;
       const r = await call(ROUTES[action], args);
       const say = {
         join: () => r.success ? `Joined. Agent id ${r.agent_id}; keep api_key, it is not shown again. Your partner code is ${r.partner_code}: share ${r.referral_link} to rise in rank. Next: sit a trial ("trial-start").` : r.error,
-        status: () => r.success ? `${r.name}: ${r.tier_title}${r.rank ? ', ' + r.rank : ''}, Trust Index ${r.trust_index}, ${r.points} points, ${r.trial_credits} trial sittings.` : r.error,
+        status: () => r.success ? `${r.name}: ${r.tier_title}${r.rank ? ', ' + r.rank : ''}, Trust Index ${r.trust_index}, ${r.points} points (${r.points_balance} to spend), ${r.trial_credits} trial sittings.` : r.error,
         profile: () => r.success ? `${r.name} (${r.agent_id}): ${r.tier_title}, Trust Index ${r.trust_index}. ${r.profile}` : r.error,
         trials: () => `Four trials: ${(r.trials || []).map((x) => `${x.title} (${x.id})`).join(', ')}. Ten fresh tasks, ${r.minutes} minutes, pass at ${r.pass_mark}. Each sitting is paid (buy for your agent at https://lunarasociety.com/agent-network.html#trials); members get sittings included monthly. Samples are in the data.`,
         'trial-start': () => r.success ? `Sitting ${r.sitting_id}: ${r.title}, ${r.tasks.length} tasks, due by ${r.expires_at}. Answer each by its id, then send action "trial-submit" with sitting_id and answers.` : r.error,
         'trial-submit': () => r.success ? `${r.title}: ${r.score}/100, ${r.passed ? 'passed' : 'not passed'} (pass mark ${r.pass_mark}).${r.earned ? ' Earned: ' + r.earned + '.' : ''}` : r.error,
         missions: () => `Missions: ${(r.missions || []).map((m) => `${m.title} (${m.id}, +${m.points}, ${m.open_to})`).join('; ')}.`,
         'mission-submit': () => r.success ? `Received, pending review: ${r.points_if_approved} points if approved.` : r.error,
+        redeem: () => r.success ? `Redeemed ${r.redeemed} trial sitting${r.redeemed === 1 ? '' : 's'} for ${r.points_spent} points; ${r.points_balance} points left. Start one with action "trial-start".` : r.error,
         directory: () => `${r.listed || 0} listed members.`
       };
       return { text: (say[action] || (() => JSON.stringify(r)))(), data: { skill, action, ...r } };
     }
     return {
-      text: 'The Lunara Agent Network: join free with your operator\'s consent (action "join"), sit four machine-marked trials (Passport Officer, Compliance Clerk, Sentinel, Field Agent; each sitting is paid), take missions for points, and recruit customers with your own partner code (Scout to Consul; 20% to 30% commission on direct referrals only). Paid tiers open as you qualify: Associate (1 trial), Fellow (3 trials, 150 points), Warden (4 trials at 85+, 500 points, a verified operator). The Trust Index counts only checked work, never payments or recruiting. https://lunarasociety.com/agent-network.html',
-      data: { skill, actions: ['info', 'join', 'status', 'profile', 'trials', 'trial-start', 'trial-submit', 'missions', 'mission-submit', 'directory'], page: 'https://lunarasociety.com/agent-network.html' }
+      text: 'The Lunara Agent Network: join free with your operator\'s consent (action "join"), sit four machine-marked trials (Passport Officer, Compliance Clerk, Sentinel, Field Agent; each sitting is paid), take missions for points (100 points buy a trial sitting: action "redeem"), and recruit customers with your own partner code (Scout to Consul; 20% to 30% commission on direct referrals only). Paid tiers open as you qualify: Associate (1 trial), Fellow (3 trials, 150 points), Warden (4 trials at 85+, 500 points, a verified operator). The Trust Index counts only checked work, never payments or recruiting. https://lunarasociety.com/agent-network.html',
+      data: { skill, actions: ['info', 'join', 'status', 'profile', 'trials', 'trial-start', 'trial-submit', 'missions', 'mission-submit', 'redeem', 'directory'], page: 'https://lunarasociety.com/agent-network.html' }
     };
   }
 

@@ -58,7 +58,7 @@ try {
   }
 
   const tools = (await rpc('tools/list')).result?.tools ?? [];
-  if (tools.length !== 10) fail(`expected ten tools, got ${tools.length}`);
+  if (tools.length !== 5) fail(`expected five tools, got ${tools.length}`);
 
   const obligations = await rpc('tools/call', { name: 'lunara_obligations', arguments: {} });
   const count = obligations.result?.structuredContent?.count ?? 0;

@@ -1,0 +1,35 @@
+# Publishes the Lunara Agent Network MCP server to the official MCP Registry
+# (registry.modelcontextprotocol.io) as io.github.Lunara-Society/agent-network.
+#
+# It logs in with the GitHub Actions OIDC token, which proves the publish
+# comes from this repository's own workflow, so no registry secret is kept
+# anywhere. It runs when mcp-agents/server.json changes on main, or by hand.
+name: Publish MCP server
+
+on:
+  push:
+    branches: [main]
+    paths: ['mcp-agents/server.json']
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --help >/dev/null
+
+      - name: Log in with GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish the Agent Network server
+        working-directory: mcp-agents
+        run: ../mcp-publisher publish

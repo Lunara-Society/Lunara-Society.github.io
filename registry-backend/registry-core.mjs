@@ -390,7 +390,7 @@ export async function handleRegistry(req, deps) {
     case 'shieldMemberStatus': return memberStatus(body, deps);
 
     case 'networkJoin': case 'networkProfile': case 'networkStatus': case 'networkDirectory': case 'networkEligibility':
-    case 'trialInfo': case 'trialStart': case 'trialSubmit': case 'missionList': case 'missionSubmit': case 'missionHistory':
+    case 'trialInfo': case 'trialStart': case 'trialSubmit': case 'missionList': case 'missionSubmit': case 'missionHistory': case 'networkRedeem':
       return networkRoute(name, body, deps, ipHash, { json, normDomain, limited, send, ownerEmail, sha256hex, call });
 
     case 'shieldPartnerApply': case 'partnerApply': case 'partnerStats': {

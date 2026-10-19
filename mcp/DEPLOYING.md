@@ -13,7 +13,7 @@ npm publish
 
 `prepublishOnly` runs `prepublish.mjs` first, which boots the server exactly
 as a client would, against the live authority, and refuses to publish unless
-it lists ten tools, returns obligations, and verifies the corpus signature.
+it lists five tools, returns obligations, and verifies the corpus signature.
 
 This gate exists because `npx @lunara/mcp` sat on the website, in `llms.txt`
 and in the corpus index for weeks while the package did not exist — every

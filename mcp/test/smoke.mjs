@@ -44,13 +44,11 @@ const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabiliti
 check('initialize returns protocol version', init.result?.protocolVersion === '2025-06-18', JSON.stringify(init));
 check('initialize names the server', init.result?.serverInfo?.name === 'lunara-intelligence');
 check('initialize warns about superseded training data', /2026\/1744/.test(init.result?.instructions || ''));
-check('initialize invites agents, with their operator\'s consent', /lunara_network_missions/.test(init.result?.instructions || '') && /operator/.test(init.result?.instructions || ''));
 notify('notifications/initialized');
 
 const list = await rpc('tools/list');
 const names = (list.result?.tools || []).map((t) => t.name);
-check('ten tools advertised', names.length === 10, names.join(','));
-check('the network tools are advertised', ['lunara_passport_scan','lunara_network_missions','lunara_network_join','lunara_mission_submit','lunara_trial'].every((n) => names.includes(n)), names.join(','));
+check('five tools advertised', names.length === 5, names.join(','));
 check('tools have input schemas', (list.result.tools || []).every((t) => t.inputSchema?.type === 'object'));
 
 const all = await rpc('tools/call', { name: 'lunara_obligations', arguments: {} });
@@ -135,28 +133,6 @@ const ver = await rpc('tools/call', { name: 'lunara_verify', arguments: { domain
 const verText = ver.result?.content?.[0]?.text || '';
 check('verify returns a status', /STATUS\s+NOT_REGISTERED/.test(verText), verText.slice(0, 200));
 check('verify refuses to smear the unregistered', /NOT a negative signal/.test(verText));
-
-// The network, through the same door. Nothing here creates a record: the
-// join is refused for want of consent before the registry writes anything.
-const scan = await rpc('tools/call', { name: 'lunara_passport_scan', arguments: { domain: 'example.com' } });
-const scanText = scan.result?.content?.[0]?.text || '';
-check('passport scan scores a live domain', Number.isFinite(scan.result?.structuredContent?.score) && /grade/.test(scanText), scanText.slice(0, 200));
-check('passport scan lists fixes and links the report', /TO FIX/.test(scanText) && /passport\.html\?d=example\.com/.test(scanText), scanText.slice(0, 400));
-check('passport scan carries the invitation', /lunara_network_missions/.test(scanText));
-
-const missions = await rpc('tools/call', { name: 'lunara_network_missions', arguments: {} });
-const missionsText = missions.result?.content?.[0]?.text || '';
-check('missions are listed with points and checks', (missions.result?.structuredContent?.missions || []).length >= 4 && /checked:/.test(missionsText), missionsText.slice(0, 300));
-check('missions tell a non-member how to join', /lunara_network_join/.test(missionsText));
-
-const noConsent = await rpc('tools/call', { name: 'lunara_network_join', arguments: { name: 'Smoke', operator_name: 'Smoke Test', operator_email: 'smoke@example.com', operator_consent: false } });
-check('joining without the operator\'s consent is refused', noConsent.result?.isError === true && /consent/.test(noConsent.result?.content?.[0]?.text || ''), JSON.stringify(noConsent.result).slice(0, 300));
-
-const badKey = await rpc('tools/call', { name: 'lunara_mission_submit', arguments: { agent_id: 'AGT-SMOKE000', key: 'lnk_nope', mission: 'league-scout', fields: {} } });
-check('a submission without a valid key is refused', badKey.result?.isError === true, JSON.stringify(badKey.result).slice(0, 300));
-
-const trials = await rpc('tools/call', { name: 'lunara_trial', arguments: { action: 'info' } });
-check('the four trials are described', (trials.result?.structuredContent?.trials || []).length === 4, (trials.result?.content?.[0]?.text || '').slice(0, 300));
 
 const unknown = await rpc('tools/call', { name: 'lunara_nope', arguments: {} });
 check('unknown tool is an error result', unknown.result?.isError === true);

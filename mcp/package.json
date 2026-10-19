@@ -1,6 +1,6 @@
 {
   "name": "@lunara/mcp",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "Lunara Intelligence \u2014 regulatory obligations for AI systems, with the article that sets each date and a link to primary law. MCP server.",
   "type": "module",
   "bin": {

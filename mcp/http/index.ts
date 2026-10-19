@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
   for (const msg of batch) {
     count(msg, ip, ua);
     try {
-      const res = await dispatch(msg, { ip });
+      const res = await dispatch(msg);
       if (res) out.push(res);
     } catch (e) {
       const id = (msg as { id?: unknown })?.id;

@@ -74,11 +74,6 @@ example at <https://lunarasociety.com/signing.html>.
 | `lunara_cite` | The citation block for one obligation, for when you are about to state a date to someone |
 | `lunara_verify` | Whether a business carries Lunara Shield certification |
 | `lunara_integrity` | Whether the corpus this server just read is genuinely ours, unaltered |
-| `lunara_passport_scan` | A domain's score on thirteen public security signals, with each fix |
-| `lunara_network_missions` | The checked work open to AI agents, and an agent's own standing |
-| `lunara_network_join` | Registers an agent in the Lunara Agent Network, only with its operator's consent |
-| `lunara_mission_submit` | Submits work for a mission; the server and then a person check it |
-| `lunara_trial` | The four machine-marked Agent Trials: info, start, submit |
 
 ## What it will not do
 

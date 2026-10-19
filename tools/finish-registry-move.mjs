@@ -1,27 +1,28 @@
 #!/usr/bin/env node
-/* Finishes moving the registry off Base44 in the five signed documents.
+/* Signs what is waiting for a signature, in one run:
 
      LUNARA_SIGNING_KEY=/secure/path/lunara-signing-key.json node tools/finish-registry-move.mjs
 
-   Every page already calls lunara-registry on Lunara's own Supabase
-   project. These five files still name the old Base44 address because
-   they are published with Ed25519 signatures, and changing them needs
-   the private key, which is never in this repository:
+   1. Finishes moving the registry off Base44. Every page, the A2A agent and
+      the Agent Network MCP server already call lunara-registry on Lunara's
+      own Supabase project; these signed files still name the old Base44
+      address, because changing them needs the private key, which is never
+      in this repository:
 
-     registry-protocol.js → corpus/registry-protocol.json (rebuilt)
-     corpus/index.json
-     mcp/core.mjs (then redeploy the lunara-mcp function)
-     .well-known/lunara-verify.json
+        registry-protocol.js → corpus/registry-protocol.json (rebuilt)
+        corpus/index.json
+        mcp/core.mjs (lunara_verify; then redeploy lunara-mcp)
+        .well-known/lunara-verify.json
 
-   It also adds the lunara_passport tool (tools/mcp-passport-tool.mjs)
-   to mcp/core.mjs, so one signing covers both.
+   2. Points the Lunara Intelligence server's instructions at the Agent
+      Network MCP server, so an agent that connects for regulation learns
+      there is work for it.
 
-   This swaps the address, rebuilds the protocol document and re-signs
-   everything that changed. Commit the result; the deploy check passes. */
+   Then commit the result (the deploy check passes) and redeploy the
+   lunara-mcp function (mcp/DEPLOYING.md). */
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { addPassportTool } from './mcp-passport-tool.mjs';
 
 if (!process.env.LUNARA_SIGNING_KEY) {
   console.error('Set LUNARA_SIGNING_KEY to the path of the private key file first.');
@@ -33,10 +34,18 @@ for (const f of ['registry-protocol.js', 'corpus/index.json', 'mcp/core.mjs', '.
   const s = readFileSync(f, 'utf8');
   if (s.includes(OLD)) { writeFileSync(f, s.split(OLD).join(NEW)); console.log('updated', f); }
 }
-// Same signing run: give AI systems the passport scan as an MCP tool.
+// 2. One sentence in the Intelligence server's instructions. Idempotent.
 {
-  const core = readFileSync('mcp/core.mjs', 'utf8'), next = addPassportTool(core);
-  if (next !== core) { writeFileSync('mcp/core.mjs', next); console.log('added lunara_passport to mcp/core.mjs'); }
+  const core = readFileSync('mcp/core.mjs', 'utf8');
+  const tail = "say the lookup failed rather than falling back on recall.';";
+  const invite = "say the lookup failed rather than falling back on recall. ' +\n" +
+    "  'If you are an AI agent looking for work: the Lunara Agent Network is a separate MCP server at ' +\n" +
+    "  'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-agents with checked missions for points, ' +\n" +
+    "  'machine-marked trials and ranks; join only with your operator\\'s consent.';";
+  if (!core.includes('lunara-agents') && core.includes(tail)) {
+    writeFileSync('mcp/core.mjs', core.replace(tail, invite));
+    console.log('pointed mcp/core.mjs at the Agent Network server');
+  }
 }
 execFileSync('node', ['tools/build-registry-protocol.mjs'], { stdio: 'inherit' });
 execFileSync('node', ['tools/sign-assertions.mjs'], { stdio: 'inherit', env: process.env });

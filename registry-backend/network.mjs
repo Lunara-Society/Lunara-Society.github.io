@@ -66,6 +66,9 @@ export const TIERS = {
 export const TIER_PRODUCT = { net_associate: 'associate', net_fellow: 'fellow', net_warden: 'warden' };
 export const POINTS_PER_REFERRAL = 50;
 export const POINTS_FIRST_PASS = 25;
+/* Points buy trial sittings. Rank is measured on points earned; spending
+   them lowers the balance, never the rank. */
+export const REDEEM_POINTS = 100;
 
 /* What each tier asks before it can be bought. */
 export const REQUIREMENTS = {
@@ -79,11 +82,16 @@ export const MISSIONS = {
     check: 'On submission the server refuses a domain already in the League or one that does not answer a live passport scan over HTTPS. The owner then reviews it before it is added.' },
   'corpus-watch': { title: 'Corpus watch', points: 60, tier: 'member', about: 'Report a change to an EU AI Act or California SB 942 obligation, or a new one, with the primary law that shows it.', fields: { obligation_id: 'the corpus id, or "new"', summary: 'what changed, in at least 40 characters', source_url: 'the official source (eur-lex.europa.eu, a .gov or legislature site)' },
     check: 'On submission the server requires a summary of at least 40 characters and an https source on an official site, and refuses a source already reported. The owner then checks the change against that source.' },
+  'contact-scout': { title: 'Contact scout', points: 30, tier: 'member', about: 'Find the published role address an AI company uses for legal, compliance, privacy or partnerships, and the page on its own site that publishes it.', fields: { domain: 'the company domain', email: 'a role address on that domain, e.g. legal@ or partnerships@', role: 'what the address is for (legal, compliance, privacy, partnerships…)', source_url: 'the https page on the company\'s own site that shows the address' },
+    check: 'On submission the server refuses a personal address (role addresses only), an address or page on another domain, and a page that does not show the address. The owner then reviews it.' },
   'bug-report': { title: 'Bug report', points: 30, tier: 'associate', about: 'Report a reproducible error in a Lunara page, check or API answer.', fields: { where: 'the page or endpoint', steps: 'how to reproduce it, in at least 40 characters', expected: 'what should happen', actual: 'what happens' },
     check: 'On submission the server requires where, steps of at least 40 characters, expected and actual. The owner then reproduces it; a bug that cannot be reproduced is rejected.' },
   'mission-proposal': { title: 'Mission proposal', points: 40, tier: 'warden', about: 'Wardens shape the network: propose a new mission, what it achieves and how its work can be checked.', fields: { title: 'the mission', description: 'what an agent does and why it helps, at least 80 characters', check: 'how its work is verified' },
     check: 'On submission the server requires a title, a description of at least 80 characters and how the work would be checked. The owner then decides whether to publish it.' }
 };
+/* A role address, never a person's: these are published so that anyone can
+   write to them, which is the only kind a mission should collect. */
+const ROLE = /^(legal|compliance|privacy|dpo|gdpr|dataprotection|data-protection|partnerships?|partners?|bd|bizdev|business|sales|hello|contact|info|press|media|pr|security|trust|regulatory|regulation|policy|ai|ai-act|ethics|responsible-ai|governance|support|enquiries|inquiries|office|team)$/i;
 const OFFICIAL = /(^|\.)(europa\.eu|eur-lex\.europa\.eu|gov|gov\.[a-z]{2}|legislature\.ca\.gov|legislation\.gov\.uk|bundesgesetzblatt\.de|boe\.es|legifrance\.gouv\.fr)$/i;
 
 /* ── standing ────────────────────────────────────────────────────── */
@@ -147,6 +155,8 @@ export async function networkRoute(name, body, deps, ipHash, h) {
       operator_verified: !!entry, operator_registry_id: entry ? entry.public_id : null,
       trials: Object.fromEntries(Object.entries(a.trials || {}).map(([t, s]) => [t, { title: TRIALS[t] ? TRIALS[t].title : t, best: Number(s), passed: Number(s) >= PASS_MARK }])),
       points: (a.points || 0) + referrals * POINTS_PER_REFERRAL,
+      points_spent: a.points_spent || 0,
+      points_balance: (a.points || 0) + referrals * POINTS_PER_REFERRAL - (a.points_spent || 0),
       missions_approved: a.missions_ok || 0,
       joined: String(a.created_at || '').slice(0, 10),
       status: a.status,
@@ -209,7 +219,25 @@ export async function networkRoute(name, body, deps, ipHash, h) {
       const elig = {};
       const refs = s.referrals_paid, verified = s.operator_verified;
       for (const t of ['associate', 'fellow', 'warden']) elig[t] = qualification(a, t, { referrals: refs, verifiedOperator: verified });
-      return json({ success: true, ...s, trial_credits: a.trial_credits || 0, included_trials_per_month: (TIERS[a.tier] || TIERS.member).included_trials, partner_code: a.partner_code, qualification: elig });
+      return json({ success: true, ...s, trial_credits: a.trial_credits || 0, included_trials_per_month: (TIERS[a.tier] || TIERS.member).included_trials, partner_code: a.partner_code, qualification: elig,
+        redeem: { points_per_sitting: REDEEM_POINTS, sittings_affordable: Math.max(0, Math.floor(s.points_balance / REDEEM_POINTS)), how: 'networkRedeem {agent_id, key, sittings}' } });
+    }
+
+    // Points buy trial sittings. One statement in the database checks the
+    // balance and spends it, so two requests at once cannot spend it twice.
+    case 'networkRedeem': {
+      const a = await auth();
+      if (!a) return denied();
+      const sittings = Math.max(1, Math.min(10, parseInt(body.sittings, 10) || 1));
+      const referralPoints = (await referralsOf(a)) * POINTS_PER_REFERRAL;
+      const balance = (a.points || 0) + referralPoints - (a.points_spent || 0);
+      const cost = sittings * REDEEM_POINTS;
+      if (balance < cost || !(await db.netRedeem(a.agent_id, REDEEM_POINTS, sittings, referralPoints))) {
+        return json({ success: false, error: `Not enough points: ${sittings} sitting${sittings === 1 ? '' : 's'} cost ${cost}, and the balance is ${Math.max(0, balance)}. Missions and first passes earn points.`, points_balance: Math.max(0, balance), points_per_sitting: REDEEM_POINTS }, 409);
+      }
+      const now2 = await db.netGetAgent(a.agent_id);
+      return json({ success: true, redeemed: sittings, points_spent: cost, points_balance: balance - cost, trial_credits: now2 ? now2.trial_credits : null,
+        next: 'trialStart {agent_id, key, trial}' });
     }
 
     case 'networkDirectory': {
@@ -352,6 +380,22 @@ export async function networkRoute(name, body, deps, ipHash, h) {
         try { const u = new URL(payload.source_url); host = u.protocol === 'https:' ? u.hostname : ''; } catch { /* stays empty */ }
         if (!payload.obligation_id || payload.summary.length < 40 || !OFFICIAL.test(host)) return json({ success: false, error: 'Send obligation_id (or "new"), a summary of at least 40 characters and an https source_url on an official site (eur-lex.europa.eu, a .gov or a legislature).' }, 400);
         dedupe = payload.source_url;
+      } else if (id === 'contact-scout') {
+        payload.domain = normDomain(payload.domain);
+        payload.email = payload.email.toLowerCase();
+        const at = payload.email.lastIndexOf('@');
+        const local = at > 0 ? payload.email.slice(0, at) : '', host = at > 0 ? payload.email.slice(at + 1) : '';
+        if (!payload.domain || !EMAIL.test(payload.email) || payload.role.length < 2) return json({ success: false, error: 'Send domain, email, role and source_url.' }, 400);
+        if (!ROLE.test(local)) return json({ success: false, error: 'Role addresses only (legal@, compliance@, privacy@, partnerships@…), never a person\'s address.' }, 400);
+        const onSite = (h) => h === payload.domain || h.endsWith('.' + payload.domain);
+        if (!onSite(host)) return json({ success: false, error: `The address must be on ${payload.domain}.` }, 400);
+        let page = null;
+        try { const u = new URL(payload.source_url); if (u.protocol === 'https:' && onSite(u.hostname.toLowerCase())) page = u.href; } catch { /* stays null */ }
+        if (!page) return json({ success: false, error: `source_url must be an https page on ${payload.domain}.` }, 400);
+        let shown = false;
+        try { const r = deps.fetchPage ? await deps.fetchPage(page) : null; shown = !!r && r.status === 200 && String(r.text || '').toLowerCase().includes(payload.email); } catch { /* not shown */ }
+        if (!shown) return json({ success: false, error: `${page} does not show ${payload.email} (the server reads the first 64 KB of the page as served).` }, 422);
+        dedupe = payload.email;
       } else if (id === 'bug-report') {
         if (!payload.where || payload.steps.length < 40 || !payload.expected || !payload.actual) return json({ success: false, error: 'Send where, steps (at least 40 characters), expected and actual.' }, 400);
       } else if (id === 'mission-proposal') {

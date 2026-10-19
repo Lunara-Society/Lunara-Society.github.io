@@ -15,9 +15,10 @@
 
    Stateless on purpose. No session id, no server-initiated stream, no
    subscription: every request carries everything needed to answer it.
-   There is nothing here to log a client into and nothing to remember
-   about them — reading this corpus is free and unauthenticated, and a
-   session store would quietly make that untrue.
+   There is nothing here to log a client into — reading this corpus is
+   free and unauthenticated, and a session store would quietly make that
+   untrue. The one thing kept is a count of tool calls (see count()), so
+   that real use can be told from the directories that probe us.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* core.mjs is not kept beside this file in the repository. It is uploaded
@@ -50,6 +51,44 @@ const json = (body: unknown, status = 200, extra: Record<string, string> = {}) =
 
 const rpcError = (code: number, message: string, status: number) =>
   json({ jsonrpc: '2.0', id: null, error: { code, message } }, status);
+
+/* Counting, not remembering. About a hundred directories and probes call
+   this endpoint every day, and without a count nobody can tell them from an
+   agent doing real work. So each session start and each tool call adds one
+   row to registry_hits: the tool's name or the client's self-reported name,
+   a salted hash of the address, and the time. Never the arguments, never
+   the answer, never the address itself. tools/list and ping are not
+   counted: that is where the crawlers live. */
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
+const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const label = (s: unknown) => String(s ?? '').toLowerCase().replace(/[^a-z0-9._-]+/g, '-').slice(0, 40) || 'unnamed';
+const CRAWLER = /bot|probe|crawler|collector|scanner|census|monitor|watch|harvester|checkup|liveness|observatory|research|health/i;
+
+async function sha256hex(s: string) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function count(msg: unknown, ip: string, ua: string) {
+  const m = msg as { method?: string; params?: { name?: unknown; clientInfo?: { name?: unknown } } };
+  const kind = m?.method === 'tools/call' ? `mcp:call:${label(m.params?.name)}`
+    : m?.method === 'initialize' ? `mcp:init:${label(m.params?.clientInfo?.name)}`
+    : null;
+  if (!kind || !SUPABASE_URL || !SERVICE_KEY) return;
+  const who = CRAWLER.test(ua) ? 'probe' : 'client';
+  console.log(JSON.stringify({ evt: 'mcp', kind, who }));
+  const write = (async () => {
+    const ip_hash = await sha256hex('lunara-mcp:' + ip);
+    await fetch(`${SUPABASE_URL}/rest/v1/registry_hits`, {
+      method: 'POST',
+      headers: { apikey: SERVICE_KEY, authorization: `Bearer ${SERVICE_KEY}`, 'content-type': 'application/json', prefer: 'return=minimal' },
+      body: JSON.stringify({ kind: `${kind}:${who}`.slice(0, 80), ip_hash, created_at: new Date().toISOString() })
+    });
+  })().catch(() => { /* a lost count never costs an answer */ });
+  // deno-lint-ignore no-explicit-any
+  const rt = (globalThis as any).EdgeRuntime;
+  if (rt?.waitUntil) rt.waitUntil(write);
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -91,8 +130,11 @@ Deno.serve(async (req: Request) => {
   if (batch.length === 0) return rpcError(-32600, 'Empty batch', 400);
   if (batch.length > 32) return rpcError(-32600, 'Batch too large', 413);
 
+  const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
+  const ua = req.headers.get('user-agent') || '';
   const out = [];
   for (const msg of batch) {
+    count(msg, ip, ua);
     try {
       const res = await dispatch(msg);
       if (res) out.push(res);

@@ -39,6 +39,7 @@ export function memoryDb() {
     async netListAgents(tiers) { return [...this.agents.values()].filter((a) => tiers.includes(a.tier)).map((a) => ({ ...a })); },
     async netCounts() { return { total: this.agents.size }; },
     async netAdd(id, c, pts) { const a = this.agents.get(id); a.trial_credits = Math.max(0, a.trial_credits + c); a.points = Math.max(0, a.points + pts); },
+    async netRedeem(id, cost, n, refPts) { const a = this.agents.get(id); if (!a || a.status !== 'active' || a.points + refPts - (a.points_spent || 0) < cost * n) return false; a.points_spent = (a.points_spent || 0) + cost * n; a.trial_credits += n; return true; },
     async netSpendCredit(id) { const a = this.agents.get(id); if (a.trial_credits > 0) { a.trial_credits--; return true; } return false; },
     async sitCreate(r) { this.sittings.set(r.sitting_id, { ...r }); },
     async sitGet(id) { const x = this.sittings.get(id); return x ? JSON.parse(JSON.stringify(x)) : null; },
@@ -720,6 +721,40 @@ await test('network: tiers must be earned, missions are checked and reviewed, tr
   eq(dir.listed, 1); eq(dir.agents[0].tier_title, 'Associate');
   const status = (await call(deps, 'networkStatus', me)).body;
   eq(status.included_trials_per_month, 1); ok(status.qualification.fellow);
+});
+
+await test('network: points buy trial sittings, rank keeps what was earned, nobody spends twice', async () => {
+  const { deps, db } = setup({ corpus: async () => CORPUS, leagueList: async () => LEAGUE });
+  const j = (await call(deps, 'networkJoin', { name: 'Saver', operator_name: 'S Ltd', operator_email: 's@s.example', operator_consent: true })).body;
+  const me = { agent_id: j.agent_id, key: j.api_key };
+  eq((await call(deps, 'networkRedeem', { agent_id: j.agent_id, key: 'lnk_' + 'x'.repeat(32) })).status, 401, 'the key is checked');
+  let r = await call(deps, 'networkRedeem', me);
+  eq(r.status, 409); eq(r.body.points_balance, 0); ok(/cost 100/.test(r.body.error));
+  db.agents.get(j.agent_id).points = 250;
+  r = (await call(deps, 'networkRedeem', { ...me, sittings: 2 })).body;
+  eq(r.success, true); eq(r.redeemed, 2); eq(r.points_balance, 50); eq(r.trial_credits, 2);
+  eq((await call(deps, 'networkRedeem', me)).status, 409, 'fifty points do not buy a sitting');
+  const s = (await call(deps, 'networkStatus', me)).body;
+  eq(s.points, 250, 'rank counts what was earned'); eq(s.points_spent, 200); eq(s.points_balance, 50);
+  eq(s.redeem.points_per_sitting, 100); eq(s.redeem.sittings_affordable, 0);
+  eq((await call(deps, 'networkRedeem', { ...me, sittings: 99 })).body.error.includes('cost 1000'), true, 'at most ten at once');
+  // The sitting it bought is a real sitting.
+  eq((await call(deps, 'trialStart', { ...me, trial: 'compliance' })).body.paid_with, 'credit');
+});
+
+await test('network: a contact scout brings a role address its own site publishes, never a person', async () => {
+  const site = { ...GOOD, pages: { ...GOOD.pages, 'https://good.example/contact': { headers: {}, text: '<p>Write to <a href="mailto:Legal@good.example">legal@good.example</a></p>' } } };
+  const { deps, db } = setup(web(site));
+  const j = (await call(deps, 'networkJoin', { name: 'Scout', operator_name: 'Sc Ltd', operator_email: 'sc@sc.example', operator_consent: true })).body;
+  const me = { agent_id: j.agent_id, key: j.api_key, mission: 'contact-scout' };
+  const base = { domain: 'good.example', role: 'legal', source_url: 'https://good.example/contact' };
+  eq((await call(deps, 'missionSubmit', { ...me, ...base, email: 'jane.doe@good.example' })).status, 400, 'a person is not a role');
+  eq((await call(deps, 'missionSubmit', { ...me, ...base, email: 'legal@other.example' })).status, 400, 'another domain');
+  eq((await call(deps, 'missionSubmit', { ...me, ...base, email: 'legal@good.example', source_url: 'https://other.example/contact' })).status, 400, 'a page on another site');
+  eq((await call(deps, 'missionSubmit', { ...me, ...base, email: 'privacy@good.example' })).status, 422, 'the page does not show it');
+  const m = (await call(deps, 'missionSubmit', { ...me, ...base, email: 'Legal@Good.example' })).body;
+  eq(m.success, true); eq(m.points_if_approved, 30); eq(db.missions[0].payload.email, 'legal@good.example');
+  eq((await call(deps, 'missionSubmit', { ...me, ...base, email: 'legal@good.example' })).status, 409, 'no duplicates');
 });
 
 await test('agent passport: only a verified AI agent gets one, anyone can verify it, revocation kills it', async () => {

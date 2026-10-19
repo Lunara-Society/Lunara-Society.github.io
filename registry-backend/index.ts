@@ -99,6 +99,7 @@ const db = {
   netListAgents: (tiers: string[]) => rest(`/network_agents?tier=in.(${tiers.map(q).join(',')})&order=created_at.asc&limit=500`),
   netCounts: async () => ({ total: await countOf('/network_agents?select=agent_id'), listed: await countOf('/network_agents?tier=neq.member&select=agent_id') }),
   netAdd: (id: string, credits: number, points: number) => rest('/rpc/network_add', { method: 'POST', body: JSON.stringify({ p_agent: id, p_credits: credits, p_points: points }) }),
+  netRedeem: (id: string, cost: number, sittings: number, referralPoints: number) => rest('/rpc/network_redeem', { method: 'POST', body: JSON.stringify({ p_agent: id, p_cost: cost, p_sittings: sittings, p_referral_points: referralPoints }) }).then((r) => r === true),
   netSpendCredit: (id: string) => rest('/rpc/network_spend_credit', { method: 'POST', body: JSON.stringify({ p_agent: id }) }).then((r) => r === true),
   sitCreate: (r: Record<string, unknown>) => post('trial_sittings', r, 'return=minimal'),
   sitGet: (id: string) => rest(`/trial_sittings?sitting_id=eq.${q(id)}&limit=1`).then(one),

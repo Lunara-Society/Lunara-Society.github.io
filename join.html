@@ -779,12 +779,12 @@ p,li,span{
         <div class="card-text">Recognized as a Lunara Registry Partner on our site, with your platform named as an integration point for verification lookups.</div>
       </div>
     </div>
-    <p class="page-sub" style="font-size:13px;margin-bottom:20px;">Vendor Certification is $7,400 for twelve months, up to three systems. Applications are reviewed by a person before an API key is issued this protects the integrity of the referral data for everyone.</p>
+    <p class="page-sub" style="font-size:13px;margin-bottom:20px;">Vendor Certification is $7,400 for twelve months, up to three systems. Applications are reviewed by a person before an API key is issued. That protects the integrity of the referral data for everyone.</p>
     <form id="partner-apply-form" style="display:flex;flex-direction:column;gap:14px;max-width:520px;">
-      <input type="text" id="pa-name" placeholder="Company / platform name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="url" id="pa-website" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="email" id="pa-email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <select id="pa-type" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;" aria-label="Type">
+      <input type="text" id="pa-name" aria-label="Company or platform name" placeholder="Company / platform name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="url" id="pa-website" aria-label="Website URL" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="email" id="pa-email" aria-label="Contact email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <select id="pa-type" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;" aria-label="Type of platform">
         <option value="directory">Business directory</option>
         <option value="marketplace">Marketplace</option>
         <option value="saas_tool">SaaS tool</option>
@@ -792,7 +792,7 @@ p,li,span{
         <option value="agency">Agency</option>
         <option value="other">Other</option>
       </select>
-      <input type="text" id="pa-domain" placeholder="Domain where you'll embed the lookup (optional)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
+      <input type="text" id="pa-domain" aria-label="Domain where you will embed the lookup (optional)" placeholder="Domain where you'll embed the lookup (optional)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
       <button type="submit" class="cta-btn" style="border:none;cursor:pointer;align-self:flex-start;">Apply for Registry Partner →</button>
       <div id="pa-result" style="font-size:13px;color:var(--white-70);line-height:1.6;"></div>
     </form>

@@ -1,197 +1,200 @@
 /* ═══════════════════════════════════════════════════════════════════
-   THE THRESHOLD: the intro to lunarasociety.com
+   THE APERTURE: the intro to lunarasociety.com
    ═══════════════════════════════════════════════════════════════════
-   Six stages, one material language (obsidian, champagne gold, smoked
-   glass, light). lunara-intro.js runs the clock and adds a class per
-   stage; everything that moves is defined here.
+   An instrument coming online, built from lines and light. No particle
+   anywhere: every mark on screen is a part of the instrument.
 
-     A  void        obsidian, a single point of light
-     B  signal      the point draws out into a gold line, which folds
-                    into a ring
-     C  artifact    the official emblem forged inside the ring, lit by
-                    a raking light, with weight, an edge and a shadow
-     D  chamber     blades of light rise either side, receding to a
-                    lit doorway; the emblem is reflected in the floor
-     E  wordmark    Lunara Society, then the line beneath it
-     F  open        the chamber parts down the middle and the emblem
-                    settles into its place in the navigation
+     grid     a precision lattice rises to the horizon
+     signal   one gold signal runs the horizon and lights it
+     landed   the lattice takes the light; the signal climbs
+     ring     the signal becomes the instrument ring, its scale engraved
+     read     four readings come off the ring, each filled only when the
+              check behind it has actually finished (lunara-intro.js)
+     iris     a nine-blade iris opens on the official seal; light rakes
+              across its relief
+     mark     Lunara Society, then the line beneath it
+     open     the ring lifts off the instrument and lands on tonight's
+              moon behind it; everything else recedes
 
-   The decision to show it is made in the <head> of index.html before
-   anything paints. Sizes are in vmin so the phone (laid out at 1120px
-   wide, see verify-viewport.mjs) frames the same composition. */
+   lunara-intro.js is the state machine and adds one class per state;
+   everything that moves is defined here. Sizes are in vmin so the phone
+   (laid out at 1120px wide, see verify-viewport.mjs) frames the same
+   composition. Reduced motion gets the composed instrument, still. */
 
 #lx-intro{display:none}
 html.lx-intro,html.lx-intro body{overflow:hidden}
 html.lx-intro #lx-intro{display:block}
 
-@property --gap{syntax:'<length>';inherits:true;initial-value:0px}
+#lx-intro{position:fixed;inset:0;z-index:2147483646;overflow:hidden;color:#EDE7DA;background:#030405;
+  font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  --gold:#D9BA78;--gold-hi:#F4E2B0;--ivory:#EDE7DA;--steel:#8E97A3;--ok:#8FE3BD;
+  --ease:cubic-bezier(.16,1,.3,1);--io:cubic-bezier(.65,0,.35,1);
+  --cy:41%;--hz:83%;--D:min(60vmin,660px);
+  transition:background-color .55s ease}
+#lx-intro *{box-sizing:border-box}
 
-#lx-intro{position:fixed;inset:0;z-index:2147483646;overflow:hidden;color:#F1ECE2;background:#040405;
-  font-family:Inter,system-ui,sans-serif;--coin:min(36vmin,440px);--gap:0px;--ease:cubic-bezier(.16,1,.3,1);
-  transition:opacity .7s ease}
-#lx-intro.out{opacity:0;pointer-events:none}
-#lx-intro.open{background:transparent;pointer-events:none}
+/* ── the air: depth, never decoration ──────────────────────────── */
+.lxi-air{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;
+  background:
+    radial-gradient(42% 34% at 50% var(--cy),rgba(217,186,120,.085),transparent 72%),
+    radial-gradient(90% 26% at 50% var(--hz),rgba(122,142,176,.13),transparent 70%),
+    linear-gradient(180deg,#030405 0%,#05070A 55%,#080B10 var(--hz),#040507 100%)}
+.s-grid .lxi-air{opacity:1}
 
-/* ── the world: light, chamber, film. It is what parts at the end ── */
-.lxi-world{position:absolute;inset:0;background:#040405}
-#lx-intro.open .lxi-world{
-  -webkit-mask:linear-gradient(90deg,#000 calc(50% - var(--gap)),transparent calc(50% - var(--gap)),transparent calc(50% + var(--gap)),#000 calc(50% + var(--gap)));
-  mask:linear-gradient(90deg,#000 calc(50% - var(--gap)),transparent calc(50% - var(--gap)),transparent calc(50% + var(--gap)),#000 calc(50% + var(--gap)));
-  --gap:52vw;transition:--gap 1.5s cubic-bezier(.7,0,.18,1),opacity 1.5s ease 0s}
-@supports not (mask:linear-gradient(#000,#000)){#lx-intro.open .lxi-world{opacity:0}}
-#lxi-gl,#lxi-motes{position:absolute;inset:0;width:100%;height:100%;display:block}
-#lxi-motes{z-index:12;pointer-events:none}
-.lxi-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 75% at 50% 46%,transparent 40%,rgba(0,0,0,.78))}
-.lxi-grain{position:absolute;inset:-50%;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:lxiGrain .6s steps(3) infinite}
-@keyframes lxiGrain{0%{transform:translate(0,0)}33%{transform:translate(-2%,1.5%)}66%{transform:translate(1.5%,-2%)}100%{transform:translate(0,0)}}
+/* ── the lattice ───────────────────────────────────────────────── */
+.lxi-floor{position:absolute;left:-70%;right:-70%;top:var(--hz);height:150vh;transform-origin:50% 0;
+  transform:perspective(42vh) rotateX(80deg);opacity:0;transition:opacity .9s ease;
+  background:
+    repeating-linear-gradient(90deg,rgba(214,222,234,.26) 0 1px,transparent 1px 144px),
+    repeating-linear-gradient(0deg,rgba(214,222,234,.26) 0 1px,transparent 1px 144px),
+    repeating-linear-gradient(90deg,rgba(214,222,234,.09) 0 1px,transparent 1px 36px),
+    repeating-linear-gradient(0deg,rgba(214,222,234,.09) 0 1px,transparent 1px 36px);
+  -webkit-mask-image:radial-gradient(52% 70% at 50% 0%,#000 0%,rgba(0,0,0,.55) 45%,transparent 78%);
+          mask-image:radial-gradient(52% 70% at 50% 0%,#000 0%,rgba(0,0,0,.55) 45%,transparent 78%)}
+.lxi-floor i{position:absolute;inset:0;opacity:0;transform:scaleX(.08);transform-origin:50% 0;
+  transition:opacity .5s ease,transform 1.1s var(--ease);
+  background:
+    repeating-linear-gradient(90deg,rgba(244,226,176,.6) 0 1px,transparent 1px 144px),
+    repeating-linear-gradient(0deg,rgba(244,226,176,.5) 0 1px,transparent 1px 144px),
+    repeating-linear-gradient(90deg,rgba(244,226,176,.18) 0 1px,transparent 1px 36px),
+    repeating-linear-gradient(0deg,rgba(244,226,176,.14) 0 1px,transparent 1px 36px);
+  -webkit-mask-image:radial-gradient(30% 46% at 50% 0%,#000,transparent 80%);
+          mask-image:radial-gradient(30% 46% at 50% 0%,#000,transparent 80%)}
+.s-grid .lxi-floor{opacity:1}
+.s-landed .lxi-floor i{opacity:1;transform:none}
 
-/* the light, without WebGL: the same four sources in gradients */
-.lxi-fb{display:none}
-#lx-intro.nogl .lxi-fb{display:block}
-.lxi-fb i{position:absolute;pointer-events:none;opacity:0;transition:opacity 1.6s ease}
-.lxi-fb .cone{left:50%;top:0;width:80vmin;height:calc(var(--hz,42%) + 18vmin);margin-left:-40vmin;
-  background:radial-gradient(ellipse 34% 100% at 50% 0,rgba(255,226,170,.11),rgba(255,226,170,.04) 60%,transparent 100%)}
-.lxi-fb .halo{left:50%;top:var(--ey,44%);width:110vmin;height:110vmin;margin:-55vmin 0 0 -55vmin;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,214,150,.30),rgba(198,161,91,.10) 26%,transparent 56%)}
-.lxi-fb .line{left:0;right:0;top:var(--ey,44%);height:24vmin;margin-top:-12vmin;background:radial-gradient(ellipse 50% 6% at 50% 50%,rgba(255,236,196,.45),transparent 70%)}
-.lxi-fb .floor{left:-10%;right:-10%;top:calc(var(--hz,42%) + 16vmin);height:30vmin;background:radial-gradient(ellipse 30% 40% at 50% 0,rgba(240,217,155,.12),transparent 70%)}
-#lx-intro.a .lxi-fb .halo{opacity:.55}
-#lx-intro.b .lxi-fb .line{opacity:1}
-#lx-intro.ring .lxi-fb .line{opacity:0}
-#lx-intro.d .lxi-fb .cone,#lx-intro.d .lxi-fb .halo,#lx-intro.d .lxi-fb .floor{opacity:1}
+/* ── the horizon, lit by the signal ─────────────────────────────── */
+.lxi-hz{position:absolute;top:var(--hz);height:1px;margin-top:-.5px;transform:scaleX(0)}
+.lxi-hz.l{left:0;width:50%;transform-origin:0 50%;background:linear-gradient(90deg,transparent,rgba(244,226,176,.55) 70%,rgba(255,246,222,.95));
+  transition:transform .52s cubic-bezier(.22,1,.36,1)}
+.lxi-hz.r{left:50%;width:50%;transform-origin:0 50%;background:linear-gradient(90deg,rgba(255,246,222,.95),rgba(244,226,176,.55) 30%,transparent);
+  transition:transform .7s var(--ease)}
+.s-signal .lxi-hz.l{transform:scaleX(1)}
+.s-landed .lxi-hz.r{transform:scaleX(1)}
+.lxi-sig{position:absolute;top:var(--hz);left:0;width:26vw;height:2px;margin-top:-1px;opacity:0;
+  transform:translateX(-30vw);
+  background:linear-gradient(90deg,transparent,rgba(244,226,176,.15) 35%,rgba(255,240,205,.95) 94%,#fff);
+  box-shadow:0 0 18px 2px rgba(244,226,176,.45)}
+.lxi-sig::after{content:"";position:absolute;right:-9px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;
+  background:radial-gradient(closest-side,#fff,rgba(255,240,205,.6) 40%,transparent)}
+.s-signal .lxi-sig{opacity:1;transform:translateX(calc(50vw - 26vw));
+  transition:transform .52s cubic-bezier(.22,1,.36,1),opacity .12s ease}
+.s-landed .lxi-sig{opacity:0;transition:opacity .25s ease}
+.lxi-climb{position:absolute;left:50%;width:2px;margin-left:-1px;
+  top:calc(var(--cy) + var(--D) * .4167);height:calc(var(--hz) - var(--cy) - var(--D) * .4167);
+  transform:scaleY(0);transform-origin:50% 100%;opacity:.95;
+  background:linear-gradient(0deg,rgba(255,246,222,.95),rgba(244,226,176,.5));box-shadow:0 0 12px rgba(244,226,176,.5)}
+.s-landed .lxi-climb{transform:scaleY(1);transition:transform .2s cubic-bezier(.5,0,.75,0)}
+.s-ring .lxi-climb{opacity:0;transition:opacity .5s ease .1s}
 
-/* ── D: the chamber. Blades of light in perspective, a floor, a door ─ */
-.lxi-hall{position:absolute;inset:0;perspective:72vmin;perspective-origin:var(--pox,50%) var(--hz,42%);overflow:hidden;pointer-events:none}
-.lxi-hall .blade{position:absolute;left:50%;top:var(--hz,42%);width:2px;height:110vmin;margin:-80vmin 0 0 -1px;
-  background:linear-gradient(to bottom,rgba(240,217,155,0) 0%,rgba(240,217,155,.08) 34%,rgba(250,232,190,.55) 76%,rgba(255,246,224,.95) 86.8%,rgba(240,217,155,.18) 87.8%,rgba(198,161,91,.05) 94%,rgba(198,161,91,0) 100%);
-  box-shadow:0 0 18px 1px rgba(240,217,155,.14);transform-origin:50% 87.3%;
-  transform:translate3d(var(--x),0,var(--z)) scaleY(0);opacity:0;
-  transition:transform 1.8s var(--ease) var(--d),opacity 1.2s ease var(--d)}
-#lx-intro.d .lxi-hall .blade{transform:translate3d(var(--x),0,var(--z)) scaleY(1);opacity:var(--o,1)}
-.lxi-hall .door{position:absolute;left:50%;top:var(--hz,42%);width:26vmin;height:96vmin;margin:-80vmin 0 0 -13vmin;opacity:0;
-  transform:translateZ(-330vmin);transition:opacity 2.4s ease .5s;
-  background:linear-gradient(90deg,transparent,rgba(255,236,196,.20) 18%,rgba(255,244,222,.42) 50%,rgba(255,236,196,.20) 82%,transparent),
-             linear-gradient(to bottom,transparent,rgba(255,236,196,.15) 30%,rgba(255,236,196,.15) 60%,transparent)}
-#lx-intro.d .lxi-hall .door{opacity:1}
-.lxi-hall .floor{position:absolute;left:50%;top:var(--hz,42%);width:300vmin;height:420vmin;margin-left:-150vmin;transform-origin:50% 0;
-  transform:translate3d(0,16vmin,60vmin) rotateX(-90deg);opacity:0;transition:opacity 2s ease .3s;
-  background:radial-gradient(ellipse 14% 7% at 50% 15%,rgba(240,217,155,.13),transparent 70%),
-             repeating-linear-gradient(to bottom,rgba(240,217,155,.045) 0 1px,transparent 1px 22vmin),
-             linear-gradient(90deg,transparent 47%,rgba(240,217,155,.035) 49.5%,rgba(240,217,155,.035) 50.5%,transparent 53%);
-  -webkit-mask:linear-gradient(to bottom,#000 10%,transparent 85%);mask:linear-gradient(to bottom,#000 10%,transparent 85%)}
-#lx-intro.d .lxi-hall .floor{opacity:1}
+/* ── the instrument ─────────────────────────────────────────────── */
+.lxi-inst{position:absolute;left:50%;top:var(--cy);width:var(--D);height:var(--D);
+  margin:calc(var(--D) / -2) 0 0 calc(var(--D) / -2);transition:transform .7s var(--ease),opacity .45s ease}
+.lxi-inst>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lxi-dial .arc{fill:none;stroke:url(#lxi-goldline);stroke-width:2.2;stroke-dasharray:100 100;stroke-dashoffset:100}
+.s-ring .lxi-dial .arc{stroke-dashoffset:0;transition:stroke-dashoffset .62s cubic-bezier(.3,0,.1,1)}
+.lxi-dial .tk{transform-box:view-box;transform-origin:300px 300px;transform:rotate(-12deg)}
+.s-ring .lxi-dial .tk{transform:none;transition:transform 1.9s cubic-bezier(.2,.9,.1,1) .1s}
+.lxi-dial .tk line{stroke:rgba(237,231,218,.55);stroke-width:1;opacity:0}
+.lxi-dial .tk line.mj{stroke:rgba(244,226,176,.95);stroke-width:1.6}
+.s-ring .lxi-dial .tk line{opacity:1;transition:opacity .18s ease var(--d)}
+.lxi-dial .eng{fill:none;stroke:rgba(214,222,234,.22);stroke-width:1;stroke-dasharray:1 5;opacity:0}
+.lxi-dial .deg{font:500 10.5px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:2px;fill:rgba(217,186,120,.75);opacity:0}
+.s-ring .lxi-dial .eng,.s-ring .lxi-dial .deg{opacity:1;transition:opacity .6s ease .35s}
+.lxi-dial .house{fill:none;stroke:url(#lxi-steel);stroke-width:7;opacity:0}
+.lxi-dial .house2{fill:none;stroke:rgba(244,226,176,.35);stroke-width:1;opacity:0}
+.s-ring .lxi-dial .house,.s-ring .lxi-dial .house2{opacity:1;transition:opacity .5s ease .25s}
+.lxi-dial .lead{fill:none;stroke:rgba(244,226,176,.6);stroke-width:1;stroke-dasharray:100 100;stroke-dashoffset:100}
+.s-read .lxi-dial .lead{stroke-dashoffset:0;transition:stroke-dashoffset .32s cubic-bezier(.3,0,.1,1)}
 
-/* ── the stage: the emblem and the words ───────────────────────────── */
-.lxi-stage{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  perspective:1100px;pointer-events:none;padding-bottom:4vmin}
-.lxi-rig{position:relative;width:var(--coin);height:var(--coin);transform-style:preserve-3d;flex:none;will-change:transform}
-#lx-intro.fly .lxi-rig{transition:transform 1.3s cubic-bezier(.7,0,.2,1),opacity .5s ease 1.05s}
+/* light gathering behind the seal as the iris opens */
+.lxi-bloom{position:absolute;inset:-18%;border-radius:50%;opacity:0;transform:scale(.7);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(244,226,176,.16),rgba(217,186,120,.06) 45%,transparent 72%)}
+.s-iris .lxi-bloom{opacity:1;transform:none;transition:opacity 1.2s ease,transform 1.6s var(--ease)}
 
-/* B: the signal line, then the ring it folds into */
-.lxi-line{position:absolute;left:50%;top:50%;width:150vmin;height:2px;margin:-1px 0 0 -75vmin;border-radius:2px;
-  background:linear-gradient(90deg,transparent,rgba(240,217,155,.5) 18%,#FFF6DE 50%,rgba(240,217,155,.5) 82%,transparent);
-  box-shadow:0 0 14px rgba(240,217,155,.55);transform:scaleX(0);opacity:0;pointer-events:none}
-#lx-intro.b .lxi-line{transform:scaleX(1);opacity:1;transition:transform 1s cubic-bezier(.2,.9,.1,1),opacity .3s ease}
-#lx-intro.ring .lxi-line{transform:scaleX(.26);opacity:0;transition:transform .9s cubic-bezier(.6,0,.4,1),opacity .7s ease .2s}
-.lxi-ring{position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);overflow:visible;pointer-events:none}
-.lxi-ring circle{fill:none;stroke:#F0D99B;stroke-width:1;stroke-dasharray:50 100;stroke-dashoffset:50;
-  filter:drop-shadow(0 0 2px rgba(240,217,155,.8))}
-.lxi-ring .a{transform:rotate(180deg);transform-origin:100px 100px}
-#lx-intro.ring .lxi-ring circle{stroke-dashoffset:0;transition:stroke-dashoffset 1.1s cubic-bezier(.5,0,.2,1)}
-#lx-intro.e .lxi-ring{opacity:.3;transform:translate(-50%,-50%) scale(1.24);transition:opacity 1.8s ease,transform 2.6s var(--ease)}
-.lxi-ring circle{transition:stroke-width 2s ease}
-#lx-intro.e .lxi-ring circle{stroke-width:.7}
+/* the seal, beneath the iris */
+.lxi-seal{position:absolute;left:16.6%;top:16.6%;width:66.8%;height:66.8%;border-radius:50%;overflow:hidden;opacity:0;
+  transform:scale(.94);filter:brightness(.25) saturate(.7);transition:opacity .5s ease .25s,transform 1.3s var(--ease),filter 1.1s ease}
+.s-ring .lxi-seal{opacity:1}
+.lxi-seal img{display:block;width:130.6%;height:130.6%;margin:-15.3%;pointer-events:none}
+.lxi-seal .rake{position:absolute;inset:0;border-radius:50%;mix-blend-mode:screen;opacity:0;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,244,214,.0) 38%,rgba(255,244,214,.55) 47%,rgba(255,244,214,.0) 56%,transparent 64%);
+  background-size:300% 100%;background-position:100% 0}
+.lxi-seal .shade{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(70% 70% at 38% 30%,transparent 45%,rgba(3,4,5,.55) 100%)}
+.s-iris .lxi-seal{transform:none;filter:none}
+.s-iris .lxi-seal .rake{opacity:1;background-position:-50% 0;transition:background-position 1.25s cubic-bezier(.45,0,.2,1) .25s,opacity .2s ease .25s}
 
-/* C: the artifact. The emblem file, given light, edge and weight */
-.lxi-coin{position:absolute;inset:0;transform-style:preserve-3d;opacity:0;
-  transform:translateZ(-260px) rotateX(26deg) rotateY(-22deg) scale(.82)}
-#lx-intro.c .lxi-coin{opacity:1;transform:none;transition:transform 2.4s var(--ease),opacity .9s ease}
-.lxi-coin img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
-.lxi-coin .face{filter:brightness(0) contrast(1.2)}
-#lx-intro.c .lxi-coin .face{filter:brightness(1.04) contrast(1.06);transition:filter 2.2s cubic-bezier(.4,0,.2,1)}
-.lxi-coin .edge{filter:brightness(.3) sepia(.7)}
-.lxi-m{position:absolute;inset:0;pointer-events:none;
-  -webkit-mask:url(/lunara_emblem_512.png) center/contain no-repeat;mask:url(/lunara_emblem_512.png) center/contain no-repeat}
-.lxi-rake{mix-blend-mode:screen;opacity:0;background:linear-gradient(104deg,transparent 34%,rgba(255,232,180,.0) 40%,rgba(255,246,222,.78) 50%,rgba(255,232,180,0) 60%,transparent 66%);
-  background-size:300% 100%;background-position:120% 0}
-#lx-intro.rake .lxi-rake{opacity:1;animation:lxiRake 1.9s cubic-bezier(.45,0,.2,1) forwards}
-@keyframes lxiRake{to{background-position:-20% 0}}
-.lxi-spec{mix-blend-mode:screen;opacity:0;transition:opacity 1.4s ease;
-  background:radial-gradient(circle at var(--sx,38%) var(--sy,30%),rgba(255,246,226,.30),rgba(255,236,196,.06) 28%,transparent 46%)}
-#lx-intro.e .lxi-spec{opacity:1}
+/* the iris: nine half-planes whose edges bound the aperture (blades
+   are moved by lunara-intro.js, which knows the geometry) */
+.lxi-iris{pointer-events:none;opacity:0;transition:opacity .5s ease .25s}
+.s-ring .lxi-iris{opacity:1}
+.lxi-iris .bl{transform-box:view-box;transform-origin:300px 300px}
 
-/* the floor gives the emblem back, dimmer, as polished stone does */
-.lxi-reflect{position:absolute;left:0;right:0;top:88.9%;height:100%;transform:scaleY(-1);opacity:0;
-  -webkit-mask:linear-gradient(to top,rgba(0,0,0,.6),transparent 42%);mask:linear-gradient(to top,rgba(0,0,0,.6),transparent 42%);pointer-events:none}
-.lxi-reflect img{width:100%;height:100%;display:block;filter:blur(1.2px) brightness(.85)}
-#lx-intro.d .lxi-reflect{opacity:.5;transition:opacity 2.4s ease .8s}
-#lx-intro.fly .lxi-reflect{opacity:0;transition:opacity .3s ease}
+/* ── the readings ───────────────────────────────────────────────── */
+.lxi-read{position:absolute;left:50%;top:var(--cy);width:var(--D);height:var(--D);margin:calc(var(--D) / -2) 0 0 calc(var(--D) / -2);
+  pointer-events:none;transition:opacity .35s ease}
+.lxi-read .r{position:absolute;margin:0;width:min(15.5rem,calc((100vw - var(--D)) / 2 - 2.6rem));opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .5s var(--ease)}
+.lxi-read .r.w{right:calc(100% + 1.6rem);text-align:right}
+.lxi-read .r.e{left:calc(100% + 1.6rem)}
+.lxi-read .r.n{top:6.5%}.lxi-read .r.s{bottom:6.5%}
+.lxi-read .k{display:block;font:500 11px/1.3 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.lxi-read b{display:block;margin-top:7px;font:400 15.5px/1.35 Inter,system-ui,sans-serif;color:var(--ivory);min-height:1.35em}
+.lxi-read b.wait{color:var(--steel)}
+.lxi-read b.ok{color:var(--ok)}
+.lxi-read b.got{animation:lxiGot .5s var(--ease)}
+.s-read .lxi-read .r{opacity:1;transform:none}
+.s-read .lxi-read .r:nth-child(2){transition-delay:.08s}.s-read .lxi-read .r:nth-child(3){transition-delay:.16s}.s-read .lxi-read .r:nth-child(4){transition-delay:.24s}
+@keyframes lxiGot{from{opacity:.2;transform:translateY(3px)}to{opacity:1;transform:none}}
 
-/* E: the wordmark */
-.lxi-words{display:flex;flex-direction:column;align-items:center;margin-top:12vmin;pointer-events:none}
-.lxi-mark{margin:0;font:300 max(26px,4.6vmin)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.9em;text-indent:.9em;text-transform:uppercase;white-space:nowrap;
-  background:linear-gradient(100deg,#7A5C28 0%,#C6A15B 22%,#F0D99B 40%,#FFF8E8 50%,#F0D99B 60%,#C6A15B 78%,#7A5C28 100%);background-size:320% 100%;background-position:100% 0;
-  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;opacity:0;filter:blur(10px)}
-#lx-intro.e .lxi-mark{letter-spacing:.42em;text-indent:.42em;opacity:1;filter:blur(0);background-position:30% 0;
-  transition:letter-spacing 2.2s var(--ease),text-indent 2.2s var(--ease),opacity 1.2s ease,filter 1.4s ease,background-position 2.6s cubic-bezier(.4,0,.2,1)}
-.lxi-sub{margin:2.6vmin 0 0;font:300 max(11px,1.35vmin)/1 Inter,system-ui,sans-serif;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;
-  color:rgba(241,236,226,.66);opacity:0;transform:translateY(8px)}
-.lxi-sub::before{content:"";display:block;width:7vmin;height:1px;margin:0 auto 2.6vmin;background:linear-gradient(90deg,transparent,rgba(240,217,155,.7),transparent);
-  transform:scaleX(0);transition:transform 1.4s var(--ease) .1s}
-#lx-intro.e2 .lxi-sub{opacity:1;transform:none;transition:opacity 1.2s ease,transform 1.4s var(--ease)}
-#lx-intro.e2 .lxi-sub::before{transform:scaleX(1)}
+/* ── the name ───────────────────────────────────────────────────── */
+.lxi-words{position:absolute;left:0;right:0;top:calc(var(--cy) + var(--D) * .5 + 3.2vmin);text-align:center;transition:opacity .35s ease}
+.lxi-mark{margin:0;font:400 clamp(26px,4.4vmin,46px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.42em;text-indent:.42em;
+  text-transform:uppercase;color:var(--ivory);white-space:nowrap}
+.lxi-mark span{display:inline-block;opacity:0;transform:translateY(.35em);filter:brightness(2.2)}
+.s-mark .lxi-mark span{opacity:1;transform:none;filter:none;transition:opacity .45s ease var(--d),transform .7s var(--ease) var(--d),filter .9s ease var(--d)}
+.lxi-sub{margin:1.6vmin 0 0;font:400 12.5px/1.4 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.3em;text-transform:uppercase;color:rgba(217,186,120,.85);
+  opacity:0;transition:opacity .6s ease .45s}
+.s-mark .lxi-sub{opacity:1}
 
-/* the way in: smoked glass, with the time left before it opens itself */
-.lxi-enter{position:relative;overflow:hidden;margin-top:4.6vmin;padding:max(11px,1.5vmin) max(30px,4.4vmin);border-radius:999px;cursor:pointer;
-  font:500 max(11px,1.3vmin)/1 Inter,system-ui,sans-serif;letter-spacing:.36em;text-indent:.36em;text-transform:uppercase;color:#F6EFE0;
-  background:linear-gradient(180deg,rgba(28,30,36,.72),rgba(12,13,16,.72));border:1px solid rgba(240,217,155,.30);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 40px -18px rgba(0,0,0,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  opacity:0;transform:translateY(10px);pointer-events:none;transition:border-color .25s ease,box-shadow .25s ease,color .25s ease}
-#lx-intro.ready .lxi-enter{opacity:1;transform:none;pointer-events:auto;
-  transition:opacity 1s ease,transform 1.2s var(--ease),border-color .25s ease,box-shadow .25s ease}
-.lxi-enter:hover{border-color:rgba(240,217,155,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 0 1px rgba(240,217,155,.18),0 0 38px -6px rgba(240,217,155,.45)}
-.lxi-enter:active{transform:scale(.97)}
-.lxi-enter:focus-visible{outline:1px solid rgba(240,217,155,.75);outline-offset:5px}
-.lxi-fill{position:absolute;left:24%;right:24%;bottom:5px;height:1px;background:linear-gradient(90deg,rgba(240,217,155,.15),#F0D99B);transform:scaleX(0);transform-origin:0 50%}
-#lx-intro.count .lxi-fill{transform:scaleX(1);transition:transform var(--wait,3.6s) linear}
+/* ── the way out ────────────────────────────────────────────────── */
+.lxi-skip{position:absolute;right:3.2vmin;bottom:3.2vmin;z-index:3;padding:10px 18px;border-radius:999px;cursor:pointer;
+  border:1px solid rgba(214,222,234,.22);background:rgba(6,7,9,.55);color:rgba(237,231,218,.82);
+  font:500 12px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.2em;text-transform:uppercase;transition:border-color .2s,color .2s}
+.lxi-skip:hover,.lxi-skip:focus-visible{border-color:rgba(244,226,176,.65);color:#fff;outline:none}
+.lxi-fly{position:fixed;z-index:4;border-radius:50%;pointer-events:none;border:2px solid rgba(244,226,176,.9);
+  box-shadow:0 0 22px rgba(244,226,176,.35),inset 0 0 22px rgba(244,226,176,.18)}
 
-.lxi-skip{position:absolute;right:max(20px,3vmin);bottom:max(20px,3vmin);z-index:30;padding:9px 16px;border-radius:999px;cursor:pointer;
-  font:500 max(10px,1.1vmin)/1 Inter,system-ui,sans-serif;letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;color:rgba(241,236,226,.55);
-  background:rgba(14,15,19,.5);border:1px solid rgba(241,236,226,.12);opacity:0;transition:opacity .8s ease .9s,color .2s,border-color .2s}
-#lx-intro.a .lxi-skip{opacity:1}
-.lxi-skip:hover,.lxi-skip:focus-visible{color:#F1ECE2;border-color:rgba(240,217,155,.45)}
-.lxi-skip:focus-visible{outline:2px solid #F0D99B;outline-offset:3px}
-#lx-intro.open .lxi-skip,#lx-intro.open .lxi-words{opacity:0;transition:opacity .35s ease}
+/* open: the instrument recedes, the room gives way to the page */
+.s-open{background-color:rgba(3,4,5,0)}
+.s-open .lxi-air,.s-open .lxi-floor,.s-open .lxi-hz{opacity:0;transition:opacity .55s ease}
+.s-open .lxi-inst{opacity:0;transform:scale(.86)}
+.s-open .lxi-read,.s-open .lxi-words,.s-open .lxi-skip{opacity:0}
+.s-out{opacity:0;transition:opacity .35s ease}
 
-/* F: the seams of light where the chamber parts */
-.lxi-seam{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;z-index:11;opacity:0;pointer-events:none;
-  background:linear-gradient(to bottom,transparent,rgba(240,217,155,.65) 20%,#FFF6DE 50%,rgba(240,217,155,.65) 80%,transparent);
-  box-shadow:0 0 24px 4px rgba(240,217,155,.35);left:50%}
-#lx-intro.open .lxi-seam{opacity:1;transition:left 1.5s cubic-bezier(.7,0,.18,1),opacity .2s ease}
-#lx-intro.open .lxi-seam.l{left:calc(50% - 52vw)}
-#lx-intro.open .lxi-seam.r{left:calc(50% + 52vw)}
-
-/* the homepage, arriving behind the doors */
-html.lx-arrive main,html.lx-arrive .lxn{animation:lxiArrive 1.5s cubic-bezier(.16,1,.3,1) both}
-@keyframes lxiArrive{from{opacity:.25;transform:scale(1.035)}to{opacity:1;transform:none}}
-
-/* a phone holds the scene upright: a larger seal, a larger name */
-@media (orientation:portrait){
-  #lx-intro{--coin:min(50vmin,620px)}
-  .lxi-mark{font-size:max(26px,6vmin)}
-  .lxi-sub{font-size:max(11px,1.9vmin)}
-  .lxi-enter{font-size:max(11px,1.9vmin);padding:2vmin 6vmin}
-  .lxi-skip{font-size:max(10px,1.6vmin);padding:1.4vmin 2.6vmin}
+/* Portrait (a phone shows this 1120px-wide page on a tall screen): the
+   instrument is larger and the readings sit in a block beneath the name,
+   where there is room for them, instead of beside the ring. */
+@media (max-aspect-ratio:4/5){
+  #lx-intro{--D:min(80vmin,900px);--cy:33%;--hz:86%}
+  .lxi-dial .lead{display:none}
+  .lxi-read{top:calc(var(--cy) + var(--D) * .5 + 15vmin);height:auto;width:min(84vmin,940px);
+    margin:0 0 0 calc(min(84vmin,940px) / -2);display:grid;grid-template-columns:1fr 1fr;gap:5vmin 6vmin}
+  .lxi-read .r{position:static;width:auto;text-align:left !important}
+  .lxi-read .r.w.n{order:1}.lxi-read .r.e.n{order:2}.lxi-read .r.w.s{order:3}.lxi-read .r.e.s{order:4}
+  .lxi-read .k{font-size:15px}
+  .lxi-read b{font-size:22px}
+  .lxi-sub{font-size:16px}
 }
 
+/* the page, arriving as the intro leaves */
+html.lx-arrive main,html.lx-arrive .lxn{animation:lxiArrive 1.1s cubic-bezier(.16,1,.3,1) both}
+@keyframes lxiArrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Reduced motion: the composed instrument, still; it fades, nothing moves. */
 @media (prefers-reduced-motion:reduce){
-  .lxi-grain{animation:none}
-  #lx-intro *{transition-duration:.01ms!important;transition-delay:0s!important;animation:none!important}
-  .lxi-coin{transform:none;filter:none}
-  #lx-intro.out{transition:opacity .4s ease!important}
-  #lx-intro.open .lxi-world{-webkit-mask:none;mask:none;opacity:0;transition:opacity .5s ease!important}
-  .lxi-seam{display:none}
+  #lx-intro *,#lx-intro *::before,#lx-intro *::after{transition:none !important;animation:none !important}
+  .lxi-sig,.lxi-climb{display:none}
   html.lx-arrive main,html.lx-arrive .lxn{animation:none}
+  .s-out{opacity:0;transition:opacity .4s ease !important}
 }

@@ -62,16 +62,15 @@
       windows = [];
 
       masts = [];
-      /* sky: a moonlit haze toward the horizon, a few stars, and the
-         moon's light from the upper right */
+      /* sky: a moonlit haze toward the horizon and the moon's light
+         from the upper right. No stars: the site carries no starfield
+         anywhere. The sky once drew 260 of them from the same seeded
+         generator as the skyline, so the generator is advanced past
+         them to keep the skyline the one already drawn. */
       var sky = g.createLinearGradient(0, 0, 0, H);
       sky.addColorStop(0, 'rgba(6,7,10,0)'); sky.addColorStop(0.55, 'rgba(18,23,33,0.55)'); sky.addColorStop(0.8, 'rgba(26,32,45,0.75)'); sky.addColorStop(1, 'rgba(12,15,21,0.9)');
       g.fillStyle = sky; g.fillRect(0, 0, W, H);
-      for (var i = 0; i < 260; i++) {
-        var m = Math.pow(r(), 4);
-        g.fillStyle = 'rgba(236,238,244,' + (0.1 + m * 0.5).toFixed(2) + ')';
-        g.fillRect(r() * W, r() * H * 0.6, 0.5 + m, 0.5 + m);
-      }
+      for (var i = 0; i < 260 * 3; i++) r();
       var glow = g.createRadialGradient(W * 0.88, H * 0.06, 0, W * 0.88, H * 0.06, W * 0.55);
       glow.addColorStop(0, 'rgba(236,230,214,0.13)'); glow.addColorStop(0.35, 'rgba(170,184,214,0.05)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
       g.fillStyle = glow; g.fillRect(0, 0, W, H);

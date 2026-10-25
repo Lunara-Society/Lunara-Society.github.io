@@ -267,7 +267,7 @@ h1 em{
 #instruments{position:relative;z-index:5;margin-top:-34px;perspective:1600px}
 .lxs-rack{display:grid;grid-template-columns:1.05fr 1fr 1.25fr;gap:18px;transform-style:preserve-3d;transition:transform .9s var(--ease)}
 .lxs-panel{
-  position:relative;padding:24px 26px 24px;border-radius:4px;
+  position:relative;padding:24px 26px 24px;border-radius:4px;display:flex;flex-direction:column;
   background:linear-gradient(180deg,rgba(18,21,28,.84),rgba(9,11,15,.9));
   border:1px solid var(--hair);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
@@ -302,6 +302,8 @@ h1 em{
 .lxs-field button{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#16130D;background:linear-gradient(180deg,#F0E6CE,#CBB07C);border:0;border-radius:100px;padding:0 18px;cursor:pointer}
 .lxs-field button:hover{filter:brightness(1.08)}
 .lxs-verdict{font-size:13px;line-height:1.6;color:#B9B3A8;margin-top:14px;min-height:42px}
+/* each instrument ends on the one thing to do next, on a shared baseline */
+.lxs-foot{margin-top:auto !important;padding-top:16px}
 .lxs-verdict b{color:var(--white);font-weight:500;font-family:var(--mono);font-size:12px}
 .lxs-verdict .ok{color:var(--live)}
 
@@ -655,7 +657,7 @@ h1 em{
       "@type": "Dataset",
       "@id": "https://lunarasociety.com/#registry",
       "name": "Lunara Public Trust Registry",
-      "description": "Every Shield-certified institution, with verification status, governance declaration and contact preferences. Free, open, machine-readable, no authentication required.",
+      "description": "Every Shield-certified business: its domain, verification status and dates, and the name of the reviewer who signed the decision. Free, open, machine-readable, no authentication required.",
       "url": "https://lunarasociety.com/registry.html",
       "creator": {
         "@id": "https://lunarasociety.com/#organization"
@@ -783,7 +785,7 @@ h1 em{
         <p class="lxs-big"><span id="lxs-days">&hellip;</span><small id="lxs-days-unit">days</small></p>
         <p class="lxs-sub" id="lxs-next">Reading the register&hellip;</p>
         <p class="lxs-sub" id="lxs-inforce" style="opacity:.7"></p>
-        <p class="lxs-sub"><a class="inline" href="december-2.html">What binds, and whether it reaches you &rarr;</a></p>
+        <p class="lxs-sub lxs-foot"><a class="inline" href="december-2.html">What binds, and whether it reaches you &rarr;</a></p>
       </article>
 
       <article class="lxs-panel">
@@ -791,6 +793,8 @@ h1 em{
         <p class="lxs-big" style="font-size:36px" id="lxs-sig-state">Verifying&hellip;</p>
         <div class="lxs-track" aria-hidden="true"><div class="lxs-fill" id="lxs-fill"></div></div>
         <p class="lxs-mono" id="lxs-sig-detail">Checking the published signature on this corpus.</p>
+        <p class="lxs-sub" id="lxs-sig-why" hidden>The register these instruments read is, byte for byte, the one Lunara signed. Change one character and this check fails.</p>
+        <p class="lxs-sub lxs-foot"><a class="inline" href="#seal">Try it: break the seal &rarr;</a></p>
       </article>
 
       <article class="lxs-panel">
@@ -801,6 +805,7 @@ h1 em{
           <button id="lxs-go" type="button">Look up</button>
         </div>
         <p class="lxs-verdict" id="lxs-verdict" aria-live="polite">Free, unauthenticated, and the same answer an AI system gets.</p>
+        <p class="lxs-sub lxs-foot"><a class="inline" href="registry.html">Read the public register &rarr;</a></p>
       </article>
     </div>
   </div>
@@ -940,7 +945,7 @@ h1 em{
     <div class="wrap">
       <div class="chain-head">
         <p class="kicker" data-rv>How verification works</p>
-        <h2 data-rv="2">Six steps, and a name <em>against the fourth.</em></h2>
+        <h2 data-rv="2">Six steps, and a name <em>against the third.</em></h2>
         <p class="sec-lede" data-rv="3">Every one of them is a step you can check afterwards. That is the only reason the process is worth publishing.</p>
       </div>
 
@@ -959,13 +964,13 @@ h1 em{
             <span class="n-name">Source</span>
             <p class="n-text">The primary instrument is attached. The article that sets the date, not a summary of it.</p>
           </li>
-          <li class="node" data-rv="3">
+          <li class="node named" data-rv="3">
             <span class="n-no">03</span>
             <span class="n-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span>
             <span class="n-name">Review</span>
             <p class="n-text">A named person examines the evidence and signs the decision. There are no anonymous approvals and no automatic ones.</p>
           </li>
-          <li class="node named" data-rv="4">
+          <li class="node" data-rv="4">
             <span class="n-no">04</span>
             <span class="n-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6l7-3z"/><path d="M9.5 12l1.9 1.9L15 10"/></svg></span>
             <span class="n-name">Signature</span>

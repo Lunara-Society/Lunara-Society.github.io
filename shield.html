@@ -808,6 +808,74 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
   <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
 <link rel="stylesheet" href="lunara-shell.css">
 <link rel="stylesheet" href="lunara-system.css">
+<style>
+/* ═══ The rebuilt lower half: lookup, process, application, agents.
+   Built from lunara-system.css; see docs/transformation.md. Placed last
+   so it wins over this page's older id rules for the domain checker. */
+.sh-look{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:30px;align-items:center;margin:72px 0 0;padding:30px 32px;border-radius:18px;
+  border:1px solid var(--hair);background:linear-gradient(165deg,rgba(24,27,34,.74),rgba(11,13,17,.68));box-shadow:var(--m-e2)}
+.sh-look-p{margin:12px 0 0;font:400 15.5px/1.6 var(--f-text);color:var(--tx-2)}
+#domain-checker{display:grid;gap:10px;margin:0;padding:0;border:0;background:none;max-width:none;text-align:left}
+#domain-checker-label{margin:0;font:500 var(--fs-small)/1.3 var(--f-text);letter-spacing:0;text-transform:none;color:var(--tx-1)}
+#domain-checker-row{display:flex;gap:10px;margin:0}
+#domain-input{flex:1;min-width:0;min-height:50px;padding:13px 16px;border-radius:12px;border:1px solid rgba(214,222,234,.18);background:rgba(5,6,8,.72);
+  color:var(--tx-1);font:400 15.5px/1.4 var(--f-mono);letter-spacing:0}
+#domain-input::placeholder{color:#857F75}
+#domain-check-btn{min-height:50px;padding:0 26px;border:0;border-radius:var(--m-pill);color:#16130D;background:linear-gradient(180deg,#F2E3BE,#CDAE73);
+  font:500 var(--fs-ui)/1 var(--f-text);letter-spacing:.01em;text-transform:none;cursor:pointer}
+#domain-check-btn:disabled{opacity:.6}
+#domain-result{min-height:0;margin:0;font:400 15px/1.6 var(--f-text);color:var(--tx-2)}
+#domain-result .result-protected{color:var(--m-crystal)}#domain-result .result-pending{color:var(--m-warn)}
+#domain-result .result-notfound{color:var(--tx-2)}#domain-result .result-error{color:var(--m-bad)}
+#domain-result a{color:var(--tx-1)!important}
+
+.sh-how{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:52px;margin:110px 0 0;align-items:start}
+.sh-how-side{position:sticky;top:120px}
+.sh-how-p{margin:18px 0 0;font:400 17px/1.65 var(--f-text);color:var(--tx-2);max-width:32ch}
+.sh-steps .sh-named::before{background:linear-gradient(180deg,#F2E3BE,#CDAE73);color:#16130D;border-color:transparent;
+  box-shadow:0 0 0 6px rgba(212,181,116,.12),0 0 26px rgba(212,181,116,.35)}
+.sh-steps .sh-named h3{color:var(--tx-gold)}
+
+.sh-apply{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:20px 52px;margin:120px 0 0;align-items:start;scroll-margin-top:100px}
+.sh-apply-side{grid-row:span 2;position:sticky;top:110px;display:grid;gap:14px}
+.sh-apply-side .x-h2{margin-bottom:8px}
+.sh-way{display:grid;gap:8px;justify-items:start;padding:20px 22px;border-radius:14px;border:1px solid var(--hair);background:rgba(255,255,255,.02)}
+.sh-way p{margin:0;font:400 15px/1.6 var(--f-text);color:var(--tx-2)}
+.sh-way .x-h4{margin:4px 0 0}
+.sh-way--paid{border-color:var(--hair-gold);background:radial-gradient(120% 80% at 100% 0%,rgba(212,181,116,.11),transparent 60%),rgba(255,255,255,.02)}
+.sh-way .x-price{margin:4px 0 0}.sh-way .x-price b{font-size:38px}
+.sh-way .x-btn{margin-top:6px}
+.sh-way .lx-paynote{display:block;font:400 13px/1.5 var(--f-text);color:var(--m-bad)}.sh-way .lx-paynote:empty{display:none}
+.sh-form{gap:18px}
+.sh-sign{margin:4px 0 0;padding:20px 22px 22px;border-radius:14px;border:1px solid var(--hair-gold);background:rgba(212,181,116,.035);display:grid;gap:16px;min-width:0}
+.sh-sign legend{padding:0 8px;font:500 12px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--tx-gold)}
+.sh-sign-q{margin:0;font:400 15.5px/1.5 var(--f-text);color:var(--tx-2)}
+.sh-who{display:flex;gap:10px;flex-wrap:wrap}
+.sh-radio{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 18px;border-radius:var(--m-pill);border:1px solid rgba(214,222,234,.2);
+  cursor:pointer;font:500 15px/1 var(--f-text);color:var(--tx-1);transition:border-color var(--t-fast) ease,background var(--t-fast) ease}
+.sh-radio input{accent-color:var(--m-gold);width:16px;height:16px;margin:0}
+.sh-radio:has(input:checked){border-color:rgba(240,217,155,.7);background:rgba(212,181,116,.1)}
+.sh-sig{display:flex;gap:16px}.sh-sig>.x-field{flex:1;min-width:0}
+.sh-sig--ai{flex-direction:column}
+.sh-attest{display:flex;align-items:flex-start;gap:12px;font:400 14.5px/1.6 var(--f-text);color:var(--tx-2);cursor:pointer}
+.sh-attest input{accent-color:var(--m-gold);width:18px;height:18px;margin:3px 0 0;flex:none}
+.sh-submit{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sh-result{font:400 15px/1.6 var(--f-text);color:var(--tx-2)}.sh-result:empty{display:none}
+.sh-dns{padding:20px 22px;border-radius:14px;border:1px solid var(--hair-gold);background:rgba(212,181,116,.04);font:400 15px/1.7 var(--f-text);color:var(--tx-2)}
+.sh-dns code{font-family:var(--f-mono);color:var(--tx-gold)!important;word-break:break-all}
+.sh-dns-act{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+#dns-check-result,#sc-check-result{font:400 14.5px/1.6 var(--f-text);color:var(--tx-2)}
+.sh-status{grid-column:2;display:grid;gap:10px;padding:20px 22px;border-radius:14px;border:1px solid var(--hair)}
+.sh-status-row{display:flex;gap:10px}.sh-status-row .x-input{flex:1;min-width:0;font-family:var(--f-mono)}
+.sh-founding{margin:64px 0 0;padding-top:28px;border-top:1px solid var(--hair);font:400 15px/1.7 var(--f-text);color:var(--tx-3);max-width:72ch}
+
+.sh-agent{max-width:1088px;margin:96px auto 48px;padding:0 clamp(20px,5vw,64px)}
+.sh-agent-card{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:44px;align-items:center;padding:42px 46px;border-radius:20px;
+  border:1px solid var(--hair-gold);background:radial-gradient(90% 120% at 100% 0%,rgba(212,181,116,.12),transparent 60%),linear-gradient(165deg,rgba(26,26,28,.84),rgba(10,11,14,.82));box-shadow:var(--m-e3)}
+.sh-agent-p{margin:18px 0 0;font:400 17px/1.65 var(--f-text);color:var(--tx-2)}
+.sh-terms{margin:4px 0 0;font:400 13.5px/1.55 var(--f-text);color:var(--tx-3)}
+.sh-agent-buy .x-btn{margin-top:24px;width:100%}
+</style>
 </head>
 <body class="lx-legacy">
 <!-- Article 50 Enforcement Banner -->
@@ -833,7 +901,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <div style="display:flex;justify-content:center;margin-bottom:32px;position:relative;z-index:1;clear:both">
       <img src="lunara_emblem_96.png" alt="Lunara Society" style="width:100px;height:100px;filter:drop-shadow(0 0 26px rgba(159,195,232,0.34)) drop-shadow(0 0 64px rgba(122,158,196,0.16));">
     </div>
-    <p class="eyebrow">Initiation</p>
+    <p class="eyebrow">Certification &middot; Shield</p>
     <h1 class="page-title">Your Business.<br>Verified. Accountable. Found.</h1>
 <div class="page-accent"></div>
     <p class="page-sub">The Shield is a status you earn through verification, not a badge you buy. A reviewer checks your business registration and domain before anything goes live and certification can be revoked if standards are later violated. <a href="/what-is-shield-certification.html">What Shield checks, in full &rarr;</a></p>
@@ -876,90 +944,132 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
     <p class="page-sub" style="margin-top:16px">Why your own logs cannot do this job: <a href="/independent-verification.html" style="color:var(--gold-light,#E2C47A)">self-generated evidence is not independent verification</a>.</p>
   </section>
 
-<h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);"><div id="domain-checker">  <span id="domain-checker-label">Check if your business is in the registry</span>  <div id="domain-checker-row">    <input id="domain-input" type="text" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false">    <button id="domain-check-btn">Check</button>  </div>  <div id="domain-result"></div></div>
-How verification actually works</h2>
-    <div class="step-list">
-      <div class="step-item"><span class="step-num">01</span><div><div class="step-title">You submit an application</div><div class="step-text">Business name, website, domain, legal registration number, and contact email. Free to apply no payment required to be reviewed.</div></div></div>
-      <div class="step-item"><span class="step-num">02</span><div><div class="step-title">Identity verification</div><div class="step-text">Your legal business registration is checked against official records before anything is marked verified.</div></div></div>
-      <div class="step-item"><span class="step-num">03</span><div><div class="step-title">Domain verification</div><div class="step-text">We confirm you actually control the domain you're applying under, via DNS or a verified email at that domain.</div></div></div>
-      <div class="step-item"><span class="step-num">04</span><div><div class="step-title">Human review no automatic approval</div><div class="step-text">A reviewer checks the evidence and signs their name to the decision. Applications are not approved automatically, by an AI, or on payment.</div></div></div>
-      <div class="step-item"><span class="step-num">05</span><div><div class="step-title">Decision: approved, rejected, or sent back for more evidence</div><div class="step-text">Only approved applications receive a public Lunara ID and a registry entry. Rejections can be appealed with additional evidence.</div></div></div>
-      <div class="step-item"><span class="step-num">06</span><div><div class="step-title">Public, checkable registry entry</div><div class="step-text">Anyone a customer, a journalist, another AI system can look up your status directly. Status shown is always the true current status.</div></div></div>
-      <div class="step-item"><span class="step-num">07</span><div><div class="step-title">Ongoing accountability</div><div class="step-text">Certification can be reviewed and revoked if standards are later violated. Permanent and unaccountable are not the same thing ours is accountable.</div></div></div>
-    </div>
-    <div class="gold-rule"></div>
-    <h2 class="page-title" style="font-size:clamp(20px,2.6vw,32px);">Apply for Shield Certification</h2>
-    <p class="page-sub">This starts the real review process above. It does not grant instant status you'll get an application ID and a pending status while we verify.</p>
-    <form id="shield-apply-form" style="display:flex;flex-direction:column;gap:14px;max-width:520px;margin-top:20px;">
-      <input type="text" id="sa-business-name" placeholder="Business legal name" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="url" id="sa-website" placeholder="Website URL (https://...)" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="text" id="sa-domain" placeholder="Domain (e.g. yourbusiness.com)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="email" id="sa-email" placeholder="Contact email" required style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="text" id="sa-regnum" placeholder="Legal registration number" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-      <input type="text" id="sa-country" placeholder="Registration country" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-
-      <!-- ── SIGNATURE ─────────────────────────────────────────────
-           An application is an attestation about a legal entity, so it
-           carries a signature. A person may sign, and so may an AI agent
-           acting for a principal — but the record always says which.
-           An AI signature is never recorded as a human one.          -->
-      <fieldset id="sa-signature" style="border:1px solid var(--border);background:rgba(196,164,107,0.03);padding:18px 16px;margin-top:6px;">
-        <legend style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:11px;padding:0 8px;">Signature</legend>
-
-        <p style="font-size:12.5px;color:var(--white-50);line-height:1.6;margin:0 0 14px;">
-          Who attests that the information above is accurate?
-        </p>
-
-        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-90);cursor:pointer;min-height:44px;">
-            <input type="radio" name="signer_type" value="human" checked style="accent-color:var(--gold);width:16px;height:16px;">
-            A person
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-90);cursor:pointer;min-height:44px;">
-            <input type="radio" name="signer_type" value="ai_agent" style="accent-color:var(--gold);width:16px;height:16px;">
-            An AI agent
-          </label>
-        </div>
-
-        <div id="sig-human" style="display:flex;flex-direction:column;gap:12px;">
-          <input type="text" id="sa-signer-name" placeholder="Full name of the person signing" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-          <input type="text" id="sa-signer-role" placeholder="Role at the business (e.g. Director)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-        </div>
-
-        <div id="sig-ai" style="display:none;flex-direction:column;gap:12px;">
-          <input type="text" id="sa-agent-name" placeholder="Agent name and model (e.g. ChatGPT, GPT-5)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-          <input type="text" id="sa-agent-operator" placeholder="Operator (e.g. OpenAI, Anthropic, self-hosted)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-          <input type="text" id="sa-agent-principal" placeholder="Acting for (person or organisation, if any)" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;">
-          <p style="font-size:12px;color:var(--white-50);line-height:1.6;margin:0;">
-            Agents may sign and submit unattended. The application is recorded as AI-signed and enters the same review as any other, a human reviewer at Lunara still decides, and nothing is marked verified without that. Do not submit a registration number you cannot source; leave it blank instead.
-          </p>
-        </div>
-
-        <label style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--white-70);line-height:1.6;margin-top:14px;cursor:pointer;">
-          <input type="checkbox" id="sa-attest" required style="accent-color:var(--gold);width:16px;height:16px;margin-top:2px;flex:0 0 auto;">
-          <span>I attest that the information above is accurate to the best of my knowledge, and that I am authorised to submit it on behalf of this business.</span>
-        </label>
-      </fieldset>
-
-      <button type="submit" class="cta-btn" style="border:none;">Submit application →</button>
-      <div id="sa-result" style="font-size:13px;color:var(--white-70);line-height:1.6;"></div>
-      <div id="dns-panel" style="display:none;margin-top:6px;padding:16px;border:1px solid var(--border);background:rgba(196,164,107,0.04);font-size:13px;line-height:1.7;color:var(--white-70);">
-        <div style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:11px;margin-bottom:8px;">Domain verification do this next</div>
-        <div id="dns-instructions"></div>
-        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;">
-          <button type="button" id="dns-check-btn" class="cta-btn" style="border:none;padding:9px 20px;font-size:11px;">Check domain now →</button>
-          <span id="dns-check-result" style="font-size:12px;color:var(--white-50);"></span>
-        </div>
+<!-- ═══ THE REGISTER, LIVE ══════════════════════════════════════════
+     The lookup used to sit inside the heading below it. It is its own
+     instrument now: the same answer a customer or an AI system gets. -->
+    <section class="sh-look" aria-labelledby="sh-look-h">
+      <div>
+        <p class="x-eyebrow">The register, live</p>
+        <h2 class="x-h3" id="sh-look-h">Is your business on it already?</h2>
+        <p class="sh-look-p">The answer a customer or an AI system gets, word for word. For almost every business today it is "not yet", and that is not a mark against anyone.</p>
       </div>
-    </form>
-    <div style="margin-top:28px;padding:16px;border:1px solid var(--border);max-width:520px;">
-      <div style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:11px;margin-bottom:10px;">Already applied? Check your domain verification</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <input type="text" id="sc-public-id" placeholder="Your reference ID (e.g. SHIELD-2026-1234)" style="flex:1;min-width:220px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--white-90);padding:10px 12px;font-family:'Inter',sans-serif;font-size:13px;">
-        <button type="button" id="sc-check-btn" class="cta-btn" style="border:none;padding:9px 20px;font-size:11px;">Check status →</button>
+      <div id="domain-checker">
+        <span id="domain-checker-label" class="x-label">Your domain</span>
+        <div id="domain-checker-row">
+          <input id="domain-input" class="x-input" type="text" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false" aria-labelledby="domain-checker-label">
+          <button id="domain-check-btn" class="x-btn x-btn--gold" type="button">Check</button>
+        </div>
+        <div id="domain-result" aria-live="polite"></div>
       </div>
-      <div id="sc-check-result" style="font-size:12px;color:var(--white-50);margin-top:10px;line-height:1.6;"></div>
-    </div>
+    </section>
+
+<!-- ═══ HOW VERIFICATION WORKS ═════════════════════════════════════════ -->
+    <section class="sh-how" aria-labelledby="sh-how-h">
+      <div class="sh-how-side">
+        <p class="x-eyebrow">How verification works</p>
+        <h2 class="x-h2" id="sh-how-h">Seven steps, and <em>a name on the fourth</em>.</h2>
+        <p class="sh-how-p">A machine can see a DNS record. Only a person signs the decision, and the record says who.</p>
+      </div>
+      <ol class="x-steps sh-steps">
+        <li><h3 class="x-h4">You apply</h3><p>Business name, website, domain, registration number and a contact email. Applying is free: no payment is needed to be reviewed.</p></li>
+        <li><h3 class="x-h4">We check who you are</h3><p>Your legal registration is checked against official records before anything is marked verified.</p></li>
+        <li><h3 class="x-h4">You prove the domain is yours</h3><p>One DNS TXT record at your domain. It is the only technical step, and review starts as soon as it is seen.</p></li>
+        <li class="sh-named"><h3 class="x-h4">A named person decides</h3><p>A reviewer checks the evidence and signs their name to the decision. Nothing is approved automatically, by an AI, or on payment.</p></li>
+        <li><h3 class="x-h4">Approved, refused, or sent back</h3><p>Only an approved application gets a public Lunara ID and an entry. A refusal can be appealed with more evidence.</p></li>
+        <li><h3 class="x-h4">Your entry goes public</h3><p>Anyone, a customer, a journalist or another AI system, can look your status up without an account, and it always shows the true current status.</p></li>
+        <li><h3 class="x-h4">It stays accountable</h3><p>An entry lasts six months and can be revoked if standards are later broken. Revocations are published as openly as approvals.</p></li>
+      </ol>
+    </section>
+
+<!-- ═══ APPLY ══════════════════════════════════════════════════════════
+     Every id and name below is read by the script at the end of this
+     section and by shieldApply; the markup changed, the contract did not. -->
+    <section class="sh-apply" id="apply" aria-labelledby="sh-apply-h">
+      <div class="sh-apply-side">
+        <p class="x-eyebrow">Apply</p>
+        <h2 class="x-h2" id="sh-apply-h">Two ways in. <em>One review.</em></h2>
+        <div class="sh-way">
+          <span class="x-tag x-tag--ok">Free</span>
+          <h3 class="x-h4">Apply with this form</h3>
+          <p>The same review, by the same people. When it passes, your entry is live for six months and we remind you before it ends.</p>
+        </div>
+        <div class="sh-way sh-way--paid">
+          <span class="x-tag x-tag--gold">Shield Verification</span>
+          <p class="x-price"><b data-lx-amount="shield">$75</b><span data-lx-every="shield">every six months</span></p>
+          <p>The same review, renewed automatically until you cancel, with your reference and the DNS record emailed to you within 24 hours.</p>
+          <a class="x-btn x-btn--line" href="/pricing.html#p-shield" data-lx-buy="shield" data-lx-nonote>Get verified</a>
+          <span class="lx-paynote" aria-live="polite"></span>
+        </div>
+        <p class="x-note">Payment never decides an application. A business that pays and one that does not go through exactly the same check.</p>
+      </div>
+
+      <form id="shield-apply-form" class="x-form sh-form" autocomplete="on">
+        <div class="x-form-row">
+          <div class="x-field"><label for="sa-business-name">Business legal name</label><input type="text" id="sa-business-name" placeholder="Acme Ltd" required autocomplete="organization"></div>
+          <div class="x-field"><label for="sa-email">Contact email</label><input type="email" id="sa-email" placeholder="you@acme.com" required autocomplete="email"></div>
+        </div>
+        <div class="x-form-row">
+          <div class="x-field"><label for="sa-website">Website</label><input type="url" id="sa-website" placeholder="https://acme.com" required autocomplete="url"></div>
+          <div class="x-field"><label for="sa-domain">Domain</label><input type="text" id="sa-domain" placeholder="acme.com" spellcheck="false"></div>
+        </div>
+        <div class="x-form-row">
+          <div class="x-field"><label for="sa-regnum">Legal registration number</label><input type="text" id="sa-regnum" placeholder="Company number"><small>Leave it blank rather than guess one you cannot source.</small></div>
+          <div class="x-field"><label for="sa-country">Registration country</label><input type="text" id="sa-country" placeholder="e.g. Portugal" autocomplete="country-name"></div>
+        </div>
+
+        <!-- ── SIGNATURE ─────────────────────────────────────────────
+             An application is an attestation about a legal entity, so it
+             carries a signature. A person may sign, and so may an AI agent
+             acting for a principal, but the record always says which.
+             An AI signature is never recorded as a human one.          -->
+        <fieldset id="sa-signature" class="sh-sign">
+          <legend>Signature</legend>
+          <p class="sh-sign-q">Who attests that the information above is accurate?</p>
+          <div class="sh-who">
+            <label class="sh-radio"><input type="radio" name="signer_type" value="human" checked><span>A person</span></label>
+            <label class="sh-radio"><input type="radio" name="signer_type" value="ai_agent"><span>An AI agent</span></label>
+          </div>
+          <div id="sig-human" class="sh-sig">
+            <div class="x-field"><label for="sa-signer-name">Name of the person signing</label><input type="text" id="sa-signer-name" autocomplete="name"></div>
+            <div class="x-field"><label for="sa-signer-role">Role at the business</label><input type="text" id="sa-signer-role" placeholder="e.g. Director" autocomplete="organization-title"></div>
+          </div>
+          <div id="sig-ai" class="sh-sig sh-sig--ai" style="display:none">
+            <div class="x-field"><label for="sa-agent-name">Agent name and model</label><input type="text" id="sa-agent-name" placeholder="e.g. ChatGPT, GPT-5"></div>
+            <div class="x-field"><label for="sa-agent-operator">Operator</label><input type="text" id="sa-agent-operator" placeholder="e.g. OpenAI, Anthropic, self-hosted"></div>
+            <div class="x-field"><label for="sa-agent-principal">Acting for</label><input type="text" id="sa-agent-principal" placeholder="Person or organisation, if any"></div>
+            <p class="x-hint">Agents may sign and submit unattended. The application is recorded as AI-signed and enters the same review as any other: a human reviewer at Lunara still decides, and nothing is marked verified without that.</p>
+          </div>
+          <label class="sh-attest">
+            <input type="checkbox" id="sa-attest" required>
+            <span>I attest that the information above is accurate to the best of my knowledge, and that I am authorised to submit it on behalf of this business.</span>
+          </label>
+        </fieldset>
+
+        <div class="sh-submit">
+          <button type="submit" class="x-btn x-btn--gold">Submit application <span aria-hidden="true">&rarr;</span></button>
+          <span class="x-note">You get a registry ID and a DNS record straight away.</span>
+        </div>
+        <div id="sa-result" class="sh-result" aria-live="polite"></div>
+        <div id="dns-panel" class="sh-dns" style="display:none">
+          <p class="x-eyebrow x-eyebrow--plain">Domain verification · do this next</p>
+          <div id="dns-instructions"></div>
+          <div class="sh-dns-act">
+            <button type="button" id="dns-check-btn" class="x-btn x-btn--line">Check domain now <span aria-hidden="true">&rarr;</span></button>
+            <span id="dns-check-result" aria-live="polite"></span>
+          </div>
+        </div>
+      </form>
+
+      <div class="sh-status">
+        <p class="x-eyebrow x-eyebrow--plain">Already applied?</p>
+        <label class="x-label" for="sc-public-id">Check your domain verification with your reference</label>
+        <div class="sh-status-row">
+          <input type="text" id="sc-public-id" class="x-input" placeholder="SHIELD-2026-1234" spellcheck="false">
+          <button type="button" id="sc-check-btn" class="x-btn x-btn--line">Check status</button>
+        </div>
+        <div id="sc-check-result" aria-live="polite"></div>
+      </div>
+    </section>
     <script>
     /* ── Signature mode ──────────────────────────────────────────
        Show the fields belonging to whoever is signing. */
@@ -1138,29 +1248,31 @@ How verification actually works</h2>
       checkDomainVerification(pid, document.getElementById('sc-check-result'));
     });
     </script>
-    <div class="gold-rule"></div>
-    <p class="page-sub" style="font-size:13px;">Founding Participant is a separate, optional paid program for priority handling and cohort recognition it does not grant verified status by itself. Every business, paid or not, goes through the same identity and domain review above.</p>
-    <span onclick="fadeNav('join.html')" class="cta-btn" style="display:inline-flex;cursor:pointer;">About Founding Participation →</span>
 
+    <p class="sh-founding">Founding Participant is a separate, optional paid programme for priority handling and cohort recognition. It does not grant verified status by itself: every business, paid or not, goes through the same identity and domain review above. <a class="x-link" href="/join.html">About Founding Participation</a></p>
   </div>
-    <div class="gold-rule" style="margin-top:48px"></div>
-    <div style="max-width:600px;margin:48px auto;text-align:center">
-      <p style="font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(196, 164, 107, 0.714);font-family:'Inter',sans-serif;margin-bottom:16px">AI Entity Verification</p>
-      <h3 style="font-size:clamp(24px,4vw,36px);font-weight:300;color:#f0e0b0;font-family:'Cormorant Garamond',serif;line-height:1.3;margin-bottom:16px">Verify Your AI Entity</h3>
-      <p style="font-size:15px;line-height:1.9;color:rgba(220, 200, 160, 0.595);max-width:480px;margin:0 auto 28px">For AI agents, autonomous systems, and AI powered platforms that need verified identity in the Lunara Registry. Six month verification cycle with public trust record.</p>
-      <div style="background:#000000;border:1px solid rgba(196,164,107,0.35);padding:32px;max-width:400px;margin:0 auto">
-        <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(196,164,107,0.72);font-family:'Inter',sans-serif;margin-bottom:12px">AI Entity Verification</div>
-        <div style="font-size:42px;font-weight:300;color:#C4A46B;font-family:'Cormorant Garamond',serif;margin-bottom:6px"><span data-lx-amount="agent">$540</span></div>
-        <div style="font-size:12px;color:rgba(196, 164, 107, 0.714);font-family:'Inter',sans-serif;letter-spacing:1px;margin-bottom:24px"><span data-lx-terms="agent">Six months, renewing automatically until you cancel. Cancel any time.</span></div>
-        <ul style="list-style:none;padding:0;margin-bottom:24px;text-align:left">
-          <li style="font-size:13px;color:rgba(220, 200, 160, 0.595);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Verified AI entity identity</li>
-          <li style="font-size:13px;color:rgba(220, 200, 160, 0.595);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Public registry listing with AI designation</li>
-          <li style="font-size:13px;color:rgba(220, 200, 160, 0.595);padding:8px 0;border-bottom:1px solid rgba(196,164,107,0.08);font-family:'Inter',sans-serif">Trust badge for your platform</li>
-          <li style="font-size:13px;color:rgba(220, 200, 160, 0.595);padding:8px 0;font-family:'Inter',sans-serif">Six months, renews until you cancel</li>
-        </ul>
-        <a class="lx-buy" data-lx-buy="agent" href="#"><span class="lx-buy-label">Verify this entity</span><span class="lx-buy-amt" data-lx-amount="agent"></span></a>
+
+<!-- ═══ AI ENTITY VERIFICATION ═════════════════════════════════════════ -->
+    <section class="sh-agent" aria-labelledby="sh-agent-h">
+      <div class="sh-agent-card">
+        <div>
+          <p class="x-eyebrow">For AI agents and platforms</p>
+          <h2 class="x-h2" id="sh-agent-h">Verify an <em>AI entity</em></h2>
+          <p class="sh-agent-p">For AI agents, autonomous systems and AI-powered platforms that need a verified identity in the Lunara Registry: a six-month verification cycle, with a public trust record a third party can check.</p>
+        </div>
+        <div class="sh-agent-buy">
+          <p class="x-price"><b data-lx-amount="agent">$540</b><span data-lx-every="agent">every six months</span></p>
+          <p class="sh-terms" data-lx-terms="agent">Six months, renewing automatically until you cancel. Cancel any time.</p>
+          <ul class="x-checks">
+            <li>Verified AI entity identity</li>
+            <li>Public registry listing with AI designation</li>
+            <li>Trust badge for your platform</li>
+            <li>Six months, renews until you cancel</li>
+          </ul>
+          <a class="x-btn x-btn--gold" data-lx-buy="agent" href="/pricing.html#p-agent">Verify this entity</a>
+        </div>
       </div>
-    </div>
+    </section>
 
   <!-- ─── FOOTER ─── -->
 <footer id="site-footer">
@@ -1366,6 +1478,13 @@ function goHome(){
   function cleanDomain(v){
     return v.replace(/^https?:\/\//,"").replace(/^www\./,"").split("/")[0].trim().toLowerCase();
   }
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; });
+  }
+  function day(iso){
+    var t = new Date(iso);
+    return isNaN(t) ? "" : t.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
+  }
 
   async function checkDomain(){
     var raw = input.value.trim();
@@ -1378,13 +1497,22 @@ function goHome(){
         {method:"POST",headers:{"Content-Type":"application/json"},
          body:JSON.stringify({domain:domain})});
       var d = await r.json();
-      if(d && (d.status === "verified" || d.status === "approved")){
-        res.innerHTML = "&#10003;&nbsp;<span class=\"result-protected\"><strong>" + domain + "</strong> is Shield Certified &#8212; verified and protected.</span>";
-      } else if(d && d.status && d.status !== "not_found"){
-        res.innerHTML = "&#9679;&nbsp;<span class=\"result-pending\"><strong>" + domain + "</strong> has an application in progress (status: " + d.status + ").</span>";
+      // The registry publishes four states and nothing else: verified,
+      // expired, revoked, not_registered. Applications under review are
+      // never public, so this must not suggest one is "in progress".
+      var who = "<strong>" + esc(domain) + "</strong>";
+      var rec = d && d.public_id ? " <a href=\"/registry.html?q=" + encodeURIComponent(d.public_id) + "\">See the record</a>" : "";
+      if(!r.ok || !d || !d.status){
+        res.innerHTML = "<span class=\"result-error\">The registry did not answer. Try again in a moment.</span>";
+      } else if(d.status === "verified"){
+        res.innerHTML = "&#10003;&nbsp;<span class=\"result-protected\">" + who + " is Shield certified" + (d.business_name ? " (" + esc(d.business_name) + ")" : "") + (d.expires_at ? ", valid until " + day(d.expires_at) : "") + "." + rec + "</span>";
+      } else if(d.status === "expired"){
+        res.innerHTML = "<span class=\"result-pending\">" + who + " was certified, but the certification lapsed" + (d.expires_at ? " on " + day(d.expires_at) : "") + "." + rec + "</span>";
+      } else if(d.status === "revoked"){
+        res.innerHTML = "<span class=\"result-error\">" + who + "'s certification was revoked" + (d.revocation_reason ? ": " + esc(String(d.revocation_reason).replace(/[.\s]+$/, "")) : "") + "." + rec + "</span>";
       } else {
-        res.innerHTML = "<span class=\"result-notfound\"><strong>" + domain + "</strong> is not yet in the registry. "
-          + "<a href=\"#apply\" style=\"color:rgba(226,196,122,0.9);text-decoration:underline;\">Apply below — free to start.</a></span>";
+        res.innerHTML = "<span class=\"result-notfound\">" + who + " has no certification on the register. "
+          + "<a href=\"#apply\">Apply below, free to start.</a></span>";
       }
     }catch(e){
       res.innerHTML = "<span class=\"result-error\">Could not reach registry. Try again in a moment.</span>";

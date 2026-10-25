@@ -1752,7 +1752,7 @@
         var plans = ['starter', 'pro', 'max'].map(function (k) {
           var tr = tiers[k], mine = cur === k;
           return h('div', { class: 'card plan' + (k === 'pro' ? ' featured' : '') },
-            k === 'pro' ? h('div', { class: 'tag' }, L('Most chosen', 'El más elegido')) : null,
+            k === 'pro' ? h('div', { class: 'tag' }, L('Recommended', 'Recomendado')) : null,
             h('h3', null, tr.label), h('div', { class: 'price' }, planPrice(k, true)),
             h('p', { style: 'margin:.2em 0' }, h('b', null, fmt(tr.monthly) + L(' credits every month', ' créditos cada mes'))),
             h('p', { class: 'small muted', style: 'margin:0 0 .4em' }, approx(tr.monthly)),

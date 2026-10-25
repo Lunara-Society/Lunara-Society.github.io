@@ -639,9 +639,16 @@
 
   /* ── the sequence ───────────────────────────────────────────────── */
   var box = null, busy = false;
+  /* The sound switch is on the page from the start, so its style must
+     be too: before this, the style arrived with the first lock, and
+     until then the switch was an unstyled grey sliver in the corner. */
+  function ensureCss() {
+    if (document.getElementById('lxl-css')) return;
+    var st = document.createElement('style'); st.id = 'lxl-css'; st.textContent = CSS; document.head.appendChild(st);
+  }
   function build() {
     if (box) return box;
-    var st = document.createElement('style'); st.id = 'lxl-css'; st.textContent = CSS; document.head.appendChild(st);
+    ensureCss();
     box = document.createElement('div'); box.id = 'lxl'; box.setAttribute('aria-hidden', 'true');
     box.innerHTML = '<i class="h t"></i><i class="h b"></i><s class="seam"></s><span class="dest"></span><div class="core"><div class="side l"></div><div class="lk"></div><div class="side r"></div></div><button type="button" class="skip">Skip · Esc</button>';
     document.body.appendChild(box);
@@ -707,6 +714,7 @@
   /* ── the switch ─────────────────────────────────────────────────── */
   function soundButton() {
     if (document.getElementById('lxl-snd') || REDUCED) return;
+    ensureCss();
     var b = document.createElement('button'); b.id = 'lxl-snd'; b.type = 'button';
     function draw() {
       var on = !muted();

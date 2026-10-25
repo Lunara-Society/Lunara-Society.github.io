@@ -2090,7 +2090,10 @@ a.back,
       reserved for the one relationship the figure exists to
       show.                                                     */
 
-.lxf {
+/* div only: the shell's footer is <footer class="lxf">, and this rule
+   once caught it too, crushing the footer of every page that loads this
+   file into an 880px column. */
+div.lxf {
   max-width: 880px;
   margin: 0 auto;
 }

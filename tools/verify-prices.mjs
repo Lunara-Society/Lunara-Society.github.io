@@ -32,6 +32,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { readProducts } from './build-offers.mjs';
+import { render as renderPricing } from './build-pricing.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -107,9 +108,21 @@ function main() {
     for (const x of found) bad.push({ file: f, ...x });
   }
 
+  /* pricing.html is generated from the table. A committed copy that
+     differs from what the table generates is the drift this file
+     exists to catch, wearing the page that lists every price. */
+  try {
+    const page = readFileSync(join(ROOT, 'pricing.html'), 'utf8');
+    if (renderPricing(page, products) !== page) {
+      bad.push({ file: 'pricing.html', amount: 0, context: 'differs from what lunara-pricing.js generates — fix: node tools/build-pricing.mjs' });
+    }
+  } catch (e) {
+    bad.push({ file: 'pricing.html', amount: 0, context: String(e.message) });
+  }
+
   if (bad.length) {
     console.error('\n  price drift — figures no page should be stating by hand\n');
-    for (const b of bad) console.error(`  · ${b.file}  $${b.amount}\n      …${b.context}…`);
+    for (const b of bad) console.error(`  · ${b.file}${b.amount ? '  $' + b.amount : ''}\n      …${b.context}…`);
     console.error('\n  Fix by putting the figure in a data-lx- slot, or by correcting');
     console.error('  lunara-pricing.js if the price itself has changed.\n');
     process.exit(1);

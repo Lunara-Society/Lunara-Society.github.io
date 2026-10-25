@@ -154,31 +154,46 @@
     root.classList.add('lxe-gl');
 
     // Light and smoke are soft by nature, so they are drawn at reduced resolution.
-    var scale = FINE ? 0.55 : 0.4, slow = 0, last = 0, running = true, m = { x: 0, y: 0 };
+    var scale = FINE ? 0.55 : 0.4, slow = 0, last = 0, running = !document.hidden, m = { x: 0, y: 0 };
     function size() {
       cv.width = Math.max(1, Math.round(innerWidth * scale)); cv.height = Math.max(1, Math.round(innerHeight * scale));
       gl.viewport(0, 0, cv.width, cv.height);
     }
     size();
-    window.addEventListener('resize', size);
-    field(function (s) { m.x = s.x * 2; m.y = -s.y * 2; });
-    document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) requestAnimationFrame(frame); });
-    var t0 = performance.now();
+
+    /* The smoke moves while the reader does, and rests when they stop.
+       A drift nobody is watching still costs a phone its battery and a
+       laptop its fan, and a page left open in a tab was drawing it for
+       ever. Its clock advances only while it is drawn, so it picks up
+       where it left off instead of jumping. */
+    var IDLE = 7000, until = 0, sleeping = true, clock = 0;
+    function wake() {
+      until = performance.now() + IDLE;
+      if (sleeping && running) { sleeping = false; last = 0; requestAnimationFrame(frame); }
+    }
+    window.addEventListener('resize', function () { size(); wake(); });
+    window.addEventListener('scroll', wake, { passive: true });
+    field(function (s) { m.x = s.x * 2; m.y = -s.y * 2; wake(); });
+    document.addEventListener('visibilitychange', function () {
+      running = !document.hidden;
+      if (running) wake();
+    });
     function frame(now) {
-      if (!running) return;
-      var dt = now - last;
-      if (dt < (FINE ? 30 : 45)) { requestAnimationFrame(frame); return; }   // smoke does not need 60 fps
+      if (!running || now > until) { sleeping = true; return; }       // the last frame stays on the glass
+      var dt = last ? now - last : 33;
+      if (last && dt < (FINE ? 30 : 45)) { requestAnimationFrame(frame); return; }   // smoke does not need 60 fps
       last = now;
       if (dt > 70 && dt < 300) slow++; else slow = Math.max(0, slow - 1);
       if (slow > 30 && scale > 0.3) { scale = Math.max(0.3, scale - 0.12); slow = 0; size(); }
+      clock += Math.min(dt, 100);
       gl.uniform2f(U.R, cv.width, cv.height);
-      gl.uniform1f(U.T, (now - t0) / 1000);
+      gl.uniform1f(U.T, clock / 1000);
       gl.uniform2f(U.M, m.x, m.y);
       gl.uniform1f(U.S, (window.scrollY || 0) * scale);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       requestAnimationFrame(frame);
     }
-    requestAnimationFrame(frame);
+    wake();
   }
 
   /* ── THE VEIL ───────────────────────────────────────────────────── */

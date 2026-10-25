@@ -1050,7 +1050,9 @@
     safe('entrances', buildEntrances);
     safe('wide-tables', containWideTables);
     safe('watermark', placeWatermark);
-    safe('letterbox', placeLetterbox);
+    /* The letterbox is retired: the same coin above the footer of thirty
+       pages stopped being a pause and became furniture. placeLetterbox
+       stays for reference only. */
     safe('gates', buildGates);
     safe('swarms', buildSwarms);
     safe('typers', buildTypers);

@@ -41,7 +41,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Where each product is actually sold. A JSON-LD offer whose url is a
    page that does not sell the thing is a broken offer. */
-const PAGE = {
+export const PAGE = {
   disclose:  'marking.html',
   kit:       'readiness-kit.html',
   shield:    'certify.html',

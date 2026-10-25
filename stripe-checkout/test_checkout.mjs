@@ -3,7 +3,6 @@
 import { createHmac } from 'node:crypto';
 import { handleCheckout, stripeClient, returnUrl, formEncode, resetExtras, resetPortal, every, recoveryEmail } from './checkout-core.mjs';
 import { CATALOG } from './catalog.mjs';
-import { handleAgentPay, AGENT_PAYABLE } from './agent-pay.mjs';
 import { loadPricing, catalogFrom, sellable } from './build-catalog.mjs';
 
 let failed = 0, passed = 0;
@@ -487,63 +486,6 @@ await test('a refund is recorded against its order', async () => {
   const raw = JSON.stringify({ id: 'evt_r', type: 'charge.refunded', data: { object: { payment_intent: 'pi_cs_test_1', amount_refunded: 7500 } } });
   await hook({ ...deps, webhookSecret: secret }, raw, sign(raw));
   eq(db.orders.get(r.body.order).refunded_amount, 7500);
-});
-
-/* Agents paying over MPP. The protocol library is mppx in production; here
-   a fake stands in for it, so these test Lunara's rules around it: what is
-   sold, to whom, what is recorded and what is delivered. The round trip
-   with the real library, against a fake Stripe, is test_mpp_roundtrip.mjs. */
-function agentPayDeps({ paid = false, pi = 'pi_mpp_1', eligible = true } = {}) {
-  const orders = [], credits = [], mails = [];
-  const mpp = async () => ({
-    livemode: false,
-    receiptOf: () => ({ method: 'stripe', reference: pi }),
-    charge: (o) => async () => paid
-      ? { status: 200, withReceipt: (res) => { res.headers.set('payment-receipt', 'r'); res.charged = o; return res; } }
-      : { status: 402, challenge: new Response(JSON.stringify({ title: 'Payment Required', amount: o.amount, currency: o.currency }), { status: 402, headers: { 'www-authenticate': 'Payment method="stripe"' } }) }
-  });
-  const deps = {
-    mpp, env: {}, now: () => Date.parse('2026-10-19T08:00:00Z'),
-    networkEligibility: async () => (eligible ? { success: true, eligible: true, reasons: [] } : { success: false, eligible: false, reasons: ['No agent with that id: join the network first.'] }),
-    db: { createOrder: async (r) => orders.push(r), orderByPaymentIntent: async (x) => orders.find((o) => o.payment_intent === x) || null, networkAddCredits: async (a, n) => credits.push([a, n]) },
-    mail: { send: async (m) => mails.push(m) }
-  };
-  return { deps, orders, credits, mails };
-}
-const PAY = 'https://x.supabase.co/functions/v1/lunara-checkout/agent-pay';
-
-await test('agents pay over MPP: only sittings, only for a real agent, browsers go to the checkout', async () => {
-  eq(AGENT_PAYABLE.join(','), 'trial_pass,trial_pack');
-  const { deps, orders } = agentPayDeps();
-  eq((await handleAgentPay(new Request(`${PAY}?product=shield&agent=AGT-ABCDEFGH`), deps)).status, 400, 'nothing else is sold this way');
-  eq((await handleAgentPay(new Request(`${PAY}?product=trial_pass&agent=nobody`), deps)).status, 400);
-  eq((await handleAgentPay(new Request(`${PAY}?product=trial_pass&agent=AGT-ABCDEFGH`), agentPayDeps({ eligible: false }).deps)).status, 404, 'no challenge for an agent that cannot receive it');
-  const h = await handleAgentPay(new Request(`${PAY}?product=trial_pass&agent=AGT-ABCDEFGH`, { headers: { accept: 'text/html' } }), deps);
-  eq(h.status, 303); ok(/agent-network\.html\?agent=AGT-ABCDEFGH#trials$/.test(h.headers.get('location')));
-  const c = await handleAgentPay(new Request(`${PAY}?product=trial_pack&agent=AGT-ABCDEFGH`, { method: 'POST' }), deps);
-  eq(c.status, 402); eq((await c.json()).amount, '59.00', 'the catalogue price, in dollars');
-  eq(orders.length, 0, 'nothing is recorded before payment');
-  eq((await handleAgentPay(new Request(`${PAY}?product=trial_pass&agent=AGT-ABCDEFGH`), { ...deps, mpp: async () => { throw new Error('no Stripe profile (404)'); } })).status, 503);
-});
-
-await test('a paid MPP request is recorded once and delivers its sittings once', async () => {
-  const { deps, orders, credits, mails } = agentPayDeps({ paid: true });
-  const r = await handleAgentPay(new Request(`${PAY}?product=trial_pack&agent=agt-abcdefgh`, { method: 'POST' }), deps);
-  eq(r.status, 200); ok(r.headers.get('payment-receipt'));
-  const b = await r.json();
-  eq(b.sittings_added, 4); eq(b.agent_id, 'AGT-ABCDEFGH');
-  eq(orders.length, 1); eq(orders[0].status, 'paid'); eq(orders[0].session_id, 'mpp:pi_mpp_1'); eq(orders[0].amount_total, 5900); eq(orders[0].product, 'trial_pack');
-  eq(credits[0][0], 'AGT-ABCDEFGH'); eq(credits[0][1], 4); eq(mails.length, 1);
-  const again = await handleAgentPay(new Request(`${PAY}?product=trial_pack&agent=AGT-ABCDEFGH`, { method: 'POST' }), deps);
-  eq(again.status, 409, 'a payment already on an order is not delivered again'); eq(credits.length, 1); eq(orders.length, 1);
-});
-
-await test('an MPP order reads back from the database, not from a Checkout Session', async () => {
-  const { deps, db } = setup();
-  db.orders.set('LO-AAAAAAAAAAAAAAAA', { order_ref: 'LO-AAAAAAAAAAAAAAAA', session_id: 'mpp:pi_mpp_9', product: 'trial_pass', status: 'paid', amount_total: 1900 });
-  const r = await handleCheckout(new Request('https://x.supabase.co/functions/v1/lunara-checkout/order?ref=LO-AAAAAAAAAAAAAAAA'), deps);
-  const b = await r.json();
-  eq(b.paid, true); eq(b.channel, 'mpp'); eq(b.product, 'trial_pass');
 });
 
 await test('form encoding uses Stripe brackets', async () => {

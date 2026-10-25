@@ -32,10 +32,6 @@
 
 // @ts-nocheck — checkout-core.mjs is deliberately plain JS, shared with Node.
 import { handleCheckout, stripeClient, withCors, json } from './checkout-core.mjs';
-import { handleAgentPay } from './agent-pay.mjs';
-// The Machine Payments Protocol, from Stripe and Tempo's reference library.
-import { Mppx, stripe as mppStripe } from 'npm:mppx@0.13.5/server';
-import { Receipt } from 'npm:mppx@0.13.5';
 
 const env = Deno.env.toObject();
 const KEY = env.STRIPE_SECRET_KEY || env['LUNA-SECRET-KEY'] || env.LUNA_SECRET_KEY || '';
@@ -72,8 +68,6 @@ const db = {
     }).then((r) => Array.isArray(r) && r.length === 1),
   getOrder: (ref: string) =>
     rest(`/stripe_orders?order_ref=eq.${q(ref)}&limit=1`).then(one),
-  orderByPaymentIntent: (pi: string) =>
-    rest(`/stripe_orders?payment_intent=eq.${q(pi)}&limit=1`).then(one),
   updateOrder: (ref: string, patch: Record<string, unknown>) =>
     rest(`/stripe_orders?order_ref=eq.${q(ref)}`, {
       method: 'PATCH',
@@ -173,58 +167,9 @@ async function networkEligibility(agent: string, product: string) {
   return r.json().catch(() => null);
 }
 
-/* Agents pay over MPP (agent-pay.mjs). Built on first use: the network id
-   is Lunara's Stripe profile, read from Stripe rather than kept here, and
-   the key that binds each 402 challenge to this server is derived inside
-   the function from a secret it already holds, so no new secret exists. */
-const PROFILE_VERSION = '2026-07-29.preview';
-let mppReady: Promise<unknown> | null = null;
-async function stripeProfileId() {
-  if (env.STRIPE_PROFILE_ID) return env.STRIPE_PROFILE_ID;
-  const r = await fetch('https://api.stripe.com/v2/network/business_profiles/me', {
-    headers: { authorization: `Bearer ${KEY}`, 'stripe-version': PROFILE_VERSION }
-  });
-  const d = await r.json().catch(() => ({}));
-  if (!r.ok || !d.id) throw new Error(`no Stripe profile (${r.status}${d?.error?.message ? ': ' + d.error.message : ''})`);
-  return d.id as string;
-}
-async function challengeKey() {
-  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.SUPABASE_SERVICE_ROLE_KEY || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const mac = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode('lunara-mpp-challenge-key-v1'));
-  return btoa(String.fromCharCode(...new Uint8Array(mac)));
-}
-function mpp() {
-  if (!KEY) return Promise.reject(new Error('Stripe is not configured'));
-  mppReady ??= (async () => {
-    const networkId = await stripeProfileId();
-    const server = Mppx.create({
-      methods: [mppStripe.charge({ secretKey: KEY, networkId, paymentMethodTypes: ['card'] })],
-      secretKey: await challengeKey()
-    });
-    return {
-      charge: (o: Record<string, unknown>) => server.charge(o as never),
-      receiptOf: (res: Response) => { try { return Receipt.fromResponse(res); } catch { return null; } },
-      livemode: /^(sk|rk)_live_/.test(KEY),
-      networkId
-    };
-  })().catch((e) => { mppReady = null; throw e; });
-  return mppReady;
-}
-
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin');
   if (req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), origin);
-  if (new URL(req.url).pathname.endsWith('/agent-pay')) {
-    try {
-      const res = await handleAgentPay(req, { db, env, mail, networkEligibility, mpp, now: () => Date.now() });
-      const out = withCors(res, origin);
-      out.headers.set('access-control-expose-headers', 'www-authenticate, payment-receipt');
-      return out;
-    } catch (e) {
-      console.error('agent-pay', e?.message || e);
-      return withCors(json({ error: 'The payment could not be completed. Nothing was delivered; if your card was charged, write to lunarasociety@gmail.com.' }, 502), origin);
-    }
-  }
   try {
     const res = await handleCheckout(req, { stripe, db, whoIs, env, mail, networkEligibility, now: () => Date.now(), webhookSecret: env.STRIPE_WEBHOOK_SECRET || '' });
     return withCors(res, origin);

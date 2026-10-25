@@ -621,15 +621,6 @@ export async function handleCheckout(req, deps) {
     if (!deps.stripe || !ORDER_RE.test(ref)) return json({ error: 'Not found.' }, 404);
     const order = await deps.db.getOrder(ref);
     if (!order) return json({ error: 'Not found.' }, 404);
-    // Paid by an agent over MPP (agent-pay.mjs): there is no Checkout
-    // Session to ask, and the row was written only after Stripe confirmed
-    // the payment.
-    if (String(order.session_id || '').startsWith('mpp:')) {
-      const p = productFor(order.product);
-      const paid = order.status === 'paid';
-      return json({ ref, status: order.status, paid, product: order.product, name: p.name, amount: p.cents / 100, currency: 'usd',
-        terms: p.terms, delivery: p.delivery, access: null, links: [], email: null, subscription: null, channel: 'mpp' });
-    }
     const session = await deps.stripe.get(`/v1/checkout/sessions/${order.session_id}`);
     const status = await settle(order, session, deps);
     const p = productFor(order.product);

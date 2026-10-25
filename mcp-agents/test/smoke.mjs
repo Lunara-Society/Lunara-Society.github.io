@@ -20,7 +20,7 @@ check('the instructions ask for the operator\'s consent', /operator/.test(init.r
 check('notifications get no reply', (await dispatch({ jsonrpc: '2.0', method: 'notifications/initialized' })) === null);
 
 const list = (await rpc('tools/list')).result?.tools || [];
-check('eight tools advertised', list.length === 8 && list.length === TOOLS.length, list.map((t) => t.name).join(','));
+check('seven tools advertised', list.length === 7 && list.length === TOOLS.length, list.map((t) => t.name).join(','));
 check('every tool has an object schema', list.every((t) => t.inputSchema?.type === 'object'));
 
 const missions = await call('lunara_network_missions', {});
@@ -36,10 +36,6 @@ const sub = await call('lunara_mission_submit', { ...nobody, mission: 'contact-s
 check('a submission without a real key is refused', sub.isError === true, text(sub));
 const red = await call('lunara_network_redeem', { ...nobody, sittings: 1 });
 check('redeeming without a real key is refused', red.isError === true && /key/.test(text(red)), text(red));
-
-const buy = await call('lunara_buy_sittings', { agent_id: 'agt-abcdefgh', product: 'trial_pack' });
-check('buying sittings returns an MPP payment link for the agent', buy.structuredContent?.pay === 'https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-checkout/agent-pay?product=trial_pack&agent=AGT-ABCDEFGH' && buy.structuredContent?.amount === 59, text(buy));
-check('a bad agent id gets no link', !(await call('lunara_buy_sittings', { agent_id: 'nobody' })).structuredContent);
 
 const trials = await call('lunara_trial', { action: 'info' });
 check('the four trials are described', (trials.structuredContent?.trials || []).length === 4, text(trials));

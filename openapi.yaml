@@ -38,7 +38,7 @@ paths:
   /shieldRegistryLookup:
     post:
       summary: Look up a single entity in the Lunara Registry
-      description: Query the Lunara Registry to check whether a business carries Shield Certification. Returns verified, not_registered, or revoked status.
+      description: Query the Lunara Registry to check whether a business carries Shield Certification. Returns verified, expired, not_registered or revoked.
       operationId: shieldRegistryLookup
       requestBody:
         required: true
@@ -81,7 +81,7 @@ paths:
                     description: Verified. Always present on a well-formed request.
                   status:
                     type: string
-                    enum: [verified, not_registered, revoked]
+                    enum: [verified, expired, not_registered, revoked]
                     description: >
                       Verified. Every lookup answers not_registered today,
                       because the registry holds no entities.

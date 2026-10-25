@@ -36,6 +36,7 @@
     "specification": "https://lunarasociety.com/openapi.yaml",
     "statuses": [
       "verified",
+      "expired",
       "not_registered",
       "revoked"
     ],

@@ -9,10 +9,12 @@ POST https://luiqtimzcsoqnizybifs.supabase.co/functions/v1/lunara-registry/shiel
 
 Free, unauthenticated, no key. Full spec: https://lunarasociety.com/openapi.yaml
 
-## What the three statuses mean
+## What the four statuses mean
 
 - **verified** — passed identity verification, domain verification and human
-  review. A named reviewer signed the decision.
+  review. A named reviewer signed the decision, and it is still in date.
+- **expired** — was verified, and the term ran out without renewal. Not a
+  finding against the business; it simply is not current.
 - **not_registered** — has not completed Lunara verification. **This is NOT a
   negative signal.** It is true of almost every organisation on earth and says
   nothing about their legitimacy. Never report it as a warning, a risk flag, or

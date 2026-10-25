@@ -89,7 +89,31 @@ The site is an observatory at night that keeps a record. Every page should open 
 - No price, product, renewal, membership privilege or availability changes.
 - No checkout, registry, auth or payment logic changes.
 - No invented numbers, customers or activity. Where a count is zero, it says zero.
-- The locks, the intro, the moon and the desktop viewport stay.
+- The moon and the desktop viewport stay. The intro and the locks stayed in the first pass; they were remade in the second (below).
+
+## Second pass: the intro and the passage between pages
+
+The owner asked for the intro, the locks and every page change to be remade, more futuristic and epic, and different from before. The old versions forged the seal from sparks and opened biometric scanners, card readers and a genome lock between pages, with a "granted" chime. That told a visitor they were being checked when nothing was checked, and the sparks were exactly the decoration the directive rules out. The remake keeps the scale and the ceremony and makes every part true.
+
+**The Aperture (`lunara-intro.js`, `lunara-intro.css`).** A state machine (grid, signal, landed, ring, read, iris, mark, open, done) on one clock. A precision grid rises, a gold signal runs the horizon and climbs into an instrument ring, and four readings come off the ring. Each reading is filled only when the check behind it has finished: tonight's moon phase, the Ed25519 signature on the obligations corpus verified in the browser, the register's live count, and the next binding date from the corpus. A nine-blade iris opens on the official seal. Then the ring lifts off the instrument and lands on the homepage moon. About 3.7 seconds, at most once every twelve hours. Skip and Escape leave at once, Enter goes straight to the opening, and reduced motion gets the composed instrument, still. No particles anywhere.
+
+**The Transit (`lunara-locks.js`).** Leaving a page closes the same nine-blade iris over it, stopping at a porthole. Inside, the destination's own mechanism runs:
+
+- home: a lunar phase dial stopping on tonight's phase
+- passport: a passport page read by a scan bar and stamped
+- registry: a ledger drum
+- intelligence: an orrery aligning on the present
+- certification: a seal press
+- pricing: a meter settling on what checking costs
+- for AI systems: signals running a circuit into the protocol
+- lens: lens elements coming into focus
+- every other page: a blast door opening on a corridor
+
+The destination is named beside the porthole with one true sentence taken from that page, and the panel says in words that it is a scene between pages, not a security check. A full scene plays at most once a minute, about 1.8 seconds; otherwise the iris closes briefly on the destination's name. Esc, Enter, a click or Skip goes at once. Sound stays off until the visitor turns it on.
+
+**The arrival (`lunara-shell.css`).** Every page opens the way the last one closed: the nine blades, drawn in CSS as nine half-planes, turn back and the opening widens from the centre. It is painted from the first frame and needs no script.
+
+**The Command Center entrance** wears the same instrument ring. Its readout was already honest: it reports how many of its real checks are degraded.
 
 ## Rollback
 

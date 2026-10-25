@@ -242,29 +242,38 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 }
 
 
-/* ═══ THE VEIL, LIFTING ═══════════════════════════════════════════════
-   Every page opens as the veil it was left under lifts: obsidian
-   fading off a hairline of gold. Leaving a page lowers the same veil
-   (lunara-engine.js), so moving through the site reads as one cut.
-   It says nothing: arriving on a page is not a security check and is
-   not dressed as one. Pure CSS, painted from the first frame, so there
-   is never a flash of the page before it. Pointer events pass straight
-   through, and reduced motion gets none of it. */
+/* ═══ THE APERTURE, OPENING ═══════════════════════════════════════════
+   Every page opens the way the last one closed (lunara-locks.js): the
+   nine blades of the iris, drawn here as nine half-planes whose gold
+   edges stand --lx-ap from the centre. The opening is the nonagon they
+   leave between them; it widens as the blades turn back, exactly the
+   geometry of the iris that closed over the page before. It says
+   nothing: arriving on a page is not a security check and is not dressed
+   as one. Pure CSS, painted from the first frame, so the page never
+   flashes underneath it. Pointer events pass straight through, and
+   reduced motion gets none of it. Without registered custom properties
+   the blades simply stand closed for a moment and lift. */
+@property --lx-ap { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --lx-tw { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 @media (prefers-reduced-motion: no-preference) {
-  html::before, html::after {
-    content: ""; position: fixed; z-index: 2147483600; pointer-events: none;
-  }
   html::before {
-    inset: 0; background: #060709;
-    animation: lxVeil .55s cubic-bezier(.4,0,.2,1) .05s both;
+    content: ""; position: fixed; inset: 0; z-index: 2147483600; pointer-events: none;
+    --lx-ap: -4px; --lx-tw: -12deg;
+    background:
+      linear-gradient(calc(var(--lx-tw) + 0deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 40deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 80deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 120deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 160deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 200deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 240deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 280deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax)),
+      linear-gradient(calc(var(--lx-tw) + 320deg),transparent calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap)),rgba(244,226,176,.55) calc(50% + var(--lx-ap) + 1.2px),#22262D calc(50% + var(--lx-ap) + 1.2px),#101215 calc(50% + var(--lx-ap) + 26vmax),#08090B calc(50% + var(--lx-ap) + 60vmax));
+    animation: lxAperture .68s cubic-bezier(.55,0,.2,1) .06s both;
   }
-  html::after {
-    left: 50%; top: 50%; width: 46vw; height: 1px; margin-left: -23vw;
-    background: linear-gradient(90deg, transparent, rgba(240,217,155,.85), transparent);
-    box-shadow: 0 0 18px rgba(240,217,155,.35);
-    animation: lxVeilLine .6s cubic-bezier(.16,1,.3,1) both;
+  @keyframes lxAperture {
+    from { --lx-ap: -4px; --lx-tw: -12deg; }
+    to   { --lx-ap: 74vmax; --lx-tw: 30deg; visibility: hidden; }
   }
-  @keyframes lxVeil { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
-  @keyframes lxVeilLine { 0% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(1.6); visibility: hidden; } }
-  html.lx-intro::before, html.lx-intro::after { animation: none; display: none; }
+  html.lx-intro::before { animation: none; display: none; }
 }

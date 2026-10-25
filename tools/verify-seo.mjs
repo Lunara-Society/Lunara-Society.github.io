@@ -6,7 +6,7 @@
    Two jobs.
 
    ONE — the answer pages must agree with their sources. The price, the
-   seven steps, the three registry statuses and the next deadlines are
+   seven steps, the four registry statuses and the next deadlines are
    emitted from certification.json and corpus/obligations.json. A page
    that tells a prospect certification is free to apply for, six months
    after that stopped being true, is the site arguing with itself in

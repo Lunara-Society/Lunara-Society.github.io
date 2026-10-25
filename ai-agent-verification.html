@@ -92,6 +92,7 @@
 <!-- BEGIN GENERATED statuses — tools/build-answers.mjs -->
 <dl class="statuses">
   <div><dt><code>verified</code></dt><dd>A named reviewer checked documentary evidence of who this business is and that it controls this domain, and signed the decision.</dd></div>
+  <div><dt><code>expired</code></dt><dd></dd></div>
   <div><dt><code>not_registered</code></dt><dd>Nobody has checked. This is the answer for almost every business on the internet and it is not a mark against them.</dd></div>
   <div><dt><code>revoked</code></dt><dd>This entity held a credential and it was withdrawn. Find out why before relying on anything it claims.</dd></div>
 </dl>
@@ -166,7 +167,7 @@
         </div>
         <div>
           <h3>How does an AI agent verify a business before contacting it?</h3>
-          <p>It queries the public register with the business's domain and receives verified, not_registered or revoked. The endpoint needs no account and no key, and returns the same answer to a machine as to a person. It should also read the business's <code>/.well-known/lunara-verify.json</code>, where one exists, for the stated contact policy.</p>
+          <p>It queries the public register with the business's domain and receives verified, expired, not_registered or revoked. The endpoint needs no account and no key, and returns the same answer to a machine as to a person. It should also read the business's <code>/.well-known/lunara-verify.json</code>, where one exists, for the stated contact policy.</p>
         </div>
         <div>
           <h3>What is an AI agent credential?</h3>
@@ -223,7 +224,7 @@
           "name": "How does an AI agent verify a business before contacting it?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "It queries the public register with the business's domain and receives verified, not_registered or revoked. The endpoint requires no account or key and returns the same answer to a machine as to a person."
+            "text": "It queries the public register with the business's domain and receives verified, expired, not_registered or revoked. The endpoint requires no account or key and returns the same answer to a machine as to a person."
           }
         },
         {

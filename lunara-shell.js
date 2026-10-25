@@ -62,35 +62,58 @@
 (function () {
   'use strict';
 
-  /* The six destinations, one name each. Changing a name here changes
-     it everywhere, which is the whole point of this file existing. */
+  /* The seven destinations, one name each. Changing a name here changes
+     it everywhere, which is the whole point of this file existing.
+
+     The order is the order a visitor needs them in: the free check
+     first (it is what most of them came to do), then the record, then
+     what it costs to be on it. The emblem is the way home, as it is on
+     every site, which is what freed the room for Pricing. */
   var NAV = [
-    { href: 'intelligence.html', label: 'Intelligence' },
-    { href: 'registry.html',     label: 'Registry' },
     { href: 'passport.html',     label: 'Passport' },
+    { href: 'registry.html',     label: 'Registry' },
+    { href: 'intelligence.html', label: 'Intelligence' },
     { href: 'shield.html',       label: 'Certification' },
+    { href: 'pricing.html',      label: 'Pricing' },
     { href: 'mcp.html',          label: 'For AI Systems' },
     { href: 'lens.html',         label: 'Lens app' }
   ];
 
+  /* A page that is not itself in the navigation still belongs under one
+     of its entries, and the navigation says which, so a reader four
+     clicks deep can still see where they are. */
+  var SECTION = {
+    'league.html': 'passport.html', 'check.html': 'intelligence.html',
+    'december-2.html': 'intelligence.html', 'marking.html': 'intelligence.html',
+    'article50.html': 'intelligence.html', 'briefing.html': 'intelligence.html',
+    'regulation.html': 'intelligence.html', 'investigate.html': 'intelligence.html',
+    'certify.html': 'shield.html', 'certify-healthcare.html': 'shield.html',
+    'certify-fintech.html': 'shield.html', 'certify-government.html': 'shield.html',
+    'what-is-shield-certification.html': 'shield.html', 'verification-matrix.html': 'shield.html',
+    'scorer.html': 'shield.html', 'constitution.html': 'shield.html', 'badge.html': 'shield.html',
+    'join.html': 'pricing.html', 'readiness-kit.html': 'pricing.html',
+    'compliance-intelligence.html': 'pricing.html', 'healthcare-intelligence.html': 'pricing.html',
+    'agents.html': 'mcp.html', 'agent-network.html': 'mcp.html', 'agent-passport.html': 'mcp.html',
+    'agent-atlas.html': 'mcp.html', 'missions.html': 'mcp.html', 'test.html': 'mcp.html', 'embed.html': 'mcp.html'
+  };
+
   var FOOT = [
-    { head: 'The record', links: [
-      ['intelligence.html', 'Regulatory intelligence'],
+    { head: 'Check, free', links: [
       ['passport.html',     'Passport control: scan a domain'],
       ['league.html',       'The AI Passport League'],
       ['check.html',        'Does the law reach your AI?'],
-      ['december-2.html',   'The 2 December deadline'],
-      ['lens.html',         'Lunara Lens: is it real?'],
       ['registry.html',     'Public register'],
-      ['evidence.html',     'Evidence standard'],
-      ['signing.html',      'How to verify us'],
-      ['glossary.html',     'Glossary']
+      ['intelligence.html', 'Regulatory intelligence'],
+      ['december-2.html',   'The 2 December deadline'],
+      ['lens.html',         'Lunara Lens: is it real?']
     ]},
     { head: 'Certification', links: [
       ['shield.html',              'Shield certification'],
+      ['pricing.html',             'Every service and price'],
       ['scorer.html',              'Risk scorer'],
       ['verification-matrix.html', 'Verification matrix'],
-      ['constitution.html',        'The constitution']
+      ['constitution.html',        'The constitution'],
+      ['join.html',                'Membership tracks']
     ]},
     { head: 'Answers', links: [
       ['governance-and-security.html',      'Governance is not security'],
@@ -98,18 +121,8 @@
       ['verify-an-ai-business.html',        'How to verify an AI business'],
       ['ai-trust-standards.html',           'AI trust standards'],
       ['trust-badges.html',                 'What a trust badge proves'],
-      ['ai-agent-verification.html',        'AI agent verification']
-    ]},
-    { head: 'Operations', links: [
-      ['command.html',           'Command Center'],
-      ['status.html',            'System status'],
-      ['investigate.html',       'Intelligence workspace'],
-      ['agent-atlas.html',       'Agent atlas · A2A inspector'],
-      ['missions.html',          'Missions'],
-      ['evidence-registry.html', 'Evidence Registry'],
-      ['regulation.html',        'Regulatory intelligence'],
-      ['simulate.html',          'Scenario Lab'],
-      ['audit.html',             'Activity and audit']
+      ['ai-agent-verification.html',        'AI agent verification'],
+      ['glossary.html',                     'Glossary']
     ]},
     { head: 'For machines', links: [
       ['agents.html',         'For AI agents · A2A'],
@@ -121,24 +134,46 @@
       ['embed.html',          'Embed the AI Act countdown'],
       ['/corpus/index.json',  'Corpus index'],
       ['/llms.txt',           'llms.txt']
+    ]},
+    { head: 'The institution', links: [
+      ['institution.html',    'About Lunara Society'],
+      ['evidence.html',       'Evidence standard and corrections'],
+      ['signing.html',        'How to verify us'],
+      ['command.html',        'Command Center'],
+      ['status.html',         'System status'],
+      ['contact.html',        'Contact']
     ]}
+  ];
+
+  /* The operating picture's workspaces, in one line under the columns:
+     public, but a reader looking for them is already looking. */
+  var OPS = [
+    ['investigate.html',       'Intelligence workspace'],
+    ['agent-atlas.html',       'Agent atlas'],
+    ['missions.html',          'Missions'],
+    ['evidence-registry.html', 'Evidence Registry'],
+    ['regulation.html',        'Obligations by date'],
+    ['simulate.html',          'Scenario Lab'],
+    ['audit.html',             'Activity and audit']
   ];
 
   var here = location.pathname.split('/').pop() || 'index.html';
   var esc = function (s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  var section = SECTION[here];
 
   /* ── the navigation ─────────────────────────────────────────── */
   var nav = document.createElement('nav');
   nav.className = 'lxn';
+  nav.setAttribute('aria-label', 'Main');
   nav.innerHTML =
-    '<a class="lxn-brand" href="/">' +
+    '<a class="lxn-brand" href="/" aria-label="Lunara Society, home"' + (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
       '<img src="/lunara_emblem_96.png" alt="" width="31" height="31" decoding="async">' +
       '<span>Lunara Society</span>' +
     '</a>' +
     '<div class="lxn-mid">' +
-      '<a href="/"' + (here === 'index.html' ? ' aria-current="page"' : '') + '>Home</a>' +
       NAV.map(function (n) {
-        return '<a href="/' + esc(n.href) + '"' + (here === n.href ? ' aria-current="page"' : '') + '>' + esc(n.label) + '</a>';
+        var cur = here === n.href ? ' aria-current="page"' : (section === n.href ? ' aria-current="true"' : '');
+        return '<a href="/' + esc(n.href) + '"' + cur + '>' + esc(n.label) + '</a>';
       }).join('') +
     '</div>' +
     '<div class="lxn-end">' +
@@ -181,6 +216,9 @@
             }).join('') + '</div>';
         }).join('') +
       '</div>' +
+      '<div class="lxf-ops"><span>Open operations</span>' +
+        OPS.map(function (l) { return '<a href="/' + esc(l[0]) + '">' + esc(l[1]) + '</a>'; }).join('') +
+      '</div>' +
       '<div class="lxf-base">' +
         '<span>Lunara Society &middot; Est. MMXXVI</span>' +
         '<span><a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a> &middot; <a href="/contact.html">Contact</a></span>' +
@@ -197,8 +235,11 @@
 
     document.body.insertBefore(nav, document.body.firstChild);
     document.body.insertBefore(drawer, nav.nextSibling);
-    if (oldFoot && oldFoot.parentNode) oldFoot.parentNode.replaceChild(foot, oldFoot);
-    else document.body.appendChild(foot);
+    /* The footer goes at the end of the page, never where the old one
+       stood: on most of the older pages that was inside a narrow
+       column, and the new footer's six columns were crushed into it. */
+    if (oldFoot && oldFoot.parentNode) oldFoot.parentNode.removeChild(oldFoot);
+    document.body.appendChild(foot);
 
     /* Only now is the page's own header removed — up to this point a
        reader without JavaScript still has one. */

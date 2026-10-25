@@ -68,6 +68,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 .lxn-mid a:hover,.lxn-mid a:focus-visible{color:var(--lx-white);background:rgba(255,255,255,0.055)}
 .lxn-mid a[aria-current="page"]{color:var(--lx-white);background:rgba(255,255,255,0.075)}
+/* A page that lives under an entry: the entry is lit, more quietly
+   than the page you are actually on, with a gold point beneath it. */
+.lxn-mid a[aria-current="true"]{color:var(--lx-white)}
+.lxn-mid a[aria-current="true"]::after{content:'';position:absolute;left:50%;bottom:3px;width:3px;height:3px;margin-left:-1.5px;border-radius:50%;background:var(--lx-gold-lit);box-shadow:0 0 6px rgba(226,196,122,.7)}
 .lxn-end{display:flex;align-items:center;gap:9px;margin-left:auto}
 .lxn-ghost{
   font-size:12.5px;text-decoration:none;color:var(--lx-grey);
@@ -158,26 +162,43 @@ body.lx-shelled [id]{scroll-margin-top:96px}
   color:var(--lx-grey-2);
 }
 .lxf-in{max-width:1280px;margin:0 auto}
+/* Older pages style any "footer p" or "footer a" their own way (centred,
+   upper case, spaced out). None of that may reach this footer. */
+.lxf :is(p,a,span,b,h4,div,i){text-align:left;text-transform:none;letter-spacing:normal;font-style:normal}
+.lxf .lxn-brand span{letter-spacing:.30em;text-transform:uppercase}
 .lxf-grid{
   display:grid;grid-template-columns:1.35fr repeat(5,1fr);
   gap:clamp(18px,2.2vw,34px);margin-bottom:40px;
 }
-.lxf-brand p{font-size:13px;color:var(--lx-grey-2);max-width:34ch;margin:14px 0 0;line-height:1.7}
+.lxf-brand p{font-size:14px;color:var(--lx-grey);max-width:34ch;margin:14px 0 0;line-height:1.7}
 .lxf h4{
-  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--lx-grey);margin:0 0 14px;font-weight:400;
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--lx-gold);margin:0 0 14px;font-weight:400;
 }
 .lxf-col a{
-  display:block;font-size:13px;color:var(--lx-grey-2);text-decoration:none;
+  display:block;font-size:14px;line-height:1.45;color:var(--lx-grey);text-decoration:none;
   padding:5px 0;transition:color .2s ease;
 }
 .lxf-col a:hover{color:var(--lx-white)}
+/* The operating picture's workspaces, as one line rather than a sixth
+   column: there for anyone looking, out of the way of anyone not. */
+.lxf-ops{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;
+  padding:18px 0 22px;margin-top:-8px;border-top:1px solid var(--lx-hair);
+  font-size:13px;
+}
+.lxf-ops span{
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--lx-grey-2);margin-right:6px;
+}
+.lxf-ops a{color:var(--lx-grey);text-decoration:none;transition:color .2s ease}
+.lxf-ops a:hover{color:var(--lx-white)}
 .lxf-base{
   display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;
   padding-top:22px;border-top:1px solid var(--lx-hair);
-  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;color:var(--lx-grey-2);
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--lx-grey);
 }
-.lxf-base a{color:var(--lx-grey-2);text-decoration:none}
+.lxf-base a{color:var(--lx-grey);text-decoration:none}
 .lxf-base a:hover{color:var(--lx-white)}
 @media (max-width:1120px){ .lxf-grid{grid-template-columns:1fr 1fr 1fr} }
 @media (max-width:900px){ .lxf-grid{grid-template-columns:1fr 1fr} }
@@ -208,8 +229,8 @@ body.lx-shelled [id]{scroll-margin-top:96px}
 .lxf-brand .lxn-brand{display:flex}
 .lxf-moon{
   display:flex;align-items:center;gap:11px;margin-top:20px;
-  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;line-height:1.5;
-  letter-spacing:.03em;color:var(--lx-grey-2);
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;line-height:1.5;
+  letter-spacing:.03em;color:var(--lx-grey);
 }
 .lxf-moon svg{width:18px;height:18px;flex:none;filter:drop-shadow(0 0 6px rgba(236,232,220,.25))}
 .lxf-moon b{font-weight:400;color:var(--lx-white)}

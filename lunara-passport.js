@@ -164,7 +164,7 @@
     })(t0);
   }
   function impact(visa) {
-    var color = visa === 'verified' ? '#7FE0B0' : visa === 'not_registered' ? '#FF8A7A' : '#F2C46B';
+    var color = visa === 'verified' ? '#7FE0B0' : visa === 'revoked' ? '#FF8A7A' : '#F2C46B';
     thud(); burst(color);
     var fl = $('pp-flash'); fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
     if (!reduce) { document.body.classList.add('quake'); setTimeout(function () { document.body.classList.remove('quake'); }, 420); }
@@ -243,7 +243,9 @@
     setTimeout(function () {
       var st = $('pp-stamp');
       st.innerHTML = stampSvg(d.visa);
-      st.className = 'stamp ' + (d.visa === 'verified' ? 'ok' : d.visa === 'not_registered' ? 'no' : 'rev') + ' slam';
+      /* Red is for a credential withdrawn. Not registered is true of almost
+         every site, so it is stamped in amber: not yet, rather than no. */
+      st.className = 'stamp ' + (d.visa === 'verified' ? 'ok' : d.visa === 'revoked' ? 'bad' : 'warn') + ' slam';
       if (!reduce) setTimeout(function () { impact(d.visa); book.classList.add('shake'); setTimeout(function () { book.classList.remove('shake'); }, 400); }, 300);
       after(domain, d);
       setTimeout(function () { document.body.classList.remove('spot'); }, 1600);

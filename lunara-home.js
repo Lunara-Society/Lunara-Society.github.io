@@ -200,6 +200,9 @@
     var keys = Object.keys(groups).sort();
     var nextKey = keys.filter(function (k) { return isoUTC(k) > now; })[0];
     var tip = $('hz-tip');
+    /* where each group's pin stands, so the "next" label can rise above
+       any pin inside its width instead of running through the stems */
+    var stands = keys.map(function (k) { var x = xAt(isoUTC(k)); return { x: x, top: yAt(x) - 30 - (groups[k].length - 1) * 17 }; });
 
     keys.forEach(function (k, gi) {
       var list = groups[k], t = isoUTC(k), x = xAt(t), base = yAt(x);
@@ -222,9 +225,11 @@
 
       if (isNext) {
         var days = Math.round((t - now) / 86400000);
-        var l1 = el('text', { x: x + 14, y: top - 2, class: 'tag', fill: '#FFFFFF' }, g);
+        var y2 = top + 14;
+        stands.forEach(function (s) { if (s.x > x && s.x < x + 190) y2 = Math.min(y2, s.top - 12); });
+        var l1 = el('text', { x: x + 14, y: y2 - 16, class: 'tag', fill: '#FFFFFF' }, g);
         l1.textContent = 'Next · ' + days + (days === 1 ? ' day' : ' days');
-        var l2 = el('text', { x: x + 14, y: top + 14, class: 'tag-sub', fill: '#A49E93' }, g);
+        var l2 = el('text', { x: x + 14, y: y2, class: 'tag-sub', fill: '#A49E93' }, g);
         l2.textContent = list.length === 1 ? shortDate(t) : list.length + ' obligations · ' + shortDate(t);
       }
 

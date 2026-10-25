@@ -236,13 +236,13 @@
     var pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     if (!reduce && window.matchMedia('(hover: hover)').matches) {
       // the shared pointer field (lunara-field.js), so the sphere turns with the rest of the opening
-      (window.__lxField = window.__lxField || []).push(function (f) { pointer.tx = f.x * 0.07; pointer.ty = f.y * 0.05; });
+      (window.__lxField = window.__lxField || []).push(function (f) { pointer.tx = f.x * 0.07; pointer.ty = f.y * 0.05; kick(); });
     }
 
-    var visible = true, raf = 0, t0 = performance.now(), texReady = false;
+    var visible = true, raf = 0, rest = 0, t0 = performance.now(), texReady = false;
 
     function frame(now) {
-      raf = 0;
+      raf = 0; rest = 0;
       if (!texReady) return;
       fit();
       var t = (now - t0) / 1000;
@@ -260,9 +260,18 @@
       gl.uniform1f(loc.uEarth, earth);
       gl.uniform1f(loc.uRelief, opts.relief || 9.0);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      if (!reduce && visible) raf = requestAnimationFrame(frame);
+      if (reduce || !visible) return;
+      /* Libration moves the sphere about a third of a pixel a frame at
+         sixty frames a second. At rest fifteen look the same and cost a
+         phone a quarter of the work; the moment the pointer moves the
+         sphere, it is drawn at full rate again until it settles. */
+      if (Math.abs(pointer.tx - pointer.x) + Math.abs(pointer.ty - pointer.y) > 0.0004) raf = requestAnimationFrame(frame);
+      else rest = setTimeout(function () { rest = 0; raf = requestAnimationFrame(frame); }, 66);
     }
-    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    function kick() {
+      if (rest) { clearTimeout(rest); rest = 0; }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
 
     ready.then(function (ims) {
       texture(gl, 0, ims[0]);

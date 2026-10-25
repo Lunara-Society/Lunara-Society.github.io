@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="/lunara_logo_512.png">
 <link rel="stylesheet" href="lunara-page.css">
 <link rel="stylesheet" href="lunara-shell.css">
+<link rel="stylesheet" href="lunara-system.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -126,10 +127,10 @@
 .book.shake{animation:shake .35s ease}
 @keyframes shake{0%,100%{transform:none}25%{transform:translate(2px,3px)}50%{transform:translate(-3px,-1px)}75%{transform:translate(1px,-2px)}}
 .stamp svg{width:240px;height:240px;mix-blend-mode:screen;filter:drop-shadow(0 0 10px currentColor)}
-.stamp.ok{color:#7FE0B0}.stamp.no{color:#FF8A7A}.stamp.rev{color:#F2C46B}
+.stamp.ok{color:#7FE0B0}.stamp.bad{color:#FF8A7A}.stamp.warn{color:#F2C46B}
 
 /* after */
-.after{max-width:1040px;margin:34px auto 0;display:none;grid-template-columns:1.25fr 1fr;gap:22px}
+.after{max-width:1040px;margin:34px auto 0;display:none;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start}
 .after.on{display:grid}
 .card{background:var(--pp-panel);border:1px solid var(--pp-hair);border-radius:16px;padding:26px 28px}
 .card h2{font:400 30px/1.1 "Cormorant Garamond",serif;color:var(--pp-ink);margin:0 0 6px}
@@ -326,13 +327,29 @@ body.quake main{animation:quake .38s ease}
     </div>
 
     <div class="after" id="pp-after">
+      <!-- The free fixes come first: they are what the outreach letters
+           promise, and a reader should get them before being offered
+           anything. Then the badge they may already have earned, then
+           the offer, then the rest. -->
+      <div class="card">
+        <h2>How to <em>raise this score</em></h2>
+        <p id="pp-fixlede">Each line is a change your web or DNS host can make, usually in minutes.</p>
+        <ol class="fixes" id="pp-fixes"></ol>
+      </div>
+      <div class="card" id="pp-badge-card">
+        <h2 id="pp-badge-h">The free <em>badge</em></h2>
+        <p id="pp-badge-p"></p>
+        <div id="pp-badge-preview" class="badge-preview"></div>
+        <pre class="call" id="pp-badge-code" hidden></pre>
+        <div class="btns" id="pp-badge-btns" hidden><button class="btn" id="pp-badge-copy" type="button">Copy badge code</button></div>
+      </div>
       <div class="card offer" id="monitor">
         <p class="kicker">Keep it this way</p>
         <h2 id="pp-offer-h">Scores <em>slip quietly</em></h2>
         <p id="pp-offer-p">One expired certificate or one deleted DNS record and a grade drops, usually without anyone noticing until a customer, a partner or an AI system does.</p>
         <div class="plans">
           <div class="plan best">
-            <span class="tag">Most chosen</span>
+            <span class="tag">Recommended</span>
             <h3>Passport Monitor</h3>
             <p class="price"><span data-lx-amount="monitor">$19</span><small data-lx-every="monitor">a month</small></p>
             <ul>
@@ -362,11 +379,6 @@ body.quake main{animation:quake .38s ease}
         <p class="fine">Card, Apple Pay or Google Pay · secure checkout by Stripe · cancel any time from your order page in two clicks.</p>
       </div>
       <div class="card">
-        <h2>How to <em>raise this score</em></h2>
-        <p id="pp-fixlede">Each line is a change your web or DNS host can make, usually in minutes.</p>
-        <ol class="fixes" id="pp-fixes"></ol>
-      </div>
-      <div class="card">
         <h2 id="pp-cta-h">Get the <em>stamp</em></h2>
         <p id="pp-cta-p">Points come from public signals. The stamp comes from a named reviewer checking who runs the domain, and every AI system that asks the register gets the same answer.</p>
         <div class="btns">
@@ -384,13 +396,6 @@ body.quake main{animation:quake .38s ease}
           <button class="btn gold" type="submit">Get the report</button>
         </form>
         <p class="watch-out" id="pp-report-out" aria-live="polite"></p>
-      </div>
-      <div class="card" id="pp-badge-card">
-        <h2 id="pp-badge-h">The free <em>badge</em></h2>
-        <p id="pp-badge-p"></p>
-        <div id="pp-badge-preview" class="badge-preview"></div>
-        <pre class="call" id="pp-badge-code" hidden></pre>
-        <div class="btns" id="pp-badge-btns" hidden><button class="btn" id="pp-badge-copy" type="button">Copy badge code</button></div>
       </div>
       <div class="card">
         <h2>Watch <em>this passport</em></h2>

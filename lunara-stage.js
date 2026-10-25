@@ -150,6 +150,7 @@
             dot.className = 'lxs-dot live';
             state.innerHTML = 'Verified <small>in your browser</small>';
             detail.textContent = 'Ed25519 · key ' + a.key_id + ' · sha-256 ' + digest.slice(0, 22) + '…';
+            var why = $('lxs-sig-why'); if (why) why.hidden = false;
           } else {
             dot.className = 'lxs-dot';
             state.textContent = 'Check failed';

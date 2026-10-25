@@ -49,8 +49,11 @@
     '@keyframes lxcRipple{0%{transform:scale(.3);opacity:1}100%{transform:scale(5.5);opacity:0}}',
     '.lxc-lit{transition:box-shadow .9s ease,border-color .9s ease}',
     '.lxc-lit.lxc-on{box-shadow:0 0 0 1px rgba(226,196,122,.28),0 30px 80px -40px rgba(226,196,122,.45),inset 0 1px 0 rgba(255,236,190,.08)}',
-    '.lxc-w{display:inline-block;opacity:0;transform:translateY(.45em);filter:blur(6px);',
-    '  transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1),filter .9s ease}',
+    /* A rise, never a blur: a heading is readable the moment it lands,
+       and the whole line has landed in under a second. */
+    '.lxc-w{display:inline-block;opacity:0;transform:translateY(.32em);',
+    '  transition:opacity .5s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.16,1,.3,1)}',
+    '.lxc-wi{display:inline;transform:none}',
     '.lxc-rise.lxc-in .lxc-w{opacity:1;transform:none;filter:none}'
   ].join('\n');
 
@@ -296,13 +299,22 @@
               if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(p)); return; }
               var w = document.createElement('span');
               w.className = 'lxc-w';
-              w.style.transitionDelay = Math.min(i++ * 55, 900) + 'ms';
+              w.style.transitionDelay = Math.min(i++ * 30, 300) + 'ms';
               w.textContent = p;
               frag.appendChild(w);
             });
             c.parentNode.replaceChild(frag, c);
           } else if (c.nodeType === 1 && !/^(BR|SVG|IMG)$/i.test(c.tagName)) {
-            wrap(c);
+            /* A styled phrase rises as one, in place. Split into
+               inline-block words, the gold sheen lunara-engine.js clips
+               to an <em>'s glyphs has no glyphs of its own left to
+               clip to, and the phrase renders invisible. */
+            if (/^(EM|I|STRONG|B|SPAN)$/i.test(c.tagName)) {
+              c.classList.add('lxc-w', 'lxc-wi');
+              c.style.transitionDelay = Math.min(i++ * 30, 300) + 'ms';
+            } else {
+              wrap(c);
+            }
           }
         });
       })(h);
@@ -313,7 +325,7 @@
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add('lxc-in'); io.unobserve(en.target); }
       });
-    }, { rootMargin: '0px 0px -12% 0px' });
+    }, { rootMargin: '0px 0px -4% 0px' });
     heads.forEach(function (h) { io.observe(h); });
 
     /* A heading must never stay invisible: if the observer has not
@@ -323,7 +335,7 @@
       heads.forEach(function (h) {
         if (h.classList.contains('lxc-in')) return;
         var r = h.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) setTimeout(function () { h.classList.add('lxc-in'); }, 1200);
+        if (r.top < window.innerHeight && r.bottom > 0) setTimeout(function () { h.classList.add('lxc-in'); }, 400);
       });
     }, { passive: true });
   }

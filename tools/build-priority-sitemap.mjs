@@ -42,6 +42,7 @@ export const PRIORITY = [
   ['verify-an-ai-business.html', '0.9', 'monthly'],
   ['ai-agent-verification.html', '0.9', 'monthly'],
   ['shield.html', '0.8', 'monthly'],
+  ['pricing.html', '0.8', 'weekly'],                    // every service and its price
   ['ai-trust-standards.html', '0.8', 'monthly'],
   ['trust-badges.html', '0.8', 'monthly'],
   ['glossary.html', '0.8', 'monthly'],

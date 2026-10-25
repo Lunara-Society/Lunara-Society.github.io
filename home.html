@@ -43,7 +43,7 @@
 html, body {
   /* min-height, not height. `height:100%` pinned body to exactly one
      screen; `overflow-x:hidden` then computed overflow-y to `auto`, so
-     the 6400px page scrolled INSIDE <body> instead of scrolling the
+     the 6400px page scrolled INSIDE <body class="lx-legacy"> instead of scrolling the
      viewport. window.scrollY stayed 0 forever and body's scroll event
      never reached window — which silently killed the scroll-progress
      bar and the return-to-top control on this page.
@@ -1530,7 +1530,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
       "@type": "Dataset",
       "@id": "https://lunarasociety.com/#registry",
       "name": "Lunara Public Trust Registry",
-      "description": "Every Shield-certified institution, with verification status, governance declaration and contact preferences. Free, open, machine-readable, no authentication required.",
+      "description": "Every Shield-certified business: its domain, verification status and dates, and the name of the reviewer who signed the decision. Free, open, machine-readable, no authentication required.",
       "url": "https://lunarasociety.com/registry.html",
       "creator": {
         "@id": "https://lunarasociety.com/#organization"
@@ -1579,6 +1579,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(196,164,107,0.65)!impo
 </script>
   <link rel="alternate" type="application/json" title="Certification specification" href="/certification.json">
 <link rel="stylesheet" href="lunara-shell.css">
+<link rel="stylesheet" href="lunara-system.css">
 </head>
 <body>
 <!-- Article 50 Enforcement Banner -->
